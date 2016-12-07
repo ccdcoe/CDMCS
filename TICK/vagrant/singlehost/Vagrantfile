@@ -208,10 +208,6 @@ wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/age
 go build mirror.go
 ./mirror &
 
-
-wget  -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
-go build mirror.go
-
 cat >> /etc/kapacitor/kapacitor.conf <<EOF
 [udf]
 [udf.functions]
