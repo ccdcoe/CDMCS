@@ -1,0 +1,183 @@
+$provision_script = <<SCRIPT
+
+TELEGRAF="telegraf_1.1.1_amd64.deb"
+INFLUXDB="influxdb_1.1.0_amd64.deb"
+KAPACITOR="kapacitor_nightly_amd64.deb"
+CHRONOGRAF="chronograf_nightly_amd64.deb"
+GRAFANA="grafana_4.0.1-1480694114_amd64.deb"
+
+wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
+dpkg -i $TELEGRAF > /dev/null 2>&1
+service telegraf start
+
+wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
+dpkg -i $INFLUXDB > /dev/null 2>&1
+service influxdb start
+
+wget  -q -4 https://dl.influxdata.com/kapacitor/nightlies/$KAPACITOR
+dpkg -i $KAPACITOR > /dev/null 2>&1
+cat > /etc/kapacitor/kapacitor.conf <<EOF
+hostname = "localhost"
+data_dir = "/var/lib/kapacitor"
+[http]
+  bind-address = ":9092"
+  auth-enabled = false
+  log-enabled = true
+[config-override]
+  enabled = true
+[logging]
+    file = "/var/log/kapacitor/kapacitor.log"
+    level = "INFO"
+[replay]
+  dir = "/var/lib/kapacitor/replay"
+[task]
+  dir = "/var/lib/kapacitor/tasks"
+  snapshot-interval = "60s"
+[storage]
+  boltdb = "/var/lib/kapacitor/kapacitor.db"
+[deadman]
+  global = false
+  threshold = 0.0
+  interval = "10s"
+  id = "node 'NODE_NAME' in task '{{ .TaskName }}'"
+  message = "{{ .ID }} is {{ if eq .Level \"OK\" }}alive{{ else }}dead{{ end }}: {{ index .Fields \"collected\" | printf \"%0.3f\" }} points/INTERVAL."
+[[influxdb]]
+  enabled = true
+  default = true
+  name = "localhost"
+  urls = ["http://localhost:8086"]
+  username = ""
+  password = ""
+  timeout = 0
+  insecure-skip-verify = false
+  startup-timeout = "5m"
+  disable-subscriptions = false
+  subscription-protocol = "http"
+  subscriptions-sync-interval = "1m0s"
+  kapacitor-hostname = ""
+  http-port = 0
+  udp-bind = ""
+  udp-buffer = 1000
+  udp-read-buffer = 0
+  [influxdb.subscriptions]
+    telegraf = [ "autogen" ]
+[alerta]
+  enabled = false
+  url = "http://192.168.11.11"
+  token = "Test-Token"
+  environment = "Production"
+  origin = "kapacitor"
+[stats]
+  enabled = true
+  stats-interval = "10s"
+  database = "_kapacitor"
+  retention-policy= "autogen"
+[udf]
+[udf.functions]
+EOF
+
+service kapacitor start
+mkdir -p /etc/kapacitor/ticks
+cd /etc/kapacitor/ticks
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/net/net_alert_stream.tick
+echo "  .alerta()" >> net_alert_stream.tick
+kapacitor define net_alert_stream -tick net_alert_stream.tick -type stream -dbrp telegraf.autogen
+kapacitor enable net_alert_stream
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/cpu/cpu_alert_stream.tick
+echo "  .alerta()" >> cpu_alert_stream.tick
+kapacitor define cpu_alert_stream -tick cpu_alert_stream.tick -type stream -dbrp telegraf.autogen
+kapacitor enable cpu_alert_stream
+
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/mem/mem_alert_stream.tick
+echo "  .alerta()" >> mem_alert_stream.tick
+kapacitor define mem_alert_stream -tick mem_alert_stream.tick -type stream -dbrp telegraf.autogen
+kapacitor enable mem_alert_stream
+
+
+wget -q -4 https://dl.influxdata.com/chronograf/nightlies/$CHRONOGRAF
+sudo dpkg -i $CHRONOGRAF > /dev/null 2>&1
+
+apt-get -y install libfontconfig > /dev/null 2>&1
+wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
+dpkg -i $GRAFANA > /dev/null 2>&1
+service grafana-server start
+sleep 1
+curl -XPOST --user admin:admin 192.168.11.11:3000/api/datasources -H "Content-Type: application/json" -d '{
+    "name": "telegraf",
+    "type": "influxdb",
+    "access": "proxy",
+    "url": "http://localhost:8086",
+    "database": "telegraf",
+    "isDefault": true
+
+}'
+
+
+apt-get -y install mongodb > /dev/null 2>&1
+apt-get -y install libffi-dev > /dev/null 2>&1
+apt-get -y install python-pip > /dev/null 2>&1
+pip install --upgrade pip > /dev/null 2>&1
+pip install alerta-server > /dev/null 2>&1
+cat > /etc/alertad.conf <<EOF
+CORS_ORIGINS = [
+    'http://192.168.11.11'
+]
+EOF
+
+apt-get -y install nginx > /dev/null 2>&1
+cd /var/www/html/
+wget -q -4 -O alerta-web.tgz https://github.com/alerta/angular-alerta-webui/tarball/master
+tar zxvf alerta-web.tgz > /dev/null 2>&1
+ALERTA=$(file alerta-angular-alerta-webui-* | head -1 | cut -f1 -d:)
+ln -s $ALERTA alerta
+
+
+cat > /etc/nginx/sites-enabled/alerta <<EOF
+upstream backend {
+        server localhost:8080 fail_timeout=0;
+}
+server {
+        listen 80 default_server deferred;
+        location /api/ {
+                proxy_pass http://backend/;
+                proxy_set_header Host \$host:\$server_port;
+                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        }
+        location / {
+                root /var/www/html/alerta/app;
+        }
+}
+EOF
+rm /etc/nginx/sites-enabled/default
+service nginx reload
+
+nohup alertad > /var/log/alerta.log &
+
+netstat -ntple
+
+kapacitor show $(kapacitor list tasks | tail -1 | cut -f1 -d" ")
+kapacitor stats ingress
+
+echo "alerta http://192.168.11.11/alerta/app"
+echo "grafana http://192.168.11.11:3000/"
+
+
+
+
+SCRIPT
+
+
+Vagrant.configure(2) do |config|
+
+   config.vm.define 'TICKAG' do |box|
+      box.vm.box = "ubuntu/xenial64"
+      box.vm.hostname = 'TICKAlerta'
+      box.vm.network :private_network, ip: "192.168.11.11"
+      box.vm.provider :virtualbox do |vb|
+       vb.customize ["modifyvm", :id, "--memory", "2048"]
+       vb.customize ["modifyvm", :id, "--cpus", "2"]
+      end
+      config.vm.provision "shell", inline: $provision_script
+   end
+end
