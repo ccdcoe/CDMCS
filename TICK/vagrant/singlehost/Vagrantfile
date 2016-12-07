@@ -8,6 +8,14 @@ GRAFANA="grafana_4.0.1-1480694114_amd64.deb"
 
 wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
 dpkg -i $TELEGRAF > /dev/null 2>&1
+cat >> /etc/telegraf/telegraf.conf <<EOF
+[[inputs.net]]
+[[inputs.netstat]]
+[[inputs.nginx]]
+  urls = ["http://localhost/status"]
+EOF
+
+
 service telegraf start
 
 wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
@@ -93,6 +101,17 @@ echo "  .alerta()" >> mem_alert_stream.tick
 kapacitor define mem_alert_stream -tick mem_alert_stream.tick -type stream -dbrp telegraf.autogen
 kapacitor enable mem_alert_stream
 
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/disk/disk_alert_stream.tick
+echo "  .alerta()" >> disk_alert_stream.tick
+kapacitor define disk_alert_stream -tick disk_alert_stream.tick -type stream -dbrp telegraf.autogen
+kapacitor enable disk_alert_stream
+
+
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/netstat/netstat_alert_stream.tick
+echo "  .alerta()" >> netstat_alert_stream.tick
+kapacitor define netstat_alert_stream -tick netstat_alert_stream.tick -type stream -dbrp telegraf.autogen
+kapacitor enable netstat_alert_stream
+
 
 wget -q -4 https://dl.influxdata.com/chronograf/nightlies/$CHRONOGRAF
 sudo dpkg -i $CHRONOGRAF > /dev/null 2>&1
@@ -138,6 +157,13 @@ upstream backend {
 }
 server {
         listen 80 default_server deferred;
+        location /status {
+                stub_status on;
+                access_log off;
+                allow 127.0.0.1;
+                allow 192.168.11.11;
+                deny all;
+        }
         location /api/ {
                 proxy_pass http://backend/;
                 proxy_set_header Host \$host:\$server_port;
