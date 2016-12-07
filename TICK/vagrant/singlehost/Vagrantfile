@@ -189,6 +189,32 @@ echo "alerta http://192.168.11.11/alerta/app"
 echo "grafana http://192.168.11.11:3000/"
 
 
+# udf
+
+cd /tmp
+wget -q -4 https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz
+tar -zxvf go1.7.1.linux-amd64.tar.gz -C /usr/local/
+echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
+echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
+echo 'export GOPATH=/opt/udfs' >> ~/.bashrc
+export GOROOT=/usr/local/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export GOPATH=/opt/udfs
+cd /opt/udfs
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/outliers/outliers.go
+go get github.com/influxdata/kapacitor/udf
+go go build outliers.go
+
+cat >> /etc/kapacitor/kapacitor.conf <<EOF
+[udf]
+[udf.functions]
+    [udf.functions.outliers]
+        socket = "/tmp/outliers.sock"
+        timeout = "10s"
+EOF
+service kapacitor restart
+
+
 
 
 SCRIPT
