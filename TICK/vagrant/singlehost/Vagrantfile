@@ -203,16 +203,48 @@ export GOPATH=/opt/udfs
 cd /opt/udfs
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/outliers/outliers.go
 go get github.com/influxdata/kapacitor/udf
-go go build outliers.go
+go build outliers.go
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
+go build mirror.go
+./mirror &
+
+
+wget  -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
+go build mirror.go
 
 cat >> /etc/kapacitor/kapacitor.conf <<EOF
 [udf]
 [udf.functions]
     [udf.functions.outliers]
-        socket = "/tmp/outliers.sock"
-        timeout = "10s"
+        prog = "/opt/udfs/outliers"
+        timeout = "1s"
+    [udf.functions.mirror]
+        socket = "/tmp/mirror.sock"
+        timeout = "1s"
 EOF
 service kapacitor restart
+
+kapacitor define outlier -tick udf_outlier.tick -type stream -dbrp telegraf.autogen
+cat > /etc/kapacitor/ticks/udf_outliers.tick <<EOF
+var period = 10s
+var every = 10s
+stream
+    |from()
+        .database('telegraf')
+        .retentionPolicy('autogen')
+        .measurement('mem')
+        .groupBy('host')
+    |window()
+        .period(period)
+        .every(every)
+    @outliers()
+        .field('used_percent')
+    |log()
+    |alert()
+EOF
+cd /etc/kapacitor/ticks
+kapacitor define outliers -tick udf_outliers.tick -type stream -dbrp telegraf.autogen
+kapacitor enable  outliers
 
 
 
