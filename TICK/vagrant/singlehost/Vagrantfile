@@ -225,9 +225,13 @@ cat >> /etc/kapacitor/kapacitor.conf <<EOF
 EOF
 service kapacitor restart
 
+kapacitor delete tasks outliers
 cat > /etc/kapacitor/ticks/udf_outliers.tick <<EOF
 var period = 100s
 var every = 10s
+var outputDB = 'telegraf'
+var outputRP = 'autogen'
+var outputMeasurement = 'outliers'
 stream
     |from()
         .database('telegraf')
@@ -240,9 +244,12 @@ stream
     @outliers()
         .field('used_percent')
         .scale(1.5)
-    |count('value')
     |log()
-    |alert()
+    |influxDBOut()
+        .create()
+        .database(outputDB)
+        .retentionPolicy(outputRP)
+        .measurement(outputMeasurement)
 EOF
 cd /etc/kapacitor/ticks
 kapacitor define outliers -tick udf_outliers.tick -type stream -dbrp telegraf.autogen
