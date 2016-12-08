@@ -204,9 +204,11 @@ cd /opt/udfs
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/outliers/outliers.go
 go get github.com/influxdata/kapacitor/udf
 go build outliers.go
-wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
-go build mirror.go
-./mirror &
+wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/moving_avg/moving_avg.go
+go build moving_avg.go
+#{}wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
+#{}go build mirror.go
+#{}./mirror &
 
 cat >> /etc/kapacitor/kapacitor.conf <<EOF
 [udf]
@@ -214,15 +216,17 @@ cat >> /etc/kapacitor/kapacitor.conf <<EOF
     [udf.functions.outliers]
         prog = "/opt/udfs/outliers"
         timeout = "1s"
-    [udf.functions.mirror]
-        socket = "/tmp/mirror.sock"
-        timeout = "1s"
+    [udf.functions.movingAvg]
+            prog = "/opt/udfs/moving_avg"
+            timeout = "1s"
+    #{}[udf.functions.mirror]
+    #{}    socket = "/tmp/mirror.sock"
+    #{}    timeout = "1s"
 EOF
 service kapacitor restart
 
-kapacitor define outlier -tick udf_outlier.tick -type stream -dbrp telegraf.autogen
 cat > /etc/kapacitor/ticks/udf_outliers.tick <<EOF
-var period = 10s
+var period = 100s
 var every = 10s
 stream
     |from()
@@ -235,6 +239,8 @@ stream
         .every(every)
     @outliers()
         .field('used_percent')
+        .scale(1.5)
+    |count('value')
     |log()
     |alert()
 EOF
@@ -242,6 +248,34 @@ cd /etc/kapacitor/ticks
 kapacitor define outliers -tick udf_outliers.tick -type stream -dbrp telegraf.autogen
 kapacitor enable  outliers
 
+kapacitor delete tasks moving_avg
+cat > /etc/kapacitor/ticks/udf_moving_avg.tick <<EOF
+var field = 'used_percent'
+var as = 'used_percent_moving_avg_100'
+var size = 100
+var outputDB = 'telegraf'
+var outputRP = 'autogen'
+var outputMeasurement = 'moving_avg'
+stream
+    |from()
+        .database('telegraf')
+        .retentionPolicy('autogen')
+        .measurement('mem')
+        .groupBy('host')
+    @movingAvg()
+        .field(field)
+        .size(size)
+        .as(as)
+    |log()
+    |influxDBOut()
+        .create()
+        .database(outputDB)
+        .retentionPolicy(outputRP)
+        .measurement(outputMeasurement)
+EOF
+cd /etc/kapacitor/ticks
+kapacitor define moving_avg -tick udf_moving_avg.tick -type stream -dbrp telegraf.autogen
+kapacitor enable  moving_avg
 
 
 
