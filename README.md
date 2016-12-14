@@ -17,8 +17,8 @@ Please visit:
 
 # Current Classes
 
- * TICK :: Feb 13-17 2017
- * Suricata :: Mar 6-10 2017 
+ * [TICK :: Feb 13-17 2017](TICK/README.md)
+ * Suricata :: Mar 6-10 2017
  * Moloch :: May 8-12 2017
 
 ## Teachers
@@ -29,5 +29,3 @@ Please visit:
  * [mpihelgas](https://github.com/mpihelgas)
  * [hillar](https://github.com/hillar)
  * ...
-
-
