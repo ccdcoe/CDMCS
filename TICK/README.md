@@ -45,7 +45,7 @@ This is *0.5 + 3 + 0.5*  days of material for any intermediate-level dev-ops who
 * 11:00 - 11:45
 
 
-* 13:00 - 13:45 UDF
+* 13:00 - 13:45 [UDF](/TICK/day_3/UDF.md)
 * 14:00 - 14:45
 * 15:00 - 15:45
 * 16:00 - 16:45 Alerta
