@@ -1,9 +1,9 @@
 
-This material has been designed to be taught in a classroom environment.
+This material has been designed to be taught in a classroom environment... hands-on 90% talk 10% **slides 0%**
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
-This is *0.5 + 3 + 0.5*  days of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn TICK+AG We believe these classes are perfect for anyone who wants a jump start in learning TICK Alerta and Grafana or who wants a more thorough understanding of the three and their internals.
+This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn TICK+AG We believe these classes are perfect for anyone who wants a jump start in learning TICK Alerta and Grafana or who wants a more thorough understanding of the three and their internals.
 
 ## Day 0 :: Intro:: Feb 13 2017 start at 13:00
 
