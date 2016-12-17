@@ -1,0 +1,3 @@
+# Vagrant
+
+Vagrant is ...
