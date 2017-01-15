@@ -1,8 +1,9 @@
 $provision_script = <<SCRIPT
 
-TELEGRAF="telegraf_1.1.1_amd64.deb"
-INFLUXDB="influxdb_1.1.0_amd64.deb"
-KAPACITOR="kapacitor_nightly_amd64.deb"
+TELEGRAF="telegraf_1.1.2_amd64.deb"
+INFLUXDB="influxdb_1.1.1_amd64.deb"
+#KAPACITOR="kapacitor_nightly_amd64.deb"
+KAPACITOR="kapacitor_1.1.1_amd64.deb"
 CHRONOGRAF="chronograf_nightly_amd64.deb"
 GRAFANA="grafana_4.0.1-1480694114_amd64.deb"
 
@@ -14,16 +15,16 @@ cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.nginx]]
   urls = ["http://localhost/status"]
 EOF
-
-
 service telegraf start
 
 wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
 dpkg -i $INFLUXDB > /dev/null 2>&1
 service influxdb start
 
-wget  -q -4 https://dl.influxdata.com/kapacitor/nightlies/$KAPACITOR
+#wget  -q -4 https://dl.influxdata.com/kapacitor/nightlies/$KAPACITOR
+wget  -q -4 https://dl.influxdata.com/kapacitor/releases/$KAPACITOR
 dpkg -i $KAPACITOR > /dev/null 2>&1
+mv /etc/kapacitor/kapacitor.conf /etc/kapacitor/kapacitor.conf_orig
 cat > /etc/kapacitor/kapacitor.conf <<EOF
 hostname = "localhost"
 data_dir = "/var/lib/kapacitor"
@@ -48,7 +49,7 @@ data_dir = "/var/lib/kapacitor"
   threshold = 0.0
   interval = "10s"
   id = "node 'NODE_NAME' in task '{{ .TaskName }}'"
-  message = "{{ .ID }} is {{ if eq .Level \"OK\" }}alive{{ else }}dead{{ end }}: {{ index .Fields \"collected\" | printf \"%0.3f\" }} points/INTERVAL."
+  message = "{{ .ID }} is {{ if eq .Level \\"OK\\" }}alive{{ else }}dead{{ end }}: {{ index .Fields \\"collected\\" | printf \\"%0.3f\\" }} points/INTERVAL."
 [[influxdb]]
   enabled = true
   default = true
@@ -201,6 +202,7 @@ export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export GOPATH=/opt/udfs
 cd /opt/udfs
+go env
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/outliers/outliers.go
 go get github.com/influxdata/kapacitor/udf
 go build outliers.go
@@ -210,9 +212,12 @@ go build moving_avg.go
 #{}go build mirror.go
 #{}./mirror &
 
+# https://gist.githubusercontent.com/hillar/cc1d79d6424e66ab4d1eb1f0f5a28d0a/raw/62541dbaa67628265b42f2484b06ebc6afc23bd5/kapacitor_udf_kurtosis.go
+# https://gist.githubusercontent.com/hillar/17520201b4edf86035cc4370745a2f38/raw/25e7bcfad7da46d63cf87f9beffc4cbc85c19dc1/kapacitor_udf_skewness.go
+
 cat >> /etc/kapacitor/kapacitor.conf <<EOF
-[udf]
-[udf.functions]
+#{}[udf]
+#{}[udf.functions]
     [udf.functions.outliers]
         prog = "/opt/udfs/outliers"
         timeout = "1s"
@@ -284,14 +289,10 @@ cd /etc/kapacitor/ticks
 kapacitor define moving_avg -tick udf_moving_avg.tick -type stream -dbrp telegraf.autogen
 kapacitor enable  moving_avg
 
-
-
 SCRIPT
 
-
 Vagrant.configure(2) do |config|
-
-   config.vm.define 'TICKAG' do |box|
+  config.vm.define 'TICKAG' do |box|
       box.vm.box = "ubuntu/xenial64"
       box.vm.hostname = 'TICKAlerta'
       box.vm.network :private_network, ip: "192.168.11.11"
@@ -300,5 +301,5 @@ Vagrant.configure(2) do |config|
        vb.customize ["modifyvm", :id, "--cpus", "2"]
       end
       config.vm.provision "shell", inline: $provision_script
-   end
+  end
 end
