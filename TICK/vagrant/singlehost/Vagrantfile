@@ -6,6 +6,8 @@ INFLUXDB="influxdb_1.1.1_amd64.deb"
 KAPACITOR="kapacitor_1.1.1_amd64.deb"
 CHRONOGRAF="chronograf_nightly_amd64.deb"
 GRAFANA="grafana_4.0.1-1480694114_amd64.deb"
+GOLANG="go1.7.4.linux-amd64.tar.gz"
+
 
 wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
 dpkg -i $TELEGRAF > /dev/null 2>&1
@@ -81,8 +83,7 @@ data_dir = "/var/lib/kapacitor"
   stats-interval = "10s"
   database = "_kapacitor"
   retention-policy= "autogen"
-[udf]
-[udf.functions]
+
 EOF
 
 service kapacitor start
@@ -122,7 +123,7 @@ wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
 dpkg -i $GRAFANA > /dev/null 2>&1
 service grafana-server start
 sleep 1
-curl -XPOST --user admin:admin 192.168.11.11:3000/api/datasources -H "Content-Type: application/json" -d '{
+curl -s -XPOST --user admin:admin 192.168.11.11:3000/api/datasources -H "Content-Type: application/json" -d '{
     "name": "telegraf",
     "type": "influxdb",
     "access": "proxy",
@@ -191,45 +192,42 @@ echo "grafana http://192.168.11.11:3000/"
 
 
 # udf
-
 cd /tmp
-wget -q -4 https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz
-tar -zxvf go1.7.1.linux-amd64.tar.gz -C /usr/local/
+wget -q -4 https://storage.googleapis.com/golang/$GOLANG
+tar -zxvf $GOLANG -C /usr/local/ > /dev/null 2>&1
 echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
 echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
 echo 'export GOPATH=/opt/udfs' >> ~/.bashrc
 export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export GOPATH=/opt/udfs
+mkdir -p /opt/udfs
 cd /opt/udfs
+go version
 go env
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/outliers/outliers.go
 go get github.com/influxdata/kapacitor/udf
 go build outliers.go
+file outliers
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/moving_avg/moving_avg.go
 go build moving_avg.go
-#{}wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/udf/agent/examples/mirror/mirror.go
-#{}go build mirror.go
-#{}./mirror &
+file moving_avg
 
 # https://gist.githubusercontent.com/hillar/cc1d79d6424e66ab4d1eb1f0f5a28d0a/raw/62541dbaa67628265b42f2484b06ebc6afc23bd5/kapacitor_udf_kurtosis.go
 # https://gist.githubusercontent.com/hillar/17520201b4edf86035cc4370745a2f38/raw/25e7bcfad7da46d63cf87f9beffc4cbc85c19dc1/kapacitor_udf_skewness.go
 
 cat >> /etc/kapacitor/kapacitor.conf <<EOF
-#{}[udf]
-#{}[udf.functions]
+[udf]
+[udf.functions]
     [udf.functions.outliers]
         prog = "/opt/udfs/outliers"
         timeout = "1s"
     [udf.functions.movingAvg]
             prog = "/opt/udfs/moving_avg"
             timeout = "1s"
-    #{}[udf.functions.mirror]
-    #{}    socket = "/tmp/mirror.sock"
-    #{}    timeout = "1s"
 EOF
 service kapacitor restart
-
+sleep 2
 kapacitor delete tasks outliers
 cat > /etc/kapacitor/ticks/udf_outliers.tick <<EOF
 var period = 100s
