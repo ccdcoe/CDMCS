@@ -8,7 +8,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 0 :: Intro:: Feb 13 2017 start at 13:00
 
  * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
- * 14:00 - 14:45 [singlehost](/TICK/singlehost/README.md)
+ * 14:00 - 14:45 [singlehost](/TICK/vagrant/singlehost/README.md)
  * 15:00 - 15:45 [basic config](/TICK/day_intro/BasicConf.md)
  * 16:00 - 16:45 [basic visualisations](/TICK/day_intro/BasicVizs.md)
 
