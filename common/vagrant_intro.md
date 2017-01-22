@@ -30,8 +30,11 @@
 ```
 
 # install vagrant
+$ apt-get install virtualbox
 $ wget -q -4 https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
 $ dpkg -i vagrant_1.9.1_x86_64.deb
+
+
 
 # init first vm
 $ cd $HOME
