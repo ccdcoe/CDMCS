@@ -7,7 +7,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ### TICK is the purpose-built, end-to-end solution for collecting, storing, visualizing and alerting on time-series data at scale
 ### Alerta accepts alerts from the standard sources and does de-duplication and correlation
-
+### Grafana is tool for querying and visualizing time series and metrics
 
 > Time-Series ... actionable trends, patterns, variability, rates of change, covariation, cycles, exceptions, anomalies and outliers.
 
