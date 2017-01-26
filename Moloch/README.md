@@ -5,6 +5,8 @@ This material has been designed to be taught in a [classroom](https://ccdcoe.org
 
 This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Moloch. We believe these classes are perfect for anyone who wants a jump start in learning Moloch or who wants a more thorough understanding of it internals.
 
+### Moloch is a large scale, open source, full packet capturing, indexing, and database system.
+> Moloch is not meant to replace Intrusion Detection Systems (IDS). Moloch augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
 ## Day 0 :: Intro:: May 8 2017 start at 13:00
 
