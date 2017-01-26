@@ -11,15 +11,17 @@ This is 3 x ( .5 + 3 + .5 ) days of material for any intermediate-level dev-ops 
 Please visit:
 
 * https://influxdata.com/get-started/what-is-the-tick-stack/
+ * http://alerta.io/
+ * http://grafana.org/
 * http://suricata-ids.org/
-* https://github.com/aol/moloch
+* http://molo.ch/
 
 
 # Current Classes
 
  * [TICK :: Feb 13-17 2017](TICK/README.md)
- * Suricata :: Mar 6-10 2017
- * Moloch :: May 8-12 2017
+ * [Suricata :: Mar 6-10 2017](Suricata/README.md)
+ * [Moloch :: May 8-12 2017](Moloch/README.md)
 
 ## Teachers
 
