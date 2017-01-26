@@ -10,7 +10,7 @@ This is 3 x ( .5 + 3 + .5 ) days of material for any intermediate-level dev-ops 
 
 Please visit:
 
-* https://influxdata.com/get-started/what-is-the-tick-stack/
+* https://www.influxdata.com/use-cases/introducing-the-tick-stack/
  * http://alerta.io/
  * http://grafana.org/
 * http://suricata-ids.org/
