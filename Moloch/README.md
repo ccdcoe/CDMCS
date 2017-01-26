@@ -43,7 +43,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 3 :: Usage :: May 11 2017
 
-* 09:00 - 09:45
+* 09:00 - 09:45 [Building hunt dashboards](/Moloch/day3/KibanaAsHuntingDashboard.md)
 * 10:00 - 10:45
 * 11:00 - 11:45
 
