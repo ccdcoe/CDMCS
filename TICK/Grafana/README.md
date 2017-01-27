@@ -16,3 +16,5 @@
  * InfluxDB
  * ElasticSearch
  * ...
+
+-> next [Install](install.md)
