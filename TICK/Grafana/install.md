@@ -16,5 +16,4 @@ By default Grafana will:
  * listen to the port *3000*
 
 -----
-
- -> next [Add data source](addDataSource.md)
+-> next [Add data source](addDataSource.md)

@@ -22,4 +22,4 @@ see http://docs.grafana.org/http_api/data_source/#create-data-source
 
 -----
 
--> next [First Dashboard](addDashboard.md)
+-> next [First Dashboard](newDashboard.md)
