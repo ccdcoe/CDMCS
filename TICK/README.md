@@ -69,4 +69,4 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * [Chronograf](/TICK/Chronograf/README.md)
 * [Kapacitor](/TICK/Kapacitor/README.md)
 * [Alerta](/TICK/Alerta/README.md)
-* [Grafana](/TICKGrafana/README.md)
+* [Grafana](/TICK/Grafana/README.md)
