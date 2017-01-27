@@ -67,3 +67,4 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * [Telegraf](/TICK/Telegraf/README.md)
 * [InfluxDB](/TICK/InfluxDB/README.md)
 * [Kapacitor](/TICK/Kapacitor/README.md)
+* [Chronograf](/TICK/Chronograf/README.md)
