@@ -15,4 +15,6 @@ By default Grafana will:
  * have initial username and password *admin*
  * listen to the port *3000*
 
+-----
+
  -> next [Add data source](addDataSource.md)
