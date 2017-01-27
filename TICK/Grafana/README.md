@@ -8,8 +8,7 @@
 * https://github.com/grafana/grafana
 * freenode  #grafana.
 
-------
-
+Features:
 * Rich Graphing
 * Dashboards
 * Many data sources
@@ -17,4 +16,5 @@
  * ElasticSearch
  * ...
 
+-----
 -> next [Install](install.md)

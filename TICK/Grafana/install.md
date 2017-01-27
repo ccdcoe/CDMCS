@@ -14,3 +14,5 @@ By default Grafana will:
  * use sqlite3 database located at */var/lib/grafana/grafana.db*
  * have initial username and password *admin*
  * listen to the port *3000*
+
+ -> next [Add data source](addDataSource.md)
