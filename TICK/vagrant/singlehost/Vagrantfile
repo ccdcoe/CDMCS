@@ -13,7 +13,7 @@ INFLUXDB="influxdb_1.1.1_amd64.deb"
 #KAPACITOR="kapacitor_nightly_amd64.deb"
 KAPACITOR="kapacitor_1.1.1_amd64.deb"
 CHRONOGRAF="chronograf_nightly_amd64.deb"
-GRAFANA="grafana_4.0.1-1480694114_amd64.deb"
+GRAFANA="grafana_4.1.0-1484127817_amd64.deb"
 GOLANG="go1.7.4.linux-amd64.tar.gz"
 
 
