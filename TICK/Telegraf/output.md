@@ -101,7 +101,9 @@ see https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_OUTPUT.
 
 ## more outputs
 
-see https://github.com/influxdata/telegraf/tree/master/plugins/outputs
+see
+* https://github.com/influxdata/telegraf/tree/master/plugins/outputs
+* https://docs.influxdata.com/telegraf/v1.2/outputs/
 
 ------
 -> Next [Inputs](inputs.md)
