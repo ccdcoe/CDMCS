@@ -21,6 +21,7 @@ Rows are always 12 “units” wide. These units are automatically scaled depend
 * http://docs.grafana.org/reference/dashboard/#panels
 * http://docs.grafana.org/features/panels/graph/
 * http://docs.grafana.org/features/panels/table_panel/
+* https://github.com/NeoCat/grafana-cal-heatmap-panel
 
 The Panel is the basic visualization building block in Grafana.
 
@@ -40,6 +41,7 @@ Use the Query Editor to build one or more queries (for one or more series) in yo
 
 * http://docs.grafana.org/reference/dashboard/#templating
 * http://docs.grafana.org/reference/templating/
+* http://docs.grafana.org/guides/whats-new-in-v4/#ad-hoc-filter-variable
 
 Dashboard Templating allows you to make your Dashboards more interactive and dynamic. *They’re one of the most powerful and most used features of Grafana*
 
