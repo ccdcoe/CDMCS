@@ -1,7 +1,10 @@
 # Telegraf configuration
 
 * configuration file from package is /etc/telegraf/telegraf.conf
-* see https://docs.influxdata.com/telegraf/v1.2/administration/configuration/
+
+see :
+* https://docs.influxdata.com/telegraf/v1.2/administration/configuration/
+* https://github.com/influxdata/telegraf/blob/master/etc/telegraf.conf
 
 #### Create a configuration file with default input and output plugins.
 
