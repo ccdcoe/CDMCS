@@ -10,7 +10,7 @@ The Dashboard is where it all comes together. Dashboards can be thought of as of
 
 ### Row
 
-* http://docs.grafana.org/reference/dashboard/#panels
+* http://docs.grafana.org/reference/dashboard/#rows
 
 A Row is a logical divider within a Dashboard, and is used to group Panels together.
 
@@ -18,7 +18,9 @@ Rows are always 12 “units” wide. These units are automatically scaled depend
 
 ### Panel
 
-* http://docs.grafana.org/reference/dashboard/#rows
+* http://docs.grafana.org/reference/dashboard/#panels
+* http://docs.grafana.org/features/panels/graph/
+* http://docs.grafana.org/features/panels/table_panel/
 
 The Panel is the basic visualization building block in Grafana.
 
