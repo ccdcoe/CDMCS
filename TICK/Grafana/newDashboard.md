@@ -55,6 +55,16 @@ Template Variables can be very useful to dynamically change what you’re visual
 
 The Playlist is a special type of Dashboard that **rotates through a list of Dashboards**. A Playlist can be a great way to build situational awareness, or just show off your metrics to your team or VIP visitors.
 
+### Time Range Controls
+
+* http://docs.grafana.org/reference/timerange/
+
+Grafana provides numerous ways to manage the time ranges of the data being visualized, both at the Dashboard-level and the Panel-level.
+
+In the top right, you have the master Dashboard time picker (it’s in between the ‘Zoom out’ and the ‘Refresh’ links).
+
+You can override the relative time range for individual panels, causing them to be different than what is selected in the Dashboard time picker in the upper right. This allows you to show metrics from different time periods or days at the same time. You control these overrides in panel editor mode and the tab *Time Range*.
+
 ------
 
 * JSON http://docs.grafana.org/reference/dashboard/#dashboard-json
