@@ -45,6 +45,8 @@ student:TICK hillar$ curl -s -4 https://raw.githubusercontent.com/influxdata/tel
 ## Input Plugins
 
 * View usage instructions for each input by running `telegraf -usage <input-name>`.
+* list of available plugins https://github.com/influxdata/telegraf/tree/master/plugins/inputs
+
 
 
 
