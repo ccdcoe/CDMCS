@@ -34,6 +34,21 @@ The Query Editor exposes capabilities of your Data Source and allows you to quer
 
 Use the Query Editor to build one or more queries (for one or more series) in your time series database.
 
+### Templating
+
+* http://docs.grafana.org/reference/dashboard/#templating
+* http://docs.grafana.org/reference/templating/
+
+Dashboard Templating allows you to make your Dashboards more interactive and dynamic. *They’re one of the most powerful and most used features of Grafana*
+
+You can create Dashboard Template variables that can be used practically anywhere in a Dashboard: data queries on individual Panels (within the Query Editor), the names in your legends, or titles in Panels and Rows.
+
+There are three different types of Template variables: query, custom, and interval.
+
+#### Repeating Panels and Repeating Rows
+
+Template Variables can be very useful to dynamically change what you’re visualizing on a given panel. Sometimes, you might want to create entire new Panels (or Rows) based on what Template Variables have been selected.
+
 ------
 
 * JSON http://docs.grafana.org/reference/dashboard/#dashboard-json
