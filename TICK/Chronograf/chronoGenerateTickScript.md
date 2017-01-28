@@ -2,6 +2,8 @@
 
 ![](chronokapa.png)
 
+![](chronokapa2.png)
+
 
 ```
 root@TICKAlerta:~# kapacitor show chronograf-v1-903cb640-9539-469f-bd19-80f02f791cbd
