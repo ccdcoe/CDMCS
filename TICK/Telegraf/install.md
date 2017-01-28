@@ -14,6 +14,7 @@ By defaul configuration file is located at */etc/telegraf/telegraf.conf*
 By default Telegraf will:
 * log to *syslog*
 * sends metrics to *local InfluxDB* every 10 seconds
+* uses database name *telegraf* 
 
 ------
 -> Next [Configuration](conf.md)
