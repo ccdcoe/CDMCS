@@ -5,6 +5,7 @@
 see :
 * https://docs.influxdata.com/telegraf/v1.2/administration/configuration/
 * https://github.com/influxdata/telegraf/blob/master/etc/telegraf.conf
+* https://github.com/influxdata/telegraf/blob/master/docs/CONFIGURATION.md
 
 #### Create a configuration file with default input and output plugins.
 
