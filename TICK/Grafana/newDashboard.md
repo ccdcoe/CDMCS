@@ -49,6 +49,12 @@ There are three different types of Template variables: query, custom, and interv
 
 Template Variables can be very useful to dynamically change what you’re visualizing on a given panel. Sometimes, you might want to create entire new Panels (or Rows) based on what Template Variables have been selected.
 
+### Playlist
+
+* http://docs.grafana.org/reference/playlist/
+
+The Playlist is a special type of Dashboard that **rotates through a list of Dashboards**. A Playlist can be a great way to build situational awareness, or just show off your metrics to your team or VIP visitors.
+
 ------
 
 * JSON http://docs.grafana.org/reference/dashboard/#dashboard-json
