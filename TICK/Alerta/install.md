@@ -1,5 +1,9 @@
 # Installing on Debian | Ubuntu
 
+see :
+* http://alerta.readthedocs.io/en/latest/quick-start.html
+* http://alerta.readthedocs.io/en/latest/deployment.html#web-proxy
+
 ```
 apt-get -y install mongodb
 apt-get -y install libffi-dev
