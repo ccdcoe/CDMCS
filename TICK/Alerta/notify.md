@@ -5,3 +5,6 @@
 
 
 see https://github.com/alerta/alerta-contrib/tree/master/plugins/slack
+
+-----
+-> Next [Grafana](/TICK/Grafana/README.md)
