@@ -28,6 +28,7 @@ Please visit:
 
  * [regit](https://github.com/regit)
  * [desa](https://github.com/desa)
+ * [WilliamSalusky](https://github.com/williamsalusky)
  * [markuskont](https://github.com/markuskont)
  * [mpihelgas](https://github.com/mpihelgas)
  * [hillar](https://github.com/hillar)
