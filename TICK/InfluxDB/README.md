@@ -14,6 +14,8 @@ Features:
 * Time-centric functions and an easy to use SQL-­like query language
 * Data can be tagged
 * A native HTTP API
+* Retention policies efficiently auto-expire stale data.
+* Continuous queries automatically compute aggregate data
 
 ------
 -> Next [Install](install.md)
