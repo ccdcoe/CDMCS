@@ -23,11 +23,31 @@ same time, which can have a measurable effect on the system.
 
 ```
  collection_jitter = "0s"
+
 ```
+
+### Default inputs
+
+```
+student:TICK hillar$ curl -s -4 https://raw.githubusercontent.com/influxdata/telegraf/master/etc/telegraf.conf | grep "^\[\[input"
+[[inputs.cpu]]
+[[inputs.disk]]
+[[inputs.diskio]]
+[[inputs.kernel]]
+[[inputs.mem]]
+[[inputs.processes]]
+[[inputs.swap]]
+[[inputs.system]]
+
+```
+
 
 ## Input Plugins
 
 * View usage instructions for each input by running `telegraf -usage <input-name>`.
+
+
+
 
 https://docs.influxdata.com/telegraf/v1.2/inputs/
 https://docs.influxdata.com/telegraf/v1.2/services/
