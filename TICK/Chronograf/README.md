@@ -9,7 +9,8 @@
 
 Featrues:
 * generates tick scripts ;)
-* controls Kapacitor
+* InfluxDB Data Explorer
+* Kapacitor UI
 
 
 ------
