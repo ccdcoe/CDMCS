@@ -98,3 +98,10 @@ see https://github.com/influxdata/telegraf/blob/master/docs/DATA_FORMATS_OUTPUT.
   # insecure_skip_verify = false
 
 ```
+
+## more outputs
+
+see https://github.com/influxdata/telegraf/tree/master/plugins/outputs
+
+------
+-> Next [Inputs](inputs.md)
