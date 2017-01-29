@@ -15,8 +15,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 13:00 - 13:45 [Intro](/common/classroom/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/TICK/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/TICK/classroom/classroom/day_intro/BasicConf.md)
- * 16:00 - 16:45 [basic visualisations](/TICK/classroom/classroom/day_intro/BasicVizs.md)
+ * 15:00 - 15:45 [basic config](/TICK/classroom/day_intro/BasicConf.md)
+ * 16:00 - 16:45 [basic visualisations](/TICK/classroom/day_intro/BasicVizs.md)
 
 ## Day 1 :: Single Box :: :: Feb 14 2017
 
