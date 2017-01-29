@@ -13,19 +13,19 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 0 :: Intro:: Feb 13 2017 start at 13:00
 
- * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
+ * 13:00 - 13:45 [Intro](/common/classroom/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/TICK/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/TICK/day_intro/BasicConf.md)
- * 16:00 - 16:45 [basic visualisations](/TICK/day_intro/BasicVizs.md)
+ * 15:00 - 15:45 [basic config](/TICK/classroom/classroom/day_intro/BasicConf.md)
+ * 16:00 - 16:45 [basic visualisations](/TICK/classroom/classroom/day_intro/BasicVizs.md)
 
 ## Day 1 :: Single Box :: :: Feb 14 2017
 
- * 09:00 - 09:45 [build from source](/TICK/day_1/BuildFromSource.md)
- * 10:00 - 10:45 [config](/TICK/day_1/Config.md)
+ * 09:00 - 09:45 [build from source](/TICK/classroom/day_1/BuildFromSource.md)
+ * 10:00 - 10:45 [config](/TICK/classroom/day_1/Config.md)
  * 11:00 - 11:45
 
 
- * 13:00 - 13:45 [eating log files](/TICK/day_1/logs2telegraf.md)
+ * 13:00 - 13:45 [eating log files](/TICK/classroom/day_1/logs2telegraf.md)
  * 14:00 - 14:45
  * 15:00 - 15:45
  * 16:00 - 16:45
@@ -46,12 +46,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 3 :: Usage :: Feb 16 2017
 
-* 09:00 - 09:45 [eating numbers for breakfast](/TICK/day_3/README.md)
+* 09:00 - 09:45 [eating numbers for breakfast](/TICK/classroom/day_3/README.md)
 * 10:00 - 10:45
 * 11:00 - 11:45
 
 
-* 13:00 - 13:45 [UDF](/TICK/day_3/UDF.md)
+* 13:00 - 13:45 [UDF](/TICK/classroom/day_3/UDF.md)
 * 14:00 - 14:45
 * 15:00 - 15:45
 * 16:00 - 16:45 Alerta
