@@ -8,7 +8,7 @@ The material is missing some of the contextual concepts and ideas that will be c
 
 This is 3 x ( .5 + 3 + .5 ) days of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn TICK, Suricata and Moloch. We believe these classes are perfect for anyone who wants a jump start in learning TICK, Suricata and Moloch or who wants a more thorough understanding of the three and their internals.
 
-# Before You Come To Class
+# Before You Register for Class
 
 Please visit:
 
