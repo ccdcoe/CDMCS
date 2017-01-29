@@ -12,6 +12,9 @@ setup(
     author_email='hillar@aarelaid.net',
     packages=find_packages(),
     py_modules=['alerta2xmpp'],
+    install_requires=[
+        'idiokit'
+    ],
     include_package_data=True,
     zip_safe=True,
     entry_points={

@@ -9,6 +9,17 @@ pip install git+https://github.com/ccdcoe/CDMCS.git#subdirectory=TICK/Alerta/ale
 export XMPP_USER=blih
 export XMPP_MUC=blah
 
+
+
+root@TICKAlerta:~# alertad
+XMPP JID: hillar@xmpp.test.ee
+Password:
+XMPP MUC: test
+[2017-01-29 19:17:55,944] ERROR in __init__: Server plugin 'xmpp' could not be loaded: __init__() should return None, not 'generator'
+[2017-01-29 19:17:55,957] ERROR in __init__: Server plugin 'xmpp' could not be loaded: __init__() should return None, not 'generator'
+
+;(
+
 '''
 
 
