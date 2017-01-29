@@ -13,5 +13,7 @@ Featrues:
 * write back to InfluxDB
 * UDFs
 
+For processing Kapacitor needs **scripts**.  
+
 ------
 -> Next [Install](install.md)
