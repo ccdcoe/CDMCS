@@ -1,4 +1,4 @@
-# Create database
+# InfluxDB Create database
 
 ```
 # create database
