@@ -1,4 +1,4 @@
-# New Dashboard
+# Grafana Dashboards
 
 * API http://docs.grafana.org/http_api/dashboard/#create-update-dashboard
 * JSON http://docs.grafana.org/reference/dashboard/#dashboard-json
