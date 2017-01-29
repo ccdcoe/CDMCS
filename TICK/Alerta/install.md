@@ -1,4 +1,4 @@
-# Installing on Debian | Ubuntu
+# Installing Alerta on Debian | Ubuntu
 
 see :
 * http://alerta.readthedocs.io/en/latest/quick-start.html
