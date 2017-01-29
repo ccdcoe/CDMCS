@@ -37,3 +37,6 @@ Options:
     	The URL http(s)://host:port of the kapacitord server. Defaults to the KAPACITOR_URL environment variable or http://localhost:9092 if not set.
 
 ```
+
+----
+-> Next [Alerting](alert.md)
