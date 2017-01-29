@@ -1,3 +1,5 @@
+see https://github.com/hillar/CDMCS/blob/master/saynomore.png
+
 # Cyber Defence Monitoring Course Suite (CDMCS)
 
 This material has been designed to be taught in a classroom environment.
