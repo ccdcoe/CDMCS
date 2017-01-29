@@ -1,4 +1,4 @@
-# Send alerts
+# Send alerts to Alerta
 
 ## Send some test alerts
 
