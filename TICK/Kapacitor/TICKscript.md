@@ -45,5 +45,7 @@ kapacitor enable  outliers
 
 ```
 
+see https://docs.influxdata.com/kapacitor/v1.2/examples/anomaly_detection/
+
 ----
 -> Next [Kapacitor CLI](cli.md)
