@@ -1,4 +1,4 @@
-# Installing on Debian | Ubuntu
+# Telegraf Installing on Debian | Ubuntu
 
 * https://docs.influxdata.com/telegraf/v1.2/introduction/installation/
 
