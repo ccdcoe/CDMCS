@@ -1,5 +1,7 @@
 # Singlehost TICKAG
 
+![](singlehost.png)
+
 * Telegraf
 * InfluxDB
 * Chronograf
