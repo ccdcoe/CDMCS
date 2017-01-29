@@ -1,4 +1,4 @@
-# Installing on Debian | Ubuntu
+# Installing Grafana on Debian | Ubuntu
 
 ```
 $ wget https://grafanarel.s3.amazonaws.com/builds/grafana_4.1.1-1484211277_amd64.deb
