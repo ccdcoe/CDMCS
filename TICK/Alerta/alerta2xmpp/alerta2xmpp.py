@@ -13,39 +13,45 @@ export XMPP_MUC=blah
 
 
 
+import os
+import sys
+import logging
+from logging.handlers import SysLogHandler
+
 import idiokit
 from idiokit.xmpp import connect, jid
-
-import os
+from idiokit.xmlcore import Element
 import getpass
-
 
 from alerta.app import app
 from alerta.plugins import PluginBase
+
+LOG = logging.getLogger('alerta.plugins.logger')
 
 XMPP_USER = os.environ.get('XMPP_USER') or app.config.get('XMPP_USER', raw_input("XMPP JID: "))
 XMPP_PASS = os.environ.get('XMPP_PASS') or app.config.get('XMPP_PASS', getpass.getpass())
 XMPP_MUC = os.environ.get('XMPP_MUC') or app.config.get('XMPP_MUC', raw_input("XMPP MUC: "))
 
 
+class XMPP(PluginBase):
 
-@idiokit.stream
-def main():
-    xmpp = yield connect(XMPP_USER, XMPP_PASS)
-    room = yield xmpp.muc.join(XMPP_MUC)
+    def __init__(self, name=None):
 
-    while True:
-        elements = yield room.next()
+        self.xmpp = yield connect(XMPP_USER, XMPP_PASS)
+        self.room = yield xmpp.muc.join(XMPP_MUC)
 
-        for message in elements.named("message").with_attrs("from"):
-            sender = jid.JID(message.get_attr("from"))
-            if sender == room.jid:
-                continue
+        super(XMPP, self).__init__(name)
 
-            for body in message.children("body"):
-                #yield room.send(body)
-		        print body
+    def pre_receive(self, alert):
+        return alert
 
+    def post_receive(self, alert):
+        body = Element("body")
+        body.text  = "*[%s] %s %s - _%s on %s_* <%s/#/alert/%s|%s>" % (
+            alert.status.capitalize(), alert.environment, alert.severity.capitalize(), alert.event, alert.resource, DASHBOARD_URL,
+            alert.id, alert.get_id(short=True)
+        )
+        yield room.send(body)
 
-if __name__ == "__main__":
-    idiokit.main_loop(main())
+    def status_change(self, alert, status, text):
+        pass
