@@ -44,3 +44,6 @@ kapacitor define outliers -tick udf_outliers.tick -type stream -dbrp telegraf.au
 kapacitor enable  outliers
 
 ```
+
+----
+-> Next [Kapacitor CLI](cli.md)
