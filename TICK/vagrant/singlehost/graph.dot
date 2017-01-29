@@ -1,18 +1,31 @@
 digraph kapaudf {
 
+{
+edge[style=invis]
+node[style=invis]
+1->2->3->4->5
+}
+
 t1 [label="telegraf"]
-
 tap [label="" shape="point"]
-smtp [label="smtp, chat, .."]
+smtp [label="sms, live chat, .." color="red"]
 udf [color="green"]
+alertaui[color="pink"]
 
-{t1} -> tap -> influxdb -> {grafana kapacitor}
-tap -> kapacitor -> {alertad} -> alertaui
-kapacitor -> influxdb
-
+t1 -> tap -> influxdb  [color="blue"]
+tap -> kapacitor [color="blue"]
+influxdb -> grafana
+influxdb -> kapacitor
 kapacitor -> udf -> kapacitor
-kapacitor -> smtp [style="dotted"]
+kapacitor -> alertad [color="pink"]
+kapacitor -> influxdb
+alertad -> alertaui [color="red"]
+alertad -> smtp [style="dotted" color="red"]
 
-{rank=same tap kapacitor udf}
+{rank=min 1 t1}
+{rank=same 2 tap kapacitor}
+{rank=same 3 influxdb alertad udf}
+{rank=same 4 grafana alertaui}
+{rank=max 5 smtp }
 
 }
