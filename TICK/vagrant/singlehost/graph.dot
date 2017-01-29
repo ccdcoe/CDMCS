@@ -1,0 +1,18 @@
+digraph kapaudf {
+
+t1 [label="telegraf"]
+
+tap [label="" shape="point"]
+smtp [label="smtp, chat, .."]
+udf [color="green"]
+
+{t1} -> tap -> influxdb -> {grafana kapacitor}
+tap -> kapacitor -> {alertad} -> alertaui
+kapacitor -> influxdb
+
+kapacitor -> udf -> kapacitor
+kapacitor -> smtp [style="dotted"]
+
+{rank=same tap kapacitor udf}
+
+}
