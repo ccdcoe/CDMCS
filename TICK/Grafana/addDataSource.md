@@ -1,4 +1,4 @@
-# Data Source
+# Grafana add Data Source
 
 Grafana supports many different storage backends, see http://docs.grafana.org/datasources/
 
