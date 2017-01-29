@@ -17,4 +17,4 @@ By default InfluxDB will:
 * listens on localhost port 8086
 
 ------
--> Next [Configuration](config.md)
+-> Next [Configuration](conf.md)
