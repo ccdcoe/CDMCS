@@ -25,11 +25,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Day 1 :: Single Box :: :: Feb 14 2017
 
  * 09:00 - 09:45 [build from source](/TICK/classroom/day_1/BuildFromSource.md)
- * 10:00 - 10:45 [config](/TICK/classroom/day_1/Config.md)
- * 11:00 - 11:45
+ * 10:00 - 10:45 [custom input plugins](/TICK/classroom/day_1/customInput.md)
+ * 11:00 - 11:45 [config](/TICK/classroom/day_1/Config.md)
 
 
- * 13:00 - 13:45 [eating log files](/TICK/classroom/day_1/logs2telegraf.md)
+ * 13:00 - 13:45 [Influx CLI](TICK/InfluxDB/cli.md)
  * 14:00 - 14:45
  * 15:00 - 15:45
  * 16:00 - 16:45
@@ -38,7 +38,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Day 2 :: Scale up :: Feb 15 2017
 
 * 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
-* 10:00 - 10:45
+* 10:00 - 10:45 [Influx CLI and queries](TICK/InfluxDB/cli.md)
 * 11:00 - 11:45
 
 
@@ -51,7 +51,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Day 3 :: Usage :: Feb 16 2017
 
 * 09:00 - 09:45 [eating numbers for breakfast](/TICK/classroom/day_3/README.md)
-* 10:00 - 10:45
+* 10:00 - 10:45 [eating log files](/TICK/classroom/day_1/logs2telegraf.md)
 * 11:00 - 11:45
 
 

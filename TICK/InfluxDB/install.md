@@ -1,5 +1,7 @@
 # Installing InfluxDB on Debian | Ubuntu
 
+## dpkg
+
 * https://docs.influxdata.com/influxdb/v1.2/introduction/installation/
 
 ```
