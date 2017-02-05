@@ -35,7 +35,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 16:00 - 16:45 [Grafana](/TICK/Grafana/README.md)
 
 
-### Day 2 :: Scale up :: Feb 15 2017
+### [Day 2](/TICK/classroom/day_2/README.md) :: Scale up :: Feb 15 2017
 
 * 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
 * 10:00 - 10:45 [Influx CLI and queries](TICK/InfluxDB/cli.md)
@@ -48,7 +48,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 16:00 - 16:45
 
 
-### Day 3 :: Usage :: Feb 16 2017
+### [Day 3](/TICK/classroom/day_3/README.md) :: Usage :: Feb 16 2017
 
 * 09:00 - 09:45 [eating numbers for breakfast](/TICK/classroom/day_3/README.md)
 * 10:00 - 10:45 [eating log files](/TICK/classroom/day_1/logs2telegraf.md)
