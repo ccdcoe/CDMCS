@@ -22,7 +22,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 15:00 - 15:45 [basic config](/TICK/classroom/day_intro/BasicConf.md)
  * 16:00 - 16:45 [basic visualisations](/TICK/classroom/day_intro/BasicVizs.md)
 
-### Day 1 :: Single Box :: :: Feb 14 2017
+### [Day 1](/TICK/classroom/day_1/README.md) :: Single Box :: :: Feb 14 2017
 
  * 09:00 - 09:45 [build from source](/TICK/classroom/day_1/BuildTelegrafFromSource.md)
  * 10:00 - 10:45 [custom input plugins](/TICK/classroom/day_1/customInput.md)
