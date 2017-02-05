@@ -1,3 +1,8 @@
+#
+
+> Go, also known as golang, is a computer programming language whose development began in 2007 at Google, and it was introduced to the public in 2009. Golang was explicitly engineered to thrive in projects built by large groups of programmers with different skill levels.
+> Concurrency, easy one binary deploy with yet fast build times.
+
 # go setup
 
 ```
