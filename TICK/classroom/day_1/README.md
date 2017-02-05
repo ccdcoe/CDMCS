@@ -4,7 +4,7 @@
  * set up disposable development enviroment (vagrant)
  * set up golang
 * add one custom plugin to one TICK component
- * plugin template
+ * plugin templates
 * install all configure all components
   * [Telegraf](/TICK/Telegraf/README.md)
   * [InfluxDB](/TICK/InfluxDB/README.md)
@@ -30,6 +30,18 @@ see
 * https://github.com/golang/go/wiki/Ubuntu
 * http://golangcode.com/how-to-install-go-in-ubuntu-16-04/
 * [go setup](/common/SetUpGoLang.md)
+
+
+# plugin templates
+
+* inputs
+  * https://github.com/influxdata/telegraf/blob/master/plugins/inputs/EXAMPLE_README.md
+  * https://github.com/influxdata/telegraf/blob/master/plugins/inputs/mock_Plugin.go
+* outputs
+* aggregators
+* parsers
+* processors
+* serializers
 
 
 
