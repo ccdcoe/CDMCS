@@ -1,8 +1,7 @@
 # Day 1
 
 * build one TICK component from source
- * set up disposable development enviroment (vagrant)
- * set up golang
+ * set up disposable development enviroment (vagrant + golang)
 * add one custom plugin to one TICK component
  * plugin templates
 * install all configure all components
