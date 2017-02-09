@@ -2,16 +2,16 @@ $provision_script = <<SCRIPT
 
 GOLANG="go1.7.4.linux-amd64.tar.gz"
 
-mkdir -p /tests
-cd /tests
-wget -q -4 https://storage.googleapis.com/golang/$GOLANG
+
+cd /vagrant
+[[ -f $GOLANG ]] || wget -q -4 https://storage.googleapis.com/golang/$GOLANG
 tar -zxvf $GOLANG -C /usr/local/ > /dev/null 2>&1
 echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
 echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
-echo 'export GOPATH=/tests' >> ~/.bashrc
+echo 'export GOPATH=/vagrant' >> ~/.bashrc
 export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-export GOPATH=/tests
+export GOPATH=/vagrant
 go version
 go env
 time go get github.com/influxdata/telegraf

@@ -3,6 +3,8 @@
 *.gz
 *.log
 # Build and Release Folders
+src/
+pkg/
 bin/
 bin-debug/
 bin-release/
