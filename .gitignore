@@ -1,3 +1,7 @@
+
+*.deb
+*.gz
+*.log
 # Build and Release Folders
 bin/
 bin-debug/

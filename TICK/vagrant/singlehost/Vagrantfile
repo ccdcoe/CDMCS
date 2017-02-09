@@ -1,4 +1,5 @@
 $provision_script = <<SCRIPT
+start=$(date)
 
 cat >> /etc/sysctl.conf <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -8,16 +9,21 @@ EOF
 sysctl -p
 cat /proc/sys/net/ipv6/conf/all/disable_ipv6
 
-TELEGRAF="telegraf_1.1.2_amd64.deb"
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+export DEBIAN_FRONTEND=noninteractive
+
+TELEGRAF="telegraf_1.2.1_amd64.deb"
 INFLUXDB="influxdb_1.2.0_amd64.deb"
 #KAPACITOR="kapacitor_nightly_amd64.deb"
-KAPACITOR="kapacitor_1.1.1_amd64.deb"
+KAPACITOR="kapacitor_1.2.0_amd64.deb"
 CHRONOGRAF="chronograf_nightly_amd64.deb"
-GRAFANA="grafana_4.1.0-1484127817_amd64.deb"
+GRAFANA="grafana_4.1.1-1484211277_amd64.deb"
 GOLANG="go1.7.4.linux-amd64.tar.gz"
 
 
-wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
+cd /vagrant
+
+[[ -f $TELEGRAF ]] || time wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
 dpkg -i $TELEGRAF > /dev/null 2>&1
 cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.net]]
@@ -26,13 +32,17 @@ cat >> /etc/telegraf/telegraf.conf <<EOF
   urls = ["http://localhost/status"]
 EOF
 service telegraf start
+sleep 1
+service  telegraf status | grep Active
 
-wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
+[[ -f $INFLUXDB ]] || time wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
 dpkg -i $INFLUXDB > /dev/null 2>&1
 service influxdb start
+sleep 1
+service  influxdb status | grep Active
 
 #wget  -q -4 https://dl.influxdata.com/kapacitor/nightlies/$KAPACITOR
-wget  -q -4 https://dl.influxdata.com/kapacitor/releases/$KAPACITOR
+[[ -f $KAPACITOR ]] ||  time wget  -q -4 https://dl.influxdata.com/kapacitor/releases/$KAPACITOR
 dpkg -i $KAPACITOR > /dev/null 2>&1
 mv /etc/kapacitor/kapacitor.conf /etc/kapacitor/kapacitor.conf_orig
 cat > /etc/kapacitor/kapacitor.conf <<EOF
@@ -95,6 +105,8 @@ data_dir = "/var/lib/kapacitor"
 EOF
 
 service kapacitor start
+sleep 1
+service  kapacitor status | grep Active
 mkdir -p /etc/kapacitor/ticks
 cd /etc/kapacitor/ticks
 wget -q -4 https://raw.githubusercontent.com/influxdata/kapacitor/master/examples/telegraf/net/net_alert_stream.tick
@@ -123,14 +135,17 @@ kapacitor define netstat_alert_stream -tick netstat_alert_stream.tick -type stre
 kapacitor enable netstat_alert_stream
 
 
-wget -q -4 https://dl.influxdata.com/chronograf/nightlies/$CHRONOGRAF
+cd /vagrant
+
+[[ -f $CHRONOGRAF ]] || wget -q -4 https://dl.influxdata.com/chronograf/nightlies/$CHRONOGRAF
 sudo dpkg -i $CHRONOGRAF > /dev/null 2>&1
 
 apt-get -y install libfontconfig > /dev/null 2>&1
-wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
+[[ -f $GRAFANA ]] || wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
 dpkg -i $GRAFANA > /dev/null 2>&1
 service grafana-server start
 sleep 1
+service grafana-server status | grep Active
 curl -s -XPOST --user admin:admin 192.168.11.11:3000/api/datasources -H "Content-Type: application/json" -d '{
     "name": "telegraf",
     "type": "influxdb",
@@ -155,7 +170,7 @@ EOF
 
 apt-get -y install nginx > /dev/null 2>&1
 cd /var/www/html/
-wget -q -4 -O alerta-web.tgz https://github.com/alerta/angular-alerta-webui/tarball/master
+[[ -f "alerta-web.tgz" ]] || wget -q -4 -O alerta-web.tgz https://github.com/alerta/angular-alerta-webui/tarball/master
 tar zxvf alerta-web.tgz > /dev/null 2>&1
 ALERTA=$(file alerta-angular-alerta-webui-* | head -1 | cut -f1 -d:)
 ln -s $ALERTA alerta
@@ -187,6 +202,7 @@ server {
 EOF
 rm /etc/nginx/sites-enabled/default
 service nginx reload
+service nginx status | grep Active
 
 nohup alertad > /var/log/alerta.log &
 
@@ -200,7 +216,7 @@ echo "grafana http://192.168.11.11:3000/"
 
 
 # udf
-cd /tmp
+cd /vagrant
 wget -q -4 https://storage.googleapis.com/golang/$GOLANG
 tar -zxvf $GOLANG -C /usr/local/ > /dev/null 2>&1
 echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
@@ -294,6 +310,7 @@ EOF
 cd /etc/kapacitor/ticks
 kapacitor define moving_avg -tick udf_moving_avg.tick -type stream -dbrp telegraf.autogen
 kapacitor enable  moving_avg
+echo "start $start end $(date)"
 
 SCRIPT
 
