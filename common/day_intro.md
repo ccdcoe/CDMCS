@@ -1,5 +1,7 @@
 # Intro
 
-* smoking
-* lunch
-* classroom ...
+* CCD COE
+* Smoking
+* Coffee breaks
+* Lunch
+* Classroom
