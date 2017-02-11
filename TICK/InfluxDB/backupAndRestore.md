@@ -1,7 +1,7 @@
 # Backup and restore
 
 * https://docs.influxdata.com/influxdb/v1.2/tools/influx_inspect
-* https://docs.influxdata.com/influxdb/v1.2/tools/shell/#influx-arguments
+* https://docs.influxdata.com/influxdb/v1.2/tools/shell/#import-data-from-a-file-with-import
 
 ## Export
 ```
