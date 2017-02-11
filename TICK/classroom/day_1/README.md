@@ -48,6 +48,7 @@ see
 # Adding a bind9 plugin to Telegraf
 
 * https://github.com/influxdata/telegraf/tree/master/plugins/inputs
+* https://raw.githubusercontent.com/ccdcoe/CDMCS/master/TICK/classroom/day_1/bind9.go
 * https://raw.githubusercontent.com/markuskont/telegraf/master/plugins/inputs/bind9/bind9.go
 
 ```
