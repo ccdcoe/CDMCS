@@ -1,0 +1,76 @@
+# Telegraf Configuration
+#
+# THIS FILE IS MANAGED BY SALT
+#
+[global_tags]
+  osname = "{{ grains.os }}"
+  osfamily = "{{ grains.os_family }}"
+  domain = "{{ grains.domain }}"
+  osrelease = "{{ grains.osrelease. }}"
+  kernel = "{{ grains.kernel }}"
+
+[agent]
+  hostname = "{{ grains.fqdn }}"
+  omit_hostname = false
+  interval = "10s"
+  round_interval = true
+  metric_buffer_limit = 1000
+  flush_buffer_when_full = true
+  collection_jitter = "0s"
+  flush_interval = "60s"
+  flush_jitter = "10s"
+  debug = false
+  quiet = true
+
+#
+# OUTPUTS:
+#
+[[outputs.influxdb]]
+  database  = "{{ database }}"
+  urls  = ["{{ url }}"]
+
+#
+# INPUTS:
+#
+{%if grains['kernel'] == 'Windows'%}
+[[inputs.win_perf_counters]]
+  [[inputs.win_perf_counters.object]]
+    Counters = ["% Idle Time", "% Interrupt Time", "% Privileged Time", "% User Time", "% Processor Time"]
+    Instances = ["*"]
+    Measurement = "win_cpu"
+    ObjectName = "Processor"
+  [[inputs.win_perf_counters.object]]
+    Counters = ["% Idle Time", "% Disk Time", "% Disk Read Time", "% Disk Write Time", "% User Time", "Current Disk Queue Length"]
+    Instances = ["*"]
+    Measurement = "win_disk"
+    ObjectName = "LogicalDisk"
+  [[inputs.win_perf_counters.object]]
+    Counters = ["Context Switches/sec", "System Calls/sec"]
+    Instances = ["------"]
+    Measurement = "win_system"
+    ObjectName = "System"
+  [[inputs.win_perf_counters.object]]
+    Counters = ["Available Bytes", "Cache Faults/sec", "Demand Zero Faults/sec", "Page Faults/sec", "Pages/sec", "Transition Faults/sec", "Pool Nonpaged Bytes", "Pool Paged Bytes"]
+    Instances = ["------"]
+    Measurement = "win_mem"
+    ObjectName = "Memory"
+  [[inputs.win_perf_counters.object]]
+    Counters = ["Bytes Received/sec", "Bytes Sent/sec", "Packets Received/sec", "Packets Sent/sec"]
+    Instances = ["*"]
+    Measurement = "win_net"
+    ObjectName = "Network Interface"
+{%elif grains['kernel'] == 'Linux'%}
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+[[inputs.disk]]
+  ignore_fs = ["tmpfs", "devtmpfs"]
+[[inputs.diskio]]
+[[inputs.kernel]]
+[[inputs.mem]]
+[[inputs.net]]
+[[inputs.netstat]]
+[[inputs.processes]]
+[[inputs.swap]]
+[[inputs.system]]
+{% endif%}
