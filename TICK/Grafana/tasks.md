@@ -3,7 +3,7 @@
 Create following dashboards:
 
 1. Load1, CPU usage, memory usage, disk usage, IOwait
-  * create a line for maximum values per 5 minute for each host
+  * for each host, create a line for maximum values per 5 minute interval 
 2. Network interface usage per host and interface.
   * Display the result is megabits per second.
   * Y axis tag to reflect that
