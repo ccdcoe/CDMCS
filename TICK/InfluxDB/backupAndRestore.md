@@ -6,7 +6,7 @@
 ## Export
 ```
 influx_inspect export \
-  -dbatabase telegraf
+  -dbatabase telegraf \
   -out /var/lib/influxdb/dump \
   -datadir /var/lib/influxdb/data/ \
   -waldir /var/lib/influxdb/wal/ \
