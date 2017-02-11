@@ -33,7 +33,7 @@ telegraf:
       - file: /etc/telegraf/telegraf.conf
 /etc/telegraf/telegraf.conf:
   file.managed:
-    - source: salt://telegraf/conf.jinja
+    - source: salt://telegraf/config.jinja
     - template: jinja
     - mode: 0644
     - default:
