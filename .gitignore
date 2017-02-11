@@ -2,6 +2,7 @@
 *.deb
 *.gz
 *.log
+*.dump
 # Build and Release Folders
 src/
 pkg/
