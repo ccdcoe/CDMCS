@@ -14,8 +14,10 @@ InfluxDB’s command line interface (influx) is an interactive shell for the HTT
 
 see https://docs.influxdata.com/influxdb/v1.2/tools/shell/
 
-
-
+* cli params
+* create db
+* retention
+* downsampling 
 * [backup & restore](TICK/InfluxDB/backupAndRestore.md)
 
 #  processing, monitoring, and alerting on time series data
