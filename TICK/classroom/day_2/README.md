@@ -10,6 +10,8 @@
 
 # db administration
 
+* [backup & restore](TICK/InfluxDB/backupAndRestore.md)
+
 #  processing, monitoring, and alerting on time series data
 
 **Kapacitor** is a data processing engine. It can process both stream and batch data.
