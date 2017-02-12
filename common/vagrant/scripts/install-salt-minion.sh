@@ -26,7 +26,7 @@ function jab
 }
 
 MASTER=$1
-IP=$(ifconfig eth0 2>/dev/null|grep 'inet addr'|cut -f2 -d':'|cut -f1 -d' ')
+IP=$(ifconfig enp0s8 2>/dev/null|grep 'inet addr'|cut -f2 -d':'|cut -f1 -d' ')
 HOSTNAME=$(hostname -f)
 
 echo "installing salt-minion on ${IP} ${HOSTNAME} setting master to ${MASTER}..."
@@ -38,11 +38,12 @@ echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
 #add-apt-repository -y ppa:saltstack/salt > /dev/null 2>&1
 #apt-get update  > /dev/null 2>&1
 apt-get -y install salt-minion  > /dev/null 2>&1
-systemctl stop salt-minion 
+systemctl stop salt-minion
 systemctl enable salt-minion
 salt-minion --version
 mv /etc/salt/minion /etc/salt/minion.from_package
 echo "master: ${MASTER}" > /etc/salt/minion
+echo "id: ${HOSTNAME}_${IP} " >> /etc/salt/minion
 echo "hash_type: sha256" >> /etc/salt/minion
 echo "${MASTER} salt" >> /etc/hosts
 systemctl start salt-minion
