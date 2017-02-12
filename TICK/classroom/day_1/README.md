@@ -4,7 +4,7 @@
  * set up disposable development enviroment (vagrant + golang)
 * add one custom plugin to one TICK component
  * plugin templates
-* install all configure all components
+* install all and configure all components
   * [Telegraf](/TICK/Telegraf/README.md)
   * [InfluxDB](/TICK/InfluxDB/README.md)
   * [Chronograf](/TICK/Chronograf/README.md)
@@ -26,14 +26,22 @@ see
 
 There is golang in default Ubuntu repositories, but it is not up to date.
 
-see
+See:
 * https://golang.org/doc/install#install
 * https://github.com/golang/go/wiki/Ubuntu
 * http://golangcode.com/how-to-install-go-in-ubuntu-16-04/
 * [go setup](/common/SetUpGoLang.md)
 
+Is go ready to go?
+[go hello](/common/GoHello.md)
 
-# plugin templates
+
+# telegraf
+
+## build from source
+
+
+## plugin templates
 
 * inputs
   * https://github.com/influxdata/telegraf/blob/master/plugins/inputs/EXAMPLE_README.md
@@ -47,7 +55,7 @@ see
 
 
 
-# Adding a bind9 plugin to Telegraf
+## Adding a bind9 plugin to Telegraf
 
 * https://github.com/influxdata/telegraf/tree/master/plugins/inputs
 * https://raw.githubusercontent.com/ccdcoe/CDMCS/master/TICK/classroom/day_1/bind9.go
