@@ -2,6 +2,20 @@ $provision_master = <<SCRIPT
 
 echo "master"
 
+apt-get -y install salt-master
+service salt-master stop
+mv /etc/salt/master /etc/salt/master.from_package
+echo "hash_type: sha256" >> /etc/salt/minion
+echo "open_mode: true" > /etc/salt/master
+echo "auto_accept: true" >> /etc/salt/master
+
+
+INFLUXDB="influxdb_1.2.0_amd64.deb"
+cd /vagrant
+[[ -f $INFLUXDB ]] || time wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
+dpkg -i $INFLUXDB > /dev/null 2>&1
+service influxdb start
+
 SCRIPT
 
 $provision_telex = <<SCRIPT
@@ -9,6 +23,9 @@ $provision_telex = <<SCRIPT
 echo "tele $1"
 
 SCRIPT
+
+SALT_MINION_INSTALL_SCRIPT = "../../../common/vagrant/scripts/install-salt-minion.sh"
+TELEGRAF_INSTALL_SCRIPT = "../../../common/vagrant/scripts/install-telegraf.sh"
 
 NET = "192.168.12."
 NET_START = 10
@@ -28,6 +45,9 @@ Vagrant.configure(2) do |config|
         v.cpus = 2
       end
       box.vm.provision "shell", inline: $provision_master
+      box.vm.provision "shell", path: TELEGRAF_INSTALL_SCRIPT, args: "#{MASTER_IP}"
+      box.vm.provision "shell", path: SALT_MINION_INSTALL_SCRIPT, args: "#{MASTER_IP}"
+
   end
 
   (1..TELECOUNT).each do |boxno|
@@ -40,7 +60,8 @@ Vagrant.configure(2) do |config|
         v.memory = 512
         v.cpus = 1
       end
-      box.vm.provision "shell", inline: $provision_telex, args: "#{MASTER_IP}"
+      box.vm.provision "shell", path: TELEGRAF_INSTALL_SCRIPT, args: "#{MASTER_IP}"
+      box.vm.provision "shell", path: SALT_MINION_INSTALL_SCRIPT, args: "#{MASTER_IP}"
     end
   end
 end
