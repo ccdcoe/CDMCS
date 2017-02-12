@@ -1,7 +1,7 @@
 # day 3
 
 * groking
-* udf's
+* writing udf's
 
 ----
 
@@ -15,3 +15,8 @@ see
 * https://skillsmatter.com/skillscasts/9432-structured-logging-the-future-of-log-management
 
 # udf
+A UDF is a custom script or binary that can communicate with Kapacitor do something what Kapacitor can not do.
+
+see
+* https://github.com/influxdata/kapacitor/blob/master/udf/agent/README.md
+* https://docs.influxdata.com/kapacitor/v1.1//nodes/u_d_f_node
