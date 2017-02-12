@@ -38,27 +38,21 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### [Day 2](/TICK/classroom/day_2/README.md) :: Scale up :: Feb 15 2017
 
 * 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
-* 10:00 - 10:45 [Influx CLI and queries](TICK/InfluxDB/cli.md)
-* 11:00 - 11:45
+* 10:00 - 11:45 [Influx CLI and queries](/TICK/classroom/day_2/README.md#db-administration)
 
 
-* 13:00 - 13:45
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45
+
+* 13:00 - 16:45 [scripted processing](/TICK/classroom/day_2/README.md#processing-monitoring-and-alerting-on-time-series-data)
+
 
 
 ### [Day 3](/TICK/classroom/day_3/README.md) :: Usage :: Feb 16 2017
 
-* 09:00 - 09:45 [eating numbers for breakfast](/TICK/classroom/day_3/README.md)
-* 10:00 - 10:45 [eating log files](/TICK/classroom/day_1/logs2telegraf.md)
-* 11:00 - 11:45
+* 09:00 - 11:45 [Reading log files](/TICK/classroom/day_3/README.md#logs---telegraf)
 
 
-* 13:00 - 13:45 [UDF](/TICK/classroom/day_3/UDF.md)
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45 Alerta
+* 13:00 - 13:45 [writing UDFs](/TICK/classroom/day_3/README.md#udf)
+
 
 ### Day +1 :: :: Feb 17 2017 end at 12:00
 
