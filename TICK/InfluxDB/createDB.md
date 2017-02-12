@@ -16,4 +16,4 @@ curl -G http://localhost:8086/query  --data-urlencode 'db=mydb' --data-urlencode
 
 -----
 
--> Next []()
+-> Next [backup & restore](backupAndRestore.md)
