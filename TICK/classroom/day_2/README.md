@@ -10,6 +10,14 @@
 
 # db administration
 
+InfluxDB’s command line interface (influx) is an interactive shell for the HTTP API.
+
+see https://docs.influxdata.com/influxdb/v1.2/tools/shell/
+
+
+
+* [backup & restore](TICK/InfluxDB/backupAndRestore.md)
+
 #  processing, monitoring, and alerting on time series data
 
 **Kapacitor** is a data processing engine. It can process both stream and batch data.

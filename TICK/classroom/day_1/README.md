@@ -24,6 +24,8 @@ see
 
 ## go
 
+There is golang in default Ubuntu repositories, but it is not up to date.
+
 see
 * https://golang.org/doc/install#install
 * https://github.com/golang/go/wiki/Ubuntu

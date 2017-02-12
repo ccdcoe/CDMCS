@@ -13,4 +13,6 @@ Grafana is a powerful tool for creating time-series visualizations. It supports 
 3. Add data source
 4. Create first graph
 5. Add users
-6.
+6. ...
+
+see [tasks](TICK/Grafana/tasks.md)
