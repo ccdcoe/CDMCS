@@ -40,8 +40,12 @@ Is go ready to go?
 
 ## build from source
 
+see
 
-## plugin templates
+* https://github.com/influxdata/telegraf#from-source
+
+
+### plugin templates
 
 * inputs
   * https://github.com/influxdata/telegraf/blob/master/plugins/inputs/EXAMPLE_README.md
