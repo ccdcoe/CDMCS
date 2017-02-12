@@ -22,7 +22,26 @@ see https://docs.influxdata.com/influxdb/v1.2/tools/shell/
 
 #  processing, monitoring, and alerting on time series data
 
+for intro see https://en.wikipedia.org/wiki/Directed_acyclic_graph
+
+see 
+* https://docs.influxdata.com/kapacitor/v1.2//tick/
+* https://docs.influxdata.com/kapacitor/v1.2/nodes/
+* https://docs.influxdata.com/kapacitor/v1.2/tick/expr/
+
+* from
+* window
+* where
+* groupBy
+* ...
+
+-----
+
+TODO :: move to kapa directory ?
+
 **Kapacitor** is a data processing engine. It can process both stream and batch data.
+
+
 
  * https://github.com/influxdata/kapacitor
  * https://docs.influxdata.com/kapacitor/
