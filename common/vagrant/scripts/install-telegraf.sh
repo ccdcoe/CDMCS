@@ -29,7 +29,7 @@ function jab
 }
 
 INFLUXDB=$1
-IP=$(ifconfig eth0 2>/dev/null|grep 'inet addr'|cut -f2 -d':'|cut -f1 -d' ')
+IP=$(ifconfig enp0s8 2>/dev/null|grep 'inet addr'|cut -f2 -d':'|cut -f1 -d' ')
 HOSTNAME=$(hostname -f)
 
 echo "installing telegraf on ${IP} ${HOSTNAME} setting influxdb to ${INFLUXDB} ..."
@@ -42,10 +42,10 @@ echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
 cd /vagrant
 [[ -f $TELEGRAF ]] || time wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
 dpkg -i $TELEGRAF > /dev/null 2>&1
+systemctl stop telegraf.service
+sed -i -e 's,"http://localhost:8086"],"http://'${INFLUXDB}':8086"],g' /etc/telegraf/telegraf.conf
 cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.net]]
 [[inputs.netstat]]
-[[inputs.nginx]]
-  urls = ["http://localhost/status"]
 EOF
-service telegraf start
+systemctl start telegraf.service
