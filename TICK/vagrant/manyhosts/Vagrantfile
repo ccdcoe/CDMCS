@@ -1,0 +1,46 @@
+$provision_master = <<SCRIPT
+
+echo "master"
+
+SCRIPT
+
+$provision_telex = <<SCRIPT
+
+echo "tele $1"
+
+SCRIPT
+
+NET = "192.168.12."
+NET_START = 10
+MASTER_IP = NET + (NET_START).to_s
+TELECOUNT = 2
+
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "ubuntu/xenial64"
+
+  config.vm.define 'master' do |box|
+
+      box.vm.hostname = 'master'
+      box.vm.network :private_network, ip: MASTER_IP
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 2
+      end
+      box.vm.provision "shell", inline: $provision_master
+  end
+
+  (1..TELECOUNT).each do |boxno|
+    name = "tele-" + boxno.to_s
+    ip = NET  + (NET_START + boxno).to_s
+    config.vm.define name do |box|
+      box.vm.hostname = name
+      box.vm.network :private_network, ip: "#{ip}"
+      box.vm.provider "virtualbox" do |v|
+        v.memory = 512
+        v.cpus = 1
+      end
+      box.vm.provision "shell", inline: $provision_telex, args: "#{MASTER_IP}"
+    end
+  end
+end
