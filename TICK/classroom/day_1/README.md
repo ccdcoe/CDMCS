@@ -33,7 +33,7 @@ See:
 * [go setup](/common/SetUpGoLang.md)
 
 Is go ready to go?
-[go hello](/common/GoHello.md)
+* [go hello](/common/GoHello.md)
 
 
 # telegraf
