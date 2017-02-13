@@ -6,6 +6,9 @@
 * http://play.grafana.org/
 * http://docs.grafana.org/
 * https://github.com/grafana/grafana
+* http://docs.grafana.org/guides/gettingstarted/
+* http://docs.grafana.org/features/intro/
+* https://grafana.net/plugins?utm_source=grafana_getting_started
 * freenode  #grafana.
 
 Features:

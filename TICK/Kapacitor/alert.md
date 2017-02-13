@@ -7,3 +7,7 @@
 ## Custom handler
 
 *  https://github.com/influxdata/kapacitor/blob/master/alert/HANDLERS.md
+
+## SMTP
+
+* https://docs.influxdata.com/kapacitor/v1.2/nodes/alert_node/#email
