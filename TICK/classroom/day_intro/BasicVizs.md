@@ -7,4 +7,4 @@
 5. Add users
 6. ...
 
-see [Grafana](/TICK/Grafana/README.md)
+see [Grafana](/TICK/Grafana/newDashboard.md)
