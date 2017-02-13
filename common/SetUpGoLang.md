@@ -13,13 +13,13 @@ cd /tmp
 wget -q -4 https://storage.googleapis.com/golang/$GOLANG
 tar -zxvf $GOLANG -C /usr/local/ > /dev/null 2>&1
 echo 'export GOROOT=/usr/local/go' >> ~/.bashrc
-echo 'export GOPATH=/opt/udfs' >> ~/.bashrc
+echo 'export GOPATH=/opt/go' >> ~/.bashrc
 echo 'export PATH=$PATH:$GOROOT/bin:$GOPATH/bin' >> ~/.bashrc
 export GOROOT=/usr/local/go
-export GOPATH=/opt/udfs
+export GOPATH=/opt/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-mkdir -p /opt/udfs
-cd /opt/udfs
+mkdir -p /opt/go
+cd /opt/go
 go version
 go env
 
