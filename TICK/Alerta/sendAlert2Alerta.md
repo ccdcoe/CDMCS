@@ -102,4 +102,4 @@ In both cases, this means that information from the correlated alert is used to 
 Whenever an alert status or severity changes, that change is recorded in the alert history log. This is to allow operations staff follow the lifecycle of a particular alert, if necessary.
 
 -------
--> Next [External Notification](notify.md)
+-> Next [UI](view.md)
