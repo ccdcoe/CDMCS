@@ -20,6 +20,7 @@ func main() {
 }
 ```
 
+And then build the binary
 ```
 go build
 ls
