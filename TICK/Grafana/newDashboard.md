@@ -74,3 +74,4 @@ In the top right, you have the master Dashboard time picker (it’s in between t
 You can override the relative time range for individual panels, causing them to be different than what is selected in the Dashboard time picker in the upper right. This allows you to show metrics from different time periods or days at the same time. You control these overrides in panel editor mode and the tab *Time Range*.
 
 ------
+-> next [Tasks](tasks.md)
