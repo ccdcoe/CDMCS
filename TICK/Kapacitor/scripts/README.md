@@ -12,7 +12,7 @@ All of the examples from this section operate on `streams`.
 ### Example of enabling a task
 
 ```
-kapacitor define local_write_failures local_write_failures.tick -dbrp _internal.monitor -type stream
+kapacitor define local_write_failures -tick local_write_failures.tick -dbrp _internal.monitor -type stream
 kapacitor enable local_write_failures
 ```
 
@@ -25,7 +25,7 @@ kapacitor enable local_write_failures
 
 #### Example
 ```
-kapacitor define high_host_disk high_host_disk.tick -dbrp telegraf.autogen -type batch
+kapacitor define high_host_disk -tick high_host_disk.tick -dbrp telegraf.autogen -type batch
 kapacitor enable high_host_disk
 ```
 
