@@ -1,0 +1,15 @@
+// SELECT writeError FROM telegraf..influxdb_write WHERE tmpltime() group by host
+// This assumes that you're using Telegraf and have the InfluxDB plugin enabled
+// https://github.com/influxdata/telegraf/tree/master/plugins/inputs/influxdb
+
+batch
+    |query('SELECT writeError, writeOk, writeTimeout FROM "telegraf"."default".influxdb_write')
+        .period(10s)
+        .every(10s)
+        .groupBy('host')
+    |derivative('writeError')
+        .nonNegative()
+    |alert()
+        .crit(lambda: "derivative" > 2)
+        .details('')
+        .log('/dev/stdout')

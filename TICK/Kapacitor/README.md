@@ -13,7 +13,9 @@ Featrues:
 * write back to InfluxDB
 * UDFs
 
-For processing Kapacitor needs **scripts**.  
+For processing Kapacitor needs **TICKscripts**.  
+
+![tick](images/tick.png)
 
 ------
 -> Next [Install](install.md)

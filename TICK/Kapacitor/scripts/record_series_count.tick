@@ -1,0 +1,36 @@
+// Fire an alert when series count exceeds threshold
+// Also rewrite downsampled points back to _internal database
+var period = 10s
+var every = 10s
+var delta = 1s
+
+var warn_threshold = 800000
+
+var data = stream
+    |from()
+    .database('_internal')
+    .measurement('database')
+    .groupBy('hostname')
+    |window()
+    .period(period)
+    .every(every)
+    |default()
+    .field('numSeries', 0)
+    |sum('numSeries')
+    .as('totalNumSeries')
+
+data
+    |alert()
+    .id('high_series_count/{{ index .Tags "hostname" }}')
+    .message('High series count for host: {{ index .Tags "hostname" }}')
+    .details('')
+    .warn(lambda: "totalNumSeries" > warn_threshold)
+    .stateChangesOnly()
+    .log('/var/log/kapacitor/high_series_count.log')
+
+data
+    |influxDBOut()
+    .database('_internal')
+    .retentionPolicy('monitor')
+    .measurement('database')
+    .tag('source', 'kapacitor')

@@ -1,0 +1,26 @@
+// Fire an alert when write errors occur (grouped by database)
+var period = 10s
+var every = 10s
+var delta = 1s
+
+stream
+    |from()
+        .database('_internal')
+        .measurement('shard')
+        .groupBy('database')
+    |window()
+        .period(period)
+        .every(every)
+    |max('writePointsFail')
+        .as('max')
+    |derivative('max')
+        .unit(delta)
+        .nonNegative()
+        .as('derivative')
+    |alert()
+        .id('write_failures/{{ index .Tags "database" }}')
+        .message('There have been write failures on database: {{ index .Tags "database" }}')
+        .details('')
+        .warn(lambda: "derivative" >= 1)
+        .stateChangesOnly()
+        .log('/var/log/kapacitor/write_failures.log')
