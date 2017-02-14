@@ -41,8 +41,7 @@ Is go ready to go?
 ## build from source
 
 see
-
-* https://github.com/influxdata/telegraf#from-source
+  * [Telegraf source install](/TICK/Telegraf/sourceinstall.md)
 
 
 ### plugin templates
