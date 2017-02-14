@@ -41,8 +41,8 @@ Is go ready to go?
 ## build from source
 
 see
-  * [Telegraf source install](/TICK/Telegraf/sourceinstall.md)
-
+  * [Telegraf source build](/TICK/Telegraf/sourceinstall.md)
+  * [Create Telegraf packages](/TICK/Telegraf/package.md)
 
 ### plugin templates
 

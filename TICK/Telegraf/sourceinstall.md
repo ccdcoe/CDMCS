@@ -6,8 +6,8 @@
  * Setup your GOPATH
  * Run go get github.com/influxdata/telegraf
  * Run cd $GOPATH/src/github.com/influxdata/telegraf
- * Run make (make prepare && make build)
-
+ * Run make (i.e., make prepare && make build)
+ * Look into $GOPATH/src/github.com/influxdata/telegraf/build/ or $GOPATH/bin/
 
 By defaul configuration file is located at */etc/telegraf/telegraf.conf* or set with $TELEGRAF_CONFIG_PATH
 
