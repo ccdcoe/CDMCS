@@ -1,0 +1,18 @@
+// This TICKscript assumes that you have telegraf running and the Kapacitor slack plugin enabled
+var period = 120s
+var every = 60s
+
+var sys_data = stream
+    |from()
+      .database('telegraf')
+      .measurement('system')
+      .groupBy('host')
+    |window()
+      .period(period)
+      .every(every)
+
+sys_data|deadman(1.0, period)
+    .id('deadman/{{ index .Tags "host" }}')
+    .message('Node {{ index .Tags "host" }} {{ if ne .Level "OK" }}has not responded in 120s!{{ else }}is back online.{{ end }}')
+    .stateChangesOnly()
+    .slack()

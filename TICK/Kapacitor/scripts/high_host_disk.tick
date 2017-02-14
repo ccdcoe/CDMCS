@@ -1,0 +1,13 @@
+// SELECT used_percent FROM telegraf..disk WHERE tmpltime() group by host
+// This TICKscript assumes that you're using Telegrafs standard system plugin
+
+batch
+    |query('SELECT used_percent FROM "telegraf"."default".disk')
+        .period(10s)
+        .every(10s)
+        .groupBy('host')
+    |alert()
+        .crit(lambda: "used_percent" > 80)
+        .details('')
+        .stateChangesOnly()
+        .log('/dev/stdout')

@@ -1,0 +1,14 @@
+// This TICKscript assumes that you're using Telegrafs standard system plugin
+
+batch
+    |query('SELECT used_percent FROM "telegraf"."default".mem')
+        .period(10s)
+        .every(10s)
+        .groupBy('host')
+    |alert()
+        .crit(lambda: "used_percent" > 80)
+        .stateChangesOnly()
+        .details('')
+        .log('/dev/stdout')
+        .victorOps()
+        .routingKey('awstest')
