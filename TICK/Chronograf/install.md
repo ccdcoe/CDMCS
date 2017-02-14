@@ -59,4 +59,4 @@ Help Options:
 ```
 
 -----
--> Next [Generate Tick script](chronoGenerateTickScript.md)
+-> Next [Using Chronograf](usingChronograf.md)

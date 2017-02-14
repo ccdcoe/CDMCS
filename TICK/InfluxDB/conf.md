@@ -14,13 +14,6 @@ View the default configuration settings with the `influxd config` command
 
 
 
-```
-
-```
-
-
-
-
 
 ------
-Next -> [Create database](createDB.md)
+Next -> [Data Model](dataModel.md)
