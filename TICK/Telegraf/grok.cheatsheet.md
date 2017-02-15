@@ -1,4 +1,7 @@
-```syslog
+
+### syslog
+
+```
 Feb 15 15:17:01 vspeherestudent-14-master148716303459424800 CRON[4174]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
 Feb 15 16:17:01 vspeherestudent-14-master148716303459424800 CRON[7065]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
 Feb 15 17:17:01 vspeherestudent-14-master148716303459424800 CRON[9959]: (root) CMD (   cd / && run-parts --report /etc/cron.hourly)
@@ -24,7 +27,13 @@ MINISYSLOG %{SYSLOGBASE} %{GREEDYDATA:string:drop}
 '''
 ```
 
-```syslog
+```sql
+SELECT count(distinct("program")  FROM "telegraf"."autogen"."syslog" WHERE time > now() - 1h GROUP BY time(1h)
+```
+
+### snoopy
+
+```
 Feb 16 00:26:57 vspeherestudent-14-master148716303459424800 snoopy[26950]: [uid:0 sid:1947 tty: cwd:/root filename:/usr/bin/dmidecode]: dmidecode 
 Feb 16 00:26:57 vspeherestudent-14-master148716303459424800 snoopy[26950]: [uid:0 sid:1947 tty: cwd:/root filename:/usr/sbin/dmidecode]: dmidecode 
 Feb 16 00:26:57 vspeherestudent-14-master148716303459424800 snoopy[26951]: [uid:0 sid:1947 tty: cwd:/root filename:/usr/sbin/dmidecode]: /usr/sbin/dmidecode 
@@ -50,5 +59,5 @@ AUTH_SNOOPY %{SYSLOGTIMESTAMP:timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST:log
 ```
 
 ```sql
-SELECT count("program")/count(distinct("program"))  FROM "telegraf"."autogen"."snoopy" WHERE time > now() - 1h GROUP BY time(10m)
+SELECT count("cwd")/count(distinct("cwd"))  FROM "telegraf"."autogen"."snoopy" WHERE time > now() - 1h GROUP BY time(1m)
 ```
