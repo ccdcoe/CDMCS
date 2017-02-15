@@ -5,7 +5,7 @@
 
 ----
 
-# logs -> telegraf 
+# logs -> telegraf
 
 The logparser plugin streams and parses the given logfiles.
 It has the capability of parsing "grok" patterns.
@@ -13,6 +13,8 @@ It has the capability of parsing "grok" patterns.
 see
 * https://github.com/influxdata/telegraf/tree/master/plugins/inputs/logparser
 * https://skillsmatter.com/skillscasts/9432-structured-logging-the-future-of-log-management
+
+-> next [Grok](/TICK/Telegraf/grok.md)
 
 # udf
 A UDF is a custom script or binary that can communicate with Kapacitor do something what Kapacitor can not do.
