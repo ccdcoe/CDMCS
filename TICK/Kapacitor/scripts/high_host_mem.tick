@@ -10,5 +10,3 @@ batch
         .stateChangesOnly()
         .details('')
         .log('/dev/stdout')
-        .victorOps()
-        .routingKey('awstest')
