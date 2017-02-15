@@ -5,14 +5,12 @@ see :
 * http://alerta.readthedocs.io/en/latest/deployment.html#web-proxy
 
 ```
-apt-get -y install mongodb
-apt-get -y install libffi-dev
-apt-get -y install python-pip
+apt-get -y install mongodb libffi-dev python-pip
 pip install --upgrade pip
 pip install alerta-server alerta
 cat > /etc/alertad.conf <<EOF
 CORS_ORIGINS = [
-    'http://192.168.11.11'
+    'http://INSERT_YOUR_IP_HERE'
 ]
 EOF
 
@@ -44,7 +42,8 @@ EOF
 rm /etc/nginx/sites-enabled/default
 service nginx reload
 
-alertad > /var/log/alerta.log &
+# Quick way of running alertad
+nohup alertad 2>&1 > /var/log/alerta.log &
 
 ```
 
