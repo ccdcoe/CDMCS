@@ -9,7 +9,7 @@ apt-get -y install mongodb
 apt-get -y install libffi-dev
 apt-get -y install python-pip
 pip install --upgrade pip
-pip install alerta-server
+pip install alerta-server alerta
 cat > /etc/alertad.conf <<EOF
 CORS_ORIGINS = [
     'http://192.168.11.11'
