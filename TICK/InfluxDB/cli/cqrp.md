@@ -35,7 +35,7 @@ END
 
 ```
 $ influx
-> CREATE CONTINUOUS QUERY downsample_cpu_1m ON telegraf BEGIN SELECT min(usage_idle), mean(usage_idle), max(usage_idle), INTO downsampled_cpu FROM cpu GROUP BY time(60s) * END
+> CREATE CONTINUOUS QUERY downsample_cpu_1m ON telegraf BEGIN SELECT min(usage_idle), mean(usage_idle), max(usage_idle) INTO downsampled_cpu FROM cpu GROUP BY time(60s), * END
 ```
 
 ### Verify that it exists
@@ -59,7 +59,7 @@ ON [name_of_database]
 
 ### Example
 ```
-CREATE RETENTION POLICY 1h ON newdb DURATION 1h REPLICATION 1 DEFAULT
+CREATE RETENTION POLICY "1h" ON newdb DURATION 1h REPLICATION 1 DEFAULT
 ```
 
 ### Verify
@@ -83,7 +83,7 @@ END
 
 ```
 $ influx
-> CREATE CONTINUOUS QUERY new_downsample_cpu_1m ON telegraf BEGIN SELECT min(usage_idle), mean(usage_idle), max(usage_idle), INTO newdb."1h".downsampled_cpu FROM cpu GROUP BY time(60s) * END
+> CREATE CONTINUOUS QUERY new_downsample_cpu_1m ON telegraf BEGIN SELECT min(usage_idle), mean(usage_idle), max(usage_idle) INTO newdb."1h".downsampled_cpu FROM cpu GROUP BY time(60s), * END
 ```
 
 ## Verify that its working
