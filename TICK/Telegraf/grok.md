@@ -30,6 +30,8 @@
 SELECT count(pid) FROM syslog GROUP BY host
 ```
 
+* Verify that Telegraf has permissions to read the log file.
+
 ## Collecting influxdb http logs
 
 ### Rsyslog
