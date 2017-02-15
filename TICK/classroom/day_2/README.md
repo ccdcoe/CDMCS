@@ -5,7 +5,6 @@
 * TICKscript
 
 
-
 -----
 
 # db administration
@@ -20,7 +19,10 @@ see https://docs.influxdata.com/influxdb/v1.2/tools/shell/
 * downsampling 
 * [backup & restore](TICK/InfluxDB/backupAndRestore.md)
 
-#  processing, monitoring, and alerting on time series data
+# Go to here [CLI](TICK/InfluxDB/cli/README.md)
+
+
+##  processing, monitoring, and alerting on time series data
 
 for intro see https://en.wikipedia.org/wiki/Directed_acyclic_graph
 
