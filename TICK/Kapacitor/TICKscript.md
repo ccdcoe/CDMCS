@@ -24,6 +24,8 @@ stream
         .measurement('cpu')
     |alert()
         .crit(lambda: "usage_idle" <  70)
+	.warn(lambda: "usage_idle" < 80)
+	.info(lambda: "usage_idle" < 98)
         // Whenever we get an alert write it to a file.
         .log('/tmp/alerts.log')
 ```
