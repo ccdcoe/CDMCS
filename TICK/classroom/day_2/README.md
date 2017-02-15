@@ -17,9 +17,9 @@ see https://docs.influxdata.com/influxdb/v1.2/tools/shell/
 * create db
 * retention
 * downsampling 
-* [backup & restore](TICK/InfluxDB/backupAndRestore.md)
+* [backup & restore](../../InfluxDB/backupAndRestore.md)
 
-# Go to here [CLI](TICK/InfluxDB/cli/README.md)
+# Go to here [CLI](../../InfluxDB/cli/README.md)
 
 
 ##  processing, monitoring, and alerting on time series data
