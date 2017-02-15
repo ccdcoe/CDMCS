@@ -171,6 +171,7 @@ see https://docs.influxdata.com/kapacitor/v1.2/examples/anomaly_detection/
 ## Exercise
 
 ### 1. Create tasks for the TICKscripts in the `scripts` folder.
+Read over each of the TICKscripts in the `scripts` folder and create a task for each one.
 ### 2. Use Chronograf to create a basic alert in Kapacitor
 In Kapacitor UI in Chronograf, build a basic alert for when the `free` fields in the `mem` measurement in the `telegraf` goes below `1G`, for each host.
 ### 3. Explore the Kapacitor documentation
