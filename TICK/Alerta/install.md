@@ -43,7 +43,7 @@ rm /etc/nginx/sites-enabled/default
 service nginx reload
 
 # Quick way of running alertad
-alertad 2>&1 > /var/log/alerta.log &
+nohup alertad 2>&1 > /var/log/alerta.log &
 
 ```
 
