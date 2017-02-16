@@ -61,3 +61,45 @@ AUTH_SNOOPY %{SYSLOGTIMESTAMP:timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST:log
 ```sql
 SELECT count("cwd")/count(distinct("cwd"))  FROM "telegraf"."autogen"."snoopy" WHERE time > now() - 1h GROUP BY time(1m)
 ```
+
+```js
+var snoopy = stream
+  |from()
+    .measurement('snoopy')
+    .groupBy('*')
+  |window()
+    .period(5m)
+    .every(1m)
+
+var cwd_count = snoopy
+  |count('cwd')
+    .as('cwd_count')
+
+var distinct_count = snoopy
+  |distinct('cwd')
+    .as('distinct_cwd')
+  |count('distinct_cwd')
+    .as('cwd_count')
+
+var distinct_count_ratio = cwd_count
+  |join(distinct_count)
+	.as('count', 'distinct_count')
+  |eval(lambda: float("count.cwd_count") /  float("distinct_count.cwd_count"))
+	.as('cwd_count_ratio')
+
+distinct_count_ratio
+  |log()
+  |eval(lambda: sigma("cwd_count_ratio"))
+    .as('sigma')
+  |alert()
+    .crit(lambda: "sigma" >= 3)
+    .warn(lambda: "sigma" >= 2)
+    .info(lambda: "sigma" >= 1)
+
+distinct_count_ratio
+  |influxDBOut()
+    .database('telegraf')
+    .retentionPolicy('autogen')
+    .tag('kapactior', 'true')
+    .measurement('derived_snoopy')
+```
