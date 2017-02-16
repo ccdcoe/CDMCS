@@ -77,3 +77,8 @@ $template PerSeverity,"/var/log/severity/%syslogseverity-text%.log"
 VHOSTCOMMONAPACHELOG %{IPORHOST:http_vhost}:?%{IPORHOST:http_port}? %{IPORHOST:http_clientip} %{USER:http_ident} %{USER:http_auth} \[%{HTTPDATE:http_timestamp}\] "(?:%{WORD:http_method} %{NOTSPACE:http_request}(?: HTTP/%{NUMBER:http_version})?|%{DATA:http_rawrequest})" %{NUMBER:http_response} (?:%{NUMBER:http_bytes}|-) "%{DATA:http_referer}" "%{DATA:http_useragent}"
 COMMONAPACHELOG %{IPORHOST:http_clientip:tag} %{USER:http_ident} %{USER:http_auth} \[%{HTTPDATE:http_timestamp:ts-httpd}\] "(?:%{WORD:http_method:tag} %{NOTSPACE:http_request:tag}(?: HTTP/%{NUMBER:http_version})?|%{DATA:http_rawrequest:string})" %{NUMBER:http_response:tag} (?:%{NUMBER:http_bytes:int}|-) "%{DATA:http_referer:string}" "%{DATA:http_useragent:string}"
 ```
+
+
+----
+
+Next -> [syslog](grok.cheatsheet.md)
