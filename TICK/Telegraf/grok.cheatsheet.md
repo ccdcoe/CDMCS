@@ -31,6 +31,10 @@ MINISYSLOG %{SYSLOGBASE} %{GREEDYDATA:string:drop}
 SELECT count(distinct("program")  FROM "telegraf"."autogen"."syslog" WHERE time > now() - 1h GROUP BY time(1h)
 ```
 
+```
+usermod -a -G adm telegraf
+```
+
 ### snoopy
 
 ```
