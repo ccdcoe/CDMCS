@@ -1,0 +1,100 @@
+$teleconfig  = <<SCRIPT
+echo "$(date) host $(hostname) $2 setting master to $1"
+service salt-minion stop
+echo "master: $1" > /etc/salt/minion
+echo "id: $2" >> /etc/salt/minion
+service salt-minion start
+echo "$(date) host $(hostname) $2 installing telegraf to $1"
+dpkg -i /vagrant/telegraf_1.2.1_amd64.deb
+service telegraf stop
+sed -i -e 's,"http://localhost:8086"],"http://'${1}':8086"],g' /etc/telegraf/telegraf.conf
+service telegraf start
+#grep snoopy  /var/log/auth.log | tail
+SCRIPT
+
+$masterinstall = <<SCRIPT
+echo "$(date) host $(hostname) $1 installing salt-master"
+echo "LC_ALL=en_US.UTF-8" >> /etc/environment
+echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/99force-ipv4
+apt-get -y install salt-master  > /dev/null 2>&1
+service salt-master stop
+mv /etc/salt/master /etc/salt/master.from_package
+echo "open_mode: true" > /etc/salt/master
+echo "auto_accept: true" >> /etc/salt/master
+service salt-master start
+echo "$(date) host $(hostname) $1 installing influxdb"
+dpkg -i /vagrant/influxdb_1.2.0_amd64.deb
+service influxdb stop
+sed -i -e 's,# bind-address = ":8086",bind-address = "'${1}':8086",g' /etc/influxdb/influxdb.conf
+service influxdb start
+dpkg -i /vagrant/chronograf_1.2.0~beta2_amd64.deb
+echo "Y" | dpkg -i /vagrant/kapacitor_1.2.0_amd64.deb
+service kapacitor stop
+sed -i -e 's,"http://localhost:8086"],"http://'${1}':8086"],g' /etc/kapacitor/kapacitor.conf
+service kapacitor start
+#grep snoopy  /var/log/auth.log | tail
+SCRIPT
+
+#$teleconfig  = <<SCRIPT
+#SCRIPT
+#$masterinstall = <<SCRIPT
+#SCRIPT
+
+NET = "10.244.1."
+NET_START = 10
+STUDENTCOUNT = 14
+TELECOUNT = 9
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "vsphere"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  require '../../../../../../keys/vm.rb'
+  include VMKeys
+  config.ssh.username = VM_USER # the one used to create the VM
+  config.ssh.password = VM_PASSWORD # the one used to create the VM
+  require '../../../../../../keys/vsphere.rb'
+  include VSphereKeys
+  config.vm.provider :vsphere do |vsphere|
+    vsphere.host = VSPHERE_HOST
+    vsphere.data_center_name = VSPHERE_DC
+    vsphere.compute_resource_name = VSPHERE_CLUSTER
+    vsphere.template_name = VSPHERE_TEMPLATE_PATH + 'student-X-master'
+    #vsphere.vm_base_path = VSPHERE_VM_PATH + 'Student_' + studentNumber.to_s
+    vsphere.customization_spec_name = 'linux_1nics'
+    vsphere.user = VSPHERE_USER
+    vsphere.password = VSPHERE_PASSWORD
+    vsphere.insecure = true
+  end
+
+  (1..STUDENTCOUNT).each do |studentNumber|
+
+    ipm = NET  + (NET_START + (studentNumber-1)*10).to_s
+    name = 'student-'+studentNumber.to_s+'-master'
+    config.vm.define name do |box|
+      box.vm.hostname = name
+      box.vm.network 'private_network', ip: ipm
+      box.vm.provision "shell", inline: $teleconfig, args: "#{ipm} #{ipm} "
+      box.vm.provision "shell", inline: $masterinstall, args: "#{ipm}"
+      box.vm.provider :vsphere do |vsphere|
+        vsphere.memory_mb = 1 * 1024
+        vsphere.cpu_count = 2
+        vsphere.vm_base_path = VSPHERE_VM_PATH + 'Student_' + studentNumber.to_s
+      end
+    end
+
+    (1..TELECOUNT).each do |counter|
+      ip = NET  + (NET_START + ((studentNumber-1)*10)+counter).to_s
+      namet = 'student-'+studentNumber.to_s+'-tele-'+counter.to_s
+      config.vm.define namet do |boxt|
+        boxt.vm.hostname = namet
+        boxt.vm.network 'private_network', ip: ip
+        boxt.vm.provision "shell", inline: $teleconfig, args: "#{ipm} #{ip} "
+        boxt.vm.provider :vsphere do |vsphere|
+          vsphere.memory_mb = 1 * 512
+          vsphere.cpu_count = 1
+          vsphere.vm_base_path = VSPHERE_VM_PATH + 'Student_' + studentNumber.to_s
+        end
+      end
+    end
+  end
+end
