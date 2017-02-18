@@ -13,7 +13,7 @@ A rule consists of the following:
 * header
 * rule-options
 
-## Action
+### Action
 
 
 * alert - This is the action we want to perform on the rule
@@ -22,12 +22,12 @@ A rule consists of the following:
 * drop - The packet doesn’t get processed any further down the chain and the sender isn’t notified. This is akin to the “DROP” target in iptables, where it will silently remove the packet from the network stack.
 * reject - This acts the same as drop but will also notify the sender that the packet has been removed from the stack.
 
-## header
+### Header
 
 * First keyword: protocol with protocol recognition
 * Second part: IP params includin variable
 
-## Rule options
+### Rule options
 
 * content matching
 * meta data
@@ -36,7 +36,7 @@ A rule consists of the following:
 
 
 
-### Exercises
+## Exercises
 
 * Write rules on query to a specific website http_hostname
 * Check some text in the content of the response
