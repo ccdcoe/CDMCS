@@ -16,6 +16,7 @@
  * http://planet.suricata-ids.org/
  * http://www.openinfosecfoundation.org/
  * https://github.com/inliniac/suricata
+ * http://suricata.readthedocs.io/en/latest/
 
 
 ----
