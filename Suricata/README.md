@@ -59,3 +59,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 09:00 - 09:45 []()
 * 10:00 - 10:45[]()
 * 11:00 - 12:00[feedback, contact exchange, thanks, etc](/common/Closing.md)
+
+
+----
+
+Before You Come To Class please browse trough ..
+
+* [Suricata](/Suricata/suricata/README.md)
+* [Scirius](/Suricata/scirius/README.md)
+* [Evebox](/Suricata/evebox/README.md)
