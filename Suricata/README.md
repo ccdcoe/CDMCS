@@ -13,14 +13,14 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/Suricata/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/Suricata/BasicConf.md)
- * 16:00 - 16:45 [basic visualisations](/Suricata/BasicVizs.md)
+ * 15:00 - 15:45 [rules](/Suricata/suricata/rules.intro.md)
+ * 16:00 - 16:45 [visual](/Suricata/scirius.md)[isations]((/Suricata/evebox.md))
 
 ## [Day 1](/Suricata/day_1/README.md) :: Single Box :: Mar 7 2017
 
- * 09:00 - 09:45 [build from source](/Suricata/day_1/BuildFromSource.md)
- * 10:00 - 10:45 [config](/Suricata/day_1/Config.md)
- * 11:00 - 11:45
+ * 09:00 - 09:45 [build from source](/Suricata/suricata/build.md)
+ * 10:00 - 10:45 [config](/Suricata/suricata/config.md)
+ * 11:00 - 11:45 [rules](/Suricata/suricata/rules.md)
 
 
  * 13:00 - 13:45
