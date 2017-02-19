@@ -16,7 +16,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 15:00 - 15:45 [rules](/Suricata/suricata/rules.intro.md)
  * 16:00 - 16:45 [visual](/Suricata/scirius.md)[isations](/Suricata/evebox.md)
 
-## [Day 1](/Suricata/day_1/README.md) :: Single Box :: Mar 7 2017
+## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Mar 7 2017
 
  * 09:00 - 09:45 [build from source](/Suricata/suricata/build.md)
  * 10:00 - 10:45 [config](/Suricata/suricata/config.md)
@@ -29,7 +29,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 16:00 - 16:45 [writing basic rule](/Suricata/suricata/writing.first.rule.md)
 
 
-## [Day 2](/Suricata/day_2/README.md) :: Scale up :: Mar 8 2017
+## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Mar 8 2017
 
 * 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
 * 10:00 - 10:45
@@ -42,7 +42,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 16:00 - 16:45
 
 
-## [Day 3](/Suricata/day_3/README.md) :: Usage :: Mar 9 2017
+## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Mar 9 2017
 
 * 09:00 - 09:45
 * 10:00 - 10:45
