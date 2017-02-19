@@ -31,28 +31,28 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Mar 8 2017
 
-* 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
-* 10:00 - 10:45
-* 11:00 - 11:45
+* 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md), [Metrix](/TICK/Telegraf/README.md)
+* 10:00 - 10:45 [installing on 1+]
+* 11:00 - 11:45 [config & rules on 1+]
 
 
-* 13:00 - 13:45
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45
+* 13:00 - 13:45 [elasticsearch]
+* 14:00 - 14:45 [scirius]
+* 15:00 - 15:45 [evebox]
+* 16:00 - 16:45 [kibana]
 
 
 ## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Mar 9 2017
 
-* 09:00 - 09:45
-* 10:00 - 10:45
-* 11:00 - 11:45
+* 09:00 - 09:45 [tuning]
+* 10:00 - 10:45 []
+* 11:00 - 11:45 []
 
 
-* 13:00 - 13:45
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45
+* 13:00 - 13:45 []
+* 14:00 - 14:45 []
+* 15:00 - 15:45 []
+* 16:00 - 16:45 []
 
 ## Day +1 :: :: Mar 10 2017 end at 12:00
 
