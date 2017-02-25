@@ -35,6 +35,20 @@ add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
 apt-get update > /dev/null 2>&1
 apt-get -y install suricata > /dev/null 2>&1
 systemctl stop suricata
+
+#ls /sys/class/net | grep -v lo
+# see http://pevma.blogspot.com.ee/2015/05/suricata-multiple-interface.html
+cat >> /etc/suricata/suricata.yaml <<EOF
+af-packet:
+  - interface: enp0s3
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: enp0s8
+    cluster-id: 97
+    cluster-type: cluster_flow
+    defrag: yes
+EOF
 touch  /etc/suricata//threshold.config
 suricata -T -vvv
 
