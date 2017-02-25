@@ -7,15 +7,35 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
-cat /proc/sys/net/ipv6/conf/all/disable_ipv6
+
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
-#suricata
 
-add-apt-repository ppa:oisf/suricata-stable
-apt-get update
-apt-get install suricata
+#set versions here
+
+ELASTICSEARCH="elasticsearch-5.2.1.deb"
+EVEBOX="evebox_0.6.0dev~dev20170223182129_amd64.deb"
+
+
+
+#suricata
+echo "$(date) installing Suricata"
+add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
+apt-get update > /dev/null 2>&1
+apt-get -y install suricata > /dev/null 2>&1
+systemctl stop suricata
+touch  /etc/suricata//threshold.config
+suricata -T -vvv
+
+
+cd /vagrant
+
+echo "$(date) installing Elasticsearch"
+[[ -f $ELASTICSEARCH ]] || wget  -q -4 https://artifacts.elastic.co/downloads/elasticsearch/$ELASTICSEARCH
+dpkg -i $ELASTICSEARCH > /dev/null 2>&1
+systemctl stop elasticsearch
+
 
 
 
