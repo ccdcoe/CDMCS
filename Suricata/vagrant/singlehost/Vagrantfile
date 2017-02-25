@@ -8,9 +8,15 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
 cat /proc/sys/net/ipv6/conf/all/disable_ipv6
-
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
+
+#suricata
+
+add-apt-repository ppa:oisf/suricata-stable
+apt-get update
+apt-get install suricata
+
 
 
 echo "DONE :: start $start end $(date)"
