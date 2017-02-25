@@ -31,6 +31,8 @@ suricata -T -vvv
 
 cd /vagrant
 
+apt-get install openjdk-8-jdk-headless
+
 echo "$(date) installing Elasticsearch"
 [[ -f $ELASTICSEARCH ]] || wget  -q -4 https://artifacts.elastic.co/downloads/elasticsearch/$ELASTICSEARCH
 dpkg -i $ELASTICSEARCH > /dev/null 2>&1
