@@ -50,8 +50,8 @@ af-packet:
     defrag: yes
 EOF
 touch  /etc/suricata//threshold.config
-suricata -T -vvv
-
+#suricata -T -vvv
+[[ $(suricata -T) ]] || exit -1
 
 # evebox
 echo "$(date) installing GeoLite2"
