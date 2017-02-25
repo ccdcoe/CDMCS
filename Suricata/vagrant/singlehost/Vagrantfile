@@ -36,7 +36,8 @@ echo "$(date) installing Elasticsearch"
 dpkg -i $ELASTICSEARCH > /dev/null 2>&1
 systemctl stop elasticsearch
 
-
+[[ -f $EVEBOX ]] ||wget  -q -4 https://bintray.com/jasonish/evebox-development-debian/download_file?file_path=$EVEBOX -O $EVEBOX
+dpkg -i $EVEBOX > /dev/null 2>&1
 
 
 echo "DONE :: start $start end $(date)"
