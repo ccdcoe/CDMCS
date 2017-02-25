@@ -17,14 +17,15 @@ cd /vagrant/suricata
 [[ -f 'master.tar.gz' ]] || wget -q -4 https://github.com/inliniac/suricata/archive/master.tar.gz
 mkdir -p /vagrant/libhtp
 cd /vagrant/libhtp
-[[ -f 'master.tar.gz' ]] || wget -q -4 https://github.com/OISF/libhtp/archive/master.tar.gz
+# https://github.com/OISF/libhtp/archive/0.5.x.zip
+[[ -f '0.5.x.tar.gz' ]] || wget -q -4 https://github.com/OISF/libhtp/archive/0.5.x.tar.gz
 cd /opt/
 tar -xzf /vagrant/suricata/master.tar.gz
 mv suricata-master/ suricata
 cd suricata
-tar -xzf /vagrant/libhtp/master.tar.gz
-mv libhtp-master libhtp
-./autogen.sh
+tar -xzf /vagrant/libhtp/0.5.x.tar.gz
+mv libhtp-0.5.x/ libhtp
+ ./autogen.sh
 ./configure --enable-profiling --enable-luajit
 #make
 #make install
