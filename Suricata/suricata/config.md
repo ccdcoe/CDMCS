@@ -1,8 +1,8 @@
 # Suricata configuration
 
-https://suricata.readthedocs.io/en/latest/configuration/index.html
+* https://suricata.readthedocs.io/en/latest/configuration/index.html
 
-https://github.com/inliniac/suricata/blob/master/src/conf-yaml-loader.c
+* https://github.com/inliniac/suricata/blob/master/src/conf-yaml-loader.c
 
 
 
