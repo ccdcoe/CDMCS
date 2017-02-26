@@ -1,0 +1,1 @@
+# Suricata rule profiling
