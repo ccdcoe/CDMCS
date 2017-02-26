@@ -1,4 +1,4 @@
-# Scirius running
+# Scirius run
 
 
 ....

@@ -10,4 +10,4 @@ see:
 *  https://github.com/StamusNetworks/scirius
 
 ----
-Next -> [Next](install.md)
+Next -> [Install](install.md)
