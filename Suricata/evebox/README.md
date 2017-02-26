@@ -2,7 +2,7 @@
 
 > EveBox is Web Based Event Viewer (GUI) for Suricata EVE Events in Elastic Search
 
-* ! evebox can push alerts from eve.json to elasticsearch 
+* ! evebox can push alerts from eve.json to elasticsearch
 
 see:
 
@@ -10,4 +10,4 @@ see:
 * https://github.com/jasonish/evebox
 
 ----
-Next -> [Next](install.md)
+Next -> [Install](install.md)
