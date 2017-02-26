@@ -20,4 +20,4 @@
 
 
 ----
-Next -> [Next](install.md)
+Next -> [Install](install.md)

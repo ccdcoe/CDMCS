@@ -1,6 +1,6 @@
 # Suricata install on Debian | Ubuntu
 
-> [OISF](http://oisf.net) maintains a PPA suricata-stable that always contains the latest stable release.
+> **[OISF](http://oisf.net)** maintains a **PPA suricata-stable** that always contains the latest stable release.
 
 see:
 * https://suricata.readthedocs.io/en/latest/install.html
@@ -13,6 +13,9 @@ apt-get install suricata
 
 
 ```
+
+* default conf dir is /etc/suricata
+* ET Open ruleset is downloaded 
 
 
 ----
