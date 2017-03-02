@@ -49,7 +49,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 11:00 - 11:45 [LUA scripts in the rules]
 
 
-* 13:00 - 13:45 [loading pcaps]
+* 13:00 - 13:45 [Loading pcaps](/Suricata/suricata/LoadPcaps.md)
 * 14:00 - 14:45 [flow]
 * 15:00 - 15:45 [files]
 * 16:00 - 16:45 [lua output]
