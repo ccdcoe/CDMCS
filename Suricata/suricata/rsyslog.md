@@ -33,3 +33,6 @@ sudo service rsyslog restart
 ```
 grep rsyslogd /var/log/syslog
 ```
+
+----
+Next -> [Rsyslog filtering](rsyslog2ela.md)
