@@ -2,7 +2,7 @@
 
 > Do not write rules, buy from professionals !
 
-see https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Suricata_Rules
+see http://suricata.readthedocs.io/en/latest/rules/intro.html
 
 ```
 alert tcp any any -> any 443 (msg:"SURICATA Port 443 but not SSL/TLS"; app-layer-protocol:!tls; threshold: type limit, track by_src, seconds 180, count 1; classtype:bad-unknown;  sid:990001;)
