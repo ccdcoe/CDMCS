@@ -13,7 +13,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 
 #set versions here
-SCIRIUS="scirius_1.1.99-1_amd64.deb"
+SCIRIUS="scirius_1.2.0-1_amd64.deb"
 EVEBOX="evebox_0.6.0dev~dev20170223182129_amd64.deb"
 ELASTICSEARCH="elasticsearch-5.2.1.deb"
 
@@ -97,7 +97,9 @@ done
 
 #Scirius
 apt-get -y install supervisor  gunicorn sqlite3 python-lockfile python-docutils docutils-common python-daemon python-pyinotify dbconfig-common
-[[ -f $SCIRIUS ]] ||wget  -q -4 http://dl.stamus-networks.com/scirius/trainings/$SCIRIUS
+
+#[[ -f $SCIRIUS ]] ||wget  -q -4 http://dl.stamus-networks.com/scirius/trainings/$SCIRIUS
+[[ -f $SCIRIUS ]] ||wget  -q -4 http://packages.stamus-networks.com/generic/pool/main/s/scirius/$SCIRIUS
 dpkg -i $SCIRIUS
 
 cat > /etc/supervisor/conf.d/scirius-supervisor.conf <<EOF
@@ -112,6 +114,8 @@ stderr_logfile=/var/log/scirius-error.log
 autostart=true
 autorestart=true
 EOF
+
+
 
 echo "DONE :: start $start end $(date)"
 SCRIPT
