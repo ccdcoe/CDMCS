@@ -96,11 +96,12 @@ sleep 1
 done
 
 #Scirius
-apt-get -y install supervisor  gunicorn sqlite3 python-lockfile python-docutils docutils-common python-daemon python-pyinotify dbconfig-common
+echo "$(date) installing Scirius"
+apt-get -y install nginx supervisor  gunicorn sqlite3 python-lockfile python-docutils docutils-common python-daemon python-pyinotify dbconfig-common
 
 #[[ -f $SCIRIUS ]] ||wget  -q -4 http://dl.stamus-networks.com/scirius/trainings/$SCIRIUS
 [[ -f $SCIRIUS ]] ||wget  -q -4 http://packages.stamus-networks.com/generic/pool/main/s/scirius/$SCIRIUS
-dpkg -i $SCIRIUS
+dpkg -i $SCIRIUS > /dev/null 2>&1
 
 cat > /etc/supervisor/conf.d/scirius-supervisor.conf <<EOF
 [program:scirius]
@@ -150,8 +151,9 @@ systemctl start supervisor.service
 supervisorctl reread
 supervisorctl update
 supervisorctl restart scirius
+systemctl enable nginx
 systemctl restart nginx
-systemctl enable supervisor.service
+
 
 echo "DONE :: start $start end $(date)"
 SCRIPT
