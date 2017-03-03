@@ -115,7 +115,43 @@ autostart=true
 autorestart=true
 EOF
 
+cat > /etc/nginx/sites-available/stamus.conf <<EOF
+server {
+   listen 192.168.10.11:80;
+   access_log /var/log/nginx/scirius.access.log;
+   error_log /var/log/nginx/scirius.error.log;
+   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
+   location /static/ { # STATIC_URL
+       alias /var/lib/scirius/static/; # STATIC_ROOT
+       expires 30d;
+   }
+   location /media/ { # MEDIA_URL
+       alias /var/lib/scirius/static/; # MEDIA_ROOT
+       expires 30d;
+   }
+   location / {
+       proxy_pass http://127.0.0.1:8000;
+       proxy_read_timeout 600;
+       proxy_set_header Host \\$http_host;
+       #proxy_set_header X-Forwarded-Proto https;
+       proxy_redirect off;
+   }
+}
+EOF
+ln -s /etc/nginx/sites-available/stamus.conf /etc/nginx/sites-enabled/stamus.conf
 
+chown www-data /var/log/scirius*
+chown www-data /tmp/scirius_error_logs.log
+
+
+
+systemctl enable supervisor.service
+systemctl start supervisor.service
+supervisorctl reread
+supervisorctl update
+supervisorctl restart scirius
+systemctl restart nginx
+systemctl enable supervisor.service
 
 echo "DONE :: start $start end $(date)"
 SCRIPT
