@@ -153,6 +153,11 @@ python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on
 python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
 
+# fix /etc/scirius/local_settings.py set evebox stuffff
+#sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
+
+echo 'ELASTICSEARCH_LOGSTASH_INDEX="evebox-"' >> /etc/scirius/local_settings.py
+
 
 systemctl enable supervisor.service
 systemctl start supervisor.service
