@@ -18,6 +18,7 @@ EVEBOX="evebox_0.6.0dev~dev20170223182129_amd64.deb"
 ELASTICSEARCH="elasticsearch-5.2.1.deb"
 TELEGRAF="telegraf_1.2.1_amd64.deb"
 INFLUXDB="influxdb_1.2.0_amd64.deb"
+GRAFANA="grafana_4.1.2-1486989747_amd64.deb"
 
 cd /vagrant
 
@@ -118,6 +119,24 @@ do
 nmap -p 22,80,443 --script=banner $ip > /dev/null &
 sleep 1
 done
+
+# grafana
+apt-get -y install libfontconfig > /dev/null 2>&1
+[[ -f $GRAFANA ]] || wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
+dpkg -i $GRAFANA > /dev/null 2>&1
+service grafana-server start
+sleep 1
+service grafana-server status | grep Active
+curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content-Type: application/json" -d '{
+    "name": "telegraf",
+    "type": "influxdb",
+    "access": "proxy",
+    "url": "http://localhost:8086",
+    "database": "telegraf",
+    "isDefault": true
+}'
+
+
 
 #Scirius
 echo "$(date) installing Scirius"
