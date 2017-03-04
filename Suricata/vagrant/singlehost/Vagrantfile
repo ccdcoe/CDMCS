@@ -31,11 +31,10 @@ systemctl stop telegraf
 cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.net]]
 [[inputs.netstat]]
-[[inputs.nginx]]
-  urls = ["http://localhost/status"]
 EOF
 systemctl enable telegraf  > /dev/null 2>&1
 systemctl start telegraf
+usermod -a -G adm telegraf
 
 echo "$(date) installing influxdb"
 [[ -f $INFLUXDB ]] || wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
@@ -77,6 +76,12 @@ touch  /etc/suricata//threshold.config
 [[ $(suricata -T) ]] || exit -1
 systemctl enable suricata > /dev/null 2>&1
 systemctl start suricata
+chown root:adm /var/run/*.pid
+cat >> /etc/telegraf/telegraf.conf <<EOF
+[[inputs.procstat]]
+    pid_file = "/var/run/suricata.pid"
+EOF
+systemctl restart telegraf
 
 # evebox
 echo "$(date) installing GeoLite2"
@@ -124,9 +129,9 @@ done
 apt-get -y install libfontconfig > /dev/null 2>&1
 [[ -f $GRAFANA ]] || wget -q -4 https://grafanarel.s3.amazonaws.com/builds/$GRAFANA
 dpkg -i $GRAFANA > /dev/null 2>&1
-service grafana-server start
+systemctl enable grafana-server > /dev/null 2>&1
+systemctl start grafana-server
 sleep 1
-service grafana-server status | grep Active
 curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content-Type: application/json" -d '{
     "name": "telegraf",
     "type": "influxdb",
@@ -190,6 +195,13 @@ server {
 }
 EOF
 ln -s /etc/nginx/sites-available/stamus.conf /etc/nginx/sites-enabled/stamus.conf
+systemctl enable nginx > /dev/null 2>&1
+systemctl restart nginx
+cat >> /etc/telegraf/telegraf.conf <<EOF
+[[inputs.nginx]]
+  urls = ["http://localhost/status"]
+EOF
+systemctl restart telegraf
 
 chown www-data /var/log/scirius*
 chown www-data /tmp/scirius_error_logs.log
@@ -212,8 +224,7 @@ systemctl start supervisor.service
 supervisorctl reread
 supervisorctl update
 supervisorctl restart scirius
-systemctl enable nginx > /dev/null 2>&1
-systemctl restart nginx
+
 
 echo "DONE :: start $start end $(date)"
 netstat -ntple
