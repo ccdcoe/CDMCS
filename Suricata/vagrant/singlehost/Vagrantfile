@@ -22,7 +22,7 @@ INFLUXDB="influxdb_1.2.0_amd64.deb"
 cd /vagrant
 
 echo "$(date) updating apt repo"
-apt-get update
+apt-get update > /dev/null 2>&1
 echo "$(date) installing telegraf"
 [[ -f $TELEGRAF ]] || wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
 dpkg -i $TELEGRAF > /dev/null 2>&1
@@ -161,6 +161,13 @@ server {
        #proxy_set_header X-Forwarded-Proto https;
        proxy_redirect off;
    }
+   location /status {
+                stub_status on;
+                access_log off;
+                allow 127.0.0.1;
+                allow 192.168.10.11;
+                deny all;
+        }
 }
 EOF
 ln -s /etc/nginx/sites-available/stamus.conf /etc/nginx/sites-enabled/stamus.conf
