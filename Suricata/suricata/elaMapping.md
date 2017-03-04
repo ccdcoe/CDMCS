@@ -85,7 +85,8 @@ curl -XGET localhost:9200/_template
 curl -XPUT localhost:9200/_template/default -d @default.json
 ```
 
-## Reindex API
+## Reindex and update_by_query API
 
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html

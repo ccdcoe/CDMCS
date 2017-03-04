@@ -166,100 +166,17 @@ curl -XGET localhost:9200/suricata-index/_search?pretty -d '{"size": 2}'
 curl -XGET localhost:9200/suricata-index/_mapping?pretty
 ```
 
-# Fixing mappings
-
-* https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html
-
-```
-curl -XGET localhost:9200/_template
-```
-
 ```
 {
- "order" : 10,
- "version" : 0,
- "template" : "suricata-*",
- "mappings" : {
-   "_default_" : {
-     "properties" : {
-       "alert": {
-         "properties": {
-           "gid": { "type": "integer" },
-           "rev": { "type": "integer" },
-           "severity": { "type": "integer" },
-           "signature_id": { "type": "integer" }
-         }
-       },
-       "dest_geoip": {
-         "properties": {
-           "location" : { "type" : "geo_point" }
-         }
-       },
-       "dest_ip": { "type": "ip" },
-       "dest_port": { "type": "integer" },
-       "dns": {
-         "properties": {
-           "id": { "type": "integer" },
-           "ttl": { "type": "integer" },
-           "tx_id": { "type": "integer" }
-         }
-       },
-       "fileinfo": {
-         "properties": {
-           "size": { "type": "integer" },
-           "stored": { "type": "boolean" },
-           "tx_id": { "type": "integer" }
-         }
-       },
-       "flow_id": { "type": "long" },
-       "http": {
-         "properties": {
-           "length": { "type": "integer" },
-           "status": { "type": "integer" }
-         }
-       },
-       "icmp_code": { "type": "integer" },
-       "icmp_type": { "type": "integer" },
-       "packet": { "type": "binary" },
-       "packet_info": {
-         "properties": {
-           "linktype": { "type": "integer" }
-         }
-       },
-       "payload": { "type": "binary" },
-       "src_geoip": {
-         "properties": {
-           "location" : { "type" : "geo_point" }
-         }
-       },
-       "src_ip": { "type": "ip" },
-       "src_port": { "type": "integer" },
-       "ssh": {
-         "properties": {
-           "client": {
-             "properties": {
-               "proto_version": { "type": "double" }
-             }
-           },
-           "server": {
-             "properties": {
-               "proto_version": { "type": "double" }
-             }
-           }
-         }
-       },
-       "stream": { "type": "integer" },
-       "timestamp": { "type": "date" },
-       "tls": {
-         "properties": {
-           "notafter": { "type": "date" },
-           "notbefore": { "type": "date" }
-         }
-       },
-       "tx_id": { "type": "integer" }
-     }
-   }
- },
- "aliases" : { }
+  "size": 2,
+  "query": {
+    "term": {
+      "event_type": "alert"
+    }
+  }
 }
+```
+
+```
+curl -XGET localhost:9200/suricata-index/_search?pretty -d @search.json
 ```
