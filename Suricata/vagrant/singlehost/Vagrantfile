@@ -203,9 +203,14 @@ cat >> /etc/telegraf/telegraf.conf <<EOF
 EOF
 systemctl restart telegraf
 
-chown www-data /var/log/scirius*
-chown www-data /tmp/scirius_error_logs.log
+#chown www-data /var/log/scirius*
+#chown www-data /tmp/scirius_error_logs.log
+# fix /etc/scirius/local_settings.py set evebox stuffff
+#sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
+echo 'ELASTICSEARCH_LOGSTASH_INDEX = "evebox-"' >> /etc/scirius/local_settings.py
+echo 'USE_INFLUXDB = True' >> /etc/scirius/local_settings.py
 
+# adding sources to rulesets
 source /usr/share/python/scirius/bin/activate
 python /usr/share/python/scirius/bin/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-3.0/emerging.rules.tar.gz http sigs
 python /usr/share/python/scirius/bin/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
@@ -213,11 +218,6 @@ python /usr/share/python/scirius/bin/manage.py defaultruleset "CDMCS ruleset"
 python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
 python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
-
-# fix /etc/scirius/local_settings.py set evebox stuffff
-#sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
-echo 'ELASTICSEARCH_LOGSTASH_INDEX = "evebox-"' >> /etc/scirius/local_settings.py
-echo 'USE_INFLUXDB = True' >> /etc/scirius/local_settings.py
 
 systemctl enable supervisor.service > /dev/null 2>&1
 systemctl start supervisor.service
