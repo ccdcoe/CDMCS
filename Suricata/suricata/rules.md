@@ -7,9 +7,6 @@ see also:
 * [Writing a rule](writing.first.rule.md)
 * [Profiling](rules.profiling.md)
 
-
-
-
 ----
 
 Next -> [ethtool](ethtool.md)
