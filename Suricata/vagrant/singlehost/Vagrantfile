@@ -22,6 +22,7 @@ GRAFANA="grafana_4.1.2-1486989747_amd64.deb"
 cd /vagrant
 
 echo "$(date) updating apt repo"
+add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
 apt-get update > /dev/null 2>&1
 echo "$(date) installing telegraf"
 [[ -f $TELEGRAF ]] || wget  -q -4 https://dl.influxdata.com/telegraf/releases/$TELEGRAF
@@ -54,8 +55,8 @@ systemctl start elasticsearch
 
 #suricata
 echo "$(date) installing Suricata"
-add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
-apt-get update > /dev/null 2>&1
+#add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
+#apt-get update > /dev/null 2>&1
 apt-get -y install suricata > /dev/null 2>&1
 systemctl stop suricata
 
@@ -146,7 +147,7 @@ curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content
 
 #Scirius
 echo "$(date) installing Scirius"
-apt-get -y install nginx supervisor gunicorn sqlite3 python-lockfile python-docutils docutils-common python-daemon python-pyinotify dbconfig-common python-influxdb
+apt-get -y install nginx supervisor gunicorn sqlite3 python-lockfile python-docutils docutils-common python-daemon python-pyinotify dbconfig-common python-influxdb > /dev/null 2>&1
 
 #[[ -f $SCIRIUS ]] ||wget  -q -4 http://dl.stamus-networks.com/scirius/trainings/$SCIRIUS
 [[ -f $SCIRIUS ]] ||wget  -q -4 http://packages.stamus-networks.com/generic/pool/main/s/scirius/$SCIRIUS
