@@ -11,7 +11,6 @@ sysctl -p
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
-
 #set versions here
 SCIRIUS="scirius_1.2.0-1_amd64.deb"
 EVEBOX="evebox_0.6.0dev~dev20170223182129_amd64.deb"
@@ -207,6 +206,8 @@ systemctl restart nginx
 cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.nginx]]
   urls = ["http://localhost/status"]
+[[inputs.procstat]]
+    pid_file = "/var/run/nginx.pid"
 EOF
 systemctl restart telegraf
 
