@@ -39,7 +39,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 13:00 - 13:45 [elasticsearch]
 * 14:00 - 14:45 [scirius]
 * 15:00 - 15:45 [evebox]
-* 16:00 - 16:45 [kibana]
+* 16:00 - 16:45 [Kibana](/common/kibana.md)
 
 
 ## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Mar 9 2017
