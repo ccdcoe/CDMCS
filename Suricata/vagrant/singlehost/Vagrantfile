@@ -93,22 +93,14 @@ gunzip GeoLite2-City.mmdb.gz --stdout > /usr/local/share/GeoIP/GeoLite2-City.mmd
 echo "$(date) installing evebox"
 [[ -f $EVEBOX ]] ||wget  -q -4 https://bintray.com/jasonish/evebox-development-debian/download_file?file_path=$EVEBOX -O $EVEBOX
 dpkg -i $EVEBOX > /dev/null 2>&1
-
 echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
 cp /etc/default/evebox /etc/default/evebox-esimport
-
-#create template
-#export ELASTICSEARCH_INDEX="evebox"
-#evebox esimport --verbose --oneshot --elasticsearch http://localhost:9200 /var/log/suricata/eve.json
-
 cat > /lib/systemd/system/evebox-esimport.service <<EOF
 [Unit]
 Description=EveBox-EsImport
-
 [Service]
-ExecStart=/usr/bin/evebox esimport \\$ELASTICSEARCH_URL \\$CONFIG \\$EVEBOX_OPTS --end /var/log/suricata/eve.json
+ExecStart=/usr/bin/evebox esimport \\$ELASTICSEARCH_URL \\$CONFIG \\$EVEBOX_OPTS --index \\$ELASTICSEARCH_INDEX --end /var/log/suricata/eve.json
 EnvironmentFile=-/etc/default/evebox-esimport
-
 [Install]
 WantedBy=multi-user.target
 EOF
