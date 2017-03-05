@@ -33,14 +33,16 @@ cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.netstat]]
 EOF
 systemctl enable telegraf  > /dev/null 2>&1
-systemctl start telegraf
 usermod -a -G adm telegraf
+systemctl start telegraf
+
 
 echo "$(date) installing influxdb"
 [[ -f $INFLUXDB ]] || wget  -q -4 https://dl.influxdata.com/influxdb/releases/$INFLUXDB
 dpkg -i $INFLUXDB > /dev/null 2>&1
 systemctl enable influxdb  > /dev/null 2>&1
 systemctl start influxdb
+
 
 echo "$(date) installing openjdk-8-jre-headless"
 apt-get -y install openjdk-8-jre-headless > /dev/null 2>&1
@@ -185,13 +187,18 @@ server {
        #proxy_set_header X-Forwarded-Proto https;
        proxy_redirect off;
    }
-   location /status {
-                stub_status on;
-                access_log off;
-                allow 127.0.0.1;
-                allow 192.168.10.11;
-                deny all;
-        }
+}
+EOF
+cat > /etc/nginx/sites-available/default.conf <<EOF
+server {
+  listen 127.0.0.1:80;
+  location /status {
+               stub_status on;
+               access_log off;
+               allow 127.0.0.1;
+               allow 192.168.10.11;
+               deny all;
+       }
 }
 EOF
 ln -s /etc/nginx/sites-available/stamus.conf /etc/nginx/sites-enabled/stamus.conf
