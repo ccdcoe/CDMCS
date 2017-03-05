@@ -121,7 +121,7 @@ systemctl start evebox
 
 # create some noise ...
 echo "$(date) generation some alert traffic"
-apt-get -y install nmap > /dev/null &
+apt-get -y install nmap > /dev/null 2>&1
 grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1000 | tail| while read ip;
 do
 nmap -p 22,80,443 --script=banner $ip > /dev/null &
