@@ -224,7 +224,7 @@ python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
 
 systemctl enable supervisor.service > /dev/null 2>&1
-systemctl start supervisor.service
+systemctl start supervisor.service > /dev/null 2>&1
 supervisorctl reread
 supervisorctl update
 supervisorctl restart scirius
