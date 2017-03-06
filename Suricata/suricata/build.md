@@ -106,4 +106,4 @@ make distclean
 ```
 
 ---
-[next : Single host configuration](/config.md)
+[next : Configuration](/Suricata/suricata/config.md)
