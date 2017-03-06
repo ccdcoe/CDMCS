@@ -216,8 +216,8 @@ systemctl restart telegraf
 # fix /etc/scirius/local_settings.py set evebox stuffff
 #sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
 echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
+echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
 echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
-echo 'USE_INFLUXDB = True' >> /etc/scirius/local_settings.py
 
 # adding sources to rulesets
 source /usr/share/python/scirius/bin/activate
