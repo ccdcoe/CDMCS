@@ -18,6 +18,7 @@ ELASTICSEARCH="elasticsearch-5.2.1.deb"
 TELEGRAF="telegraf_1.2.1_amd64.deb"
 INFLUXDB="influxdb_1.2.0_amd64.deb"
 GRAFANA="grafana_4.1.2-1486989747_amd64.deb"
+KIBANA="kibana-5.2.2-amd64.deb"
 
 cd /vagrant
 
@@ -72,6 +73,10 @@ af-packet:
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
+default-rule-path: /etc/suricata/rules
+rule-files:
+ - scirius.rules
+sensor-name: suricata
 EOF
 touch  /etc/suricata//threshold.config
 #suricata -T -vvv
@@ -183,7 +188,7 @@ server {
    }
 }
 EOF
-cat > /etc/nginx/sites-available/default.conf <<EOF
+cat > /etc/nginx/sites-available/default <<EOF
 server {
   listen 127.0.0.1:80;
   location /status {
@@ -211,7 +216,9 @@ systemctl restart telegraf
 # fix /etc/scirius/local_settings.py set evebox stuffff
 #sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
 echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
-echo 'USE_INFLUXDB = True' >> /etc/scirius/local_settings.py
+echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> /etc/scirius/local_settings.py
 
 # adding sources to rulesets
 source /usr/share/python/scirius/bin/activate
@@ -222,11 +229,22 @@ python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on
 python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
 
+chown -R www-data:www-data /etc/suricata/rules/
+chown -R www-data:www-data /var/lib/scirius/
+
 systemctl enable supervisor.service > /dev/null 2>&1
-systemctl start supervisor.service
+systemctl start supervisor.service > /dev/null 2>&1
 supervisorctl reread
 supervisorctl update
 supervisorctl restart scirius
+
+#kibana
+[[ -f $KIBANA ]] || wget -q -4 https://artifacts.elastic.co/downloads/kibana/$KIBANA
+dpkg -i $KIBANA > /dev/null 2>&1
+echo 'server.host: "0.0.0.0"' >> /etc/kibana/kibana.yml
+systemctl enable kibana > /dev/null 2>&1
+systemctl start kibana
+
 
 
 echo "DONE :: start $start end $(date)"
