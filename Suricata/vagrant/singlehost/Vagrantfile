@@ -18,6 +18,7 @@ ELASTICSEARCH="elasticsearch-5.2.1.deb"
 TELEGRAF="telegraf_1.2.1_amd64.deb"
 INFLUXDB="influxdb_1.2.0_amd64.deb"
 GRAFANA="grafana_4.1.2-1486989747_amd64.deb"
+KIBANA="kibana-5.2.2-amd64.deb"
 
 cd /vagrant
 
@@ -227,6 +228,14 @@ systemctl start supervisor.service
 supervisorctl reread
 supervisorctl update
 supervisorctl restart scirius
+
+#kibana
+[[ -f $KIBANA ]] || wget -q -4 https://artifacts.elastic.co/downloads/kibana/$KIBANA
+dpkg -i $KIBANA > /dev/null 2>&1
+#echo 'elasticsearch.url: "http://192.168.10.11:9200"' >> /etc/kibana/kibana.yml
+systemctl enable kibana > /dev/null 2>&1
+systemctl start kibana
+
 
 
 echo "DONE :: start $start end $(date)"
