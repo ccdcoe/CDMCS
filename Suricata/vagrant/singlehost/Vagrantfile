@@ -184,7 +184,7 @@ server {
    }
 }
 EOF
-cat > /etc/nginx/sites-available/default.conf <<EOF
+cat > /etc/nginx/sites-available/default <<EOF
 server {
   listen 127.0.0.1:80;
   location /status {
