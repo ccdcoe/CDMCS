@@ -218,6 +218,7 @@ systemctl restart telegraf
 echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
 echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
 echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> /etc/scirius/local_settings.py
 
 # adding sources to rulesets
 source /usr/share/python/scirius/bin/activate
