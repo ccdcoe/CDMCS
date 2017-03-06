@@ -73,6 +73,10 @@ af-packet:
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
+default-rule-path: /etc/suricata/rules
+rule-files:
+ - scirius.rules
+sensor-name: suricata
 EOF
 touch  /etc/suricata//threshold.config
 #suricata -T -vvv
@@ -212,6 +216,7 @@ systemctl restart telegraf
 # fix /etc/scirius/local_settings.py set evebox stuffff
 #sed -i -e 's,logstash,evebox,g' /etc/scirius/local_settings.py
 echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
 echo 'USE_INFLUXDB = True' >> /etc/scirius/local_settings.py
 
 # adding sources to rulesets
@@ -222,6 +227,8 @@ python /usr/share/python/scirius/bin/manage.py defaultruleset "CDMCS ruleset"
 python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
 python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
+
+chown -R www-data:www-data /etc/suricata/rules/
 
 systemctl enable supervisor.service > /dev/null 2>&1
 systemctl start supervisor.service > /dev/null 2>&1
