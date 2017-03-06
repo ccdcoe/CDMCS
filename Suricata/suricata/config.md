@@ -22,11 +22,10 @@ grep -v -E '^\s*#' /etc/suricata/suricata.yaml
 grep -v -E '^\s*#' /etc/suricata/suricata.yaml | grep -v '^$'
 ```
 
-## HOME_NET and other vars
+## Example HOME_NET and other vars
 
 ```
 vars:
-  # more specifc is better for alert accuracy and performance
   address-groups:
     HOME_NET: "[198.18.0.0/22,2a07:1181:140::0/44,100.64.0.0/22,2a07:1181:120::0/64,100.64.134.0/24,2a07:1181:121::0/64,10.242.4.0/24,2a07:1181:130:3604::0/64,10.242.5.0/24,2a07:1181:130:3605::0/64,10.242.6.0/24,2a07:1181:130:3606::0/64,10.242.7.0/24,2a07:1181:130:3607::0/64]"
     EXTERNAL_NET: "!$HOME_NET"
@@ -50,7 +49,6 @@ vars:
     SSH_PORTS: 22
     DNP3_PORTS: 20000
     MODBUS_PORTS: 502
-
 ```
 
 
