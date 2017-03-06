@@ -230,6 +230,7 @@ python /usr/share/python/scirius/bin/manage.py updatesuricata
 deactivate
 
 chown -R www-data:www-data /etc/suricata/rules/
+chown -R www-data:www-data /var/lib/scirius/
 
 systemctl enable supervisor.service > /dev/null 2>&1
 systemctl start supervisor.service > /dev/null 2>&1
