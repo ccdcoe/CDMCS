@@ -232,7 +232,7 @@ supervisorctl restart scirius
 #kibana
 [[ -f $KIBANA ]] || wget -q -4 https://artifacts.elastic.co/downloads/kibana/$KIBANA
 dpkg -i $KIBANA > /dev/null 2>&1
-#echo 'elasticsearch.url: "http://192.168.10.11:9200"' >> /etc/kibana/kibana.yml
+echo 'server.host: "0.0.0.0"' >> /etc/kibana/kibana.yml
 systemctl enable kibana > /dev/null 2>&1
 systemctl start kibana
 
