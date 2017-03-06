@@ -1,4 +1,4 @@
-# make install-full
+# Run 'make install-full' to install configuration and rules
 
 ```
 root@secx:/home/student/oisf# make install-full
@@ -7,7 +7,7 @@ Making install in libhtp
 ...
 
 install -d "/usr/local/etc/suricata/rules"
-/usr/bin/wget -qO - http://rules.emergingthreats.net/open/suricata-2.0/emerging.rules.tar.gz | tar -x -z -C "/usr/local/etc/suricata/" -f -
+/usr/bin/wget -qO - https://rules.emergingthreats.net/open/suricata-3.0/emerging.rules.tar.gz | tar -x -z -C "/usr/local/etc/suricata/" -f -
 
 You can now start suricata by running as root something like '/usr/local/bin/suricata -c /usr/local/etc/suricata//suricata.yaml -i eth0'.
 
