@@ -16,6 +16,10 @@ echo "$(date) installing telegraf host: $(hostname) $SALTMINIONID influxdb: $INF
 dpkg -i /vagrant/telegraf_1.2.1_amd64.deb > /dev/null 2>&1
 service telegraf stop > /dev/null 2>&1
 sed -i -e 's,"http://localhost:8086"],"http://'${INFLUXDB}':8086"],g' /etc/telegraf/telegraf.conf
+cat >> /etc/telegraf/telegraf.conf <<EOF
+[[inputs.net]]
+[[inputs.netstat]]
+EOF
 service telegraf start > /dev/null 2>&1
 
 # exit with error if salt minion service is not running
