@@ -5,6 +5,9 @@ rules:
 * https://github.com/ptresearch/AttackDetection#suricata-pt-open-ruleset
 * MISP (https://github.com/MISP/MISP/issues/7)
 
+"installing" rules:
+* https://github.com/inliniac/suricata/blob/master/Makefile.am#L31
+
 rule managers:
 * [oinkmaster](http://oinkmaster.sourceforge.net/)
 * [baconator](https://code.google.com/archive/p/baconator/wikis/About.wiki)
