@@ -1,9 +1,9 @@
 # Suricata rules
 
 see:
+* [oinkmaster](http://oinkmaster.sourceforge.net/)
 * [baconator](https://code.google.com/archive/p/baconator/wikis/About.wiki)
 * [pulledpork](https://code.google.com/archive/p/pulledpork/wikis/Timeline.wiki)
-* [oinkmaster](http://oinkmaster.sourceforge.net/)
 * ..
 * [scirius](Suricata/scirius/README.md)
 
