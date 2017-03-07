@@ -3,7 +3,9 @@
 rules:
 * https://rules.emergingthreats.net/open/suricata-3.0/
 * https://github.com/ptresearch/AttackDetection#suricata-pt-open-ruleset
-* MISP (https://github.com/MISP/MISP/issues/7)
+* "generators"
+  * https://github.com/conix-security/bl2ru2
+  * MISP (https://github.com/MISP/MISP/issues/7)
 
 "installing" rules:
 * https://github.com/inliniac/suricata/blob/master/Makefile.am#L31
