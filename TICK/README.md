@@ -57,8 +57,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Day +1 :: :: Feb 17 2017 end at 12:00
 
 * 09:00 - 09:45 []()
-* 10:00 - 10:45[]()
-* 11:00 - 12:00[feedback, contact exchange, thanks, etc]()
+* 10:00 - 10:45 []()
+* 11:00 - 12:00 [feedback, contact exchange, thanks, etc.]()
 
 ---
 ## Before You Come To Class please browse trough ..
