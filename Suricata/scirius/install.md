@@ -1,5 +1,8 @@
 # Scirius install on Debian | Ubuntu
 
+
+before install please see [installing elasticsearch](/common/elastic.install.md)
+
 see:
 
 * https://github.com/StamusNetworks/scirius#installation-and-setup
