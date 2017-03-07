@@ -81,9 +81,11 @@ EOF
 touch  /etc/suricata//threshold.config
 #suricata -T -vvv
 [[ $(suricata -T) ]] || exit -1
+#Fixed some weird systemd/init.d daemon pid file creating behavior. PID file in /var/run/ should be readable by all. 
+sed -i -e 's/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log  2>\\&1 \\&/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log 2>\\&1\\n       chmod 644 $PIDFILE > \\/dev\\/null 2>\\&1 || true/' /etc/init.d/suricata
+systemctl daemon-reload
 systemctl enable suricata > /dev/null 2>&1
 systemctl start suricata
-chown root:adm /var/run/*.pid
 cat >> /etc/telegraf/telegraf.conf <<EOF
 [[inputs.procstat]]
     pid_file = "/var/run/suricata.pid"
