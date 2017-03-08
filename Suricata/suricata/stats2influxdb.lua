@@ -31,6 +31,11 @@ function setup (args)
     top_pps = 0
     top_pps_nodrops = 0
     min_pps_drops = 0
+    influx_host = "10.244.1.190"
+    influx_port = 8086
+    influx_db = "telegraf"
+    sensor_name = "suricata-1"
+
 end
 
 function store_values (t, v)
@@ -208,23 +213,32 @@ function log(args)
         end
     end
 
-    str = string.format("Volume: %.3f Mbit/s %.3f Gbit/s", mbitps_read, gbitps_read);
-    SCLogInfo(str);
-    table.insert(points, "suricata bitps=" .. bitps_read)
-
+--    str = string.format("Volume: %.3f Mbit/s %.3f Gbit/s",
+--      mbitps_read,
+--      gbitps_read);
+--    SCLogInfo(str);
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  bitps=" .. bitps_read)
 
     total = t.decoder_pkts + t.capture_merged_drops
-    str = string.format("Packets: %d (%2.1f%%) processed (%d pps), %d dropped, %d drops/s (%2.1f%%)", t.decoder_pkts, (t.decoder_pkts / total * 100), pps_read, t.capture_merged_drops, pps_dropped, (t.capture_merged_drops / total * 100));
-    SCLogInfo(str);
-    table.insert(points, "suricata packets=" .. t.decoder_pkts)
-    table.insert(points, "suricata pps=" .. pps_read)
-    table.insert(points, "suricata dropped=" .. pps_dropped)
-    table.insert(points, "suricata drops=" .. (t.capture_merged_drops / total * 100))
+--    str = string.format("Packets: %d (%2.1f%%) processed (%d pps), %d dropped, %d drops/s (%2.1f%%)",
+--    t.decoder_pkts,
+--    (t.decoder_pkts / total * 100),
+--    pps_read,
+--    t.capture_merged_drops,
+--    pps_dropped,
+--    (t.capture_merged_drops / total * 100));
+--    SCLogInfo(str);
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. " packets=" .. t.decoder_pkts)
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  pps=" .. pps_read)
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  dropped=" .. pps_dropped)
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  drops=" .. (t.capture_merged_drops / total * 100))
 
-    str = string.format("TCP: sessions %d, with gaps %2.1f%%", t.tcp_sessions, ((t.tcp_reassembly_gap * 2) / t.tcp_sessions) * 100)
-    SCLogInfo(str);
-    table.insert(points, "suricata tcp_sessions=" .. t.tcp_sessions)
-    table.insert(points, "suricata tcp_session_gaps=" .. ((t.tcp_reassembly_gap * 2) / t.tcp_sessions) * 100)
+--    str = string.format("TCP: sessions %d, with gaps %2.1f%%",
+--    t.tcp_sessions,
+--    ((t.tcp_reassembly_gap * 2) / t.tcp_sessions) * 100)
+--    SCLogInfo(str);
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  tcp_sessions=" .. t.tcp_sessions)
+    table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  tcp_session_gaps=" .. ((t.tcp_reassembly_gap * 2) / t.tcp_sessions) * 100)
     local influx_response = write_to_influxdb(points)
     SCLogInfo(tostring(influx_response));
 
