@@ -153,6 +153,12 @@ end
 --
 local http = require("socket.http")
 
+local iint = function(f)
+    -- https://docs.influxdata.com/influxdb/v1.2/write_protocols/line_protocol_tutorial/#data-types
+    --  append an i to the field value to tell InfluxDB to store the number as an integer.
+    return tostring(math.floor(f + 0.49)) .. "i"
+end
+
 function http_post_to_influxdb(measurement, tags, fields, influx_host, influx_port, influx_db)
   -- use some common default values
   local host = influx_host or "127.0.0.1"
@@ -168,7 +174,7 @@ function http_post_to_influxdb(measurement, tags, fields, influx_host, influx_po
   line = line .. " "
   -- https://docs.influxdata.com/influxdb/v1.2/write_protocols/line_protocol_tutorial/#field-set
   for key,value in pairs(fields) do
-    line = line .. key .. "=" .. tostring(value) .. ","
+    line = line .. key .. "=" .. iint(value) .. ","
   end
   -- strip last comma
   line = line:sub(1,-2)
