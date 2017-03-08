@@ -145,13 +145,14 @@ end
 --
 local http = require("socket.http")
 
-function write_to_influxdb(points, influx_host, influx_db)
+function write_to_influxdb(points, influx_host, influx_port, influx_db)
   local host = influx_host or "10.244.1.190"
   local dbname = influx_db or "telegraf"
+  local port = influx_port or "8086"
   if type(points) == "table" then
         points = table.concat(points, "\n")
   end
-  local url = "http://" .. tostring(host) .. "/write?db=" .. tostring(dbname)
+  local url = "http://" .. tostring(host) .. ":" .. tostring(port) .. "/write?db=" .. tostring(dbname)
   return http.request(url, points)
 end
 
