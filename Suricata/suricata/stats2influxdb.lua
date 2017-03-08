@@ -31,6 +31,7 @@ function setup (args)
     top_pps = 0
     top_pps_nodrops = 0
     min_pps_drops = 0
+-- TODO get it from suricata.yaml
     influx_host = "10.244.1.190"
     influx_port = 8086
     influx_db = "telegraf"
@@ -151,7 +152,7 @@ end
 local http = require("socket.http")
 
 function write_to_influxdb(points, influx_host, influx_port, influx_db)
-  local host = influx_host or "10.244.1.190"
+  local host = influx_host or "127.0.0.1"
   local dbname = influx_db or "telegraf"
   local port = influx_port or "8086"
   if type(points) == "table" then
@@ -239,7 +240,7 @@ function log(args)
 --    SCLogInfo(str);
     table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  tcp_sessions=" .. t.tcp_sessions)
     table.insert(points, "suricata,sensor=" .. tostring(sensor_name) .. "  tcp_session_gaps=" .. ((t.tcp_reassembly_gap * 2) / t.tcp_sessions) * 100)
-    local influx_response = write_to_influxdb(points)
+    local influx_response = write_to_influxdb(points,influx_host, influx_port, influx_db)
     SCLogInfo(tostring(influx_response));
 
 
