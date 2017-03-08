@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STUDENTCOUNT=1
+STUDENTCOUNT=19
 
 cd ../students/ || exit
 read -p "Are you sure? " -n 1 -r
