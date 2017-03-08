@@ -15,6 +15,7 @@ bin-release/
 # Other files and folders
 .settings/
 .vagrant/
+students/
 
 # Executables
 *.swf
