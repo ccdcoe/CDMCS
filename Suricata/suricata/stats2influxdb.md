@@ -6,3 +6,7 @@ see:
 * https://github.com/regit/suri-stats
 * https://fauie.com/2016/06/27/suricata-stats-to-influx-dbgrafana/
 * https://github.com/chrisfauerbach/suricata_stats_influx
+
+samples: 
+* [stats2influxdb.lua](stats2influxdb.lua)
+* [stats2influxdb_onelongline.lua](stats2influxdb_onelongline.lua)
