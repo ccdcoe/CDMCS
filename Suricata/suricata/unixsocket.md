@@ -5,6 +5,7 @@
 ### Suricata can listen to a unix socket and accept commands from the user. 
 
 see:
+* https://home.regit.org/2012/09/a-new-unix-command-mode-in-suricata/
 * https://github.com/inliniac/suricata/blob/89ba5816dc303d54741bdfd0a3896c7c1ce50d91/src/unix-manager.c#L922
 * https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Unix_Socket#Protocol
 * https://github.com/inliniac/suricata/tree/master/scripts/suricatasc
