@@ -1,10 +1,14 @@
 # load pcaps
 
 see
- * https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Interacting_via_Unix_Socket
- * https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Multi_Tenancy
  * https://home.regit.org/2012/09/a-new-unix-command-mode-in-suricata/
- * https://www.networktotal.com
+ * http://suricata.readthedocs.io/en/latest/command-line-options.html?highlight=pcap#cmdoption-r
+ * http://suricata.readthedocs.io/en/latest/unix-socket.html?highlight=unix%20socket#pcap-processing-mode
+
+get some pcaps:
+
+* http://suricata.readthedocs.io/en/latest/public-data-sets.html
+* http://www.malware-traffic-analysis.net/training-exercises.html
 
 ## Configuration
 
