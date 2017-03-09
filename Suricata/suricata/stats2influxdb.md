@@ -1,5 +1,7 @@
 # Sending Suricata stats to InfluxDB
 
+http://suricata.readthedocs.io/en/latest/output/lua-output.html
+
 see:
 
 * https://github.com/inliniac/suricata/blob/master/src/log-stats.c
