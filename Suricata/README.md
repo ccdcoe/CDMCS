@@ -44,15 +44,15 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Mar 9 2017
 
-* 09:00 - 09:45 [tuning]
-* 10:00 - 10:45 [multi tenancy ]
-* 11:00 - 11:45 [LUA scripts in the rules]
+* 09:00 - 09:45 [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
+* 10:00 - 11:45 [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
 
 
-* 13:00 - 13:45 [Loading pcaps](/Suricata/suricata/LoadPcaps.md)
-* 14:00 - 14:45 [flow]
-* 15:00 - 15:45 [files]
-* 16:00 - 16:45 [lua output]
+
+* 13:00 - 13:45 [Suricata unix socket](/Suricata/suricata/unixsocket.md)
+* 14:00 - 14:45 [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
+* 15:00 - 15:45 
+* 16:00 - 16:45
 
 ## Day +1 :: :: Mar 10 2017 end at 12:00
 
