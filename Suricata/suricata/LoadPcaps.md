@@ -1,7 +1,7 @@
 # load pcaps
 
 see
- * https://home.regit.org/2012/09/a-new-unix-command-mode-in-suricata/
+
  * http://suricata.readthedocs.io/en/latest/command-line-options.html?highlight=pcap#cmdoption-r
  * http://suricata.readthedocs.io/en/latest/unix-socket.html?highlight=unix%20socket#pcap-processing-mode
 
