@@ -6,6 +6,7 @@
 
 see:
 * https://github.com/inliniac/suricata/blob/89ba5816dc303d54741bdfd0a3896c7c1ce50d91/src/unix-manager.c#L922
+* https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Unix_Socket#Protocol
 * https://github.com/inliniac/suricata/tree/master/scripts/suricatasc
 * http://suricata.readthedocs.io/en/latest/rule-management/rule-reload.html
 * http://suricata.readthedocs.io/en/latest/unix-socket.html
