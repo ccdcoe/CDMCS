@@ -8,5 +8,7 @@ see:
 * https://github.com/chrisfauerbach/suricata_stats_influx
 
 samples: 
+* https://github.com/inliniac/surilua
+* https://gist.github.com/hillar/aeae0b6d12de4ccd8ced
 * [stats2influxdb.lua](stats2influxdb.lua)
 * [stats2influxdb_onelongline.lua](stats2influxdb_onelongline.lua)
