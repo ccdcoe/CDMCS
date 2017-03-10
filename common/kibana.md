@@ -110,3 +110,10 @@ GET suricata-exercise/_search
   }
 }
 ```
+
+## tasks
+
+* Find top signatures per category.
+* Which alerts are boring? Apply filter.
+* Find interesting content in web application alerts. What prompted those alerts?
+* Draw a timeline of attack campaign
