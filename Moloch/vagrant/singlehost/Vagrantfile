@@ -1,6 +1,33 @@
 $provision_script = <<SCRIPT
 
-echo "WOOT!"
+start=$(date)
+
+cat >> /etc/sysctl.conf <<EOF
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+EOF
+sysctl -p
+
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+export DEBIAN_FRONTEND=noninteractive
+
+#set versions here
+#MOLOCH="moloch-nightly_amd64.deb"
+MOLOCH=moloch_0.18.0-1_amd64.deb
+
+cd /vagrant/
+echo "$(date) installing moloch"
+apt-get -y install libwww-perl libjson-perl
+[[ -f $MOLOCH ]] || wget  -q -4 http://files.molo.ch/builds/ubuntu-16.04/$MOLOCH
+#dpkg -i $MOLOCH || exit -1
+#mv /data/moloch-nightly/ /data/moloch
+confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev)
+
+echo -en "enp0s3,enp0s8,lo\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
+
+echo "DONE :: start $start end $(date)"
+netstat -ntple
 
 SCRIPT
 
