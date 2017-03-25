@@ -1,0 +1,18 @@
+$provision_script = <<SCRIPT
+
+echo "dummy"
+
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'dummy' do |box|
+      box.vm.box = "ubuntu/xenial64"
+      box.vm.hostname = 'dummy'
+      box.vm.network :private_network, ip: "192.168.10.10"
+      box.vm.provider :virtualbox do |vb|
+       vb.customize ["modifyvm", :id, "--memory", "2048"]
+       vb.customize ["modifyvm", :id, "--cpus", "2"]
+      end
+      config.vm.provision "shell", inline: $provision_script
+  end
+end
