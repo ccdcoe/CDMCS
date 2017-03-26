@@ -17,6 +17,8 @@ export DEBIAN_FRONTEND=noninteractive
 MOLOCH=moloch_0.18.0-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
 
+cd /vagrant/
+
 echo "$(date) installing java"
 add-apt-repository ppa:webupd8team/java > /dev/null 2>&1
 apt-get update > /dev/null 2>&1
@@ -26,21 +28,33 @@ apt-get -y install oracle-java8-installer > /dev/null 2>&1
 echo "$(date) installing Elasticsearch"
 [[ -f $ELASTICSEARCH ]] || wget  -q -4 https://artifacts.elastic.co/downloads/elasticsearch/$ELASTICSEARCH
 dpkg -i $ELASTICSEARCH > /dev/null 2>&1
-
 sed -i -e 's,-Xms2g,-Xms256m,g' /etc/elasticsearch/jvm.options
 sed -i -e 's,-Xmx2g,-Xmx256m,g' /etc/elasticsearch/jvm.options
 systemctl enable elasticsearch > /dev/null 2>&1
 systemctl start elasticsearch
 
-cd /vagrant/
 echo "$(date) installing moloch"
 apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
 [[ -f $MOLOCH ]] || wget  -q -4 http://files.molo.ch/builds/ubuntu-16.04/$MOLOCH
-#dpkg -i $MOLOCH || exit -1
-#mv /data/moloch-nightly/ /data/moloch
 confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev)
+echo "$confcmd"
+echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
 
-echo -en "enp0s3,enp0s8,lo\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
+until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s'
+do
+  echo "Waiting for ES to start"
+  sleep 1
+done
+
+/data/moloch/db/db.pl http://localhost:9200 init
+/data/moloch/bin/moloch_add_user.sh admin "Admin User" THEPASSWORD --admin
+
+systemctl enable molochviewer.service
+systemctl start molochviewer.service
+
+ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
+ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
+
 
 echo "DONE :: start $start end $(date)"
 netstat -ntple
