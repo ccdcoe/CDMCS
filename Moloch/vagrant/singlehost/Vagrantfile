@@ -39,23 +39,18 @@ apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
 confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev)
 echo "$confcmd"
 echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
-
 until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s'
 do
   echo "Waiting for ES to start"
   sleep 1
 done
-
 /data/moloch/db/db.pl http://localhost:9200 init
 /data/moloch/bin/moloch_add_user.sh admin "Admin User" THEPASSWORD --admin
-
 systemctl enable molochviewer.service
 systemctl start molochviewer.service
-
 ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
 ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
-
-systemctl start molochcapture.service 
+systemctl start molochcapture.service
 
 
 echo "DONE :: start $start end $(date)"
