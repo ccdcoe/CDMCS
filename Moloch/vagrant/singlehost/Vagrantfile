@@ -55,6 +55,8 @@ systemctl start molochviewer.service
 ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
 ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
 
+systemctl start molochcapture.service 
+
 
 echo "DONE :: start $start end $(date)"
 netstat -ntple
