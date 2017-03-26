@@ -15,17 +15,26 @@ export DEBIAN_FRONTEND=noninteractive
 #set versions here
 #MOLOCH="moloch-nightly_amd64.deb"
 MOLOCH=moloch_0.18.0-1_amd64.deb
+ELASTICSEARCH="elasticsearch-5.2.2.deb"
 
 echo "$(date) installing java"
-add-apt-repository ppa:webupd8team/java
-apt-get update
+add-apt-repository ppa:webupd8team/java > /dev/null 2>&1
+apt-get update > /dev/null 2>&1
 echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
+apt-get -y install oracle-java8-installer > /dev/null 2>&1
 
-apt-get -y install oracle-java8-installer
+echo "$(date) installing Elasticsearch"
+[[ -f $ELASTICSEARCH ]] || wget  -q -4 https://artifacts.elastic.co/downloads/elasticsearch/$ELASTICSEARCH
+dpkg -i $ELASTICSEARCH > /dev/null 2>&1
+
+sed -i -e 's,-Xms2g,-Xms256m,g' /etc/elasticsearch/jvm.options
+sed -i -e 's,-Xmx2g,-Xmx256m,g' /etc/elasticsearch/jvm.options
+systemctl enable elasticsearch > /dev/null 2>&1
+systemctl start elasticsearch
 
 cd /vagrant/
 echo "$(date) installing moloch"
-apt-get -y install libwww-perl libjson-perl
+apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
 [[ -f $MOLOCH ]] || wget  -q -4 http://files.molo.ch/builds/ubuntu-16.04/$MOLOCH
 #dpkg -i $MOLOCH || exit -1
 #mv /data/moloch-nightly/ /data/moloch
