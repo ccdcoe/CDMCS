@@ -40,14 +40,14 @@ confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev)
 echo "$confcmd"
 echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
 # set up wise server
-sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so\nviewerPlugins=wise.js\n,g' /data/moloch/etc/config.ini
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' /data/moloch/etc/config.ini
 MOLOCH_INSTALL_DIR="/data/moloch"
 sed -e "s,MOLOCH_INSTALL_DIR,${MOLOCH_INSTALL_DIR},g" < $MOLOCH_INSTALL_DIR/etc/molochwise.systemd.service > /etc/systemd/system/molochwise.service
 cp /data/moloch/wiseService/wiseService.ini.sample /data/moloch/etc/wise.ini
 systemctl enable molochwise.service
 systemctl start molochwise.service
 
-until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s' > /dev/null 2>&1 
+until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s' > /dev/null 2>&1
 do
   sleep 1
 done
