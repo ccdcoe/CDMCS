@@ -59,6 +59,11 @@ ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
 ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
 systemctl start molochcapture.service
 
+#create some traffic
+sleep 1
+curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i; done &
+
+
 echo "DONE :: start $start end $(date)"
 netstat -ntple
 
