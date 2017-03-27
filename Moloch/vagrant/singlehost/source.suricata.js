@@ -21,14 +21,9 @@ var source;
 function SuricataSource (api, section) {
   var self = this;
   SuricataSource.super_.call(this, api, section);
-  this.esHost = this.api.getConfig("suricata", "esHost");
-  if (this.esHost === undefined) {
-    console.log(this.section, "- No elasticsearch host defined");
-    return;
-  }
-  this.esIndex = this.api.getConfig("suricata", "esIndex");
-  if (this.esIndex === undefined) {
-    console.log(this.section, "- No elasticsearch index defined");
+  this.evBox = this.api.getConfig("suricata", "evBox");
+  if (this.evBox === undefined) {
+    console.log(this.section, "- No evebox host defined");
     return;
   }
 
@@ -65,7 +60,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
                     "src_port:%22"+ src_port +"%22%20AND%20" +
                     "dest_ip:%22"+ dest_ip +"%22%20AND%20" +
                     "dest_port:%22"+ dest_port +"%22"
-  var url = "https://evebox/api/1/alerts?tags=&timeRange=" + timeRange + "s&queryString=" + queryString
+  var url = this.evBox+"/api/1/alerts?tags=&timeRange=" + timeRange + "s&queryString=" + queryString
 
 
   console.log(url)
