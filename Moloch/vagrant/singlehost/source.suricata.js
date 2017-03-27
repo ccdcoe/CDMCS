@@ -26,6 +26,23 @@ function SuricataSource (api, section) {
     console.log(this.section, "- No evebox host defined");
     return;
   }
+  this.tags = "";
+  // see https://github.com/jasonish/evebox/blob/dbfa3ce1348fc8186bf36fbfda85a7966949e833/webapp/src/app/elasticsearch.service.ts#L288
+  var mustHaveTags = this.api.getConfig("suricata", "mustHaveTags");
+  if (!this.mustHaveTags === undefined) {
+    mustHaveTags.split(";").forEach(function(tag){
+      this.tags += tag.trim() + ","
+    });
+  }
+  var mustNotHaveTags = this.api.getConfig("suricata", "mustNotHaveTags");
+  if (!mustNotHaveTags === undefined) {
+    mustNotHaveTags.split(";").forEach(function(tag){
+      this.tags += "-" +tag.trim() + ","
+    });
+  }
+
+
+
 
   // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
   this.excludeTuples = [];
@@ -60,7 +77,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
                     "src_port:%22"+ src_port +"%22%20AND%20" +
                     "dest_ip:%22"+ dest_ip +"%22%20AND%20" +
                     "dest_port:%22"+ dest_port +"%22"
-  var url = this.evBox+"/api/1/alerts?tags=&timeRange=" + timeRange + "s&queryString=" + queryString
+  var url = this.evBox+"/api/1/alerts?tags=" +  this.tags + "&timeRange=" + timeRange + "s&queryString=" + queryString
 
 
   console.log(url)
