@@ -31,6 +31,10 @@ function SuricataSource (api, section) {
     console.log(this.section, "- No elasticsearch index defined");
     return;
   }
+
+  // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
+  this.excludeTuples = [];
+
   this.api.addSource("suricata", this);
 }
 
