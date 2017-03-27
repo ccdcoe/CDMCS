@@ -103,8 +103,10 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   var self = this;
   var req = request(options, function(err, im, results) {
     if (err || im.statusCode != 200 || results === undefined) {
+      if (self.api.debug > 2) {
       console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
-      return;
+      }
+      return cb(undefined, undefined);
     }
     if (self.api.debug > 2) {
       console.dir(results['alerts'])
@@ -114,7 +116,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
     }
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
-    return;
+    return cb(undefined, undefined);
   });
 
   /*
