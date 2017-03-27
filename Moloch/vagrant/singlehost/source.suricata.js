@@ -92,8 +92,30 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
                     "dest_port:%22"+ dest_port +"%22"
 
   var url = this.evBox+"/api/1/alerts?tags=" +  this.tags + "&timeRange=" + timeRange + "s&queryString=" + queryString
-
-  console.log(url)
+  if (this.api.debug > 2) {
+    console.log(url)
+  }
+  var options = {
+    url: url,
+    method: 'GET',
+    json: true
+  };
+  var self = this;
+  var req = request(options, function(err, im, results) {
+    if (err || im.statusCode != 200 || results === undefined) {
+      console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
+      return;
+    }
+    if (self.api.debug > 2) {
+      console.dir(results['alerts'])
+    }
+    if (results['alerts'].length == 0) {
+       return cb(undefined, undefined);
+    }
+  }).on('error', function (err) {
+    console.log(self.section, "- ERROR",err);
+    return;
+  });
 
   /*
   response
