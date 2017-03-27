@@ -31,11 +31,10 @@ function SuricataSource (api, section) {
     console.log(this.section, "- No elasticsearch index defined");
     return;
   }
-  this.dataFields = [];
   this.api.addSource("suricata", this);
 }
-util.inherits(SuricataSource, wiseSource);
 
+util.inherits(SuricataSource, wiseSource);
 
 //////////////////////////////////////////////////////////////////////////////////
 SuricataSource.prototype.getTuple = function(tuple, cb) {
