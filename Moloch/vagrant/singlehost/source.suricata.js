@@ -13,6 +13,7 @@ see https://github.com/ccdcoe/CDMCS/blob/master/Suricata/evebox/esimport.md
 
 var wiseSource     = require('./wiseSource.js')
   , util           = require('util')
+  , request        = require('request')
   ;
 
 var source;
@@ -40,14 +41,26 @@ function SuricataSource (api, section) {
       this.tags += "-" +tag.trim() + ","
     });
   }
+  // test evebox connection
+  var options = {
+    url: this.evBox+"/api/1/version",
+    method: 'GET',
+    json: true
+  };
+  var req = request(options, function(err, im, results) {
+    if (err || im.statusCode != 200 || results === undefined) {
+      console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
+      return;
+    }
+    console.dir(results)
+    // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
+    self.excludeTuples = [];
+    self.api.addSource("suricata", self);
+  }).on('error', function (err) {
+    console.log(self.section, "- ERROR",err);
+    return;
+  });
 
-
-
-
-  // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
-  this.excludeTuples = [];
-
-  this.api.addSource("suricata", this);
 }
 
 util.inherits(SuricataSource, wiseSource);
@@ -58,8 +71,6 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   // [ '1490640063', 'tcp', '10.0.2.2', '57000', '10.0.2.15', '22' ]
   // wait for node upgrade ...
   // var [ timestamp, protos, src_ip, src_port, dest_ip, dest_port ] = tuple.split(";");
-  // check evebox  naming  and template !
-  // https://github.com/jasonish/evebox/blob/master/resources/elasticsearch/template-es5x.json
   var bites = tuple.split(";");
   var timestamp = bites[0];
   var protos = bites[1].split(",");
@@ -67,18 +78,20 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   var src_port = bites[3];
   var dest_ip = bites[4];
   var dest_port = bites[5];
+
   // build evebox query
   // see :
   // * https://github.com/jasonish/evebox/blob/master/elasticsearch/alertqueryservice.go
   // * https://github.com/jasonish/evebox/blob/59472e3dd9449b95bf78dc08e2b7f1a88834ed70/core/eventservice.go#L46
 
   var timeRange = Math.floor(Date.now()/1000) - timestamp;
+
   var queryString = "src_ip:%22"+ src_ip +"%22%20AND%20" +
                     "src_port:%22"+ src_port +"%22%20AND%20" +
                     "dest_ip:%22"+ dest_ip +"%22%20AND%20" +
                     "dest_port:%22"+ dest_port +"%22"
-  var url = this.evBox+"/api/1/alerts?tags=" +  this.tags + "&timeRange=" + timeRange + "s&queryString=" + queryString
 
+  var url = this.evBox+"/api/1/alerts?tags=" +  this.tags + "&timeRange=" + timeRange + "s&queryString=" + queryString
 
   console.log(url)
 
