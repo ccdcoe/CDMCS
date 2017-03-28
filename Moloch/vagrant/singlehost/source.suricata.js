@@ -122,7 +122,9 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
                     "dest_ip:%22"+ dest_ip +"%22%20AND%20" +
                     "dest_port:%22"+ dest_port +"%22"
 
-  var url = this.evBox+"/api/1/alerts?tags=" +  this.tags + "&timeRange=" + timeRange + "s&queryString=" + queryString
+  var url = this.evBox+"/api/1/alerts?tags=" +  this.tags +
+                                     "&timeRange=" + timeRange + "s" +
+                                     "&queryString=" + queryString
   if (this.api.debug > 2) {
     console.log(url)
   }
@@ -134,7 +136,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   var self = this;
   var req = request(options, function(err, im, results) {
     if (err || im.statusCode != 200 || results === undefined) {
-      if (self.api.debug > 2) {
+      if (self.api.debug > 1) {
       console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
       }
       return cb(undefined, undefined);
