@@ -158,10 +158,10 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       console.dir(results['alerts'])
     }
     if (results['alerts'].length == 0) {
-       return cb(undefined, undefined);
+      return cb(undefined, undefined);
     } else {
       var wiseResult;
-      var args = [self.signatureField, "dummy", self.categoryField, "dummy", self.severityField,3];
+      var args = [self.signatureField, "dummy", self.categoryField, "dummy", self.severityField,""+3];
       wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
       return cb(null, wiseResult);
     }
