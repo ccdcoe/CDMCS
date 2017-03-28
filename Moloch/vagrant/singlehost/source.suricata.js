@@ -53,6 +53,9 @@ var source;
 function SuricataSource (api, section) {
   var self = this;
   SuricataSource.super_.call(this, api, section);
+  this.count = 0;
+  this.alerts = 0;
+  this.errors = 0;
   this.evBox = this.api.getConfig("suricata", "evBox");
   if (this.evBox === undefined) {
     console.log(this.section, "- No evebox host defined");
@@ -90,6 +93,10 @@ function SuricataSource (api, section) {
     self.signatureField = self.api.addField("field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:true");
     self.categoryField = self.api.addField("field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:true");
     self.severityField = self.api.addField("field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:true");
+    // print stats
+    setInterval(function(){
+      console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
+    }, 8*1000);
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
     return;
@@ -101,6 +108,7 @@ util.inherits(SuricataSource, wiseSource);
 
 SuricataSource.prototype.getTuple = function(tuple, cb) {
 
+  this.count += 1;
   // [ '1490640063', 'tcp', '10.0.2.2', '57000', '10.0.2.15', '22' ]
   // wait for node upgrade ...
   // var [ timestamp, protos, src_ip, src_port, dest_ip, dest_port ] = tuple.split(";");
@@ -139,11 +147,13 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   var self = this;
   var req = request(options, function(err, im, results) {
     if (err || im.statusCode != 200 || results === undefined) {
+      this.errors += 1;
       if (self.api.debug > 1) {
       console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
       }
       return cb(undefined, undefined);
     }
+    this.alerts += 1;
     if (self.api.debug > 2) {
       console.dir(results['alerts'])
     }
