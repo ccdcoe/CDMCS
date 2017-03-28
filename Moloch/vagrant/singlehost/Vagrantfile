@@ -34,6 +34,39 @@ sed -i -e 's,-Xmx2g,-Xmx256m,g' /etc/elasticsearch/jvm.options
 systemctl enable elasticsearch > /dev/null 2>&1
 systemctl start elasticsearch
 
+#suricata
+echo "$(date) installing Suricata"
+add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
+apt-get update > /dev/null 2>&1
+apt-get -y install suricata > /dev/null 2>&1
+systemctl stop suricata
+
+#ls /sys/class/net | grep -v lo
+# see http://pevma.blogspot.com.ee/2015/05/suricata-multiple-interface.html
+cat >> /etc/suricata/suricata.yaml <<EOF
+af-packet:
+  - interface: enp0s3
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: enp0s8
+    cluster-id: 97
+    cluster-type: cluster_flow
+    defrag: yes
+default-rule-path: /etc/suricata/rules
+# rule-files:
+# - scirius.rules
+sensor-name: moloch-singlehost
+EOF
+touch  /etc/suricata//threshold.config
+#suricata -T -vvv
+[[ $(suricata -T) ]] || exit -1
+#Fixed some weird systemd/init.d daemon pid file creating behavior. PID file in /var/run/ should be readable by all.
+#sed -i -e 's/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log  2>\\&1 \\&/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log 2>\\&1\\n       chmod 644 $PIDFILE > \\/dev\\/null 2>\\&1 || true/' /etc/init.d/suricata
+systemctl daemon-reload
+systemctl enable suricata > /dev/null 2>&1
+systemctl start suricata
+
 # evebox
 echo "$(date) installing GeoLite2"
 [[ -f 'GeoLite2-City.mmdb.gz' ]] || wget -q  -4 http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
@@ -48,7 +81,8 @@ cat > /lib/systemd/system/evebox-esimport.service <<EOF
 [Unit]
 Description=EveBox-EsImport
 [Service]
-ExecStart=/usr/bin/evebox esimport \\$ELASTICSEARCH_URL \\$CONFIG \\$EVEBOX_OPTS --index \\$ELASTICSEARCH_INDEX --end /var/log/suricata/eve.json
+#ExecStart=/usr/bin/evebox esimport -e \\$ELASTICSEARCH_URL --index \\$ELASTICSEARCH_INDEX --end /var/log/suricata/eve.json
+ExecStart=/usr/bin/evebox esimport -e http://localhost:9200 --end /var/log/suricata/eve.json
 EnvironmentFile=-/etc/default/evebox-esimport
 [Install]
 WantedBy=multi-user.target
@@ -88,7 +122,7 @@ systemctl start molochcapture.service
 
 #create some traffic
 sleep 1
-curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i; done &
+curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
 
 
 echo "DONE :: start $start end $(date)"
