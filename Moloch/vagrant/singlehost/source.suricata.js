@@ -158,7 +158,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       }
       return cb(undefined, undefined);
     }
-    this.alerts += 1;
+    self.alerts += 1;
     if (self.api.debug > 3) {
       console.dir(results)
       /*
@@ -217,7 +217,6 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       // TODO how to send more than one alert per tuple ?
       results['alerts'].forEach(function(alert){
         var wiseResult;
-        console.dir(alert);
         var signature = alert['event']['_source']['alert']['signature'];
         var category = alert['event']['_source']['alert']['category'];
         var severity = alert['event']['_source']['alert']['severity'];
