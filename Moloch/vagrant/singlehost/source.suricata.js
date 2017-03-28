@@ -215,6 +215,9 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       return cb(undefined, undefined);
     } else {
       // TODO how to send more than one alert per tuple ?
+      if (results['alerts'].length > 1) {
+        console.log("TODO: more than one alert, going to skip ", results['alerts'].length)
+      }
       results['alerts'].forEach(function(alert){
         var wiseResult;
         var signature = alert['event']['_source']['alert']['signature'];
@@ -222,7 +225,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
         var severity = alert['event']['_source']['alert']['severity'];
         var args = [self.signatureField, signature, self.categoryField, category, self.severityField,""+severity];
         wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
-        cb(null, wiseResult);
+        return cb(null, wiseResult);
       });
       return ;
 
