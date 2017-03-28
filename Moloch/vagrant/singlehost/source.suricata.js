@@ -87,6 +87,9 @@ function SuricataSource (api, section) {
     // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
     self.excludeTuples = [];
     self.api.addSource("suricata", self);
+    self.signatureField = self.api.addField("field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:true");
+    self.categoryField = self.api.addField("field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:true");
+    self.severityField = self.api.addField("field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:true");
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
     return;
