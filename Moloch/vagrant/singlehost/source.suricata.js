@@ -83,7 +83,7 @@ function SuricataSource (api, section) {
       console.log(self.section, "- Error for request:\n", options, "\n", im, "\nresults:\n", results);
       return;
     }
-    console.dir(results)
+    console.log(self.evBox,"/api/1/version returned",results)
     // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
     self.excludeTuples = [];
     self.api.addSource("suricata", self);
@@ -103,7 +103,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   // var [ timestamp, protos, src_ip, src_port, dest_ip, dest_port ] = tuple.split(";");
   var bites = tuple.split(";");
   var timestamp = bites[0];
-  var protos = bites[1].split(",");
+  //var protos = bites[1].split(",");
   var src_ip = bites[2];
   var src_port = bites[3];
   var dest_ip = bites[4];
