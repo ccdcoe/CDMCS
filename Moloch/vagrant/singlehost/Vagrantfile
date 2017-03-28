@@ -16,6 +16,7 @@ export DEBIAN_FRONTEND=noninteractive
 #MOLOCH="moloch-nightly_amd64.deb"
 MOLOCH=moloch_0.18.0-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
+EVEBOX="evebox_0.6.1~dev20170326064726_amd64.deb"
 
 cd /vagrant/
 
@@ -32,6 +33,32 @@ sed -i -e 's,-Xms2g,-Xms256m,g' /etc/elasticsearch/jvm.options
 sed -i -e 's,-Xmx2g,-Xmx256m,g' /etc/elasticsearch/jvm.options
 systemctl enable elasticsearch > /dev/null 2>&1
 systemctl start elasticsearch
+
+# evebox
+echo "$(date) installing GeoLite2"
+[[ -f 'GeoLite2-City.mmdb.gz' ]] || wget -q  -4 http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
+mkdir -p /usr/local/share/GeoIP
+gunzip GeoLite2-City.mmdb.gz --stdout > /usr/local/share/GeoIP/GeoLite2-City.mmdb
+echo "$(date) installing evebox"
+[[ -f $EVEBOX ]] ||wget  -q -4 http://evebox.org/files/debian/pool/main/e/evebox/$EVEBOX -O $EVEBOX
+dpkg -i $EVEBOX > /dev/null 2>&1
+echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
+cp /etc/default/evebox /etc/default/evebox-esimport
+cat > /lib/systemd/system/evebox-esimport.service <<EOF
+[Unit]
+Description=EveBox-EsImport
+[Service]
+ExecStart=/usr/bin/evebox esimport \\$ELASTICSEARCH_URL \\$CONFIG \\$EVEBOX_OPTS --index \\$ELASTICSEARCH_INDEX --end /var/log/suricata/eve.json
+EnvironmentFile=-/etc/default/evebox-esimport
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable evebox-esimport > /dev/null 2>&1
+systemctl start evebox-esimport
+
+systemctl enable evebox > /dev/null 2>&1
+systemctl start evebox
 
 echo "$(date) installing moloch"
 apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
