@@ -127,11 +127,16 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   // waiting for minTs and maxTs ;)
 
   var timeRange = Math.floor(Date.now()/1000) - timestamp;
-
-  var queryString = "src_ip:%22"+ src_ip +"%22%20AND%20" +
+  // moloch and suricata sometimes do set "oposite" src and dest
+  // so we need query (src and dest) or (dest and src)
+  var queryString = "(src_ip:%22"+ src_ip +"%22%20AND%20" +
                     "src_port:%22"+ src_port +"%22%20AND%20" +
                     "dest_ip:%22"+ dest_ip +"%22%20AND%20" +
-                    "dest_port:%22"+ dest_port +"%22"
+                    "dest_port:%22"+ dest_port +"%22)OR"+
+                    "(src_ip:%22"+ dest_ip +"%22%20AND%20" +
+                    "src_port:%22"+ dest_port +"%22%20AND%20" +
+                    "dest_ip:%22"+ src_ip +"%22%20AND%20" +
+                    "dest_port:%22"+ src_port +"%22)"
 
   var url = this.evBox+"/api/1/alerts?tags=" +  this.tags +
                                      "&timeRange=" + timeRange + "s" +
@@ -154,16 +159,74 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       return cb(undefined, undefined);
     }
     this.alerts += 1;
-    if (self.api.debug > 2) {
-      console.dir(results['alerts'])
+    if (self.api.debug > 3) {
+      console.dir(results)
+      /*
+      {
+          "alerts": [{
+              "count": 1,
+              "event": {
+                  "_id": "95983add-13f7-11e7-afde-02ed55e681b9",
+                  "_index": "suricata-2017.03.28",
+                  "_score": null,
+                  "_source": {
+                      "@timestamp": "2017-03-28T20:46:13.946Z",
+                      "alert": {
+                          "action": "allowed",
+                          "category": "Potentially Bad Traffic",
+                          "gid": 1,
+                          "rev": 7,
+                          "severity": 2,
+                          "signature": "GPL ATTACK_RESPONSE id check returned root",
+                          "signature_id": 2100498
+                      },
+                      "dest_ip": "10.0.2.15",
+                      "dest_port": 58542,
+                      "event_type": "alert",
+                      "flow_id": 1308387892870536,
+                      "geoip": {
+                          "continent_code": "EU",
+                          "coordinates": [9.491, 51.2993],
+                          "country_code2": "DE",
+                          "country_name": "Germany",
+                          "ip": "82.165.177.154",
+                          "latitude": 51.2993,
+                          "longitude": 9.491
+                      },
+                      "host": "suricata",
+                      "in_iface": "enp0s3",
+                      "proto": "TCP",
+                      "src_ip": "82.165.177.154",
+                      "src_port": 80,
+                      "tags": [],
+                      "timestamp": "2017-03-28T20:46:13.946584+0000"
+                  },
+                  "_type": "log",
+                  "sort": [1490733973946]
+              },
+              "maxTs": "2017-03-28T20:46:13.946584+0000",
+              "minTs": "2017-03-28T20:46:13.946584+0000",
+              "escalatedCount": 0
+          }]
+      }
+      */
     }
-    if (results['alerts'].length == 0) {
+    if (results['alerts'] === undefined || results['alerts'].length == 0) {
       return cb(undefined, undefined);
     } else {
-      var wiseResult;
-      var args = [self.signatureField, "dummy", self.categoryField, "dummy", self.severityField,""+3];
-      wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
-      return cb(null, wiseResult);
+      // TODO how to send more than one alert per tuple ?
+      results['alerts'].forEach(function(alert){
+        var wiseResult;
+        console.dir(alert);
+        var signature = alert['event']['_source']['alert']['signature'];
+        var category = alert['event']['_source']['alert']['category'];
+        var severity = alert['event']['_source']['alert']['severity'];
+        var args = [self.signatureField, signature, self.categoryField, category, self.severityField,""+severity];
+        wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
+        cb(null, wiseResult);
+      });
+      return ;
+
     }
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
