@@ -217,18 +217,23 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
       // TODO how to send more than one alert per tuple ?
       if (results['alerts'].length > 1) {
         console.log("TODO: more than one alert, going to skip ", results['alerts'].length)
+        console.dir(results)
       }
+      var args = [];
       results['alerts'].forEach(function(alert){
-        var wiseResult;
         var signature = alert['event']['_source']['alert']['signature'];
         var category = alert['event']['_source']['alert']['category'];
         var severity = alert['event']['_source']['alert']['severity'];
-        var args = [self.signatureField, signature, self.categoryField, category, self.severityField,""+severity];
-        wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
-        return cb(null, wiseResult);
+        args.push(self.signatureField);
+        args.push(signature);
+        args.push(self.categoryField);
+        args.push(category);
+        args.push(self.severityField);
+        args.push(""+severity);
       });
-      return ;
-
+      var wiseResult;
+      wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
+      return cb(null, wiseResult);
     }
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
