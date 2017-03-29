@@ -35,6 +35,7 @@
 ## wise.ini
 [suricata]
 evBox=https://evebox.blah
+fields=sid;severity;signature;category;host;in_iface;flow_id;
 ### optional tags
 mustHaveTags=escalated
 mustNotHaveTags=archived;deleted;
@@ -61,6 +62,9 @@ function SuricataSource (api, section) {
     console.log(this.section, "- No evebox host defined");
     return;
   }
+  this.fields = [];
+  // TODO get list of lields from wise.ini
+  // fields=sid;severity;signature;category;host;in_iface;flow_id;
   this.tags = "";
   // see https://github.com/jasonish/evebox/blob/dbfa3ce1348fc8186bf36fbfda85a7966949e833/webapp/src/app/elasticsearch.service.ts#L288
   var mustHaveTags = this.api.getConfig("suricata", "mustHaveTags");
