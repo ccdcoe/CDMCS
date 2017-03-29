@@ -44,6 +44,35 @@ mustNotHaveTags=archived;deleted;
 
 'use strict';
 
+// helper stuffff
+
+var flatten = function(data) {
+    var result = {};
+    function recurse (cur, prop) {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+             for(var i=0, l=cur.length; i<l; i++)
+                 recurse(cur[i], prop ? prop+"."+i : ""+i);
+            if (l == 0)
+                result[prop] = [];
+        } else {
+            var isEmpty = true;
+            for (var p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? prop+"."+p : p);
+            }
+            if (isEmpty)
+                result[prop] = {};
+        }
+    }
+    recurse(data, "");
+    return result;
+}
+
+
+// SuricataSource
+
 var wiseSource     = require('./wiseSource.js')
   , util           = require('util')
   , request        = require('request')
@@ -59,12 +88,44 @@ function SuricataSource (api, section) {
   this.errors = 0;
   this.evBox = this.api.getConfig("suricata", "evBox");
   if (this.evBox === undefined) {
-    console.log(this.section, "- No evebox host defined");
+    console.log(this.section, "- No evebox host defined; in wise.ini in section [suricata] set evBox=http://localhost:5636");
     return;
   }
+  // prepare for field list 
   this.fields = [];
-  // TODO get list of lields from wise.ini
-  // fields=sid;severity;signature;category;host;in_iface;flow_id;
+  var allowedFields = ['signature_id','severity','signature','category','host','in_iface','flow_id','_id','_index'];
+  var fieldDeclas = [];
+  fieldDeclas['signature'] = "field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:true";
+  fieldDeclas['category'] = "field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:true";
+  fieldDeclas['severity'] = "field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:true";
+  this.flattNames = [];
+  this.flattNames['signature'] = 'event._source.alert.signature';
+  this.flattNames['category'] = 'event._source.alert.category';
+  this.flattNames['severity'] = 'event._source.alert.severity';
+  // get list of fields
+  var fields = this.api.getConfig("suricata", "fields");
+  if (fields === undefined) {
+    console.log(this.section, "- No fields defined; in wise.ini in section [suricata] set fields=severity;signature;category;");
+    return;
+  } else {
+    fields.split(";").some(function(fieldname){
+      if (allowedFields.indexOf(fieldname) == -1){
+        console.log(self.section, "-",fieldname,"is not allowed; try one of:", allowedFields.join(";"));
+        return true;
+      } else {
+        if (self.fields.indexOf(fieldname) == -1){
+          self.fields.push(fieldname);
+        }
+      }
+    });
+    if (this.fields.length < 1) {
+      console.log(this.section, "- how you did that !?", fields)
+      return;
+    } else {
+      console.log(this.section, "- using fields", this.fields.join(","));
+    }
+  }
+
   this.tags = "";
   // see https://github.com/jasonish/evebox/blob/dbfa3ce1348fc8186bf36fbfda85a7966949e833/webapp/src/app/elasticsearch.service.ts#L288
   var mustHaveTags = this.api.getConfig("suricata", "mustHaveTags");
@@ -94,9 +155,9 @@ function SuricataSource (api, section) {
     // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
     self.excludeTuples = [];
     self.api.addSource("suricata", self);
-    self.signatureField = self.api.addField("field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:true");
-    self.categoryField = self.api.addField("field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:true");
-    self.severityField = self.api.addField("field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:true");
+    self.fields.forEach(function(fieldname){
+      self[fieldname+'Field'] = self.api.addField(fieldDeclas[fieldname]);
+    });
     // print stats
     setInterval(function(){
       console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
@@ -145,7 +206,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
   var url = this.evBox+"/api/1/alerts?tags=" +  this.tags +
                                      "&timeRange=" + timeRange + "s" +
                                      "&queryString=" + queryString
-  if (this.api.debug > 2) {
+  if (this.api.debug > 4) {
     console.log(url)
   }
   var options = {
@@ -213,27 +274,58 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
               "escalatedCount": 0
           }]
       }
+
+      flatten
+
+      { count: 1,
+  'event._id': 'daee0d7a-1498-11e7-afde-02ed55e681b9',
+  'event._index': 'suricata-2017.03.29',
+  'event._score': null,
+  'event._source.@timestamp': '2017-03-29T16:00:39.448Z',
+  'event._source.alert.action': 'allowed',
+  'event._source.alert.category': 'Misc Attack',
+  'event._source.alert.gid': 1,
+  'event._source.alert.rev': 2914,
+  'event._source.alert.severity': 2,
+  'event._source.alert.signature': 'ET TOR Known Tor Relay/Router (Not Exit) Node Traffic group 32',
+  'event._source.alert.signature_id': 2522062,
+  'event._source.dest_ip': '10.0.2.15',
+  'event._source.dest_port': 61892,
+  'event._source.event_type': 'alert',
+  'event._source.flow_id': 1553995842178848,
+  'event._source.geoip.continent_code': 'EU',
+  'event._source.geoip.coordinates.0': -18,
+  'event._source.geoip.coordinates.1': 65,
+  'event._source.geoip.country_code2': 'IS',
+  'event._source.geoip.country_name': 'Iceland',
+  'event._source.geoip.ip': '193.107.85.56',
+  'event._source.geoip.latitude': 65,
+  'event._source.geoip.longitude': -18,
+  'event._source.host': 'suricata',
+  'event._source.in_iface': 'enp0s3',
+  'event._source.proto': 'TCP',
+  'event._source.src_ip': '193.107.85.56',
+  'event._source.src_port': 80,
+  'event._source.tags': [],
+  'event._source.timestamp': '2017-03-29T16:00:39.448607+0000',
+  'event._type': 'log',
+  'event.sort.0': 1490803239448,
+  maxTs: '2017-03-29T16:00:39.448607+0000',
+  minTs: '2017-03-29T16:00:39.448607+0000',
+  escalatedCount: 0 }
+
       */
     }
     if (results['alerts'] === undefined || results['alerts'].length == 0) {
       return cb(undefined, undefined);
     } else {
-      // TODO how to send more than one alert per tuple ?
-      if (results['alerts'].length > 1) {
-        console.log("TODO: more than one alert, going to skip ", results['alerts'].length)
-        console.dir(results)
-      }
       var args = [];
       results['alerts'].forEach(function(alert){
-        var signature = alert['event']['_source']['alert']['signature'];
-        var category = alert['event']['_source']['alert']['category'];
-        var severity = alert['event']['_source']['alert']['severity'];
-        args.push(self.signatureField);
-        args.push(signature);
-        args.push(self.categoryField);
-        args.push(category);
-        args.push(self.severityField);
-        args.push(""+severity);
+        alert = flatten(alert);
+        self.fields.forEach(function(fieldname){
+          args.push(self[fieldname+'Field']);
+          args.push(""+alert[self.flattNames[fieldname]]);
+        });
       });
       var wiseResult;
       wiseResult = {num: args.length/2, buffer: wiseSource.encode.apply(null, args)};
