@@ -91,17 +91,29 @@ function SuricataSource (api, section) {
     console.log(this.section, "- No evebox host defined; in wise.ini in section [suricata] set evBox=http://localhost:5636");
     return;
   }
-  // prepare for field list 
+  // prepare for field list
   this.fields = [];
   var allowedFields = ['signature_id','severity','signature','category','host','in_iface','flow_id','_id','_index'];
   var fieldDeclas = [];
-  fieldDeclas['signature'] = "field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:true";
-  fieldDeclas['category'] = "field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:true";
-  fieldDeclas['severity'] = "field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:true";
+  fieldDeclas['signature_id'] = "field:suricata.signature_id;db:suricata.signature_id;kind:integer;friendly:SID;help:Suricata Signature ID;count:false";
+  fieldDeclas['signature']    = "field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:false";
+  fieldDeclas['category'] = "field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:false";
+  fieldDeclas['severity'] = "field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:false";
+  fieldDeclas['host'] = "field:suricata.host;db:suricata.host-term;kind:termfield;friendly:Host;help:Suricata Host;count:false";
+  fieldDeclas['in_iface'] = "field:suricata.in_iface;db:suricata.in_iface-term;kind:termfield;friendly:Iface;help:Suricata in iface;count:false";
+  fieldDeclas['_id'] = "field:suricata._id;db:suricata._id-term;kind:termfield;friendly:_id;help:Evebox _id;count:false";
+  fieldDeclas['_index'] = "field:suricata._index;db:suricata._index-term;kind:termfield;friendly:_index;help:Evebox index;count:false";
+  fieldDeclas['flow_id'] = "field:suricata.flow_id;db:suricata.flow_id-term;kind:termfield;friendly:flow_id;help:Suricata flow id;count:false";
   this.flattNames = [];
+  this.flattNames['signature_id'] = 'event._source.alert.signature_id';
   this.flattNames['signature'] = 'event._source.alert.signature';
   this.flattNames['category'] = 'event._source.alert.category';
   this.flattNames['severity'] = 'event._source.alert.severity';
+  this.flattNames['host'] = 'event._source.host';
+  this.flattNames['in_iface'] = 'event._source.in_iface';
+  this.flattNames['_id'] = 'event._id';
+  this.flattNames['_index'] = 'event._index';
+  this.flattNames['flow_id'] = 'event._source.flow_id';
   // get list of fields
   var fields = this.api.getConfig("suricata", "fields");
   if (fields === undefined) {
