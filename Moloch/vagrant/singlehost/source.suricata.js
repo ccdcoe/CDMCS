@@ -95,10 +95,10 @@ function SuricataSource (api, section) {
   this.fields = [];
   var allowedFields = ['signature_id','severity','signature','category','host','in_iface','flow_id','_id','_index'];
   var fieldDeclas = [];
-  fieldDeclas['signature_id'] = "field:suricata.signature_id;db:suricata.signature_id;kind:integer;friendly:SID;help:Suricata Signature ID;count:false";
+  fieldDeclas['signature_id'] = "field:suricata.signature_id;db:suricata.signature_id-term;kind:integer;friendly:SID;help:Suricata Signature ID;count:false";
   fieldDeclas['signature']    = "field:suricata.signature;db:suricata.signature-term;kind:termfield;friendly:Signature;help:Suricata Alert Signature;count:false";
   fieldDeclas['category'] = "field:suricata.category;db:suricata.category-term;kind:termfield;friendly:Category;help:Suricata Alert Category;count:false";
-  fieldDeclas['severity'] = "field:suricata.severity;db:suricata.severity;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:false";
+  fieldDeclas['severity'] = "field:suricata.severity;db:suricata.severity-term;kind:integer;friendly:Severity;help:Suricata Alert Severity;count:false";
   fieldDeclas['host'] = "field:suricata.host;db:suricata.host-term;kind:termfield;friendly:Host;help:Suricata Host;count:false";
   fieldDeclas['in_iface'] = "field:suricata.in_iface;db:suricata.in_iface-term;kind:termfield;friendly:Iface;help:Suricata in iface;count:false";
   fieldDeclas['_id'] = "field:suricata._id;db:suricata._id-term;kind:termfield;friendly:_id;help:Evebox _id;count:false";
@@ -167,9 +167,16 @@ function SuricataSource (api, section) {
     // TODO move it to https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/wiseSource.js#L39
     self.excludeTuples = [];
     self.api.addSource("suricata", self);
+    var str =
+      "if (session.suricata)\n" +
+      "  div.sessionDetailMeta.bold Suricata \n" +
+      "  dl.sessionDetailMeta\n" ;
     self.fields.forEach(function(fieldname){
       self[fieldname+'Field'] = self.api.addField(fieldDeclas[fieldname]);
+      str += "    +arrayList(session.suricata, '" + fieldname + "-term', '" + fieldname + "', 'suricata." + fieldname + "')\n";
     });
+    console.log(str);
+    self.api.addView("suricata", str);
     // print stats
     setInterval(function(){
       console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
