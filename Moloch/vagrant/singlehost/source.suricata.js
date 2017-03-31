@@ -185,9 +185,11 @@ function SuricataSource (api, section) {
     });
     self.api.addView("suricata", str);
     // print stats
-    setInterval(function(){
-      console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
-    }, 8*1000);
+    if (self.api.debug>0){
+      setInterval(function(){
+        console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
+      }, 60*1000/self.api.debug);
+    }
   }).on('error', function (err) {
     console.log(self.section, "- ERROR",err);
     return;
