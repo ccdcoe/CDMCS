@@ -173,6 +173,10 @@ function SuricataSource (api, section) {
       "  dl.sessionDetailMeta\n" ;
     self.fields.forEach(function(fieldname){
       self[fieldname+'Field'] = self.api.addField(fieldDeclas[fieldname]);
+      if (fieldname === "_id" ) {
+        // http://192.168.10.11:5636/#/event/c1b9cd27-1659-11e7-b1f9-02ed55e681b9
+          self.api.addRightClick("EveBoxEventLink", {name:"EveBox", url:self.evBox+"/#/event/%TEXT%", fields:"suricata._id"});
+      }
       str += "    +arrayList(session.suricata, '" + fieldname + "-term', '" + fieldname + "', 'suricata." + fieldname + "')\n";
     });
     console.log(str);
