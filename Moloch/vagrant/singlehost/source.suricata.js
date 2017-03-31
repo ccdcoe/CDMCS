@@ -183,7 +183,6 @@ function SuricataSource (api, section) {
       }
       str += "    +arrayList(session.suricata, '" + fieldname + "-term', '" + fieldname + "', 'suricata." + fieldname + "')\n";
     });
-    console.log(str);
     self.api.addView("suricata", str);
     // print stats
     setInterval(function(){
