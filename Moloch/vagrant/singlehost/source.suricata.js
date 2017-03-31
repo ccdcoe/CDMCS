@@ -143,13 +143,13 @@ function SuricataSource (api, section) {
   var mustHaveTags = this.api.getConfig("suricata", "mustHaveTags");
   if (!this.mustHaveTags === undefined) {
     mustHaveTags.split(";").forEach(function(tag){
-      this.tags += tag.trim() + ","
+      self.tags += tag.trim() + ","
     });
   }
   var mustNotHaveTags = this.api.getConfig("suricata", "mustNotHaveTags");
   if (!mustNotHaveTags === undefined) {
     mustNotHaveTags.split(";").forEach(function(tag){
-      this.tags += "-" +tag.trim() + ","
+      self.tags += "-" +tag.trim() + ","
     });
   }
   // test evebox connection
@@ -193,7 +193,6 @@ function SuricataSource (api, section) {
     console.log(self.section, "- ERROR",err);
     return;
   });
-
 }
 
 util.inherits(SuricataSource, wiseSource);
@@ -252,7 +251,7 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
     }
     self.alerts += 1;
     if (self.api.debug > 3) {
-      console.dir(results)      
+      console.dir(results)
     }
     if (results['alerts'] === undefined || results['alerts'].length == 0) {
       return cb(undefined, undefined);
