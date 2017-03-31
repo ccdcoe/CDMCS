@@ -161,9 +161,18 @@ ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
 systemctl start molochcapture.service
 
 #create some traffic
+
+echo "$(date) generation some alert traffic"
 sleep 1
 curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
-
+# and some more
+# create some noise ...
+apt-get -y install nmap > /dev/null 2>&1
+grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1000 | tail| while read ip;
+do
+nmap -p 22,80,443 --script=banner $ip > /dev/null &
+sleep 1
+done
 
 echo "DONE :: start $start end $(date)"
 netstat -ntple
