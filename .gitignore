@@ -1,4 +1,6 @@
-
+*.dat
+*.zip
+*.csv
 *.deb
 *.gz
 *.log
