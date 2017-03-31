@@ -175,7 +175,11 @@ function SuricataSource (api, section) {
       self[fieldname+'Field'] = self.api.addField(fieldDeclas[fieldname]);
       if (fieldname === "_id" ) {
         // http://192.168.10.11:5636/#/event/c1b9cd27-1659-11e7-b1f9-02ed55e681b9
-          self.api.addRightClick("EveBoxEventLink", {name:"EveBox", url:self.evBox+"/#/event/%TEXT%", fields:"suricata._id"});
+          self.api.addRightClick("EveBoxEventLink", {name:"EveBox EVENT", url:self.evBox+"/#/event/%TEXT%", fields:"suricata._id"});
+      }
+      if (fieldname === "flow_id") {
+        //http://192.168.10.11:5636/#/events;q=flow_id%3A%221741428037472661%22
+        self.api.addRightClick("EveBoxFlowLink", {name:"EveBox FLOW", url:self.evBox+"/#/events;q=flow_id%3A%22%TEXT%%22", fields:"suricata.flow_id"});
       }
       str += "    +arrayList(session.suricata, '" + fieldname + "-term', '" + fieldname + "', 'suricata." + fieldname + "')\n";
     });
