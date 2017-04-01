@@ -141,7 +141,7 @@ cp /data/moloch/wiseService/wiseService.ini.sample /data/moloch/etc/wise.ini
 cat > /data/moloch/etc/wise.ini <<EOF
 [suricata]
 evBox=http://192.168.10.11:5636
-fields=_id;signature;severity;category
+fields=severity;category;signature;flow_id;_id
 mustNotHaveTags=archived
 EOF
 cp /vagrant/source.suricata.js /data/moloch/wiseService/
@@ -160,18 +160,15 @@ ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
 ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
 systemctl start molochcapture.service
 
-#create some traffic
-
-echo "$(date) generation some alert traffic"
+echo "$(date) generating some alert traffic, your ISP may detect it and disconnect you"
 sleep 1
 curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
 # and some more
-# create some noise ...
 apt-get -y install nmap > /dev/null 2>&1
-grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1000 | tail| while read ip;
+grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1500 | tail| while read ip;
 do
-nmap -p 22,80,443 --script=banner $ip > /dev/null &
-sleep 1
+  nmap -p 22,80,443 --script=banner $ip > /dev/null &
+  sleep 1
 done
 
 echo "DONE :: start $start end $(date)"
