@@ -29,6 +29,8 @@ MOLOCH=moloch_0.18.1-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
 EVEBOX="evebox_0.6.1~dev20170326064726_amd64.deb"
 
+THEPASSWORD="admin"
+
 cd /vagrant/
 
 echo "$(date) installing java"
@@ -153,7 +155,7 @@ do
   sleep 1
 done
 echo -en "INIT" | /data/moloch/db/db.pl http://localhost:9200 init
-/data/moloch/bin/moloch_add_user.sh admin "Admin User" THEPASSWORD --admin
+/data/moloch/bin/moloch_add_user.sh admin "Admin User" $THEPASSWORD --admin
 systemctl enable molochviewer.service
 systemctl start molochviewer.service
 ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
