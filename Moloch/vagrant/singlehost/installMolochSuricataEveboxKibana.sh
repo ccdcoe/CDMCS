@@ -27,7 +27,8 @@ export DEBIAN_FRONTEND=noninteractive
 #MOLOCH="moloch-nightly_amd64.deb"
 MOLOCH=moloch_0.18.1-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
-EVEBOX="evebox_0.6.1~dev20170326064726_amd64.deb"
+EVEBOX="evebox_0.6.1~dev20170403042550_amd64.deb"
+
 
 THEPASSWORD="admin"
 
