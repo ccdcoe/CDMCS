@@ -185,6 +185,7 @@ function SuricataSource (api, section) {
     });
     self.api.addView("suricata", str);
     // print stats
+    console.dir(self.api);
     if (self.api.debug>0){
       setInterval(function(){
         console.log("Suricata: checks:",self.count,"alerts:", self.alerts, "query errors:", self.errors);
@@ -214,11 +215,17 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
 
   // build evebox query
   // see :
+  // * http://evebox.readthedocs.io/en/latest/api.html#get-api-1-alerts
   // * https://github.com/jasonish/evebox/blob/master/elasticsearch/alertqueryservice.go
   // * https://github.com/jasonish/evebox/blob/59472e3dd9449b95bf78dc08e2b7f1a88834ed70/core/eventservice.go#L46
-  // waiting for minTs and maxTs ;)
+  // for minTs and maxTs see https://github.com/jasonish/evebox/commit/ef993eb87167b3a4184450719f3543ddc7f35b33
 
-  var timeRange = Math.floor(Date.now()/1000) - timestamp;
+  //var timeRange = Math.floor(Date.now()/1000) - timestamp;
+  var start = new Date(timestamp * 1000);
+  var minTs = start.toISOString();
+  // TODO somehow find out session length or session timeout
+  var end = new Date((timestamp + 90) * 1000);
+  var maxTs = end.toISOString();
   // moloch and suricata sometimes do set "oposite" src and dest
   // so we need query (src and dest) or (dest and src)
   var queryString = "(src_ip:%22"+ src_ip +"%22%20AND%20" +
@@ -231,7 +238,9 @@ SuricataSource.prototype.getTuple = function(tuple, cb) {
                     "dest_port:%22"+ src_port +"%22)"
 
   var url = this.evBox+"/api/1/alerts?tags=" +  this.tags +
-                                     "&timeRange=" + timeRange + "s" +
+                                     //"&timeRange=" + timeRange + "s" +
+                                     "&min_ts=" + minTs +
+                                     "&max_ts=" + maxTs +
                                      "&queryString=" + queryString
   if (this.api.debug > 4) {
     console.log(url)
