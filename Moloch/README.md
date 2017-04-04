@@ -12,13 +12,13 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/Moloch/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/Moloch/day_intro/BasicConf.md)
- * 16:00 - 16:45 [basic queries](/Moloch/day_intro/Basicqueries.md)
+ * 15:00 - 15:45 [basic config](/Moloch/classroom/day_intro/BasicConf.md)
+ * 16:00 - 16:45 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
 
 ## Day 1 :: Single Box :: May 9 2017
 
- * 09:00 - 09:45 [build from source](/Moloch/day_1/BuildFromSource.md)
- * 10:00 - 10:45 [config](/Moloch/day_1/Config.md)
+ * 09:00 - 09:45 [build from source](/Moloch/classroom/day_1/BuildFromSource.md)
+ * 10:00 - 10:45 [config](/Moloch/classroom/day_1/Config.md)
  * 11:00 - 11:45
 
 
@@ -43,7 +43,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 3 :: Usage :: May 11 2017
 
-* 09:00 - 09:45 [Building hunt dashboards](/Moloch/day3/KibanaAsHuntingDashboard.md)
+* 09:00 - 09:45 [Building hunt dashboards](/Moloch/classroom/day3/KibanaAsHuntingDashboard.md)
 * 10:00 - 10:45
 * 11:00 - 11:45
 
@@ -61,6 +61,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ----
 
-# Before You Come To Class please browse trough ..
+# Before You Come To Class please
 
-* [Goodbye single host, woot!](https://github.com/aol/moloch/commit/8c472d939fad305d1c4134bde0ca8754faeaff84)
+* [Prepare your laptop](/Moloch/vagrant/singlehost/README.md#get-it-running-on-your-laptop-before-you-come-to-classroom)
+* browse trough ..
+  * [Goodbye single host, woot!](https://github.com/aol/moloch/commit/8c472d939fad305d1c4134bde0ca8754faeaff84)

@@ -1,15 +1,22 @@
-# Moloch & Suricata (in single box)
+# Moloch (& Suricata (&& EEK)) in single box
 
 * **Moloch** is full packet capturing, indexing, and database system.
 * MOLOCH is not IDS
-* WISE is helper service to check external knowledge before saving session index data
+* *WISE* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
 * **Suricata** is IDS and NSM tool.
-*  EveBox is a web based Suricata "eve log" event (including *alerts*) viewer and has API to query alerts
+*  *EveBox* is a web based Suricata "eve log" event (including *alerts*) viewer and has API to query alerts.
+* *ElasticSearch* is a search engine.
+
+
+
 * WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
+
 
 # Get it running on YOUR laptop, before you come to classroom
 
-Yes, you need to bring your own laptop!
+* Yes, you need to bring your own laptop!
+
+* Yes, you need to get it up and running in your laptop!
 
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
@@ -30,7 +37,7 @@ To create and provision a new virtual machine :
 
 
 Running `vagrant up` for the first time will run provisioning, which will:
-- Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64), if there isn't already a copy on your machine
+- Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64) <sup>[1](#mybox)</sup>, if there isn't already a copy on your machine
 - Create a new VirtualBox virtual machine from that image
 - Run the provisioning script ([installMolochSuricataEveboxKibana.sh](installMolochSuricataEveboxKibana.sh))
 
@@ -47,3 +54,8 @@ If your instance or Vagrant box are really not behaving, you can re-run the prov
 ### Support/help
 
 If you are confused, or having any issues with the above, join the Moloch Slack server (https://slackinvite.molo.ch/) or Suricata IRC channel (irc.freenode.net #suricata).
+If you can not get it running properly, do not worry, day 0 is for helping you out.
+If you can not get it running at all, do not worry, Tallinn is nice medieval city and has a good number of [tourist attractions](https://www.visittallinn.ee/eng/visitor/see-do/sightseeing) ;)
+
+----
+<a name="mybox">1</a> :: Or build your own box, see [here](https://www.vagrantup.com/docs/boxes/base.html)
