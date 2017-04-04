@@ -37,9 +37,9 @@ To create and provision a new virtual machine :
 
 
 Running `vagrant up` for the first time will run provisioning, which will:
-- Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64) <sup>[1](#mybox)</sup>, if there isn't already a copy on your machine
+- Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there isn't already a copy on your machine
 - Create a new VirtualBox virtual machine from that image
-- Run the provisioning script ([installMolochSuricataEveboxKibana.sh](installMolochSuricataEveboxKibana.sh))
+- Run the provisioning script ([installMolochSuricataEveboxKibana.sh](installMolochSuricataEveboxKibana.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
 The Vagrant box will automatically start after provisioning. It can be started in future with `vagrant up` from the *dirnameyoujustcreated* directory.
 
@@ -58,4 +58,6 @@ If you can not get it running properly, do not worry, day 0 is for helping you o
 If you can not get it running at all, do not worry, Tallinn is nice medieval city and has a good number of [tourist attractions](https://www.visittallinn.ee/eng/visitor/see-do/sightseeing) ;)
 
 ----
-<a name="mybox">1</a> :: Or build your own box, see [here](https://www.vagrantup.com/docs/boxes/base.html)
+<a name="mybox">(1)</a> :: Or build your own box, see [here](https://www.vagrantup.com/docs/boxes/base.html)
+
+<a name="readitbeforeyouexecuteit">(2)</a> :: Whenever you have to execute a shell script from the web, first open url in your web browser to make sure the script isn't malicious and is safe to run.
