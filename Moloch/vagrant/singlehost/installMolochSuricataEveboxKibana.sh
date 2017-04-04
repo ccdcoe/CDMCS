@@ -3,7 +3,9 @@
 # run this script on your own risk.
 #
 # it will install and configure
-# Moloch, Surucata, Evebox and maybe Kibana
+# Moloch, Suricata, Evebox and ElasticSearch and maybe Kibana
+#
+# ! it will generate some traffic to raise alerts
 #
 
 if [ "$(id -u)" != "0" ]; then
