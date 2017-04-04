@@ -7,7 +7,9 @@
 *  EveBox is a web based Suricata "eve log" event (including *alerts*) viewer and has API to query alerts
 * WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
 
-# Get it running before you come to classroom
+# Get it running on YOUR laptop, before you come to classroom
+
+Yes, you need to bring your own laptop!
 
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
