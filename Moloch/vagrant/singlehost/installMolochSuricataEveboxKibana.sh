@@ -30,8 +30,10 @@ export DEBIAN_FRONTEND=noninteractive
 MOLOCH=moloch_0.18.1-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
 EVEBOX="evebox_0.6.1_amd64.deb"
-//http://evebox.org/files/development/evebox-latest-amd64.deb
-//http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
+EVEDIR=http://evebox.org/files/release/0.6.1
+// Jason >  Its my intention to tag and release often
+// http://evebox.org/files/development/evebox-latest-amd64.deb
+// http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
 
 
 THEPASSWORD="admin"
@@ -100,7 +102,7 @@ echo "$(date) installing GeoLite2"
 mkdir -p /usr/local/share/GeoIP
 gunzip GeoLite2-City.mmdb.gz --stdout > /usr/local/share/GeoIP/GeoLite2-City.mmdb
 echo "$(date) installing evebox"
-[[ -f $EVEBOX ]] ||wget  -q -4 http://evebox.org/files/release/0.6.1/$EVEBOX -O $EVEBOX
+[[ -f $EVEBOX ]] ||wget  -q -4 $EVEDIR/$EVEBOX -O $EVEBOX
 dpkg -i $EVEBOX > /dev/null 2>&1
 
 cat >/etc/default/evebox <<EOF
