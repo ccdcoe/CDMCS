@@ -11,23 +11,19 @@
 
 * WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
 
-![grp](https://www.gravizo.com/source/s2m?https%3A%2F%2Fraw.githubusercontent.com%2Fccdcoe%2FCDMCS%2Fmaster%2FMoloch%2Fvagrant%2Fsinglehost%2FREADME.md)
-<details>
-<summary></summary>
-custom_mark10
+![grp](https://www.gravizo.com/svg?digraph%20suricata2moloch%20{eth0%20%20-%3E%20%22moloch-capture%22%20-%3E%20wise%20%22elastic.suricata%22%20%20-%3E%20%22evebox.api%22%20-%3E%20wise%20-%3E%20%22moloch-capture%22%22moloch-capture%22%20-%3E%20%22elastic.sessions%22%20-%3E%20%20%22moloch-viewer%22eth0%20-%3E%20suricata%20-%3E%20%22eve.json%22%20-%3E%20%22evebox.import%22%20-%3E%20%22elastic.suricata%22%20-%3E%22evebox.ui%22{rank=same;%20%22moloch-capture%22%20suricata}{rank=same;%20wise%20%22eve.json%22}{rank=same;%20%22evebox.api%22%20%22evebox.import%22}{rank=same;%20%20%22elastic.suricata%22%20%20%22elastic.sessions%22}{rank=same;%20%20%22moloch-viewer%22%20%22evebox.ui%22%20}})
+```
 digraph suricata2moloch {
-eth0  -> "moloch-capture" -> wise 
-"elastic.suricata"  -> "evebox.api" -> wise -> "moloch-capture"
-"moloch-capture" -> "elastic.sessions" ->  "moloch-viewer"
-eth0 -> suricata -> "eve.json" -> "evebox.import" -> "elastic.suricata" ->"evebox.ui"
+eth0 -> suricata -> "eve.json" -> "evebox.import" -> "elastic.suricata" -> "evebox.api" -> wise 
+eth0  -> "moloch-capture" -> wise -> "moloch-capture" -> "elastic.sessions" ->  "moloch-viewer"
+"elastic.suricata" ->"evebox.ui"
 {rank=same; "moloch-capture" suricata}
 {rank=same; wise "eve.json"}
 {rank=same; "evebox.api" "evebox.import"}
 {rank=same;  "elastic.suricata"  "elastic.sessions"}
 {rank=same;  "moloch-viewer" "evebox.ui" }
 }
-custom_mark10
-</details> 
+```
 
 
 # Get it running on YOUR laptop, before you come to classroom
