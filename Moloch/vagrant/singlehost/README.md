@@ -2,9 +2,9 @@
 
 * **Moloch** is full packet capturing, indexing, and database system.
 * MOLOCH is not IDS
-* *WISE* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
-* **Suricata** is IDS and NSM tool.
-*  *EveBox* is a web based Suricata "eve log" event (including *alerts*) viewer and has [API to query alerts](http://evebox.readthedocs.io/en/latest/api.html#get-api-1-alerts).
+* *[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
+* **[Suricata](https://suricata-ids.org/)** is IDS and NSM tool.
+*  *[EveBox](https://github.com/jasonish/evebox)* is a web based Suricata "eve log" event (including *alerts*) viewer and has [API to query alerts](http://evebox.readthedocs.io/en/latest/api.html#get-api-1-alerts).
 * *ElasticSearch* is a search engine.
 
 
