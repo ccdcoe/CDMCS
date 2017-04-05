@@ -29,7 +29,9 @@ export DEBIAN_FRONTEND=noninteractive
 #MOLOCH="moloch-nightly_amd64.deb"
 MOLOCH=moloch_0.18.1-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
-EVEBOX="evebox_0.6.1~dev20170403042550_amd64.deb"
+EVEBOX="evebox_0.6.1_amd64.deb"
+//http://evebox.org/files/development/evebox-latest-amd64.deb
+//http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
 
 
 THEPASSWORD="admin"
@@ -98,7 +100,7 @@ echo "$(date) installing GeoLite2"
 mkdir -p /usr/local/share/GeoIP
 gunzip GeoLite2-City.mmdb.gz --stdout > /usr/local/share/GeoIP/GeoLite2-City.mmdb
 echo "$(date) installing evebox"
-[[ -f $EVEBOX ]] ||wget  -q -4 http://evebox.org/files/debian/pool/main/e/evebox/$EVEBOX -O $EVEBOX
+[[ -f $EVEBOX ]] ||wget  -q -4 http://evebox.org/files/release/0.6.1/$EVEBOX -O $EVEBOX
 dpkg -i $EVEBOX > /dev/null 2>&1
 
 cat >/etc/default/evebox <<EOF
