@@ -11,7 +11,9 @@
 
 * WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
 
-![grp](https://www.gravizo.com/svg?
+![grp](https://www.gravizo.com/source/s2m?https%3A%2F%2Fraw.githubusercontent.com%2Fccdcoe%2FCDMCS%2Fmaster%2FMoloch%2Fvagrant%2Fsinglehost%2FREADME.md)
+<details>
+s2m
 digraph suricata2moloch {
 eth0  -> "moloch-capture" -> wise 
 "elastic.suricata"  -> "evebox.api" -> wise -> "moloch-capture"
@@ -23,7 +25,9 @@ eth0 -> suricata -> "eve.json" -> "evebox.import" -> "elastic.suricata" ->"evebo
 {rank=same;  "elastic.suricata"  "elastic.sessions"}
 {rank=same;  "moloch-viewer" "evebox.ui" }
 }
-)
+s2m
+</details> 
+
 
 # Get it running on YOUR laptop, before you come to classroom
 
