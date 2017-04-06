@@ -31,9 +31,9 @@ MOLOCH=moloch_0.18.1-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
 EVEBOX="evebox_0.6.1_amd64.deb"
 EVEDIR=http://evebox.org/files/release/0.6.1
-// Jason >  Its my intention to tag and release often
-// http://evebox.org/files/development/evebox-latest-amd64.deb
-// http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
+# Jason >  Its my intention to tag and release often
+# http://evebox.org/files/development/evebox-latest-amd64.deb
+# http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
 
 
 THEPASSWORD="admin"
@@ -139,9 +139,9 @@ systemctl start evebox
 echo "$(date) installing moloch"
 apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
 [[ -f $MOLOCH ]] || wget  -q -4 http://files.molo.ch/builds/ubuntu-16.04/$MOLOCH
-confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev)
+confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev) > /dev/null 2>&1
 echo "$confcmd"
-echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd
+echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd > /dev/null 2>&1
 # set up wise server
 sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' /data/moloch/etc/config.ini
 MOLOCH_INSTALL_DIR="/data/moloch"
@@ -161,16 +161,17 @@ until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&tim
 do
   sleep 1
 done
-echo -en "INIT" | /data/moloch/db/db.pl http://localhost:9200 init
+echo -en "INIT" | /data/moloch/db/db.pl http://localhost:9200 init > /dev/null 2>&1
 /data/moloch/bin/moloch_add_user.sh admin "Admin User" $THEPASSWORD --admin
 systemctl enable molochviewer.service
 systemctl start molochviewer.service
-ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off
-ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off
+ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off > /dev/null 2>&1
+ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off > /dev/null 2>&1
 systemctl start molochcapture.service
 
 echo "$(date) generating some alert traffic, your ISP may detect it and disconnect you"
 sleep 1
+curl -s www.testmyids.com > /dev/null 2>&1
 curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
 # and some more
 apt-get -y install nmap > /dev/null 2>&1
