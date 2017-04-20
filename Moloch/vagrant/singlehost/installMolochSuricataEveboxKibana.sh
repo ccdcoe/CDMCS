@@ -27,7 +27,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 #set versions here
 #MOLOCH="moloch-nightly_amd64.deb"
-MOLOCH=moloch_0.18.1-1_amd64.deb
+MOLOCH=moloch_0.18.2-1_amd64.deb
 ELASTICSEARCH="elasticsearch-5.2.2.deb"
 EVEBOX="evebox_0.6.1_amd64.deb"
 EVEDIR=http://evebox.org/files/release/0.6.1
