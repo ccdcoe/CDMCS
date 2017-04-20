@@ -41,24 +41,24 @@ THEPASSWORD="admin"
 cd /vagrant/
 
 echo "$(date) installing java"
-add-apt-repository ppa:webupd8team/java > /dev/null 2>&1
-apt-get update > /dev/null 2>&1
+add-apt-repository ppa:webupd8team/java >> /vagrant/provision.log 2>&1
+apt-get update >> /vagrant/provision.log 2>&1
 echo "oracle-java8-installer shared/accepted-oracle-license-v1-1 select true" | sudo debconf-set-selections
-apt-get -y install oracle-java8-installer > /dev/null 2>&1
+apt-get -y install oracle-java8-installer >> /vagrant/provision.log 2>&1
 
 echo "$(date) installing Elasticsearch"
 [[ -f $ELASTICSEARCH ]] || wget  -q -4 https://artifacts.elastic.co/downloads/elasticsearch/$ELASTICSEARCH
-dpkg -i $ELASTICSEARCH > /dev/null 2>&1
+dpkg -i $ELASTICSEARCH >> /vagrant/provision.log 2>&1
 sed -i -e 's,-Xms2g,-Xms256m,g' /etc/elasticsearch/jvm.options
 sed -i -e 's,-Xmx2g,-Xmx256m,g' /etc/elasticsearch/jvm.options
-systemctl enable elasticsearch > /dev/null 2>&1
+systemctl enable elasticsearch >> /vagrant/provision.log 2>&1
 systemctl start elasticsearch
 
 #suricata
 echo "$(date) installing Suricata"
-add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1
-apt-get update > /dev/null 2>&1
-apt-get -y install suricata > /dev/null 2>&1
+add-apt-repository ppa:oisf/suricata-stable >> /vagrant/provision.log 2>&1
+apt-get update >> /vagrant/provision.log 2>&1
+apt-get -y install suricata >> /vagrant/provision.log 2>&1
 systemctl stop suricata
 
 #ls /sys/class/net | grep -v lo
@@ -93,7 +93,7 @@ touch  /etc/suricata//threshold.config
 #suricata -T -vvv
 [[ $(suricata -T) ]] || exit -1
 systemctl daemon-reload
-systemctl enable suricata > /dev/null 2>&1
+systemctl enable suricata >> /vagrant/provision.log 2>&1
 systemctl start suricata
 
 # evebox
@@ -103,7 +103,7 @@ mkdir -p /usr/local/share/GeoIP
 gunzip GeoLite2-City.mmdb.gz --stdout > /usr/local/share/GeoIP/GeoLite2-City.mmdb
 echo "$(date) installing evebox"
 [[ -f $EVEBOX ]] ||wget  -q -4 $EVEDIR/$EVEBOX -O $EVEBOX
-dpkg -i $EVEBOX > /dev/null 2>&1
+dpkg -i $EVEBOX >> /vagrant/provision.log 2>&1
 
 cat >/etc/default/evebox <<EOF
 ELASTICSEARCH_URL="-e http://localhost:9200"
@@ -130,18 +130,18 @@ WantedBy=multi-user.target
 EOF
 
 
-systemctl enable evebox-esimport > /dev/null 2>&1
+systemctl enable evebox-esimport >> /vagrant/provision.log 2>&1
 systemctl start evebox-esimport
 
-systemctl enable evebox > /dev/null 2>&1
+systemctl enable evebox >> /vagrant/provision.log 2>&1
 systemctl start evebox
 
 echo "$(date) installing moloch"
-apt-get -y install libwww-perl libjson-perl > /dev/null 2>&1
+apt-get -y install libwww-perl libjson-perl >> /vagrant/provision.log 2>&1
 [[ -f $MOLOCH ]] || wget  -q -4 http://files.molo.ch/builds/ubuntu-16.04/$MOLOCH
-confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev) > /dev/null 2>&1
+confcmd=$(dpkg -i $MOLOCH | tail -1 | rev | cut -f1 -d" " | rev) >> /vagrant/provision.log 2>&1
 echo "$confcmd"
-echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd > /dev/null 2>&1
+echo -en "enp0s3;enp0s8;\nno\nhttp://localhost:9200\ns2spassword\n" | $confcmd >> /vagrant/provision.log 2>&1
 # set up wise server
 sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' /data/moloch/etc/config.ini
 MOLOCH_INSTALL_DIR="/data/moloch"
@@ -157,24 +157,24 @@ cp /vagrant/source.suricata.js /data/moloch/wiseService/
 systemctl enable molochwise.service
 systemctl start molochwise.service
 
-until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s' > /dev/null 2>&1
+until curl -sS 'http://127.0.0.1:9200/_cluster/health?wait_for_status=yellow&timeout=5s' >> /vagrant/provision.log 2>&1
 do
   sleep 1
 done
-echo -en "INIT" | /data/moloch/db/db.pl http://localhost:9200 init > /dev/null 2>&1
+echo -en "INIT" | /data/moloch/db/db.pl http://localhost:9200 init >> /vagrant/provision.log 2>&1
 /data/moloch/bin/moloch_add_user.sh admin "Admin User" $THEPASSWORD --admin
 systemctl enable molochviewer.service
 systemctl start molochviewer.service
-ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off > /dev/null 2>&1
-ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off > /dev/null 2>&1
+ethtool -K enp0s3 tx off sg off gro off gso off lro off tso off >> /vagrant/provision.log 2>&1
+ethtool -K enp0s8 tx off sg off gro off gso off lro off tso off >> /vagrant/provision.log 2>&1
 systemctl start molochcapture.service
 
 echo "$(date) generating some alert traffic, your ISP may detect it and disconnect you"
 sleep 1
-curl -s www.testmyids.com > /dev/null 2>&1
+curl -s www.testmyids.com >> /vagrant/provision.log 2>&1
 curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
 # and some more
-apt-get -y install nmap > /dev/null 2>&1
+apt-get -y install nmap >> /vagrant/provision.log 2>&1
 grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1500 | tail| while read ip;
 do
   nmap -p 22,80,443 --script=banner $ip > /dev/null &
