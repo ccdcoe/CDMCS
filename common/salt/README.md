@@ -1,5 +1,12 @@
 # vagrant
 
+* https://docs.saltstack.com/en/latest/ref/modules/all/index.html
+* https://docs.saltstack.com/en/latest/ref/states/all/index.html
+* http://jinja.pocoo.org/docs/2.9/templates/
+* https://docs.saltstack.com/en/latest/topics/jinja/index.html
+* https://docs.saltstack.com/en/latest/topics/pillar/
+* https://docs.saltstack.com/en/latest/topics/grains/index.html
+
 This repository is meant to be used as a local development environment. Easiest way to get started is to use virtualbox provider.
 
 ```
@@ -15,13 +22,14 @@ sudo salt-key -A -y
 salt '*' test.ping
 salt '*' grains.ls
 salt '*' grains.get os
+salt '*' cmd.run 'ifconfig'
 ```
 
 Note that developer does not need superuser privileges to use salt execution modules as vagrant user. This is due to pre-configured ACL within salt-master config file. However, local system administration tasks (e.g. accepting certificate requests) still require elevation.
 
 ## States
 
-Salt does configuration management, in addition to orchestration. 
+Salt does configuration management, in addition to orchestration.
 
 ```
 salt '*' state.apply <statename>
