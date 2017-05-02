@@ -17,15 +17,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 1 :: Single Box :: May 9 2017
 
- * 09:00 - 09:45 [build from source](/Moloch/build.md)
- * 10:00 - 10:45 [config](/Moloch/config.md)
- * 11:00 - 11:45
+ * 09:00 - 10:30 [build from source](/Moloch/build.md)
+ * 11:00 - 11:45 [config](/Moloch/config.md)
 
-
- * 13:00 - 13:45
- * 14:00 - 14:45
- * 15:00 - 15:45
- * 16:00 - 16:45
+ * 13:00 - 16:45 Digging
 
 
 ## Day 2 :: Scale up :: May 10 2017
@@ -34,11 +29,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 10:00 - 10:45
 * 11:00 - 11:45
 
-
-* 13:00 - 13:45
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45
+* 13:00 - 16:45 Digging
 
 
 ## Day 3 :: Usage :: May 11 2017
@@ -47,11 +38,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 10:00 - 10:45
 * 11:00 - 11:45
 
-
-* 13:00 - 13:45
-* 14:00 - 14:45
-* 15:00 - 15:45
-* 16:00 - 16:45
+* 13:00 - 16:45 Digging
 
 ## Day +1 :: :: May 12 2017 end at 12:00
 
