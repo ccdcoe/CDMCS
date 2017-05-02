@@ -147,4 +147,4 @@ nodejs viewer.js -c /opt/moloch/etc/config.ini
 * data retention
 
 ---
-[next : Advanced Configuration]()
+[next : Advanced Configuration](/Moloch/config.md)
