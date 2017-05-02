@@ -17,8 +17,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 1 :: Single Box :: May 9 2017
 
- * 09:00 - 09:45 [build from source](/Moloch/classroom/day_1/BuildFromSource.md)
- * 10:00 - 10:45 [config](/Moloch/classroom/day_1/Config.md)
+ * 09:00 - 09:45 [build from source](/Moloch/build.md)
+ * 10:00 - 10:45 [config](/Moloch/config.md)
  * 11:00 - 11:45
 
 
