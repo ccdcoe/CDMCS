@@ -42,12 +42,12 @@ Install the latest versions of Vagrant and VirtualBox for your operating systems
 If you get any error message, [fix them before creating any VM's](https://www.vagrantup.com/docs/virtualbox/common-issues.html).
 
 
-To create and provision a new virtual machine :
+To create and provision a new virtual machine (UPDATE: fixed links from HTML page to raw):
 
     mkdir somedirnameyoulike
     cd dirnameyoujustcreated
-    wget https://github.com/ccdcoe/CDMCS/blob/master/Moloch/vagrant/singlehost/installMolochSuricataEveboxKibana.sh
-    wget https://github.com/ccdcoe/CDMCS/blob/master/Moloch/vagrant/singlehost/Vagrantfile
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/installMolochSuricataEveboxKibana.sh
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
     vagrant up
 
 
