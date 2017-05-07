@@ -12,7 +12,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/Moloch/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/Moloch/classroom/day_intro/BasicConf.md)
+ * 15:00 - 15:45 [basic config](/Moloch/config.md)
  * 16:00 - 16:45 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
 
 ## Day 1 :: Single Box :: May 9 2017
