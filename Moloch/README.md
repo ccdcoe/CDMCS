@@ -52,4 +52,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 * [Prepare your laptop](/Moloch/vagrant/singlehost/README.md#get-it-running-on-your-laptop-before-you-come-to-classroom)
 * browse trough ..
+  * [molo.ch](http://molo.ch/)
+  * [moloch FAQ](https://github.com/aol/moloch/wiki/FAQ)
+  * [moloch wiki](https://github.com/aol/moloch/wiki)
   * [Goodbye single host, woot!](https://github.com/aol/moloch/commit/8c472d939fad305d1c4134bde0ca8754faeaff84)
+  * [InfoSec matters - Moloch FPC](http://blog.infosecmatters.net/2017/05/moloch-fpc.html)

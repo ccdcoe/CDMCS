@@ -7,7 +7,7 @@ MASTEROFMASTERS = "192.168.128.201"
 NET = "10.244.1."
 NET_START = 10
 STUDENTCOUNT = 1
-SURICATACOUNT = 2
+SURICATACOUNT = 8
 
 Vagrant.configure(2) do |config|
   config.vm.box = "vsphere"
