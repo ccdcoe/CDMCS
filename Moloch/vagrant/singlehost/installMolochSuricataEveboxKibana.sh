@@ -28,9 +28,12 @@ export DEBIAN_FRONTEND=noninteractive
 #set versions here
 #MOLOCH="moloch-nightly_amd64.deb"
 MOLOCH=moloch_0.18.2-1_amd64.deb
-ELASTICSEARCH="elasticsearch-5.2.2.deb"
+ELASTICSEARCH="elasticsearch-5.3.2.deb"
 EVEBOX="evebox_0.6.1_amd64.deb"
 EVEDIR=http://evebox.org/files/release/0.6.1
+EVEBOX="evebox_0.7.0_amd64.deb"
+EVEDIR="https://evebox.org/files/release/latest"
+# https://evebox.org/files/development/evebox-latest-amd64.deb
 # Jason >  Its my intention to tag and release often
 # http://evebox.org/files/development/evebox-latest-amd64.deb
 # http://evebox.org/files/release/0.6.1/evebox_0.6.1_amd64.deb
@@ -172,12 +175,12 @@ systemctl start molochcapture.service
 echo "$(date) generating some alert traffic, your ISP may detect it and disconnect you"
 sleep 1
 curl -s www.testmyids.com >> /vagrant/provision.log 2>&1
-curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
+#curl  -s https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist | while read i; do curl -s -m 2 $i > /dev/null; done &
 # and some more
 apt-get -y install nmap >> /vagrant/provision.log 2>&1
 grep -h -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /etc/suricata/rules/*.rules | sort | uniq | grep -v "\.0$" |rev| sort| rev | head -1500 | tail| while read ip;
 do
-  nmap -p 22,80,443 --script=banner $ip > /dev/null &
+  #nmap -p 22,80,443 --script=banner $ip > /dev/null &
   sleep 1
 done
 
