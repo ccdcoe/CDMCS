@@ -2,6 +2,7 @@
 
 * https://github.com/pevma/SEPTun
 * https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Performance_Tuning_Guide/s-cpu-irq.html
+* https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_MRG/1.3/html/Realtime_Tuning_Guide/sect-Realtime_Tuning_Guide-General_System_Tuning-Interrupt_and_Process_Binding.html
 * https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Packet_Capture
 * https://www.kernel.org/doc/Documentation/IRQ-affinity.txt
 
