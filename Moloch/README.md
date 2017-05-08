@@ -10,10 +10,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 0 :: Intro:: May 8 2017 start at 13:00
 
- * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
- * 14:00 - 14:45 [singlehost](/Moloch/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [basic config](/Moloch/config.md)
- * 16:00 - 16:45 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
+ * 13:00 - 14:00 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
+ * 14:00 - 15:00 [singlehost](/Moloch/vagrant/singlehost/README.md)
+ * 15:30 - 16:15 [basic config](/Moloch/config.md)
+ * 16:15 - 17:00 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
 
 ## Day 1 :: Single Box :: May 9 2017
 
@@ -40,8 +40,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day +1 :: :: May 12 2017 end at 12:00
 
-* 09:00 - 09:45 []()
-* 10:00 - 10:45 []()
+* 09:00 - 10:30 []()
 * 11:00 - 12:00 [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----
