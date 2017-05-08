@@ -25,18 +25,16 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 2 :: Scale up :: May 10 2017
 
-* 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
-* 10:00 - 10:45
-* 11:00 - 11:45
+* 09:00 - 10:30 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
+* 11:00 - 12:30
 
 * 13:00 - 16:45 Digging
 
 
 ## Day 3 :: Usage :: May 11 2017
 
-* 09:00 - 09:45 [Building hunt dashboards](/Moloch/classroom/day3/KibanaAsHuntingDashboard.md)
-* 10:00 - 10:45
-* 11:00 - 11:45
+* 09:00 - 10:30 [Building hunt dashboards](/Moloch/classroom/day3/KibanaAsHuntingDashboard.md)
+* 11:00 - 12:30
 
 * 13:00 - 16:45 Digging
 
