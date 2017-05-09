@@ -25,7 +25,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 2 :: Scale up :: May 10 2017
 
-* 09:00 - 10:30 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md),
+* 09:00 - 10:30 [metrixz](https://github.com/ccdcoe/CDMCS/tree/master/TICK/vagrant/singlehost#singlehost-tickag),[Telegraf](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Telegraf),[InfluxDB](https://github.com/ccdcoe/CDMCS/tree/master/TICK/InfluxDB),[Grafana](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Grafana); SALT [Minions](/common/SetUpMinions.md) & [Master](/common/SetUpMaster.md)
 * 11:00 - 12:30
 
 * 13:00 - 16:45 Digging
