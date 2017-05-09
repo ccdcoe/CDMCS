@@ -49,6 +49,8 @@ curl -ss -XGET localhost:9200/_cat/nodes
 
 ### Dependencies
 
+* https://nodejs.org/dist/
+
 ```
 sudo apt-get -y install build-essential git
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
