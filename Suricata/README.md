@@ -9,14 +9,14 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 > Suricata is a free and open source, mature, fast and robust network threat detection engine. The Suricata engine is capable of real time intrusion detection (IDS), inline intrusion prevention (IPS), network security monitoring (NSM) and offline pcap processing.
 
-## Day 0 :: Intro:: Mar 6 2017 start at 13:00
+## Day 0 :: Intro:: Feb 12 2018 start at 13:00
 
  * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 14:45 [singlehost](/Suricata/vagrant/singlehost/README.md)
  * 15:00 - 15:45 [rules](/Suricata/suricata/rules.intro.md)
  * 16:00 - 16:45 [visual](/Suricata/scirius/README.md)[isations](/Suricata/evebox/README.md)
 
-## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Mar 7 2017
+## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
 
  * 09:00 - 09:45 [build from source](/Suricata/suricata/build.md)
  * 10:00 - 10:45 [config](/Suricata/suricata/config.md)
@@ -29,7 +29,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 16:00 - 16:45 [writing basic rule](/Suricata/suricata/writing.first.rule.md)
 
 
-## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Mar 8 2017
+## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Feb 14 2018
 
 * 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md), [Metrix](/TICK/Telegraf/README.md)
 * 10:00 - 10:45 [installing on 1+]
@@ -42,7 +42,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 16:00 - 16:45 [Kibana](/common/kibana.md)
 
 
-## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Mar 9 2017
+## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Feb 15 2018
 
 * 09:00 - 09:45 [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
 * 10:00 - 13:45 [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
@@ -53,7 +53,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 15:00 - 16:45 [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
 
 
-## Day +1 :: :: Mar 10 2017 end at 12:00
+## Day +1 :: :: Feb 16 2018 end at 12:00
 
 * 09:00 - 09:45 [Making sense out of Alerts](/common/kibana.md)
 * 10:00 - 10:45 []()
