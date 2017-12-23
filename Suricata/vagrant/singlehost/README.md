@@ -2,4 +2,5 @@
 
 * suricata
 * scirius
-* evebox
+* elastic
+* tick
