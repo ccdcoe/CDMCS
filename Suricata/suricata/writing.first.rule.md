@@ -15,7 +15,6 @@ A rule consists of the following:
 
 ### Action
 
-
 * alert - This is the action we want to perform on the rule
 
 * pass - This can be compared to “ACCEPT” in iptables, in that if the packet matches this rule it’ll be accepted through.
@@ -32,9 +31,6 @@ A rule consists of the following:
 * content matching
 * meta data
 * threshold configuration
-
-
-
 
 ## Exercises
 

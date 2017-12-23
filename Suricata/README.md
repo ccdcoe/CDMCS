@@ -11,53 +11,58 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 0 :: Intro:: Feb 12 2018 start at 13:00
 
- * 13:00 - 13:45 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
- * 14:00 - 14:45 [singlehost](/Suricata/vagrant/singlehost/README.md)
- * 15:00 - 15:45 [rules](/Suricata/suricata/rules.intro.md)
- * 16:00 - 16:45 [visual](/Suricata/scirius/README.md)[isations](/Suricata/evebox/README.md)
+ * 13:00 - 14:45
+   * [Intro](/common/day_intro.md)
+   * [what is Suricata](/Suricata/README.md)
+   * [vagrant](/common/vagrant_intro.md)
+   * [singlehost](/Suricata/vagrant/singlehost/README.md)
+ * 15:00 - 16:45
+   * [first rule](/Suricata/)
+   * [first dashboard]()
 
 ## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
 
- * 09:00 - 09:45 [build from source](/Suricata/suricata/build.md)
- * 10:00 - 10:45 [config](/Suricata/suricata/config.md)
- * 11:00 - 11:45 [managing rules](/Suricata/suricata/rules.md)
-
-
- * 13:00 - 13:45 [indexing alert log](/Suricata/suricata/rsyslog.md)
- * 14:00 - 14:45 [scirius](/Suricata/scirius/README.md)
- * 15:00 - 15:45 [evebox](/Suricata/evebox/README.md)
- * 16:00 - 16:45 [writing basic rule](/Suricata/suricata/writing.first.rule.md)
-
+ * 09:00 - 11:45
+   * [build from source](/Suricata/suricata/build.md)
+   * [config](/Suricata/suricata/config.md)
+   * [managing rules](/Suricata/suricata/rules.md)
+ * 13:00 - 16:45
+   * [indexing alert log](/Suricata/suricata/rsyslog.md)
+   * [scirius](/Suricata/scirius/README.md)
+   * [evebox](/Suricata/evebox/README.md)
+   * [writing basic rule](/Suricata/suricata/writing.first.rule.md)
 
 ## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Feb 14 2018
 
-* 09:00 - 09:45 [Minions](/common/SetUpMinions.md), [Master](/common/SetUpMaster.md), [Metrix](/TICK/Telegraf/README.md)
-* 10:00 - 10:45 [installing on 1+]
-* 11:00 - 11:45 [config & rules on 1+]
-
-
-* 13:00 - 13:45 [elasticsearch]
-* 14:00 - 14:45 [scirius]
-* 15:00 - 15:45 [evebox]
-* 16:00 - 16:45 [Kibana](/common/kibana.md)
+* 09:00 - 11:45
+  * [Minions](/common/SetUpMinions.md)
+  * [Master](/common/SetUpMaster.md)
+  * [Metrix](/TICK/Telegraf/README.md)
+  * [deployment]()
+* 13:00 - 16:45
+  * [elasticsearch]()
+  * [scirius]()
+  * [evebox]()
+  * [Kibana](/common/kibana.md)
 
 
 ## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Feb 15 2018
 
-* 09:00 - 09:45 [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
-* 10:00 - 13:45 [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
-
-
-
-* 14:00 - 14:45 [Suricata unix socket](/Suricata/suricata/unixsocket.md)
-* 15:00 - 16:45 [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
+* 09:00 - 11:45
+  * [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
+  * [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
+  * [IPS]()
+* 14:00 - 16:45
+  * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
+  * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
 
 
 ## Day +1 :: :: Feb 16 2018 end at 12:00
 
-* 09:00 - 09:45 [Making sense out of Alerts](/common/kibana.md)
-* 10:00 - 10:45 []()
-* 11:00 - 12:00 [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+* 09:00 - 09:45
+  * [Making sense out of Alerts](/common/kibana.md)
+  * []()
+  * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 
 ----
