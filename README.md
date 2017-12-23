@@ -20,7 +20,7 @@ Please visit:
 
 # Current Classes
 
- * [Suricata :: ](Suricata/README.md)
+ * [Suricata :: Feb 12-16 2018](Suricata/README.md)
  * [SDM :: ](SDM/README.md)
  * [Moloch ::](Moloch/README.md)
 
