@@ -81,7 +81,7 @@ EOF
 touch  /etc/suricata//threshold.config
 #suricata -T -vvv
 [[ $(suricata -T) ]] || exit -1
-#Fixed some weird systemd/init.d daemon pid file creating behavior. PID file in /var/run/ should be readable by all. 
+#Fixed some weird systemd/init.d daemon pid file creating behavior. PID file in /var/run/ should be readable by all.
 sed -i -e 's/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log  2>\\&1 \\&/$DAEMON $SURICATA_OPTIONS > \\/var\\/log\\/suricata\\/suricata-start.log 2>\\&1\\n       chmod 644 $PIDFILE > \\/dev\\/null 2>\\&1 || true/' /etc/init.d/suricata
 systemctl daemon-reload
 systemctl enable suricata > /dev/null 2>&1
@@ -247,22 +247,19 @@ echo 'server.host: "0.0.0.0"' >> /etc/kibana/kibana.yml
 systemctl enable kibana > /dev/null 2>&1
 systemctl start kibana
 
-
-
 echo "DONE :: start $start end $(date)"
 netstat -ntple
 SCRIPT
 
-
 Vagrant.configure(2) do |config|
   config.vm.define 'Amstelredamme' do |box|
-      box.vm.box = "ubuntu/xenial64"
+      box.vm.box = "generic/ubuntu1604"
       box.vm.hostname = 'Amstelredamme'
       box.vm.network :private_network, ip: "192.168.10.11"
       box.vm.provider :virtualbox do |vb|
        vb.customize ["modifyvm", :id, "--memory", "4096"]
        vb.customize ["modifyvm", :id, "--cpus", "4"]
       end
-      config.vm.provision "shell", inline: $provision_script
+      config.vm.provision "shell", path: "provision.sh"
   end
 end
