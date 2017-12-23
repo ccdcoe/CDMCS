@@ -13,7 +13,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 13:00 - 14:45
    * [Intro](/common/day_intro.md)
-   * [what is Suricata](/Suricata/README.md)
+   * [what is Suricata](/Suricata/suricata/README.md)
    * [vagrant](/common/vagrant_intro.md)
    * [singlehost](/Suricata/vagrant/singlehost/README.md)
  * 15:00 - 16:45
