@@ -2,6 +2,7 @@
 # set versions here
 
 # SURICATA="4.0.3"
+PROXY=http://192.168.10.1:3128
 
 # basic OS config
 start=$(date)
@@ -13,6 +14,15 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
+
+FILE=/etc/profile
+grep "proxy" $FILE || cat >> $FILE <<EOF
+http_proxy=$PROXY
+https_proxy=$PROXY
+export http_proxy
+export https_proxy
+EOF
+source /etc/profile
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
 [[ -f $FILE ]] ||  echo 'Acquire::ForceIPv4 "true";' | sudo tee $FILE
