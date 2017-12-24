@@ -2,7 +2,6 @@
 # set versions here
 
 # SURICATA="4.0.3"
-SURI_CHECK=$()
 
 # basic OS config
 start=$(date)
