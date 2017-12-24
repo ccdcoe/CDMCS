@@ -9,11 +9,12 @@ check_service(){
 DEBUG=false
 PROXY=http://192.168.10.1:3128
 PKGDIR=/vagrant/pkgs
-WGET_PARAMS="-4"
+WGET_PARAMS="-4 -q"
 
 # versions
-ELA=6.1.1
-#SURICATA=4.0.3
+ELA="elasticsearch-6.1.1.deb"
+KIBANA="kibana-6.1.1-amd64.deb"
+LOGSTASH="logstash-6.1.1.deb"
 
 # basic OS config
 start=$(date)
@@ -26,14 +27,14 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
 
-FILE=/etc/profile
-grep "proxy" $FILE || cat >> $FILE <<EOF
-http_proxy=$PROXY
-https_proxy=$PROXY
-export http_proxy
-export https_proxy
-EOF
-source /etc/profile
+#FILE=/etc/profile
+#grep "proxy" $FILE || cat >> $FILE <<EOF
+#http_proxy=$PROXY
+#https_proxy=$PROXY
+#export http_proxy
+#export https_proxy
+#EOF
+#source /etc/profile
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
 [[ -f $FILE ]] ||  echo 'Acquire::ForceIPv4 "true";' | sudo tee $FILE
@@ -41,10 +42,11 @@ export DEBIAN_FRONTEND=noninteractive
 mkdir -p /vagrant/pkgs
 
 # basic software
-apt-get update > /dev/null && apt-get install curl htop vim tmux > /dev/null
+#apt-get update > /dev/null && apt-get install curl htop vim tmux > /dev/null
 
 # java
 install_oracle_java() {
+  echo "Installing oracle Java"
   echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 boolean true' | debconf-set-selections \
   && add-apt-repository ppa:webupd8team/java > /dev/null 2>&1 \
   && apt-get update > /dev/null \
@@ -55,13 +57,39 @@ java -version || install_oracle_java
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
-FILE=$PKGDIR/elasticsearch-$ELA.deb
-SHA=$FILE.sha512
-[[ -f $FILE ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELA.deb -O $FILE
-[[ -f $FILE.sha512 ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$ELA.deb.sha512 -O $SHA
-cd $PKGDIR && shasum -a 512 -c $SHA && dpkg -i $FILE
+cd $PKGDIR
+[[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
+dpkg -i $ELA > /dev/null 2>&1
 
 check_service elasticsearch
+
+# kibana
+echo "Provisioning KIBANA"
+cd $PKGDIR
+[[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
+dpkg -i $KIBANA > /dev/null 2>&1
+
+FILE=/etc/kibana/kibana.yml
+grep "provisioned" $FILE || cat >> $FILE <<EOF
+# provisioned
+server.host: "0.0.0.0"
+EOF
+
+check_service kibana
+
+# logstash
+echo "Provisioning LOGSTASH"
+cd $PKGDIR
+[[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
+dpkg -i $LOGSTASH > /dev/null 2>&1
+
+#FILE=/etc/kibana/kibana.yml
+#grep "provisioned" $FILE || cat >> $FILE <<EOF
+## provisioned
+#server.host: "0.0.0.0"
+#EOF
+
+#check_service logstash
 
 # suricata
 install_suricata_from_ppa(){
