@@ -6,7 +6,7 @@ check_service(){
 }
 
 # params
-DEBUG=false
+DEBUG=true
 PROXY=http://192.168.10.1:3128
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
@@ -86,6 +86,7 @@ install_suricata_from_ppa(){
 echo "Provisioning SURICATA"
 suricata -V || install_suricata_from_ppa
 
+[[ -f /etc/suricata/rules/scirius.rules ]] || touch /etc/suricata/rules/scirius.rules
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 FILE=/etc/suricata/suricata.yaml
@@ -101,8 +102,8 @@ af-packet:
     cluster-type: cluster_flow
     defrag: yes
 default-rule-path: /etc/suricata/rules
-#rule-files:
-# - scirius.rules
+rule-files:
+ - scirius.rules
 sensor-name: suricata
 EOF
 
