@@ -32,7 +32,7 @@ export DEBIAN_FRONTEND=noninteractive
 # install suricata but check if already exists
 # add-apt-repository assumes ubuntu
 suricata -V || bash -c "add-apt-repository ppa:oisf/suricata-stable && apt-get update && apt-get install -y suricata && suricata -V"
-ip addr show
+if $debug ; then ip addr show; fi
 systemctl stop suricata
 FILE=/etc/suricata/suricata.yaml
 grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
@@ -58,3 +58,4 @@ if $debug ; then suricata -T -vvv; fi
 systemctl daemon-reload
 systemctl is-enabled suricata.service 2>/dev/null | grep disabled && systemctl enable suricata.service
 systemctl status suricata.service | egrep  "inactive" && systemctl start suricata.service
+if $debug ; then systemctl status suricata.service ; fi
