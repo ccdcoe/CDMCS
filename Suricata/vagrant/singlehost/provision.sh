@@ -77,6 +77,7 @@ server.host: "0.0.0.0"
 EOF
 
 check_service kibana
+
 # suricata
 install_suricata_from_ppa(){
   add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
@@ -141,5 +142,7 @@ output {
 }
 EOF
 curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
+curl -ss -XPUT localhost:9200/.kibana/doc/index-pattern:a1571060-e8e2-11e7-9cf4-db76e233e72b -d @/vagrant/kibana-index-pattern.json -H'Content-Type: application/json'
+curl -ss -XPUT localhost:9200/.kibana/doc/config:6.0.1 -d @/vagrant/kibana-index-pattern-config.json -H'Content-Type: application/json'
 chown root:logstash /var/log/suricata/eve.json
 check_service logstash
