@@ -2,7 +2,7 @@ check_service(){
   systemctl daemon-reload
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
   systemctl status $1.service | egrep  "inactive" && systemctl start $1.service
-  if $DEBUG ; then systemctl status $1.service ; fi
+  systemctl status $1.service
 }
 
 # params
@@ -72,7 +72,7 @@ install_suricata_from_ppa(){
 echo "Provisioning SURICATA"
 suricata -V || install_suricata_from_ppa
 
-#if $DEBUG ; then ip addr show; fi
+if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 FILE=/etc/suricata/suricata.yaml
 grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
@@ -93,6 +93,6 @@ sensor-name: suricata
 EOF
 
 touch  /etc/suricata/threshold.config
-#if $DEBUG ; then suricata -T -vvv; fi
+if $DEBUG ; then suricata -T -vvv; fi
 
 check_service suricata
