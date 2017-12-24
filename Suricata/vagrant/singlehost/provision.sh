@@ -20,7 +20,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # install suricata but check if already exists
 # add-apt-repository assumes ubuntu
-suricata -V || bash -c "add-apt-repository ppa:oisf/suricata-stable && apt-get update && apt-get install -y suricata && suricata -V" > /dev/null 2>&1
+suricata -V || bash -c "add-apt-repository ppa:oisf/suricata-stable && apt-get update && apt-get install -y suricata && suricata -V"
 ip addr show
 systemctl stop suricata
 FILE=/etc/suricata/suricata.yaml
@@ -42,4 +42,8 @@ sensor-name: suricata
 EOF
 
 touch  /etc/suricata/threshold.config
-suricata -T -vvv && systemctl start suricata.service
+suricata -T -vvv
+
+systemctl daemon-reload
+systemctl is-enabled suricata.service 2>/dev/null | grep disabled && systemctl enable suricata.service
+systemctl status suricata.service | egrep  "inactive" && systemctl start suricata.service
