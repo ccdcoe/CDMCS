@@ -2,6 +2,7 @@
 # set versions here
 
 # SURICATA="4.0.3"
+DEBUG=true
 PROXY=http://192.168.10.1:3128
 
 # basic OS config
@@ -52,7 +53,7 @@ sensor-name: suricata
 EOF
 
 touch  /etc/suricata/threshold.config
-suricata -T -vvv
+if $debug ; then suricata -T -vvv; fi
 
 systemctl daemon-reload
 systemctl is-enabled suricata.service 2>/dev/null | grep disabled && systemctl enable suricata.service
