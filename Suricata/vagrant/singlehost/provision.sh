@@ -178,10 +178,10 @@ dpkg -i $TELEGRAF > /dev/null 2>&1
 systemctl stop telegraf.service
 grep "Amstelredamme" $FILE || cat > $FILE <<EOF
 [global_tags]
-  provision = "Amstelredamme"
+  year = "2018"
 
 [agent]
-  hostname = "syslog.yellow.ex"
+  hostname = "Amstelredamme"
   omit_hostname = false
   interval = "1s"
   round_interval = true
