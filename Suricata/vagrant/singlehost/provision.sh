@@ -76,38 +76,6 @@ server.host: "0.0.0.0"
 EOF
 
 check_service kibana
-
-# logstash
-echo "Provisioning LOGSTASH"
-cd $PKGDIR
-[[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
-dpkg -i $LOGSTASH > /dev/null 2>&1
-
-FILE=/etc/logstash/conf.d/suricata.conf
-[[ -f $FILE ]] || cat >> $FILE <<EOF
-input {
-  file {
-    path => "/var/log/suricata/eve.json"
-    tags => ["suricata"]
-  }
-}
-filter {
-  json {
-    source => "message"
-  }
-  if 'syslog' not in [tags] {
-    mutate { remove_field => [ "message", "Hostname" ] }
-  }
-}
-output {
-  elasticsearch {
-    hosts => ["localhost"]
-    index => "suricata-logstash-%{YYYY.MM.dd.hh}"
-  }
-}
-EOF
-check_service logstash
-
 # suricata
 install_suricata_from_ppa(){
   add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
@@ -141,4 +109,35 @@ touch  /etc/suricata/threshold.config
 if $DEBUG ; then suricata -T -vvv; fi
 
 check_service suricata
-chown root:logstash /var/log/suricata/eve.json && systemctl restart logstash.service
+# logstash
+echo "Provisioning LOGSTASH"
+cd $PKGDIR
+[[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
+dpkg -i $LOGSTASH > /dev/null 2>&1
+
+FILE=/etc/logstash/conf.d/suricata.conf
+[[ -f $FILE ]] || cat >> $FILE <<EOF
+input {
+  file {
+    path => "/var/log/suricata/eve.json"
+    tags => ["suricata"]
+  }
+}
+filter {
+  json {
+    source => "message"
+  }
+  if 'syslog' not in [tags] {
+    mutate { remove_field => [ "message", "Hostname" ] }
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["localhost"]
+    index => "suricata-logstash-%{+YYYY.MM.dd.hh}"
+  }
+}
+EOF
+curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
+chown root:logstash /var/log/suricata/eve.json
+check_service logstash
