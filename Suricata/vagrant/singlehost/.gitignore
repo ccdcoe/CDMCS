@@ -1,0 +1,4 @@
+*.deb
+*.tar.gz
+*.log
+pkgs/

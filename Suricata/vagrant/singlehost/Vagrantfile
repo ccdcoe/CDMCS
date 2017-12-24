@@ -253,9 +253,10 @@ SCRIPT
 
 Vagrant.configure(2) do |config|
   config.vm.define 'Amstelredamme' do |box|
-      box.vm.box = "generic/ubuntu1604"
+      box.vm.box = "ubuntu/xenial64"
       box.vm.hostname = 'Amstelredamme'
       box.vm.network :private_network, ip: "192.168.10.11"
+      box.vm.synced_folder ".", "/vagrant", disabled: false
       box.vm.provider :virtualbox do |vb|
        vb.customize ["modifyvm", :id, "--memory", "4096"]
        vb.customize ["modifyvm", :id, "--cpus", "4"]
