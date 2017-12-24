@@ -13,7 +13,8 @@ WGET_PARAMS="-4 -q"
 
 # versions
 ELA="elasticsearch-6.1.1.deb"
-KIBANA="kibana-6.1.1-amd64.deb"
+# 6.1.1 index management was broken for me
+KIBANA="kibana-6.0.1-amd64.deb"
 LOGSTASH="logstash-6.1.1.deb"
 
 # basic OS config
@@ -91,11 +92,11 @@ FILE=/etc/suricata/suricata.yaml
 grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
 # Amstelredamme added by vagrant
 af-packet:
-  - interface: eth0
+  - interface: enp0s3
     cluster-id: 98
     cluster-type: cluster_flow
     defrag: yes
-  - interface: eth1
+  - interface: enp0s8
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
@@ -134,7 +135,7 @@ filter {
 output {
   elasticsearch {
     hosts => ["localhost"]
-    index => "suricata-logstash-%{+YYYY.MM.dd.hh}"
+    index => "suricata-%{+YYYY.MM.dd.hh}"
   }
 }
 EOF
