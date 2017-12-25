@@ -18,6 +18,7 @@ KIBANA="kibana-6.0.1-amd64.deb"
 LOGSTASH="logstash-6.1.1.deb"
 INFLUX="influxdb_1.4.2_amd64.deb"
 TELEGRAF="telegraf_1.5.0-1_amd64.deb"
+GRAFANA="grafana_4.6.3_amd64.deb"
 
 # basic OS config
 start=$(date)
@@ -124,8 +125,9 @@ EOF
 check_service kibana
 
 # set up default index pattern
-curl -ss -XPUT localhost:9200/.kibana/doc/index-pattern:a1571060-e8e2-11e7-9cf4-db76e233e72b -d @/vagrant/kibana-index-pattern.json -H'Content-Type: application/json'
-curl -ss -XPUT localhost:9200/.kibana/doc/config:6.0.1 -d @/vagrant/kibana-index-pattern-config.json -H'Content-Type: application/json'
+sleep 5
+#curl -ss -XPUT localhost:9200/.kibana/doc/index-pattern:a1571060-e8e2-11e7-9cf4-db76e233e72b -d @/vagrant/kibana-index-pattern.json -H'Content-Type: application/json'
+#curl -ss -XPUT localhost:9200/.kibana/doc/config:6.0.1 -d @/vagrant/kibana-index-pattern-config.json -H'Content-Type: application/json'
 
 # logstash
 echo "Provisioning LOGSTASH"
@@ -166,8 +168,26 @@ cd $PKGDIR
 [[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
 dpkg -i $INFLUX > /dev/null 2>&1
 systemctl stop influxdb.service
-
 check_service influxdb
+
+# grafana
+echo "Provisioning GRAFANA"
+cd $PKGDIR
+[[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
+apt-get -y install libfontconfig > /dev/null 2>&1
+dpkg -i $GRAFANA #> /dev/null 2>&1
+systemctl stop grafana-server.service
+check_service grafana-server
+
+sleep 1
+curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content-Type: application/json" -d '{
+    "name": "telegraf",
+    "type": "influxdb",
+    "access": "proxy",
+    "url": "http://localhost:8086",
+    "database": "telegraf",
+    "isDefault": true
+}'
 
 # telegraf
 echo "Provisioning TELEGRAF"
