@@ -125,7 +125,7 @@ EOF
 check_service kibana
 
 # set up default index pattern
-sleep 5
+#sleep 5
 #curl -ss -XPUT localhost:9200/.kibana/doc/index-pattern:a1571060-e8e2-11e7-9cf4-db76e233e72b -d @/vagrant/kibana-index-pattern.json -H'Content-Type: application/json'
 #curl -ss -XPUT localhost:9200/.kibana/doc/config:6.0.1 -d @/vagrant/kibana-index-pattern-config.json -H'Content-Type: application/json'
 
