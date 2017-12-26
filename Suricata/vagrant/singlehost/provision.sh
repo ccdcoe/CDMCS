@@ -12,13 +12,14 @@ PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
 # versions
-ELA="elasticsearch-6.1.1.deb"
+ELA="elasticsearch-6.0.1.deb"
 # 6.1.1 index management was broken for me
 KIBANA="kibana-6.0.1-amd64.deb"
-LOGSTASH="logstash-6.1.1.deb"
+LOGSTASH="logstash-6.0.1.deb"
 INFLUX="influxdb_1.4.2_amd64.deb"
 TELEGRAF="telegraf_1.5.0-1_amd64.deb"
 GRAFANA="grafana_4.6.3_amd64.deb"
+SCIRIUS="scirius_1.2.7-1_amd64.deb"
 
 # basic OS config
 start=$(date)
@@ -136,11 +137,11 @@ cd $PKGDIR
 dpkg -i $LOGSTASH > /dev/null 2>&1
 
 FILE=/etc/logstash/conf.d/suricata.conf
-[[ -f $FILE ]] || cat >> $FILE <<EOF
+grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
 input {
   file {
     path => "/var/log/suricata/eve.json"
-    tags => ["suricata"]
+    tags => ["suricata","Amstelredamme"]
   }
 }
 filter {
@@ -196,6 +197,7 @@ cd $PKGDIR
 dpkg -i $TELEGRAF > /dev/null 2>&1
 
 systemctl stop telegraf.service
+FILE=/etc/telegraf/telegraf.conf
 grep "Amstelredamme" $FILE || cat > $FILE <<EOF
 [global_tags]
   year = "2018"
@@ -233,3 +235,35 @@ grep "Amstelredamme" $FILE || cat > $FILE <<EOF
 EOF
 
 check_service telegraf
+
+# scirius
+echo "Provisioning SCIRIUS"
+cd $PKGDIR
+[[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
+#dpkg -i $SCIRIUS || apt-get -y -f install #> /dev/null 2>&1
+apt-get install -y python-pip dbconfig-common sqlite3 python-daemon python-pyinotify > /dev/null && dpkg -i $SCIRIUS
+echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
+echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
+echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> /etc/scirius/local_settings.py
+
+# adding sources to rulesets
+source /usr/share/python/scirius/bin/activate
+pip install --upgrade urllib3 > /dev/null
+python /usr/share/python/scirius/bin/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-3.0/emerging.rules.tar.gz http sigs
+python /usr/share/python/scirius/bin/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
+python /usr/share/python/scirius/bin/manage.py defaultruleset "CDMCS ruleset"
+python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
+python /usr/share/python/scirius/bin/manage.py updatesuricata
+deactivate
+#systemctl stop influxdb.service
+#check_service influxdb
+
+#cd /opt
+#apt-get install -y git python-pip python-dev > /dev/null
+#[[ -d /opt/scirius ]] || git clone https://github.com/StamusNetworks/scirius.git /opt/scirius
+#cd /opt/scirius
+#git checkout tags/$SCIRIUS > /dev/null 2>&1
+#pip install -r requirements.txt > /dev/null 2>&1
+#pip install pyinotify > /dev/null 2>&1
+#pip install gitdb > /dev/null 2>&1
