@@ -61,8 +61,7 @@ suricata -V || install_suricata_from_ppa
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 FILE=/etc/suricata/suricata.yaml
-grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
-# Amstelredamme added by vagrant
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
 af-packet:
   - interface: enp0s3
     cluster-id: 98
@@ -83,7 +82,7 @@ af-packet:
 default-rule-path: /etc/suricata/rules
 rule-files:
  - scirius.rules
-sensor-name: suricata
+sensor-name: CDMCS
 EOF
 
 touch  /etc/suricata/threshold.config
@@ -107,7 +106,7 @@ java -version || install_oracle_java
 echo "Provisioning ELASTICSEARCH"
 cd $PKGDIR
 [[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
-dpkg -i $ELA > /dev/null 2>&1
+dpkg -s elasticsearch || dpkg -i $ELA > /dev/null 2>&1
 
 check_service elasticsearch
 
@@ -115,7 +114,7 @@ check_service elasticsearch
 echo "Provisioning KIBANA"
 cd $PKGDIR
 [[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
-dpkg -i $KIBANA > /dev/null 2>&1
+dpkg -s kibana || dpkg -i $KIBANA > /dev/null 2>&1
 
 FILE=/etc/kibana/kibana.yml
 grep "provisioned" $FILE || cat >> $FILE <<EOF
@@ -134,14 +133,14 @@ sleep 5
 echo "Provisioning LOGSTASH"
 cd $PKGDIR
 [[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
-dpkg -i $LOGSTASH > /dev/null 2>&1
+dpkg -s logstash || dpkg -i $LOGSTASH > /dev/null 2>&1
 
 FILE=/etc/logstash/conf.d/suricata.conf
-grep "Amstelredamme" $FILE || cat >> $FILE <<EOF
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
 input {
   file {
     path => "/var/log/suricata/eve.json"
-    tags => ["suricata","Amstelredamme"]
+    tags => ["suricata","CDMCS"]
   }
 }
 filter {
@@ -167,7 +166,7 @@ check_service logstash
 echo "Provisioning INFLUXDB"
 cd $PKGDIR
 [[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
-dpkg -i $INFLUX > /dev/null 2>&1
+dpkg -s influxdb || dpkg -i $INFLUX > /dev/null 2>&1
 systemctl stop influxdb.service
 check_service influxdb
 
@@ -176,7 +175,7 @@ echo "Provisioning GRAFANA"
 cd $PKGDIR
 [[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
 apt-get -y install libfontconfig > /dev/null 2>&1
-dpkg -i $GRAFANA #> /dev/null 2>&1
+dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
 systemctl stop grafana-server.service
 check_service grafana-server
 
@@ -198,8 +197,8 @@ config_scirius(){
   echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> /etc/scirius/local_settings.py
 
   source /usr/share/python/scirius/bin/activate
-  pip install --upgrade urllib3 > /dev/null
   # adding sources to rulesets
+  pip install --upgrade urllib3 > /dev/null 2>&1
   python /usr/share/python/scirius/bin/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
   python /usr/share/python/scirius/bin/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
   python /usr/share/python/scirius/bin/manage.py defaultruleset "CDMCS ruleset"
@@ -207,14 +206,63 @@ config_scirius(){
   python /usr/share/python/scirius/bin/manage.py updatesuricata
   python suri_reloader -p /path/to/rules  -l /var/log/suri-reload.log  -D
   deactivate
-  echo "1" > /vagrant/scirius-provisioned.log
+  echo "1" > /var/log/vagrant-provisioned.log
 }
 echo "Provisioning SCIRIUS"
 cd $PKGDIR
 [[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
-apt-get install -y python-pip dbconfig-common sqlite3 python-daemon python-pyinotify > /dev/null && dpkg -i $SCIRIUS > /dev/null 2>&1
+apt-get install -y nginx python-pip dbconfig-common sqlite3 python-daemon python-pyinotify > /dev/null
+pip install gunicorn > /dev/null 2>&1
+dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
 
 grep 1 /var/log/vagrant-provisioned.log || config_scirius
+
+FILE=/etc/systemd/system/scirius.service
+grep "scirius" $FILE || cat >> $FILE <<EOF
+[Unit]
+Description=scirius daemon
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/usr/share/python/scirius/lib/python2.7/site-packages
+ExecStart=/usr/local/bin/gunicorn --log-syslog -t 600 -w 4 --bind unix:/tmp/scirius.sock scirius.wsgi
+Environment="PATH=/usr/share/python/scirius/bin:/usr/bin"
+
+[Install]
+WantedBy=multi-user.target
+EOF
+check_service scirius
+
+systemctl stop nginx.service
+FILE=/etc/nginx/sites-available/scirius
+grep scirius $FILE || cat >> $FILE <<EOF
+server {
+   listen 192.168.10.11:80;
+   access_log /var/log/nginx/scirius.access.log;
+   error_log /var/log/nginx/scirius.error.log;
+   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
+   location /static/ { # STATIC_URL
+       alias /var/lib/scirius/static/; # STATIC_ROOT
+       expires 30d;
+   }
+   location /media/ { # MEDIA_URL
+       alias /var/lib/scirius/static/; # MEDIA_ROOT
+       expires 30d;
+   }
+   location / {
+       proxy_pass http://unix:/tmp/scirius.sock:/;
+       proxy_read_timeout 600;
+       proxy_set_header Host $http_host;
+       proxy_redirect off;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   }
+}
+EOF
+[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
+check_service nginx
+
 #systemctl stop influxdb.service
 #check_service influxdb
 
@@ -226,12 +274,12 @@ dpkg -i $TELEGRAF > /dev/null 2>&1
 
 systemctl stop telegraf.service
 FILE=/etc/telegraf/telegraf.conf
-grep "Amstelredamme" $FILE || cat > $FILE <<EOF
+grep "CDMCS" $FILE || cat > $FILE <<EOF
 [global_tags]
   year = "2018"
 
 [agent]
-  hostname = "Amstelredamme"
+  hostname = "CDMCS"
   omit_hostname = false
   interval = "1s"
   round_interval = true
