@@ -1,4 +1,6 @@
 *.deb
 *.tar.gz
 *.log
+*.pcap
+*.py
 pkgs/
