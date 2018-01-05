@@ -21,8 +21,8 @@ Please visit:
 # Current Classes
 
  * [Suricata :: Feb 12-16 2018](Suricata/README.md)
- * [SDM :: ](SDM/README.md)
- * [Moloch ::](Moloch/README.md)
+ * [SDM :: Feb 26 - Mar 2 2018](SDM/README.md)
+ * [Moloch :: May 7-11 2018](Moloch/README.md)
 
 # Older Classes
 
