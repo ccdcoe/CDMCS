@@ -1,7 +1,7 @@
 check_service(){
   systemctl daemon-reload
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
-  systemctl status $1.service | egrep  "inactive" && systemctl start $1.service
+  systemctl status $1.service | egrep  "inactive|failed" && systemctl start $1.service
   systemctl status $1.service
 }
 
@@ -19,6 +19,7 @@ INFLUX="influxdb_1.4.2_amd64.deb"
 TELEGRAF="telegraf_1.5.0-1_amd64.deb"
 GRAFANA="grafana_4.6.3_amd64.deb"
 SCIRIUS="scirius_1.2.7-1_amd64.deb"
+EVEBOX="evebox_0.8.1_amd64.deb"
 
 # basic OS config
 start=$(date)
@@ -45,8 +46,10 @@ FILE=/etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 mkdir -p /vagrant/pkgs
 
+#cd /tmp && rm -f snoopy-install.sh && wget -O snoopy-install.sh https://github.com/a2o/snoopy/raw/install/doc/install/bin/snoopy-install.sh && chmod 755 snoopy-install.sh && ./snoopy-install.sh stable
+
 # basic software
-#apt-get update > /dev/null && apt-get install curl htop vim tmux > /dev/null
+apt-get update > /dev/null && apt-get install -y curl htop vim tmux > /dev/null
 
 # suricata
 install_suricata_from_ppa(){
@@ -95,12 +98,15 @@ check_service suri-reloader
 install_oracle_java() {
   echo "Installing oracle Java"
   echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 boolean true' | debconf-set-selections \
-  && add-apt-repository ppa:webupd8team/java > /dev/null 2>&1 \
+  && add-apt-repository ppa:webupd8team/java \
   && apt-get update > /dev/null \
   && apt-get -y install oracle-java8-installer > /dev/null
 }
 echo "Provisioning JAVA"
-java -version || install_oracle_java
+# https://askubuntu.com/questions/966107/cant-install-oracle-java-8-in-ubuntu-16-04
+# java -version || install_oracle_java
+#apt-get update
+apt-get install -y openjdk-8-jre-headless
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -191,34 +197,52 @@ curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content
 
 # scirius
 config_scirius(){
-  echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
-  echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> /etc/scirius/local_settings.py
-  echo "ELASTICSEARCH_VERSION = 5" >> /etc/scirius/local_settings.py
-  echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> /etc/scirius/local_settings.py
+  SCIRIUS_PATH="/opt/scirius"
+  SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
 
-  source /usr/share/python/scirius/bin/activate
+  cd /opt
+  git clone https://github.com/StamusNetworks/scirius
+  cd scirius
+
+  /usr/local/bin/virtualenv ./
+  source $SCIRIUS_PATH/bin/activate
+
+  pip install -r requirements.txt
+  pip install --upgrade urllib3
+  pip install gunicorn pyinotify python-daemon
+  python manage.py syncdb  --noinput
+  echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
+  chown www-data db.sqlite3
+  chown www-data $SCIRIUS_PATH
+
+  echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> $SCIRIUS_CONF
+  echo "ELASTICSEARCH_VERSION = 5" >> $SCIRIUS_CONF
+  echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> $SCIRIUS_CONF
+  echo "ALLOWED_HOSTS = ['192.168.10.11']" >> $SCIRIUS_CONF
+
   # adding sources to rulesets
-  pip install --upgrade urllib3 > /dev/null 2>&1
-  python /usr/share/python/scirius/bin/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
-  python /usr/share/python/scirius/bin/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
-  python /usr/share/python/scirius/bin/manage.py defaultruleset "CDMCS ruleset"
-  python /usr/share/python/scirius/bin/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
-  python /usr/share/python/scirius/bin/manage.py updatesuricata
-  python suri_reloader -p /path/to/rules  -l /var/log/suri-reload.log  -D
+  python $SCIRIUS_PATH/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
+  python $SCIRIUS_PATH/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
+  python $SCIRIUS_PATH/manage.py defaultruleset "CDMCS ruleset"
+  python $SCIRIUS_PATH/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
+  python $SCIRIUS_PATH/manage.py updatesuricata
+  python $SCIRIUS_PATH/suricata/scripts/suri_reloader -p /etc/suricata/rules  -l /var/log/suri-reload.log -D
   deactivate
   echo "1" > /var/log/vagrant-provisioned.log
 }
 echo "Provisioning SCIRIUS"
 cd $PKGDIR
 [[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
-apt-get install -y nginx python-pip dbconfig-common sqlite3 python-daemon python-pyinotify > /dev/null
-pip install gunicorn > /dev/null 2>&1
-dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
+
+apt-get install -y nginx python-pip dbconfig-common sqlite3 > /dev/null
+pip install --upgrade pip virtualenv #urllib3 chardet
 
 grep 1 /var/log/vagrant-provisioned.log || config_scirius
+#dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
 
 FILE=/etc/systemd/system/scirius.service
-grep "scirius" $FILE || cat >> $FILE <<EOF
+grep "scirius" $FILE || cat > $FILE <<EOF
 [Unit]
 Description=scirius daemon
 After=network.target
@@ -226,9 +250,12 @@ After=network.target
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=/usr/share/python/scirius/lib/python2.7/site-packages
-ExecStart=/usr/local/bin/gunicorn --log-syslog -t 600 -w 4 --bind unix:/tmp/scirius.sock scirius.wsgi
-Environment="PATH=/usr/share/python/scirius/bin:/usr/bin"
+WorkingDirectory=/opt/scirius
+ExecStart=/opt/scirius/bin/gunicorn --log-syslog -t 600 -w 4 --bind unix:/tmp/scirius.sock scirius.wsgi:application
+Environment=VIRTUAL_ENV=/opt/scirius
+Environment=PATH=$VIRTUAL_ENV/bin:$PATH
+
+#Environment="PATH=/usr/share/python/scirius/bin:/usr/bin"
 
 [Install]
 WantedBy=multi-user.target
@@ -237,18 +264,30 @@ check_service scirius
 
 systemctl stop nginx.service
 FILE=/etc/nginx/sites-available/scirius
-grep scirius $FILE || cat >> $FILE <<EOF
+grep scirius $FILE || cat > $FILE <<'EOF'
 server {
    listen 192.168.10.11:80;
    access_log /var/log/nginx/scirius.access.log;
    error_log /var/log/nginx/scirius.error.log;
+
+   #error_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=error;
+   #access_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=info main;
+
    # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
-   location /static/ { # STATIC_URL
-       alias /var/lib/scirius/static/; # STATIC_ROOT
+   location /static/rules {
+       alias /opt/scirius/rules/static/rules/;
        expires 30d;
    }
-   location /media/ { # MEDIA_URL
-       alias /var/lib/scirius/static/; # MEDIA_ROOT
+   location /static/js {
+       alias /opt/scirius/rules/static/js/;
+       expires 30d;
+   }
+   location /static/fonts {
+       alias /opt/scirius/rules/static/fonts/;
+       expires 30d;
+   }
+   location /static/django_tables2 {
+       alias /opt/scirius/lib/python2.7/site-packages/django_tables2/static/django_tables2/;
        expires 30d;
    }
    location / {
@@ -261,10 +300,18 @@ server {
 }
 EOF
 [[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
+[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
+
 check_service nginx
 
 #systemctl stop influxdb.service
 #check_service influxdb
+
+# evebox
+echo "Provisioning EVEBOX"
+cd $PKGDIR
+[[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/evebox_0.8.1_amd64.deb -O $EVEBOX
+dpkg -i $TELEGRAF > /dev/null 2>&1
 
 # telegraf
 echo "Provisioning TELEGRAF"
@@ -311,3 +358,7 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
 EOF
 
 check_service telegraf
+
+systemctl status scirius.service | grep 'running' || echo "SCIRIUS DOWN"
+systemctl status nginx.service | grep 'running' || echo "NGINX DOWN"
+#netstat -anutp
