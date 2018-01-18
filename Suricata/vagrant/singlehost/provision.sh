@@ -71,8 +71,21 @@ suricata -V || install_suricata_from_ppa
 [[ -f /etc/suricata/rules/scirius.rules ]] || touch /etc/suricata/rules/scirius.rules
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
+
+if $DEBUG ; then suricata -T || exit 1 ; fi
+touch  /etc/suricata/threshold.config
+
 FILE=/etc/suricata/suricata.yaml
+grep "cdmcs" $FILE || cat >> $FILE <<EOF
+include: cdmcs-detect.yaml
+include: cdmcs-logging.yaml
+EOF
+
+FILE=/etc/suricata/cdmcs-detect.yaml
 grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
 af-packet:
   - interface: enp0s3
     cluster-id: 98
@@ -88,8 +101,57 @@ rule-files:
 sensor-name: CDMCS
 EOF
 
-touch  /etc/suricata/threshold.config
-if $DEBUG ; then suricata -T -vvv; fi
+FILE=/etc/suricata/cdmcs-logging.yaml
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
+outputs:
+  - fast:
+      enabled: yes
+      filename: fast.log
+      append: yes
+  - eve-log:
+      enabled: 'yes'
+      filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
+      filename: eve.json
+      redis:
+        server: 127.0.0.1
+        port: 6379
+        async: true ## if redis replies are read asynchronously
+        mode: list
+        pipelining:
+          enabled: yes ## set enable to yes to enable query pipelining
+          batch-size: 10 ## number of entry to keep in buffer
+
+      types:
+        - alert:
+            metadata: yes              # add L7/applayer fields, flowbit and other vars to the alert
+            tagged-packets: yes
+            xff:
+              enabled: no
+              mode: extra-data
+              deployment: reverse
+              header: X-Forwarded-For
+        - http:
+            extended: yes     # enable this for extended logging information
+        - dns:
+            query: yes     # enable logging of DNS queries
+            answer: yes    # enable logging of DNS answers
+        - tls:
+            extended: yes     # enable this for extended logging information
+        - files:
+            force-magic: no   # force logging magic on all logged files
+        - smtp:
+        - ssh
+        - stats:
+            totals: yes       # stats for all threads merged together
+            threads: no       # per thread stats
+            deltas: no        # include delta values
+        - flow
+EOF
+
+#if $DEBUG ; then suricata -T -vvv; fi
 
 check_service suricata
 #check_service suri-reloader
@@ -366,6 +428,7 @@ EOF
 
 check_service telegraf
 
+systemctl status suricata.service | grep 'running' || echo "SURICATA DOWN"
 systemctl status scirius.service | grep 'running' || echo "SCIRIUS DOWN"
 systemctl status nginx.service | grep 'running' || echo "NGINX DOWN"
 #netstat -anutp
