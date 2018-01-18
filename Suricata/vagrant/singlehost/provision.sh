@@ -215,11 +215,14 @@ config_scirius(){
   chown www-data db.sqlite3
   chown www-data $SCIRIUS_PATH
 
-  echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"' >> $SCIRIUS_CONF
-  echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"' >> $SCIRIUS_CONF
-  echo "ELASTICSEARCH_VERSION = 5" >> $SCIRIUS_CONF
-  echo "ELASTICSEARCH_KEYWORD = 'keyword'" >> $SCIRIUS_CONF
-  echo "ALLOWED_HOSTS = ['192.168.10.11']" >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"'  >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"'  >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_VERSION = 6'  >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_KEYWORD = "keyword"'  >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_LOGSTASH_TIMESTAMPING = "daily"'  >> $SCIRIUS_CONF
+  echo 'ALLOWED_HOSTS = ["192.168.10.11"]'  >> $SCIRIUS_CONF
+  echo 'SURICATA_NAME_IS_HOSTNAME = True'  >> $SCIRIUS_CONF
+  echo 'ELASTICSEARCH_HOSTNAME = "host"' >> $SCIRIUS_CONF
 
   # adding sources to rulesets
   python $SCIRIUS_PATH/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
