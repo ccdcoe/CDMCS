@@ -18,12 +18,17 @@ LOGSTASH="logstash-6.1.1.deb"
 INFLUX="influxdb_1.4.2_amd64.deb"
 TELEGRAF="telegraf_1.5.0-1_amd64.deb"
 GRAFANA="grafana_4.6.3_amd64.deb"
-SCIRIUS="scirius_1.2.7-1_amd64.deb"
 EVEBOX="evebox_0.8.1_amd64.deb"
 
-# basic OS config
+# for deb
+SCIRIUS="scirius_1.2.7-1_amd64.deb"
+# for git
+SCIRIUS_PATH="/opt/scirius"
+SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
+
 start=$(date)
 
+# basic OS config
 FILE=/etc/sysctl.conf
 grep "disable_ipv6" $FILE || cat >> $FILE <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -31,6 +36,9 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
+
+# no persistent storage, only use as mem cache
+docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 redis
 
 #FILE=/etc/profile
 #grep "proxy" $FILE || cat >> $FILE <<EOF
@@ -74,14 +82,6 @@ af-packet:
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
-  - interface: eth0
-    cluster-id: 96
-    cluster-type: cluster_flow
-    defrag: yes
-  - interface: eth1
-    cluster-id: 95
-    cluster-type: cluster_flow
-    defrag: yes
 default-rule-path: /etc/suricata/rules
 rule-files:
  - scirius.rules
@@ -92,7 +92,7 @@ touch  /etc/suricata/threshold.config
 if $DEBUG ; then suricata -T -vvv; fi
 
 check_service suricata
-check_service suri-reloader
+#check_service suri-reloader
 
 # java
 install_oracle_java() {
@@ -146,7 +146,14 @@ grep "CDMCS" $FILE || cat >> $FILE <<EOF
 input {
   file {
     path => "/var/log/suricata/eve.json"
-    tags => ["suricata","CDMCS"]
+    tags => ["suricata", "CDMCS", "fromfile"]
+  }
+  redis {
+    data_type => "list"
+    host => "127.0.0.1"
+    port => 6379
+    key  => "suricata"
+    tags => ["suricata", "CDMCS", "fromredis"]
   }
 }
 filter {
@@ -166,7 +173,12 @@ output {
 EOF
 curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
 chown root:logstash /var/log/suricata/eve.json
+
+/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
+
 check_service logstash
+
+
 
 # influx
 echo "Provisioning INFLUXDB"
@@ -197,9 +209,6 @@ curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content
 
 # scirius
 config_scirius(){
-  SCIRIUS_PATH="/opt/scirius"
-  SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
-
   cd /opt
   git clone https://github.com/StamusNetworks/scirius
   cd scirius
@@ -258,8 +267,6 @@ ExecStart=/opt/scirius/bin/gunicorn --log-syslog -t 600 -w 4 --bind unix:/tmp/sc
 Environment=VIRTUAL_ENV=/opt/scirius
 Environment=PATH=$VIRTUAL_ENV/bin:$PATH
 
-#Environment="PATH=/usr/share/python/scirius/bin:/usr/bin"
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -306,9 +313,6 @@ EOF
 [[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
 
 check_service nginx
-
-#systemctl stop influxdb.service
-#check_service influxdb
 
 # evebox
 echo "Provisioning EVEBOX"
