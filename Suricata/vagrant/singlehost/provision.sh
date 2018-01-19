@@ -78,8 +78,8 @@ touch  /etc/suricata/threshold.config
 
 FILE=/etc/suricata/suricata.yaml
 grep "cdmcs" $FILE || cat >> $FILE <<EOF
-include: cdmcs-detect.yaml
-include: cdmcs-logging.yaml
+include: /etc/suricata/cdmcs-detect.yaml
+include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
 FILE=/etc/suricata/cdmcs-detect.yaml
@@ -283,7 +283,7 @@ config_scirius(){
   python manage.py syncdb  --noinput
   echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
   chown www-data db.sqlite3
-  chown www-data $SCIRIUS_PATH
+  chown -R www-data $SCIRIUS_PATH
 
   echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"'  >> $SCIRIUS_CONF
@@ -293,10 +293,16 @@ config_scirius(){
   echo "ALLOWED_HOSTS = [\"$EXPOSE\"]"  >> $SCIRIUS_CONF
   echo 'SURICATA_NAME_IS_HOSTNAME = True'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_HOSTNAME = "host"' >> $SCIRIUS_CONF
+  echo 'USE_KIBANA = True' >> $SCIRIUS_CONF
+  echo "KIBANA_URL = \"$EXPOSE:5601\"" >> $SCIRIUS_CONF
+  echo 'KIBANA_INDEX = ".kibana"' >> $SCIRIUS_CONF
+  echo "USE_EVEBOX = True" >> $SCIRIUS_CONF
+  echo "EVEBOX_ADDRESS = \"$EXPOSE:5636\"" >> $SCIRIUS_CONF
 
   # adding sources to rulesets
   python $SCIRIUS_PATH/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
   python $SCIRIUS_PATH/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
+  python $SCIRIUS_PATH/manage.py addsource "CDMCS Custom Sigs" https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Suricata/vagrant/singlehost/local.rules http sig
   python $SCIRIUS_PATH/manage.py defaultruleset "CDMCS ruleset"
   python $SCIRIUS_PATH/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
   python $SCIRIUS_PATH/manage.py updatesuricata
@@ -439,7 +445,9 @@ EOF
 
 check_service telegraf
 
-curl testmyids.com > /dev/null 2>&1
+echo "making some noise"
+while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
+while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
 
 systemctl status suricata.service | grep 'running' || echo "SURICATA DOWN"
 systemctl status scirius.service | grep 'running' || echo "SCIRIUS DOWN"
