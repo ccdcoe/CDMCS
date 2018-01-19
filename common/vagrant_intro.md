@@ -31,7 +31,7 @@
 
 # install vagrant
 $ apt-get install virtualbox
-$ wget -q -4 https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
+$ wget -q -4 https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb
 $ dpkg -i vagrant_1.9.1_x86_64.deb
 
 
@@ -54,4 +54,5 @@ $ vagrant destroy
 $ vagrant status
 $ vagrant up
 
+$ vagrant global-status
 ```
