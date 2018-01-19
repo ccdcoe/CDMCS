@@ -8,15 +8,16 @@ check_service(){
 # params
 DEBUG=true
 PROXY=http://192.168.10.1:3128
+EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
 # versions
-ELA="elasticsearch-6.1.1.deb"
-KIBANA="kibana-6.1.1-amd64.deb"
-LOGSTASH="logstash-6.1.1.deb"
+ELA="elasticsearch-6.1.2.deb"
+KIBANA="kibana-6.1.2-amd64.deb"
+LOGSTASH="logstash-6.1.2.deb"
 INFLUX="influxdb_1.4.2_amd64.deb"
-TELEGRAF="telegraf_1.5.0-1_amd64.deb"
+TELEGRAF="telegraf_1.5.1-1_amd64.deb"
 GRAFANA="grafana_4.6.3_amd64.deb"
 EVEBOX="evebox_0.8.1_amd64.deb"
 
@@ -233,14 +234,12 @@ output {
   }
 }
 EOF
-curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
+curl -ss -XPUT localhost:9200/_template/suricata -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
 chown root:logstash /var/log/suricata/eve.json
 
 /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
 
 check_service logstash
-
-
 
 # influx
 echo "Provisioning INFLUXDB"
@@ -260,7 +259,7 @@ systemctl stop grafana-server.service
 check_service grafana-server
 
 sleep 1
-curl -s -XPOST --user admin:admin 192.168.10.11:3000/api/datasources -H "Content-Type: application/json" -d '{
+curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d '{
     "name": "telegraf",
     "type": "influxdb",
     "access": "proxy",
@@ -291,7 +290,7 @@ config_scirius(){
   echo 'ELASTICSEARCH_VERSION = 6'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_KEYWORD = "keyword"'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_LOGSTASH_TIMESTAMPING = "daily"'  >> $SCIRIUS_CONF
-  echo 'ALLOWED_HOSTS = ["192.168.10.11"]'  >> $SCIRIUS_CONF
+  echo "ALLOWED_HOSTS = [\"$EXPOSE\"]"  >> $SCIRIUS_CONF
   echo 'SURICATA_NAME_IS_HOSTNAME = True'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_HOSTNAME = "host"' >> $SCIRIUS_CONF
 
@@ -338,7 +337,7 @@ systemctl stop nginx.service
 FILE=/etc/nginx/sites-available/scirius
 grep scirius $FILE || cat > $FILE <<'EOF'
 server {
-   listen 192.168.10.11:80;
+   listen 0.0.0.0:80;
    access_log /var/log/nginx/scirius.access.log;
    error_log /var/log/nginx/scirius.error.log;
 
@@ -379,8 +378,20 @@ check_service nginx
 # evebox
 echo "Provisioning EVEBOX"
 cd $PKGDIR
-[[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/evebox_0.8.1_amd64.deb -O $EVEBOX
-dpkg -i $TELEGRAF > /dev/null 2>&1
+[[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O $EVEBOX
+dpkg -i $EVEBOX > /dev/null 2>&1
+grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
+systemctl stop evebox.service
+
+FILE=/etc/default/evebox
+grep "CDMCS" $FILE || cat > $FILE <<'EOF'
+# CDMCS
+#CONFIG="-c /etc/evebox/evebox.yaml"
+ELASTICSEARCH_URL="-e http://localhost:9200"
+EVEBOX_OPTS="--index suricata"
+EOF
+
+check_service evebox
 
 # telegraf
 echo "Provisioning TELEGRAF"
@@ -427,6 +438,8 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
 EOF
 
 check_service telegraf
+
+curl testmyids.com > /dev/null 2>&1
 
 systemctl status suricata.service | grep 'running' || echo "SURICATA DOWN"
 systemctl status scirius.service | grep 'running' || echo "SCIRIUS DOWN"
