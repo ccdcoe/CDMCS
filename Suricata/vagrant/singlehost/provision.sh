@@ -38,6 +38,7 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
 
+echo "Provisioning REDIS"
 # no persistent storage, only use as mem cache
 docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 redis
 
@@ -240,6 +241,49 @@ chown root:logstash /var/log/suricata/eve.json
 /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
 
 check_service logstash
+
+echo "Provisioning RSYSLOG"
+add-apt-repository ppa:adiscon/v8-stable
+apt-get update
+apt-get install rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch -y
+FILE=/etc/rsyslog.d/75-elastic.conf
+grep "CDMCS" $FILE || cat >> $FILE <<'EOF'
+# CDMCS
+module(load="omelasticsearch")
+module(load="mmjsonparse")
+
+template(name="suricata-index" type="list") {
+    constant(value="suricata-")
+    property(name="timereported" dateFormat="rfc3339" position.from="1" position.to="4")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="6" position.to="7")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="9" position.to="10")
+}
+
+template(name="JSON" type="list") {
+    property(name="$!all-json")
+}
+
+if $syslogtag contains 'suricata' and $msg startswith ' @cee:' then {
+
+  action(type="mmjsonparse")
+
+  if $parsesuccess == "OK" then action(
+    type="omelasticsearch"
+    template="JSON"
+    server="127.0.0.1"
+    serverport="9200"
+    searchIndex="suricata-index"
+    dynSearchIndex="on"
+  )
+
+}
+EOF
+
+systemctl stop rsyslog.service
+rsyslogd -N 1 || exit 1
+check_service rsyslogd
 
 # influx
 echo "Provisioning INFLUXDB"
