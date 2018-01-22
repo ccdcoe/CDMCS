@@ -17,8 +17,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [vagrant](/common/vagrant_intro.md)
    * [singlehost](/Suricata/vagrant/singlehost/)
  * 15:00 - 16:45
-   * [first rule](/Suricata/)
-   * [first dashboard]()
+   * [first rule](/Suricata/suricata/writing.first.rule.md)
+   * [first dashboard](/common/kibana.md)
 
 ## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
 
