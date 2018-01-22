@@ -29,4 +29,4 @@ see also:
 
 ----
 
-Next -> [Intro to rules](/Suricata/rules/rules.intro.md)
+Next -> [Intro to rules](rules.intro.md)

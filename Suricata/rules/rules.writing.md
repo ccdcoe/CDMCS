@@ -38,3 +38,7 @@ A rule consists of the following:
 * Check some text in the content of the response
 * Write a rules checking TLS fingerprint of a HTTPS website
 * Write session based rule spanning across multiple packets of same session
+
+---
+
+Next -> [Profiling](rules.profiling.md)
