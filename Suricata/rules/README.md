@@ -21,12 +21,6 @@ rule managers:
 rule writing tools:
 * [dalton + flowsynth](https://github.com/secureworks/dalton)
 
-see also:
-
-* [Intro to rules](rules.intro.md)
-* [Writing a rule](writing.first.rule.md)
-* [Profiling](rules.profiling.md)
-
 ----
 
 Next -> [Intro to rules](rules.intro.md)

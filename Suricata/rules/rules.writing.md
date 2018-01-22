@@ -40,6 +40,6 @@ A rule consists of the following:
 * Write a rules checking TLS fingerprint of a HTTPS website
 * Write session based rule spanning across multiple packets of same session
 
----
+----
 
 Next -> [Profiling](rules.profiling.md)
