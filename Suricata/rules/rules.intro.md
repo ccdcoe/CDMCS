@@ -9,7 +9,6 @@
 
 * How many rules do we have?
 
-
 Remove all comments
 ```
 grep -v '^ *#' emerging-all.rules
