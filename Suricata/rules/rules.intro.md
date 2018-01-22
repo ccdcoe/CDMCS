@@ -36,4 +36,4 @@ More:
 * https://www.proofpoint.com/us/daily-ruleset-update-summary
 
 ----
-Next -> [Writing a rule](rule.writing.md)
+Next -> [Writing a rule](rules.writing.md)
