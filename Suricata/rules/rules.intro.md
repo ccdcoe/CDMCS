@@ -35,4 +35,4 @@ More:
 * https://www.proofpoint.com/us/daily-ruleset-update-summary
 
 ----
-Next -> [Writing a rule](rules.writing.md)
+Next -> [capture some traffic](rules.pcap.md)

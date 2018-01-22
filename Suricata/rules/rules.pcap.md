@@ -2,10 +2,11 @@
 
  * https://www.sans.org/security-resources/tcpip.pdf
  * https://www.tcpdump.org/tcpdump_man.html
-
+ * https://wiki.wireshark.org/DisplayFilters
 
 ## find your interface
 ```
+route -n
 ip link show
 ```
 
@@ -19,5 +20,14 @@ tcpdump -i $IFACE -w /tmp/capture.pcap port 80
 ## generate some traffic
 
 ```
-curl -s http://sysadminnid.tumblr.com/ > /dev/null 2>&1
+curl -v https://www.facebook.com -sL -H 'Connection: close'
 ```
+
+## load the pcap into suricata
+
+```
+suricata -r /vagrant/capture.pcap -vvv
+```
+
+----
+Next -> [write a rule](rules.writing.md)

@@ -5,8 +5,14 @@
  * http://suricata.readthedocs.io/en/latest/rules/intro.html
  * https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision-dalton.sh
 
+## basic rule template
 ```
-alert tcp any any -> any 443 (msg:"SURICATA Port 443 but not SSL/TLS"; app-layer-protocol:!tls; threshold: type limit, track by_src, seconds 180, count 1; classtype:bad-unknown;  sid:990001;)
+alert tcp any any -> any any (msg:"testing"; classtype:bad-unknown; sid:990001; rev:1;)
+```
+
+# more useful example
+```
+alert tcp any any -> any 443 (msg:"SURICATA Port 443 but not SSL/TLS"; app-layer-protocol:!tls; threshold: type limit, track by_src, seconds 180, count 1; classtype:bad-unknown;  sid:990002;)
 ```
 
 A rule consists of the following:
@@ -33,13 +39,5 @@ A rule consists of the following:
 * meta data
 * threshold configuration
 
-## Exercises
-
-* Write rules on query to a specific website http_hostname
-* Check some text in the content of the response
-* Write a rules checking TLS fingerprint of a HTTPS website
-* Write session based rule spanning across multiple packets of same session
-
 ----
-
-Next -> [Profiling](rules.profiling.md)
+Next -> [Exercises](rules.exercises.md)
