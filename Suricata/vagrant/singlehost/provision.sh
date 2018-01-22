@@ -259,6 +259,8 @@ template(name="suricata-index" type="list") {
     property(name="timereported" dateFormat="rfc3339" position.from="6" position.to="7")
     constant(value=".")
     property(name="timereported" dateFormat="rfc3339" position.from="9" position.to="10")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="12" position.to="13")
 }
 
 template(name="JSON" type="list") {
@@ -316,7 +318,7 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
 config_scirius(){
   cd /opt
   git clone https://github.com/StamusNetworks/scirius
-  cd scirius
+  cd scirius && git checkout tags/scirius-1.2.8
 
   /usr/local/bin/virtualenv ./
   source $SCIRIUS_PATH/bin/activate
