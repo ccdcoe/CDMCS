@@ -154,9 +154,24 @@ outputs:
 EOF
 
 #if $DEBUG ; then suricata -T -vvv; fi
+[[ -f /etc/init.d/suricata ]] && rm /etc/init.d/suricata
+FILE=/etc/systemd/system/suricata.service
+grep "suricata" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=suricata daemon
+After=network.target
 
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/run/
+ExecStart=/usr/bin/suricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid --af-packet -D -vvv
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
+EOF
 check_service suricata
-#check_service suri-reloader
 
 # java
 install_oracle_java() {
