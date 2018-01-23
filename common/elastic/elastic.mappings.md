@@ -4,6 +4,7 @@
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html
 * https://raw.githubusercontent.com/markuskont/salt-elasticsearch/master/salt/elasticsearch/etc/elasticsearch/template/suricata.json
+* https://www.elastic.co/blog/strings-are-dead-long-live-strings
 
 ## Templates
 
