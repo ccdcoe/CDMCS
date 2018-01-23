@@ -6,7 +6,7 @@ see
 * https://github.com/obsrvbl/suricata-service
 * https://github.com/jasonish/suricata-rpms
 
-### Dependencies
+## Dependencies
 
 ```
 sudo apt-get -y install \
@@ -36,7 +36,7 @@ Or the lazy way to get most of them:
 sudo apt-get build-dep suricata
 ```
 
-### Searching for packages
+## Searching for packages
 
 ```
 sudo apt-cache search pcre
@@ -46,16 +46,16 @@ sudo apt-cache search pcre
 sudo apt-cache policy libpcre3-dev
 ```
 
-### get the source
+## get the source
 ```
-git clone git://phalanx.openinfosecfoundation.org/oisf.git
+git clone https://github.com/OISF/suricata
 ```
 
 ```
 cd oisf
 git clone https://github.com/OISF/libhtp.git -b 0.5.x
 ```
-### configure, make install
+## configure, make install
 
 ```
 ./autogen.sh
@@ -91,7 +91,7 @@ This is Suricata version 4.0dev (rev 6585ac4)
 
 ```
 
-### Cleaning up
+## Cleaning up
 
 ```
 sudo make uninstall
@@ -105,5 +105,5 @@ make clean
 make distclean
 ```
 
----
-[next : Configuration](config.md)
+----
+next -> [Exercises](exercises.md)

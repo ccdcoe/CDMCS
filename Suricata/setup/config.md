@@ -14,6 +14,12 @@ see:
 suricata -T -vvv
 ```
 
+## Show active config parameters
+
+```
+suricata --dump-config
+```
+
 ## See only active configuration
 suricata.yaml is like a documentation in itself. See the file without comments.
 ```
@@ -41,7 +47,6 @@ vars:
     MODBUS_SERVER: "$HOME_NET"
     ENIP_CLIENT: "$HOME_NET"
     ENIP_SERVER: "$HOME_NET"
-
   port-groups:
     HTTP_PORTS: "80"
     SHELLCODE_PORTS: "!80"
@@ -51,6 +56,19 @@ vars:
     MODBUS_PORTS: 502
 ```
 
+## online capture
+
+```
+af-packet:
+  - interface: enp0s3
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: enp0s8
+    cluster-id: 97
+    cluster-type: cluster_flow
+    defrag: yes
+```
 
 ----
 

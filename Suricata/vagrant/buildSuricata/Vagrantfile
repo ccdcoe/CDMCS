@@ -1,36 +1,30 @@
 $provision_script = <<SCRIPT
 
-
-
 echo "Building Suricata ..."
+apt-get update && apt-get install -qq -y \
+git \
+build-essential \
+autogen \
+autoconf \
+libtool \
+pkg-config \
+curl \
+sudo
 
-apt-get update
-apt-get -y install libpcre3 libpcre3-dbg libpcre3-dev build-essential libpcap-dev   \
-                libnet1-dev libyaml-0-2 libyaml-dev pkg-config zlib1g zlib1g-dev \
-                libcap-ng-dev libcap-ng0 make libmagic-dev libjansson-dev        \
-                libnss3-dev libgeoip-dev liblua5.1-dev libhiredis-dev \
-                m4 autoconf libluajit-5.1-dev
+cd /vagrant
+[[ -d /vagrant/suricata ]] || git clone https://github.com/OISF/suricata \
+&& cd /vagrant/suricata \
+&& git checkout tags/suricata-4.0.1
 
-# https://www.openinfosecfoundation.org/download/suricata-3.2.1.tar.gz
+cd /vagrant/suricata && git clone https://github.com/OISF/libhtp.git \
+&& cd libhtp \
+&& git checkout tags/0.5.25
 
-mkdir -p /vagrant/suricata
-cd /vagrant/suricata
-[[ -f 'master.tar.gz' ]] || wget -q -4 https://github.com/inliniac/suricata/archive/master.tar.gz
-mkdir -p /vagrant/libhtp
-cd /vagrant/libhtp
-# https://github.com/OISF/libhtp/archive/0.5.x.zip
-[[ -f '0.5.x.tar.gz' ]] || wget -q -4 https://github.com/OISF/libhtp/archive/0.5.x.tar.gz
-cd /opt/
-tar -xzf /vagrant/suricata/master.tar.gz
-mv suricata-master/ suricata
-cd suricata
-tar -xzf /vagrant/libhtp/0.5.x.tar.gz
-mv libhtp-0.5.x/ libhtp
- ./autogen.sh
-./configure --enable-profiling --enable-luajit
-#make
-#make install
+cd /vagrant/suricata && ./autogen.sh
 
+cd /vagrant/suricata && ./configure
+
+#make && make install
 
 SCRIPT
 
@@ -38,11 +32,11 @@ Vagrant.configure(2) do |config|
   config.vm.define 'buildSuricata' do |box|
       box.vm.box = "ubuntu/xenial64"
       box.vm.hostname = 'buildSuricata'
-      box.vm.network :private_network, ip: "192.168.11.11"
+      box.vm.network :private_network, ip: "192.168.10.12"
       box.vm.provider :virtualbox do |vb|
-       vb.customize ["modifyvm", :id, "--memory", "2048"]
-       vb.customize ["modifyvm", :id, "--cpus", "2"]
+       vb.customize ["modifyvm", :id, "--memory", "4096"]
+       vb.customize ["modifyvm", :id, "--cpus", "4"]
       end
-      config.vm.provision "shell", inline: $provision_script
+      box.vm.provision "shell", inline: $provision_script
   end
 end
