@@ -18,3 +18,4 @@
  * [kafka](https://www.elastic.co/blog/just-enough-kafka-for-the-elastic-stack-part1)
  * [redis](https://www.elastic.co/blog/just_enough_redis_for_logstash)
  * [docker](docker-compose.yml)
+ * [vagrant](https://github.com/markuskont/salt-elasticsearch)
