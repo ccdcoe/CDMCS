@@ -48,11 +48,11 @@ sudo apt-cache policy libpcre3-dev
 
 ## get the source
 ```
-git clone https://github.com/OISF/suricata
+git clone https://github.com/OISF/suricata && cd suricata && git checkout tags/suricata-4.0.3
 ```
 
 ```
-cd oisf
+cd suricata
 git clone https://github.com/OISF/libhtp.git -b 0.5.x
 ```
 ## configure, make install

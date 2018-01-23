@@ -1,24 +1,32 @@
 $provision_script = <<SCRIPT
 
 echo "Building Suricata ..."
-apt-get update && apt-get install -qq -y \
-git \
+apt-get update && apt-get -qq -y install \
+libpcre3 \
+libpcre3-dbg \
+libpcre3-dev \
 build-essential \
-autogen \
 autoconf \
+automake \
 libtool \
+libpcap-dev \
+libnet1-dev \
+libyaml-0-2 \
+libyaml-dev \
 pkg-config \
-curl \
-sudo
+zlib1g \
+zlib1g-dev \
+libcap-ng-dev \
+libcap-ng0 \
+make \
+libmagic-dev
 
 cd /vagrant
-[[ -d /vagrant/suricata ]] || git clone https://github.com/OISF/suricata \
-&& cd /vagrant/suricata \
-&& git checkout tags/suricata-4.0.1
+[[ -d /vagrant/suricata ]] || git clone https://github.com/OISF/suricata.git
+cd suricata && git checkout tags/suricata-4.0.3
 
-cd /vagrant/suricata && git clone https://github.com/OISF/libhtp.git \
-&& cd libhtp \
-&& git checkout tags/0.5.25
+[[ -d libhtp ]] || git clone https://github.com/OISF/libhtp.git
+cd libhtp && git checkout tags/0.5.25 && cd ..
 
 cd /vagrant/suricata && ./autogen.sh
 
