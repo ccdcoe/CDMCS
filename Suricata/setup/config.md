@@ -54,4 +54,4 @@ vars:
 
 ----
 
-Next -> [Rules](rules.md)
+Next -> [Rules](/Suricata/rules)

@@ -23,14 +23,14 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
 
  * 09:00 - 11:45
-   * [build from source](/Suricata/suricata/build.md)
-   * [config](/Suricata/suricata/config.md)
+   * [build from source](/Suricata/setup/build.md)
+   * [config](/Suricata/setup/config.md)
    * [managing rules](/Suricata/suricata/rules.md)
  * 13:00 - 16:45
-   * [indexing alert log](/Suricata/suricata/rsyslog.md)
+   * [elastic, basic](/common/elastic)
    * [scirius](/Suricata/scirius/README.md)
    * [evebox](/Suricata/evebox/README.md)
-   * [writing basic rule](/Suricata/suricata/writing.first.rule.md)
+   * [rules, cont.](/Suricata/rules)
 
 ## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Feb 14 2018
 
@@ -40,9 +40,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * [Metrix](/TICK/Telegraf/README.md)
   * [deployment]()
 * 13:00 - 16:45
-  * [elasticsearch]()
-  * [scirius]()
-  * [evebox]()
+  * [elastic, clustered](/common/elastic/elastic.cluster.md)
+  * [indexing alert log](/Suricata/logging/)
   * [Kibana](/common/kibana.md)
 
 
