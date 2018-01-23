@@ -3,7 +3,7 @@
 ## JVM heap size
 
  * rule of thumb is 50% available memory
- * not so important
+ * not so important when just testing [(amount of data matters)](https://www.elastic.co/blog/found-understanding-memory-pressure-indicator)
  * https://www.elastic.co/guide/en/elasticsearch/guide/current/heap-sizing.html
 
 ```
