@@ -5,6 +5,8 @@
 *.gz
 *.log
 *.dump
+*.pcap
+*.cap
 # Build and Release Folders
 src/
 pkg/
@@ -30,5 +32,3 @@ students/
 # information for Eclipse / Flash Builder.
 
 ltmain.sh
-*.pcap
-*.cap

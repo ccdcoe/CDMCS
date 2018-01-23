@@ -18,7 +18,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [singlehost](/Suricata/vagrant/singlehost/)
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/rules.md)
-   * [intro to dashboarding](/common/kibana.md)
+   * [intro to dashboarding]()
 
 ## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
 
@@ -27,7 +27,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [config](/Suricata/setup/config.md)
    * [managing rules](/Suricata/suricata/rules.md)
  * 13:00 - 16:45
-   * [elastic, basic](/common/elastic)
+   * [elasticsearch basics](/common/elastic)
    * [scirius](/Suricata/scirius/README.md)
    * [evebox](/Suricata/evebox/README.md)
    * [rules, cont.](/Suricata/rules)

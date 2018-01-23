@@ -3,10 +3,10 @@
  * Build your own suricata
    * set a custom installation root of your own choosing
      * configuration directory should be placed under /etc/suricata
-   * it must support the following features:
+   * it must support the following features (some of these you will need pretty soon):
      * EVE log in JSON format
      * redis output
-     * suricatasc
+     * unix socket support with suricatasc utility
      * [reading multiple pcap files from directory](http://suricata.readthedocs.io/en/latest/command-line-options.html#cmdoption-r)
      * NFS logging and output
 
