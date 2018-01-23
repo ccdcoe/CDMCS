@@ -30,3 +30,5 @@ students/
 # information for Eclipse / Flash Builder.
 
 ltmain.sh
+*.pcap
+*.cap

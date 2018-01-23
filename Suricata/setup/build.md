@@ -1,7 +1,7 @@
 # Building Suricata from source
 
 see
-* https://redmine.openinfosecfoundation.org/projects/suricata/wiki/Installation_from_GIT
+* http://suricata.readthedocs.io/en/latest/install.html#source
 * http://pevma.blogspot.se/2013/12/suricata-cocktails-handy-one-liners.html
 * https://github.com/obsrvbl/suricata-service
 * https://github.com/jasonish/suricata-rpms
@@ -93,7 +93,21 @@ sudo ldconfig
 suricata -V
 ```
 
-## Cleaning up
+## test that it works
+
+### read a random pcap
+
+```
+suricata -c /etc/suricata/suricata.yaml -vvv -r /vagrant/test.pcap
+```
+
+### find the logging dir, check logs
+
+```
+ls -lah `grep default-log-dir: /etc/suricata/suricata.yaml | cut -d ":" -f2`
+```
+
+## cleaning up
 
 ```
 sudo make uninstall
