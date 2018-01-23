@@ -45,7 +45,7 @@ chown -R vagrant:vagrant .
 
 cd /home/vagrant
 wget $WGET_PARAMS https://www.malware-traffic-analysis.net/2018/01/22/2018-01-22-malspam-pushing-smoke-loader-and-other-malware.pcap.zip -O test.pcap.zip
-unzip -P test.pcap.zip
+unzip -P infected test.pcap.zip
 
 LOGDIR=`grep default-log-dir: /opt/suricata-4.0.3/etc/suricata/suricata.yaml | cut -d":" -f2`
 
@@ -53,6 +53,7 @@ echo "running suricata as regular user without custom config"
 chown -R vagrant:vagrant /opt/suricata-4.0.3/etc
 chown -R vagrant:vagrant $LOGDIR
 
+cd /home/vagrant
 /opt/suricata-4.0.3/bin/suricata -c /opt/suricata-4.0.3/etc/suricata/suricata.yaml -r test.pcap
 ls -lah $LOGDIR
 tail $LOGDIR/fast.log
