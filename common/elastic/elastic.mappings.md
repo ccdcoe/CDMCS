@@ -13,76 +13,81 @@ curl -XGET localhost:9200/_template
 
 ```
 {
- "order" : 0,
- "version" : 0,
- "template" : "*",
- "settings" : {
-   "index" : {
-     "refresh_interval" : "60s",
-     "number_of_shards" : 1,
-     "number_of_replicas" : 0
-   }
- },
- "mappings" : {
-   "_default_" : {
-     "dynamic_templates" : [
-       {
-         "message_field" : {
-           "path_match" : "message",
-           "mapping" : {
-             "norms" : false,
-             "type" : "text"
-           },
-           "match_mapping_type" : "string"
-         }
-       },
-       {
-         "string_fields" : {
-           "mapping" : {
-             "norms" : false,
-             "type" : "text",
-             "fields" : {
-               "keyword" : {
-                 "type" : "keyword"
-               }
-             }
-           },
-           "match_mapping_type" : "string",
-           "match" : "*"
-         }
-       }
-     ],
-     "_all" : {
-       "norms" : false,
-       "enabled" : false
-     },
-     "properties" : {
-       "@timestamp" : {
-         "type" : "date",
-         "format": "strict_date_optional_time||epoch_millis||date_time"
-       },
-       "geoip" : {
-         "dynamic" : true,
-         "properties" : {
-           "ip" : { "type" : "ip" },
-           "latitude" : { "type" : "half_float" },
-           "location" : { "type" : "geo_point" },
-           "longitude" : { "type" : "half_float" }
-         }
-       },
-       "@version" : {
-         "include_in_all" : false,
-         "type" : "keyword"
-       }
-     }
-   }
- },
- "aliases" : { }
+  "order": 0,
+  "version": 60001,
+  "index_patterns": [
+    "*"
+  ],
+  "settings": {
+    "index": {
+      "refresh_interval" : "30s",
+      "number_of_shards" : 3,
+      "number_of_replicas" : 0
+    }
+  },
+  "mappings": {
+    "_default_": {
+      "dynamic_templates": [
+        {
+          "message_field": {
+            "path_match": "message",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "text",
+              "norms": false
+            }
+          }
+        },
+        {
+          "string_fields": {
+            "match": "*",
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "text",
+              "norms": false,
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "@version": {
+          "type": "keyword"
+        },
+        "geoip": {
+          "dynamic": true,
+          "properties": {
+            "ip": {
+              "type": "ip"
+            },
+            "location": {
+              "type": "geo_point"
+            },
+            "latitude": {
+              "type": "half_float"
+            },
+            "longitude": {
+              "type": "half_float"
+            }
+          }
+        }
+      }
+    }
+  },
+  "aliases": {}
 }
 ```
 
 ```
-curl -XPUT localhost:9200/_template/default -d @default.json
+curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
 ```
 
 ## Reindex and update_by_query API

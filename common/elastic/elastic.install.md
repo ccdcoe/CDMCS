@@ -32,5 +32,14 @@ systemctl enable elasticsearch
 systemctl start elasticsearch
 ```
 
+## test it
+
+```
+curl -ss -XGET localhost:9200
+curl -ss -XGET localhost:9200/_cat/nodes
+curl -ss -XGET localhost:9200/_cat/indices
+curl -ss -XGET localhost:9200/_cat/shards
+```
+
 ----
 next -> [configure basic node](elastic.config.basic.md)

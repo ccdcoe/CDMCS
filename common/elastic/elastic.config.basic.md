@@ -43,6 +43,18 @@ chown elasticsearch /srv/elasticsearch/{0,1}
 path.data: /srv/elasticsearch/0,/srv/elasticsearch/1
 ```
 
+```
+ls -lah /srv/elasticsearch/*/nodes/*
+```
+
+## log directory
+
+ * do not leave unconfigured
+
+```
+path.logs: /var/log/elasticsearch
+```
+
 ## roles
 
  * all roles should be enabled on single node
@@ -58,4 +70,4 @@ node.master: true
 
 ----
 
-next -> [clustered setup](basic.md)
+next -> [creating your first template](elastic.mappings.md)
