@@ -65,9 +65,15 @@ git clone https://github.com/OISF/libhtp.git -b 0.5.x
 ./configure
 ```
 
-* [configure --help](/Suricata/suricata/ConfigureHelp.md)
-* [configure --enable-profiling --enable-luajit](/Suricata/suricata/ConfigureProfilingLuaJit.md)
+### find your problems (also applies to make later down the line)
+```
+./configure  > /dev/null 2> ../error.log
+```
 
+* [configure --help](ConfigureHelp.md)
+* [configure --enable-profiling --enable-luajit](ConfigureProfilingLuaJit.md)
+
+## compile
 ```
 make
 ```
@@ -76,19 +82,15 @@ make
 sudo make install
 ```
 
-* [make install-conf](/Suricata/suricata/MakeInstallConf.md)
-* [make install-full](/Suricata/suricata/MakeInstallFull.md)
-
-
+* [make install-conf](MakeInstallConf.md)
+* [make install-full](MakeInstallFull.md)
 
 ```
 sudo ldconfig
 ```
 
 ```
-root@suricata:~/oisf# suricata -V
-This is Suricata version 4.0dev (rev 6585ac4)
-
+suricata -V
 ```
 
 ## Cleaning up

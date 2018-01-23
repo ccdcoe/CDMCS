@@ -21,16 +21,18 @@ libcap-ng0 \
 make \
 libmagic-dev
 
-cd /vagrant
-[[ -d /vagrant/suricata ]] || git clone https://github.com/OISF/suricata.git
+cd /home/vagrant
+[[ -d suricata ]] || git clone https://github.com/OISF/suricata.git
 cd suricata && git checkout tags/suricata-4.0.3
 
 [[ -d libhtp ]] || git clone https://github.com/OISF/libhtp.git
 cd libhtp && git checkout tags/0.5.25 && cd ..
 
-cd /vagrant/suricata && ./autogen.sh
+pwd
+./autogen.sh
+./configure
 
-cd /vagrant/suricata && ./configure
+chown -R vagrant:vagrant .
 
 #make && make install
 
