@@ -27,7 +27,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [config](/Suricata/setup/config.md)
    * [managing rules](/Suricata/suricata/rules.md)
  * 13:00 - 16:45
-   * [elasticsearch basics](/common/elastic)
+   * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
    * [scirius](/Suricata/scirius/README.md)
    * [evebox](/Suricata/evebox/README.md)
    * [rules, cont.](/Suricata/rules)
