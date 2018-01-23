@@ -33,4 +33,4 @@ systemctl start elasticsearch
 ```
 
 ----
-next -> [configure sngle node](elastic.config.single.md)
+next -> [configure basic node](elastic.config.basic.md)
