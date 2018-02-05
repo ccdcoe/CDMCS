@@ -22,7 +22,7 @@ GRAFANA="grafana_4.6.3_amd64.deb"
 EVEBOX="evebox_0.8.1_amd64.deb"
 
 # for deb
-SCIRIUS="scirius_1.2.7-1_amd64.deb"
+SCIRIUS="scirius_1.2.8-1_amd64.deb"
 # for git
 SCIRIUS_PATH="/opt/scirius"
 SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py

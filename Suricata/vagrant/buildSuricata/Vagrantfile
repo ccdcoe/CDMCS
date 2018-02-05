@@ -1,3 +1,6 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 $provision_script = <<SCRIPT
 
 WGET_PARAMS="-4 -q"
