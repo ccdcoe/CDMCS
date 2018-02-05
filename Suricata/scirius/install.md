@@ -16,7 +16,7 @@ pip install --upgrade pip virtualenv
 ## from deb
 
 ```
-SCIRIUS="scirius_1.2.7-1_amd64.deb"
+SCIRIUS="scirius_1.2.8-1_amd64.deb"
 [[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
 
 apt-get install -y nginx python-pip dbconfig-common sqlite3 > /dev/null
