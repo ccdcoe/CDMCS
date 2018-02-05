@@ -5,6 +5,7 @@
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html
 * https://raw.githubusercontent.com/markuskont/salt-elasticsearch/master/salt/elasticsearch/etc/elasticsearch/template/suricata.json
 * https://www.elastic.co/blog/strings-are-dead-long-live-strings
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html
 
 ## Templates
 
@@ -89,6 +90,12 @@ curl -XGET localhost:9200/_template
 
 ```
 curl -ss -XPUT localhost:9200/_template/default -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
+```
+
+## check for mappings
+
+```
+curl -ss -XGET localhost:9200/index-timestamp/_mappings
 ```
 
 ## Reindex and update_by_query API

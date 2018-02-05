@@ -3,14 +3,11 @@
 
 see
 
-* /lib/systemd/system/evebox.service
+```cat /lib/systemd/system/evebox.service```
 
 
 ```
-
 evebox -h
-
-
 ```
 
 
