@@ -10,7 +10,7 @@ apt-get install -y nginx python-pip dbconfig-common sqlite3
 ```
 ### python stuff (global)
 ```
-pip install --upgrade pip virtualenv
+pip install --upgrade pip virtualenv gunicorn
 ```
 
 ## from deb
@@ -19,7 +19,6 @@ pip install --upgrade pip virtualenv
 SCIRIUS="scirius_1.2.8-1_amd64.deb"
 [[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
 dpkg -i $SCIRIUS || apt-get -f -y install
-
 ```
 
 ## from git
