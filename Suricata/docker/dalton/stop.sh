@@ -5,8 +5,8 @@ echo "stopping dalton"
 cd dalton 
 
 if [ -f "/etc/arch-release" ]; then
-  sudo bash -c "docker-compose stop && docker-compose rm"
+  sudo bash -c "docker-compose stop && docker-compose rm -f"
 else
-  time docker-compose stop && docker-compose rm
+  time docker-compose stop && docker-compose rm -f
 fi
 
