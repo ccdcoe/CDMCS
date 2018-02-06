@@ -94,10 +94,10 @@ after:
 
 ## add state to top file
 
- * Otherwise code will not be applied
- * base == environment (must be configured first in master config)
- * `*` == apply on all minions
- * `test` == filename from previous step
+* Otherwise code will not be applied
+* base == environment (must be configured first in master config)
+* `*` == apply on all minions
+* `test` == filename from previous step
   * `/vagrant/salt/test/init.sls` would achieve the same result
 
 ```
@@ -109,4 +109,30 @@ base:
   '*':
     - test
 
+```
+
+## define server-side variables
+
+* can be used like grains, but are defined on server
+* are defined exactly like states
+* are applied separately from states
+
+```
+vim /vagrant/pillar/suri.sls
+```
+
+```
+suricata:
+  homenets: "[192.168.0.0/16,10.0.0.0/8]"
+  interface: ethX
+```
+
+## apply server-side variables
+
+* different files can be applied using different criteria
+
+```
+base:
+  'suricata-*':
+    - suri
 ```
