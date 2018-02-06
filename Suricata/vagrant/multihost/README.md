@@ -132,6 +132,9 @@ suricata:
 * different files can be applied using different criteria
 
 ```
+vim /vagrant/pillar/top.sls
+```
+```
 base:
   'suricata-*':
     - suri

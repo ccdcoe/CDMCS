@@ -36,10 +36,9 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 * 09:00 - 11:45
   * [multihost with salt](/Suricata/vagrant/multihost)
-  * [Metrix](/TICK/Telegraf/README.md)
-  * [deployment]()
-* 13:00 - 16:45
   * [elastic, clustered](/common/elastic/elastic.cluster.md)
+
+* 13:00 - 16:45
   * [indexing alert log](/Suricata/logging/)
   * [Kibana](/common/kibana.md)
 
