@@ -5,5 +5,6 @@
 * [Evebox for simple tailing](evebox.md)
 * [Logstash is simplest to get started](logstash.md)
 * [logstash+redis for simple pub-sub](/common/elastic/logstash-redis-ela.conf)
+* [Ingest node to get logstash without logstash](/common/elastic/elastic.ingest.md)
 * [Rsyslog for lowest CPU overhead](rsyslog.omelastic.md)
-* [Rsyslog+kafka for scaling]()
+* [Rsyslog+kafka for scaling](rsyslog.kafka.conf)
