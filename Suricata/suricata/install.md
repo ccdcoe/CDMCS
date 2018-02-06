@@ -20,4 +20,4 @@ apt-get install suricata
 
 ----
 
-Next -> [Config](config.md)
+Next -> [Config](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/setup/config.md)

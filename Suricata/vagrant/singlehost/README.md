@@ -1,6 +1,15 @@
 # single host
 
+## Main components: 
+
 * suricata
 * scirius
-* elastic
-* tick
+* elasticsearch
+* rsyslog
+* logstash
+* tick stack
+* grafana
+* kibana
+* evebox
+* redis
+

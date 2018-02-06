@@ -107,17 +107,11 @@ suricata -c /etc/suricata/suricata.yaml -vvv -r /vagrant/test.pcap
 ls -lah `grep default-log-dir: /etc/suricata/suricata.yaml | cut -d ":" -f2`
 ```
 
-## cleaning up
+## Uninstall and cleaning up 
 
 ```
 sudo make uninstall
-```
-
-```
 make clean
-```
-
-```
 make distclean
 ```
 

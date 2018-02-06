@@ -1,5 +1,5 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/cyber-defence-monitoring-course-suite-module-3-0.html) environment... hands-on 90% talk 10% **slides 0%**
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/cyber-defence-monitoring-course-suite-module-3-1.html) environment... hands-on 90% talk 10% **slides 0%**
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
@@ -8,14 +8,14 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Moloch is a large scale, open source, full packet capturing, indexing, and database system.
 > Moloch is not meant to replace Intrusion Detection Systems (IDS). Moloch augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-## Day 0 :: Intro:: May 8 2017 start at 13:00
+## Day 0 :: Intro:: May 7 2018, starts at 13:00
 
  * 13:00 - 14:00 [Intro](/common/day_intro.md), [vagrant](/common/vagrant_intro.md)
  * 14:00 - 15:00 [singlehost](/Moloch/vagrant/singlehost/README.md)
  * 15:30 - 16:15 [basic config](/Moloch/config.md)
  * 16:15 - 17:00 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
 
-## Day 1 :: Single Box :: May 9 2017
+## Day 1 :: Single Box :: May 8 2018
 
  * 09:00 - 10:30 [build from source](/Moloch/build.md)
  * 11:00 - 11:45 [config](/Moloch/config.md)
@@ -23,22 +23,22 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 13:00 - 16:45 Digging
 
 
-## Day 2 :: Scale up :: May 10 2017
+## Day 2 :: Scale up :: May 9 2018
 
-* 09:00 - 10:30 [metrixz](https://github.com/ccdcoe/CDMCS/tree/master/TICK/vagrant/singlehost#singlehost-tickag),[Telegraf](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Telegraf),[InfluxDB](https://github.com/ccdcoe/CDMCS/tree/master/TICK/InfluxDB),[Grafana](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Grafana); SALT [Minions](/common/SetUpMinions.md) & [Master](/common/SetUpMaster.md)
+* 09:00 - 10:30 [metrix](https://github.com/ccdcoe/CDMCS/tree/master/TICK/vagrant/singlehost#singlehost-tickag),[Telegraf](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Telegraf),[InfluxDB](https://github.com/ccdcoe/CDMCS/tree/master/TICK/InfluxDB),[Grafana](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Grafana); SALT [Minions](/common/SetUpMinions.md) & [Master](/common/SetUpMaster.md)
 * 11:00 - 12:30 [Multiple Hosts Monitoring Multiple Network Segments](https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments)
 
 * 13:30 - 16:45 Digging
 
 
-## Day 3 :: Usage :: May 11 2017
+## Day 3 :: Usage :: May 10 2018
 
 * 09:00 - 10:30 [Building hunters](/Moloch/classroom/day3/hunting.md)
 * 11:00 - 12:30 Traffic capture in LS17
 
 * 13:00 - 16:45 Digging
 
-## Day +1 :: :: May 12 2017 end at 12:00
+## Day +1 :: :: May 11 2018, ends at 12:00
 
 * 09:00 - 10:30 [WISE](wise.md), [Suri2Molo](suri2molo.md)
 * 11:00 - 12:00 [feedback, contact exchange, thanks, etc.](/common/Closing.md)

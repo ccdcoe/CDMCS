@@ -16,7 +16,9 @@
 
 * https://www.vagrantup.com/downloads.html
 
-### [start:](https://www.vagrantup.com/docs/getting-started/)
+### Getting started:
+
+* https://www.vagrantup.com/docs/getting-started/
 
 1. [prepare](https://www.vagrantup.com/docs/getting-started/project_setup.html)
 1. [up & ssh](https://www.vagrantup.com/docs/getting-started/up.html)
@@ -28,11 +30,12 @@
 ---
 
 ```
+# Some sample cmds
 
 # install vagrant
 $ apt-get install virtualbox
-$ wget -q -4 https://releases.hashicorp.com/vagrant/2.0.1/vagrant_2.0.1_x86_64.deb
-$ dpkg -i vagrant_1.9.1_x86_64.deb
+$ wget -q -4 https://releases.hashicorp.com/vagrant/2.0.2/vagrant_2.0.2_x86_64.deb 
+$ dpkg -i vagrant_2.0.2_x86_64.deb
 
 
 
@@ -54,5 +57,6 @@ $ vagrant destroy
 $ vagrant status
 $ vagrant up
 
+# see all vms
 $ vagrant global-status
 ```

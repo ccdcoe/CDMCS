@@ -6,7 +6,7 @@
 
 see:
 
- * https://www.stamus-networks.com/open-source/#Scirius
+ * https://www.stamus-networks.com/open-source
  *  https://github.com/StamusNetworks/scirius
 
 ----
