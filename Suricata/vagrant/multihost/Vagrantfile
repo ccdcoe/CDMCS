@@ -2,7 +2,7 @@
 
 MASTER_IP = '192.168.10.20'
 MASTER_CPU = 2
-MASTER_MEM = 512
+MASTER_MEM = 1024
 MASTER_IMG = 'ubuntu/xenial64'
 
 SALT = 'stable'

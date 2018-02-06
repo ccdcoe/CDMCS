@@ -1,11 +1,10 @@
-{% set pkg = 'suricata' %}
 {% set conf = '/etc/suricata/suricata.yaml' %}
 {% set params = '/etc/default/suricata' %}
 
 include:
   - ethtool
 
-{{pkg}}:
+suricata:
   pkgrepo.managed:
     - humanname: OISF suricata stable repository
     - clean_file: True
@@ -21,9 +20,9 @@ include:
     - refresh: True
     - pkgs:
       - libhtp1
-      - {{pkg}}
+      - suricata
   service.running:
-    - name: {{pkg}}
+    - name: suricata
     - enable: True
     - watch:
       - {{conf}}
@@ -32,7 +31,7 @@ include:
 {{conf}}:
   file.managed:
     - mode: 644
-    - source: salt://files/suricata.jinja
+    - source: salt://fileserver/suricata.jinja
     - template: jinja
     - default:
       home_net: "192.168.0.0/24,10.0.0.0/8"

@@ -129,7 +129,7 @@ outputs:
   # Extensible Event Format (nicknamed EVE) event log in JSON format
   - eve-log:
       enabled: yes
-      filetype: syslog #regular|syslog|unix_dgram|unix_stream|redis
+      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
       filename: eve.json
       prefix: "@cee: " # prefix to prepend to each log entry
       # the following are valid when type: syslog above
