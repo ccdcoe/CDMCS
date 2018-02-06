@@ -35,4 +35,4 @@ grep rsyslogd /var/log/syslog
 ```
 
 ----
-Next -> [Rsyslog filtering](rsyslog2ela.md)
+Next -> [Rsyslog filtering](rsyslog.omelastic.md)

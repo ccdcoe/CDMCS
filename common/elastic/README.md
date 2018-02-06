@@ -13,6 +13,7 @@
  * https://elasticsearch-py.readthedocs.io/en/master/
  * https://github.com/elastic/elasticsearch-js
  * https://github.com/olivere/elastic
+ * [python example](elastic.shipper.py)
 
 ## E with other friends
  * [kafka](https://www.elastic.co/blog/just-enough-kafka-for-the-elastic-stack-part1)
