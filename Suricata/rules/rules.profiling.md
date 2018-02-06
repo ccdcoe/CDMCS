@@ -1,6 +1,6 @@
 # Suricata rule profiling
 
->  I seem to remember the Suricata team recommending against enabling performance profiling in our Suricata package due to performance issues.
+> Compiling Suricata with rule-profiling will have an impact on performance, even if the option is disabled in the configuration file.
 
 see:
 
