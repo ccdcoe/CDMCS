@@ -51,3 +51,9 @@ server {
    }
 }
 ```
+
+### testing config
+
+```
+nginx -t -c /etc/nginx/nginx.conf
+```
