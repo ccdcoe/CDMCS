@@ -1,6 +1,4 @@
-# Suricata output
-
-see:
+# Suricata output to elasticsearch
 
 * https://suricata.readthedocs.io/en/latest/output/index.html
 * [ES API is all you really need](/common/elastic/elastic.shipper.py)
