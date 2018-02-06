@@ -35,8 +35,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Feb 14 2018
 
 * 09:00 - 11:45
-  * [Minions](/common/SetUpMinions.md)
-  * [Master](/common/SetUpMaster.md)
+  * [multihost with salt](/Suricata/vagrant/multihost)
   * [Metrix](/TICK/Telegraf/README.md)
   * [deployment]()
 * 13:00 - 16:45
