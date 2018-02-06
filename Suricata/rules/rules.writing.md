@@ -40,4 +40,4 @@ A rule consists of the following:
 * threshold configuration
 
 ----
-Next -> [Exercises](rules.exercises.md)
+Next -> [Exercises](rules.exercise.basic.md)

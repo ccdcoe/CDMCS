@@ -9,3 +9,7 @@
 * Modify this rule to only fire on established responses
 * Find the term "Nagios pisaraid ei usu" from established responses
 * Use proper hexadecimal encoding to match special bytes and ensure that rule fires for both "sysadminnid" and "SysAdminnid"
+
+----
+Next -> [Rule profiling](rules.profiling.md)
+

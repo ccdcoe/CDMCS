@@ -8,5 +8,4 @@ see:
 * https://github.com/inliniac/suricata/blob/master/src/util-profiling-rules.c
 
 ---
-
-Next -> [Lua in rules](rules.lua.md)
+Next -> [Lua scripting in rules](rules.lua.md)
