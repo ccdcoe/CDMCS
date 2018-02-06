@@ -40,7 +40,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 * 13:00 - 16:45
   * [indexing alert log](/Suricata/logging/)
-  * [Kibana](/common/kibana.md)
+  * [Dashboarding and aggregations](/common/kibana.md)
 
 
 ## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Feb 15 2018
@@ -57,8 +57,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day +1 :: :: Feb 16 2018, ends at 12:00
 
 * 09:00 - 09:45
-  * [Making sense out of Alerts](/common/kibana.md)
-  * []()
+  * [Insert content here]()
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 
