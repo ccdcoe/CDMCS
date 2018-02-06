@@ -98,7 +98,7 @@ after:
  * base == environment (must be configured first in master config)
  * `*` == apply on all minions
  * `test` == filename from previous step
- ** `/vagrant/salt/test/init.sls` would achieve the same result
+  * `/vagrant/salt/test/init.sls` would achieve the same result
 
 ```
 vim /vagrant/salt/top.sls
