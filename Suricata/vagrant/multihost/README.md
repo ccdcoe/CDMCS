@@ -167,3 +167,16 @@ base:
 salt -E 'minion-[12]' cp.push /etc/suricata/suricata.yaml
 ls -lah /var/cache/salt/master/minions/minion-*/files/etc/suricata/
 ```
+
+# utlis
+
+## copy a file from master to minion
+
+* note salt-cp is a separate program from salt
+* i.e., do not expect targeting options to have equal functionality
+
+```
+echo "test1" > testfile.txt
+salt-cp '*' testfile.txt /tmp/testfile.txt
+salt '*' cmd.run 'cat /tmp/testfile.txt'
+```
