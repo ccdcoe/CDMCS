@@ -3,6 +3,7 @@
 > Maybe it is better to just drop the bad stuff?
 
 see:
+* https://github.com/StamusNetworks/SELKS/wiki/Initial-Setup---Suricata-IPS
 * https://home.regit.org/2012/09/new-af_packet-ips-mode-in-suricata/
 * https://github.com/OISF/suricata/commit/662dccd8a5180807e3749842508b80e2e2183051
 
