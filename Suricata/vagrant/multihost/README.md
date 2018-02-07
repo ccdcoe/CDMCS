@@ -92,6 +92,14 @@ after:
       - file: /tmp/1
 ```
 
+### apply without top file
+
+ * `-E` for pcre
+
+```
+salt -E 'minion-[12]' state.apply test
+```
+
 ## add state to top file
 
 * Otherwise code will not be applied
