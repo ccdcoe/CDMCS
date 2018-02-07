@@ -117,7 +117,6 @@ base:
   '*':
     - test
 ```
-
 ### apply all states via top file
 
 ```
@@ -149,6 +148,14 @@ vim /vagrant/pillar/top.sls
 ```
 ```
 base:
-  'suricata-*':
+  'minion-*':
+    - suri
+```
+
+### for more explicit targeting
+
+```
+base:
+  'minion-[12]':
     - suri
 ```
