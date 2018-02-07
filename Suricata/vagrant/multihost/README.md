@@ -116,7 +116,12 @@ vim /vagrant/salt/top.sls
 base:
   '*':
     - test
+```
 
+### apply all states via top file
+
+```
+salt -E 'minion-[12]' state.highstate
 ```
 
 ## define server-side variables
