@@ -18,7 +18,7 @@ redis-cli
 netstat -anutp | grep 6379
 ```
 
-# Suricata config
+## Suricata config
 
 * make sure redis support is actually compiled in
 
@@ -35,4 +35,12 @@ redis:
   pipelining:
     enabled: yes ## set enable to yes to enable query pipelining
     batch-size: 10 ## number of entry to keep in buffer
+```
+
+## Testing
+
+```
+redis-cli
+127.0.0.1:6379> KEYS *
+1) "suricata"
 ```
