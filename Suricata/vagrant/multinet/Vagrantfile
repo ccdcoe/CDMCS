@@ -1,0 +1,19 @@
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--cpus", 2]
+    vb.customize ["modifyvm", :id, "--memory", 2048]
+  end
+
+  config.vm.define 'client' do |box|
+    box.vm.box = "janihur/ubuntu-1604-lxde-desktop"
+    box.vm.hostname = 'client'
+    box.vm.network :private_network, ip: "192.168.12.30"
+  end
+  config.vm.define 'router' do |box|
+    box.vm.box = "ubuntu/xenial64"
+    box.vm.hostname = 'router'
+    box.vm.network :private_network, ip: "192.168.12.1"
+  end
+end
