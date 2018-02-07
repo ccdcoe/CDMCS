@@ -19,3 +19,17 @@ suricata:
     - watch:
       - {{ conf }}
       - {{ params }}
+
+{{ conf }}:
+  file.managed:
+    - mode: 644
+    - source: salt://fileserver/suricata.jinja
+    - template: jinja
+    - default:
+      home_net: "10.0.0.0/8"
+      interface: "enp0s3"
+
+{{ params }}:
+  file.managed:
+    - mode: 644
+    - source: salt://fileserver/default.conf

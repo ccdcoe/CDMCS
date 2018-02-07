@@ -8,6 +8,7 @@
 *.pcap
 *.cap
 *.swp
+*.bak
 # Build and Release Folders
 src/
 pkg/
