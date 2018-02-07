@@ -1,6 +1,7 @@
 # Suricata Unix Socket
 
-> REstarting suricata is a no no
+> Restarting suricata is a no no. If you have a lot of rules, this will take a long time
+> You would not want to miss anything, would you?
 
 ### Suricata can listen to a unix socket and accept commands from the user. 
 

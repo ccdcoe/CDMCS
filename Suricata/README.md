@@ -48,7 +48,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 09:00 - 11:45
   * [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
   * [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
-  * [IPS]()
+  * [IPS](/Suricata/suricata/ips-intro.md)
 * 13:00 - 16:45
   * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
   * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
