@@ -160,3 +160,10 @@ base:
     - match: pcre
     - suri
 ```
+
+## copy a file from minion to master
+
+```
+salt -E 'minion-[12]' cp.push /etc/suricata/suricata.yaml
+ls -lah /var/cache/salt/master/minions/minion-*/files/etc/suricata/
+```

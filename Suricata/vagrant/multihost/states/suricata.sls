@@ -7,15 +7,7 @@ include:
 suricata:
   pkgrepo.managed:
     - humanname: OISF suricata stable repository
-    - clean_file: True
-    {% if grains['os'] == 'Ubuntu' %}
     - ppa: oisf/suricata-stable
-    {% elif grains['os'] == 'jessie' %}
-    - name: deb http://ppa.launchpad.net/oisf/suricata-stable/ubuntu vivid main
-    - file: /etc/apt/sources.list.d/oisf-suricata-stable-trusty.list
-    - keyserver: keyserver.ubuntu.com
-    - keyid: 9F6FC9DDB1324714B78062CBD7F87B2966EB736F
-    {% endif %}
   pkg.latest:
     - refresh: True
     - pkgs:
@@ -25,10 +17,10 @@ suricata:
     - name: suricata
     - enable: True
     - watch:
-      - {{conf}}
-      - {{params}}
+      - {{ conf }}
+      - {{ params }}
 
-{{conf}}:
+{{ conf }}:
   file.managed:
     - mode: 644
     - source: salt://fileserver/suricata.jinja
@@ -38,7 +30,7 @@ suricata:
       interface: "eth0"
 
 
-{{params}}:
+{{ params }}:
   file.managed:
     - mode: 644
-    - source: salt://files/default.conf
+    - source: salt://fileserver/default.conf
