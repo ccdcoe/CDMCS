@@ -157,5 +157,6 @@ base:
 ```
 base:
   'minion-[12]':
+    - match: pcre
     - suri
 ```
