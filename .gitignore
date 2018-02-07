@@ -33,3 +33,6 @@ students/
 # information for Eclipse / Flash Builder.
 
 ltmain.sh
+
+# nested git repos
+Suricata/docker/dalton/dalton/
