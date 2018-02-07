@@ -3,7 +3,7 @@
 ## client
 
 ```
-echo "*.* @192.168.10.20:514"
+echo "*.* @192.168.10.20:514" >> /etc/rsyslog.d/udp-client.conf
 systemctl restart rsyslogd.service
 ```
 
