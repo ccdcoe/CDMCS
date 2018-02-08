@@ -1,7 +1,0 @@
-#reject http any any -> any any (msg:"nagios pisaraid ei usu"; content:"sysadminnid"; classtype:policy-violation; sid:4000001; rev:1;)
-#drop http any any -> any any (content:"GET"; http_method; sid:4000002; rev:1;)
-reject tcp any any -> any any (content:"detectportal"; sid:4000003; rev:1;)
-reject tcp $HOME_NET any -> $EXTERNAL_NET 53 (msg:"DNS exfil"; content:"GET"; sid:4000004; rev:4;)
-#drop http any !$HTTP_PORTS -> any any (msg:"http response from non-http port"; sid:4000005; rev:4;)
-reject dns any any -> any any (msg:"drop facebook dns"; dns_query; content:"facebook"; nocase; sid:4000006;)
-reject dns any any -> any $HTTP_PORTS (msg:"DNS on HTTP port"; nocase; sid:4000007;)
