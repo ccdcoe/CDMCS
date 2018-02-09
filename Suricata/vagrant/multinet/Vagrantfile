@@ -1,5 +1,7 @@
 # vi: set ft=ruby :
-#
+
+# change if you want a dedicated alert box
+DEPLOY_SEC = false
 
 $buildSuricata = <<SCRIPT
 export DEBIAN_FRONTEND=noninteractive
@@ -33,6 +35,19 @@ Vagrant.configure(2) do |config|
     box.vm.box = "ubuntu/xenial64"
     box.vm.hostname = 'bridge'
     box.vm.network :private_network, ip: "192.168.12.254", virtualbox__intnet: "INT"
+    box.vm.network :private_network, ip: "192.168.10.30"
     box.vm.provision "shell", inline: $buildSuricata
   end
+  if DEPLOY_SEC == true
+    config.vm.define 'sec' do |box|
+      box.vm.box = "ubuntu/xenial64"
+      box.vm.hostname = 'sec'
+      box.vm.network :private_network, ip: "192.168.10.31"
+      config.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--cpus", 4]
+        vb.customize ["modifyvm", :id, "--memory", 4096]
+      end
+    end
+  end
 end
+
