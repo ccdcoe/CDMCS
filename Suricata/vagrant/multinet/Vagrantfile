@@ -1,7 +1,7 @@
 # vi: set ft=ruby :
 
 # change if you want a dedicated alert box
-DEPLOY_SEC = false
+DEPLOY_SEC = true
 
 $buildSuricata = <<SCRIPT
 export DEBIAN_FRONTEND=noninteractive
