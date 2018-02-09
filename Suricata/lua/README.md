@@ -8,3 +8,11 @@
 * https://www.stamus-networks.com/2015/07/24/finding-self-signed-tls-certificates-suricata-and-luajit-scripting/
 * https://www.lua.org/start.html
 * https://luarocks.org/
+
+## make sure that lua scripting support is compiled into suricata
+
+```
+suricata --build-info | grep lua
+  LUA support:                             yes, through luajit
+  libluajit:                               yes
+```
