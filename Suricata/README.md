@@ -20,7 +20,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [intro to rules](/Suricata/rules/rules.intro.md)
    * [intro to dashboarding]()
 
-## [Day 1](/Suricata/classroom/day_1/README.md) :: Single Box :: Feb 13 2018
+## Day 1 :: Single Box :: Feb 13 2018
 
  * 09:00 - 11:45
    * [build from source](/Suricata/setup/build.md)
@@ -32,7 +32,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [scirius](/Suricata/scirius)
    * [rules, cont.](/Suricata/rules)
 
-## [Day 2](/Suricata/classroom/day_2/README.md) :: Scale up :: Feb 14 2018
+## Day 2 :: Scale up :: Feb 14 2018
 
 * 09:00 - 11:45
   * [multihost with salt](/Suricata/vagrant/multihost)
@@ -43,7 +43,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * [Dashboarding and aggregations](/common/kibana.md)
 
 
-## [Day 3](/Suricata/classroom/day_3/README.md) :: Usage :: Feb 15 2018
+## Day 3 :: Usage :: Feb 15 2018
 
 * 09:00 - 11:45
   * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
