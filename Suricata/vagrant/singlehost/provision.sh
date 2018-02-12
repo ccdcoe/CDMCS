@@ -211,8 +211,6 @@ check_service kibana
 
 # set up default index pattern
 sleep 5
-#curl -ss -XPUT localhost:9200/.kibana/index-pattern/a1571060-e8e2-11e7-9cf4-db76e233e72b -d @/vagrant/kibana-index-pattern.json -H'Content-Type: application/json'
-#curl -ss -XPUT localhost:9200/.kibana/config/5.6.2 -d @/vagrant/kibana-index-pattern-config.json -H'Content-Type: application/json'
 
 # logstash
 echo "Provisioning LOGSTASH"
@@ -510,8 +508,4 @@ echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
 while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
 
-systemctl status suricata.service | grep 'running' || echo "SURICATA DOWN"
-systemctl status scirius.service | grep 'running' || echo "SCIRIUS DOWN"
-systemctl status nginx.service | grep 'running' || echo "NGINX DOWN"
-systemctl status evebox.service | grep 'running' || echo "EVEBOX DOWN"
 netstat -anutp
