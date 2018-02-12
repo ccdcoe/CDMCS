@@ -46,12 +46,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 3 :: Usage :: Feb 15 2018
 
 * 09:00 - 11:45
-  * [Suricata LUA output](/Suricata/suricata/stats2influxdb.md)
-  * [Suricata LUA rules](/Suricata/suricata/rules.lua.md)
-  * [IPS](/Suricata/suricata/ips-intro.md)
-* 13:00 - 16:45
   * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
   * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
+  * [IPS](/Suricata/suricata/ips-intro.md)
+* 13:00 - 16:45
+  * [Suricata LUA](/Suricata/lua)
 
 
 ## Day +1 :: :: Feb 16 2018, ends at 12:00

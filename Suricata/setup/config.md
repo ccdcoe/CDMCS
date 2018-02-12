@@ -26,6 +26,7 @@ suricata.yaml is like a documentation in itself. See the file without comments.
 grep -v -E '^\s*#' /etc/suricata/suricata.yaml
 # remove empty lines as well
 grep -v -E '^\s*#' /etc/suricata/suricata.yaml | grep -v '^$'
+sed -i -e 's/#.*$//' -e '/^\s*$/d' /etc/suricata/suricata.yaml
 ```
 
 ## Example HOME_NET and other vars
