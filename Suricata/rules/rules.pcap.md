@@ -17,6 +17,13 @@ export IFACE=lo
 tcpdump -i $IFACE -w /tmp/capture.pcap port 80
 ```
 
+## fixing bad checksumming
+
+```
+tcprewrite -C -i /tmp/infile.pcap -o /tmp/outfile.pcap
+```
+
+
 ## generate some traffic
 
 ```
