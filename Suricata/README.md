@@ -27,10 +27,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [config](/Suricata/setup/config.md)
    * [managing rules](/Suricata/suricata/rules.md)
  * 13:00 - 16:45
+   * [rules, cont.](/Suricata/rules), [playing with config](/Suricata/setup/config.md)
    * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
    * [evebox](/Suricata/evebox)
    * [scirius](/Suricata/scirius)
-   * [rules, cont.](/Suricata/rules)
 
 ## Day 2 :: Scale up :: Feb 14 2018
 
