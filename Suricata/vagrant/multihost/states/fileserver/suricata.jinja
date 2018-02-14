@@ -27,44 +27,7 @@ vars:
     FTP_PORTS: 21
 default-rule-path: /etc/suricata/rules
 rule-files:
- - botcc.rules
- - ciarmy.rules
- - compromised.rules
- - drop.rules
- - dshield.rules
- - emerging-attack_response.rules
- - emerging-chat.rules
- - emerging-current_events.rules
- - emerging-dns.rules
- - emerging-dos.rules
- - emerging-exploit.rules
- - emerging-ftp.rules
- - emerging-imap.rules
- - emerging-malware.rules
- - emerging-misc.rules
- - emerging-mobile_malware.rules
- - emerging-netbios.rules
- - emerging-p2p.rules
- - emerging-policy.rules
- - emerging-pop3.rules
- - emerging-rpc.rules
- - emerging-scan.rules
- - emerging-smtp.rules
- - emerging-snmp.rules
- - emerging-sql.rules
- - emerging-telnet.rules
- - emerging-tftp.rules
- - emerging-trojan.rules
- - emerging-user_agents.rules
- - emerging-voip.rules
- - emerging-web_client.rules
- - emerging-web_server.rules
- - emerging-worm.rules
- - tor.rules
- - http-events.rules    # available in suricata sources under rules dir
- - smtp-events.rules    # available in suricata sources under rules dir
- - dns-events.rules     # available in suricata sources under rules dir
- - tls-events.rules     # available in suricata sources under rules dir
+  - {{ rulefile }}
 classification-file: /etc/suricata/classification.config
 reference-config-file: /etc/suricata/reference.config
 default-log-dir: /var/log/suricata/

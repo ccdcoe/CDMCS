@@ -10,7 +10,7 @@ SALT = 'stable'
 boxes = [
   {
     :name       => "minion-1",
-    :mem        => "2048",
+    :mem        => "4096",
     :cpu        => "2",
     :ip         => "192.168.10.21",
     :image      => 'ubuntu/xenial64',
@@ -18,25 +18,9 @@ boxes = [
   },
   {
     :name       => "minion-2",
-    :mem        => "2048",
+    :mem        => "4096",
     :cpu        => "2",
     :ip         => "192.168.10.22",
-    :image      => 'ubuntu/xenial64',
-    :provision  => []
-  },
-  {
-    :name       => "minion-3",
-    :mem        => "2048",
-    :cpu        => "2",
-    :ip         => "192.168.10.23",
-    :image      => 'ubuntu/xenial64',
-    :provision  => []
-  },
-  {
-    :name       => "minion-4",
-    :mem        => "2048",
-    :cpu        => "2",
-    :ip         => "192.168.10.24",
     :image      => 'ubuntu/xenial64',
     :provision  => []
   }
