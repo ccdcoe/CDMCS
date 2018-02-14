@@ -36,7 +36,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 * 09:00 - 11:45
   * [multihost with](/Suricata/vagrant/multihost) [salt](/common/salt)
-  * [manage rules](Suricata/rules/rules.update.md)
+  * [rules management](/Suricata/rules/rules.update.md)
 
 * 13:00 - 16:45
   * [elastic, clustered](/common/elastic/elastic.cluster.md)
