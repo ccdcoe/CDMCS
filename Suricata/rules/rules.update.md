@@ -17,7 +17,7 @@ suricata-update
 ## point suricata.yaml to new rules file
 ```
 rules:
-  - /etc/suricata/rules/suricata.rules
+  - /var/lib/suricata/rules/suricata.rules
 ```
 
 ## reload suricata
