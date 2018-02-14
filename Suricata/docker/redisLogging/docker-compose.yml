@@ -1,0 +1,38 @@
+version: '3.2'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.1.2
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+      #- "9300:9300"
+    environment:
+      #- cluster.name=docker-cluster
+      - "ES_JAVA_OPTS=-Xmx1g -Xms1g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+#    volumes:
+#      - type: bind
+#        source: /srv/pcap/elasticsearch
+#        target: /usr/share/elasticsearch/data
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.1.2
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+  logstash:
+    image: docker.elastic.co/logstash/logstash-oss:6.1.2
+    container_name: logstash
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash-redis-ela.conf:/usr/share/logstash/pipeline/logstash.conf
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
