@@ -35,7 +35,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 2 :: Scale up :: Feb 14 2018
 
 * 09:00 - 11:45
-  * [multihost with salt](/Suricata/vagrant/multihost)
+  * [multihost with](/Suricata/vagrant/multihost) [salt](/common/salt)
   * [elastic, clustered](/common/elastic/elastic.cluster.md)
 
 * 13:00 - 16:45
