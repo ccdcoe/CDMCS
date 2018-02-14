@@ -26,7 +26,6 @@ suricata:
     - source: salt://fileserver/suricata.jinja
     - template: jinja
     - default:
-      home_net: "10.0.0.0/8"
       interface: "enp0s3"
 
 {{ params }}:
