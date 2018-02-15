@@ -47,6 +47,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 3 :: Usage :: Feb 15 2018
 
 * 09:00 - 11:45
+  * [indexing alert log](/Suricata/logging/)
   * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
   * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
 * 13:00 - 16:45
