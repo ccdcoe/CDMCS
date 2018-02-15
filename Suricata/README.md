@@ -52,13 +52,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
 * 13:30 - 16:45
   * [Suricata LUA](/Suricata/lua)
-  * [IPS](/Suricata/suricata/ips-intro.md)
 
 
 ## Day +1 :: :: Feb 16 2018, ends at 12:00
 
 * 09:00 - 10:30
-  * [Insert content here]()
+  * [IPS](/Suricata/suricata/ips-intro.md)
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 
