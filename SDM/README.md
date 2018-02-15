@@ -7,40 +7,55 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ### Stream Data Mining workshop
 
-> Content will be updated soon enough 
+> Preliminary agenda
+> Content will be updated throughout the course 
+> Participants are incouraged to propose their own topics of interest for discussion
 
 ## Day 0 :: Intro:: Feb 26 2018, starts at 13:00
 
  * 13:00 - 14:45
    * [Intro](/common/day_intro.md)
+   * [vagrant](/common/vagrant_intro.md)
  * 15:00 - 16:45
    * [build dev environment]()
+   * [Kafka setup and clustering]()
 
-## Day 1 ::  :: Feb 27 2018
+## Day 1 :: Kafka :: Feb 27 2018
 
  * 09:00 - 11:45
+   * [Kafka's own scripts]()
+   * Custom [consumers]() and [producers]()
+
  * 13:00 - 16:45
 
-## Day 2 ::  :: Feb 28 2018
+## Day 2 :: Science :: Feb 28 2018
+
+* 09:00 - 11:45
+  * Rundown of various algorithms and methods
+* 13:00 - 16:45
+
+
+## Day 3 :: Work :: Mar 1 2018
 
 * 09:00 - 11:45
 * 13:00 - 16:45
 
 
-## Day 3 ::  :: Mar 1 2018
-
-* 09:00 - 11:45
-* 13:00 - 16:45
-
-
-## Day +1 :: :: Mar 2 2018, ends at 12:00
+## Day +1 :: Outro :: Mar 2 2018, ends at 12:00
 
 * 09:00 - 09:45
-  * [Insert content here]()
+  * Recap
+  * Save and make backups
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 
-----
 
 Before You Come To Class please browse trough ...
+
+  * [Apache Kafka Introduction](https://kafka.apache.org/intro)
+
+Might be beneficial to look at ...
+
+  * [Python scikit-learn](http://scikit-learn.org)
+i * [Project R](https://www.r-project.org/)
 
