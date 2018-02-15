@@ -22,11 +22,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 1 :: Single Box :: Feb 13 2018
 
- * 09:00 - 11:45
+ * 09:00 - 12:30
    * [build from source](/Suricata/setup/build.md)
    * [config](/Suricata/setup/config.md)
    * [managing rules](/Suricata/suricata/rules.md)
- * 13:00 - 16:45
+ * 13:30 - 16:45
    * [rules, cont.](/Suricata/rules), [playing with config](/Suricata/setup/config.md)
    * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
    * [evebox](/Suricata/evebox)
@@ -34,11 +34,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 2 :: Scale up :: Feb 14 2018
 
-* 09:00 - 11:45
+* 09:00 - 12:30
   * [multihost with](/Suricata/vagrant/multihost) [salt](/common/salt)
   * [rules management](/Suricata/rules/rules.update.md)
 
-* 13:00 - 16:45
+* 13:30 - 16:45
   * [elastic, clustered](/common/elastic/elastic.cluster.md)
   * [indexing alert log](/Suricata/logging/)
   * [Dashboarding and aggregations](/common/kibana.md)
@@ -46,18 +46,18 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 3 :: Usage :: Feb 15 2018
 
-* 09:00 - 11:45
+* 09:00 - 12:30
   * [indexing alert log](/Suricata/logging/)
   * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
   * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
-* 13:00 - 16:45
+* 13:30 - 16:45
   * [Suricata LUA](/Suricata/lua)
   * [IPS](/Suricata/suricata/ips-intro.md)
 
 
 ## Day +1 :: :: Feb 16 2018, ends at 12:00
 
-* 09:00 - 09:45
+* 09:00 - 10:30
   * [Insert content here]()
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
