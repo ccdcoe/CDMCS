@@ -25,7 +25,6 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 09:00 - 12:30
    * [build from source](/Suricata/setup/build.md)
    * [config](/Suricata/setup/config.md)
-   * [managing rules](/Suricata/suricata/rules.md)
  * 13:30 - 16:45
    * [rules, cont.](/Suricata/rules), [playing with config](/Suricata/setup/config.md)
    * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
