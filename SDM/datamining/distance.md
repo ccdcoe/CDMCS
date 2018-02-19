@@ -9,5 +9,4 @@
 
 The most basic distance function in vector space.
 
-$$d = \sqrt{2}$$
-
+$e^{i\pi} + 1 = 0$

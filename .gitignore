@@ -29,6 +29,7 @@ bin-release/
 **/.config/*                  
 **/.nv/*
 **/.cache/*
+**/.jupyter/*
 
 # Other files and folders
 .settings/
