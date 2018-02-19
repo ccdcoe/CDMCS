@@ -8,9 +8,6 @@
 * a tool for building complete development environments.
 * is a tool for building and distributing development environments.
 * an automation tool with a domain-specific language (DSL) that is used to automate the creation of VMs and VM environments.
-* ...
-
-
 
 ## install:
 
@@ -27,45 +24,45 @@
 * [automated provisioning](https://www.vagrantup.com/docs/getting-started/provisioning.html)
 * [boxes](https://www.vagrantup.com/docs/getting-started/boxes.html)
 
-## Some sample cmds
+## Basic usage
 
 ### install vagrant
 
 ```
-$ apt-get install virtualbox
-$ wget -q -4 https://releases.hashicorp.com/vagrant/2.0.2/vagrant_2.0.2_x86_64.deb 
-$ dpkg -i vagrant_2.0.2_x86_64.deb
+apt-get install virtualbox
+wget -q -4 https://releases.hashicorp.com/vagrant/2.0.2/vagrant_2.0.2_x86_64.deb 
+dpkg -i vagrant_2.0.2_x86_64.deb
 ```
 
 ### init first vm
 ```
-$ cd $HOME
-$ mkdir vagrant_getting_started
-$ cd vagrant_getting_started
-$ vagrant init ubuntu/xenial64
+cd $HOME
+mkdir vagrant_getting_started
+cd vagrant_getting_started
+vagrant init ubuntu/xenial64
 ```
 
 ### run vm
 ```
-$ vagrant status
-$ vagrant up
+vagrant status
+vagrant up
 ```
 
 ### use ssh
 ```
-$ vagrant ssh
+vagrant ssh
 ```
 
 ### start over
 ```
-$ vagrant destroy
-$ vagrant status
-$ vagrant up
+vagrant destroy
+vagrant status
+vagrant up
 ```
 
 ### see all vms
 ```
-$ vagrant global-status
+vagrant global-status
 ```
 
 ### ssh manually

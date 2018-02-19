@@ -20,7 +20,7 @@
 ## vagrant
 
 see
-* [vagrant setup](/common/vagrant_intro.md)
+* [vagrant setup](/common/vagrant.intro.md)
 
 ## go
 

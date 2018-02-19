@@ -15,12 +15,19 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
  * 13:00 - 14:45
    * [Intro](/common/day_intro.md)
-   * [vagrant](/common/vagrant_intro.md)
+   * [vagrant](/common/vagrant.intro.md)
+   * [docker](/common/docker.intro.md)
  * 15:00 - 16:45
    * [build dev environment]()
    * [Kafka setup and clustering]()
 
-## Day 1 :: Kafka :: Feb 27 2018
+## Day 1 :: Data Science :: Feb 27 2018
+
+* 09:00 - 11:45
+  * Rundown of various algorithms and methods
+* 13:00 - 16:45
+
+## Day 2 :: Science :: Feb 28 2018
 
  * 09:00 - 11:45
    * [Kafka's own scripts]()
@@ -28,14 +35,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
  * 13:00 - 16:45
 
-## Day 2 :: Science :: Feb 28 2018
-
-* 09:00 - 11:45
-  * Rundown of various algorithms and methods
-* 13:00 - 16:45
-
-
-## Day 3 :: Work :: Mar 1 2018
+## Day 3 :: Group work / probabilistic data structures :: Mar 1 2018
 
 * 09:00 - 11:45
 * 13:00 - 16:45
