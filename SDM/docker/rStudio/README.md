@@ -21,3 +21,5 @@ DATA=$HOME/data
 ```
 docker run --rm -ti -e "DISPLAY" -v /tmp/.X11-unix/:/tmp/.X11-unix --device=/dev/dri:/dev/dri -v $PROJECT:/home/vagrant -v $DATA:/mnt ccdcoe/rstudio
 ```
+
+Windows and MacOS hosts should work if you install X server, but this is untested and likely also pointless. Please explore alternatives like virtual machines or Rstudio server if you want to keep your Windows host clean.

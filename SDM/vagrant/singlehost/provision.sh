@@ -22,6 +22,7 @@ GRAFANA="grafana_4.6.3_amd64.deb"
 GOLANG="go1.9.4.linux-amd64.tar.gz"
 NODE_VER="v6.13.0"
 KAFKA_VER="1.0.0"
+ZOO_VER="3.4.11"
 
 start=$(date)
 
@@ -45,7 +46,42 @@ mkdir -p /vagrant/pkgs
 
 # basic software
 apt-get update > /dev/null && apt-get install $APT_PARAMS curl htop vim tmux build-essential > /dev/null
-apt-get install $APT_PARAMS openjdk-8-jre-headless
+
+echo "Provisioning JAVA"
+install_oracle_java() {
+  echo "Installing oracle Java"
+  echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 boolean true' | debconf-set-selections \
+  && add-apt-repository ppa:webupd8team/java \
+  && apt-get update > /dev/null \
+  && apt-get -y install oracle-java8-installer > /dev/null
+}
+java -version || install_oracle_java
+#apt-get install $APT_PARAMS openjdk-8-jre-headless
+
+# kafka + zookeeper needs name resolution
+grep SDM /etc/hosts || echo "192.168.10.11  SDM" >> /etc/hosts
+
+echo "Provisioning Zookeeper"
+cd $PKGDIR
+[[ -f "zookeeper-$ZOO_VER.tar.gz" ]] || wget $WGET_PARAMS http://apache.is.co.za/zookeeper/zookeeper-$ZOO_VER/zookeeper-$ZOO_VER.tar.gz && tar -xzf zookeeper-$ZOO_VER.tar.gz -C /opt
+
+echo "Provisioning KAFKA"
+cd $PKGDIR 
+[[ -f "kafka_2.11-$KAFKA_VER.tgz" ]] || wget $WGET_PARAMS http://www-eu.apache.org/dist/kafka/$KAFKA_VER/kafka_2.11-$KAFKA_VER.tgz && tar -xzf kafka_2.11-$KAFKA_VER.tgz -C /opt
+/opt/kafka_2.11-$KAFKA_VER/bin/kafka-server-start.sh -daemon /opt/kafka_2.11-$KAFKA_VER/config/server.properties
+mkdir -p /var/lib/zookeeper
+cat > /opt/zookeeper-$ZOO_VER/conf/zoo.cfg <<EOL
+tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+initLimit=5
+syncLimit=2
+server.1=SDM:2888:3888
+EOL
+echo 1 > /var/lib/zookeeper/myid
+bash /opt/zookeeper-$ZOO_VER/bin/zkServer.sh start
+
+/opt/kafka_2.11-$KAFKA_VER/bin/zookeeper-shell.sh SDM:2181 <<< "ls /brokers/ids"
 
 # collect sample data
 echo "Provisioning FPROBE"
@@ -60,7 +96,6 @@ echo "Provisioning NODEJS"
 cd $PKGDIR && [[ -f "node-$NODE_VER-linux-x64.tar.gz" ]] || wget $WGET_PARAMS https://nodejs.org/dist/$NODE_VER/node-$NODE_VER-linux-x64.tar.gz
 
 tar -xzf node-$NODE_VER-linux-x64.tar.gz -C /opt || exit 1
-
 ln -sf /opt/node-$NODE_VER-linux-x64/bin/node /usr/bin/node
 ln -sf /opt/node-$NODE_VER-linux-x64/bin/npm /usr/bin/npm
 
@@ -104,6 +139,13 @@ input {
     port => 6379
     key  => "cdmcs"
     tags => ["cdmcs", "CDMCS", "fromredis"]
+  }
+  kafka {
+    bootstrap_servers => "SDM:9092"
+    topics => ['SDM']
+    id => "SDM-logstash-consumer"
+    group_id => "SDM-logstash-consumer"
+    tags => ['SDM']
   }
 }
 filter {
