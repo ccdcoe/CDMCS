@@ -20,7 +20,7 @@ bin-release/
 [Bb]in/ # FlashDevelop bin
 
 # R specifics
-R/*
+**/R/*
 .RStudio
 lib/*
 .rstudio-desktop/*         
