@@ -12,11 +12,12 @@ Optionally, rstudio installer version and container user name can be specified u
 docker build -t ccdcoe/rstudio --build-arg user=vagrant --build-arg rstudio="rstudio-xenial-1.1.423-amd64.deb" .
 ```
 
-GUI image can then be started with following docker command line arguments. It is necessary to pass X11 unix socket and display variables to initiate working graphical app. `/dev/dri` is used to pass intel GPU drivers to the container. Workspace image and user-installed packages will be placed under user home dir, thus I would recommend mounting the project folder on host to container home directory.
+GUI image can then be started with following docker command line arguments. It is necessary to pass X11 unix socket and display variables to initiate working graphical app. `/dev/dri` is used to pass intel GPU drivers to the container. Workspace image and user-installed packages will be placed under user home dir, thus I would recommend mounting the project folder on host to container home directory. I would also recommend separating code and data directories.
 
 ```
 PROJECT=$HOME/CDMCS/SDM/docker/rStudio
 DATA=$HOME/data
-
+```
+```
 docker run --rm -ti -e "DISPLAY" -v /tmp/.X11-unix/:/tmp/.X11-unix -v $PROJECT:/home/vagrant --device=/dev/dri:/dev/dri -v $DATA:/mnt ccdcoe/rstudio
 ```
