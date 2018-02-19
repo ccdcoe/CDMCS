@@ -28,8 +28,12 @@
 
 ```
 apt-get install virtualbox
-wget -q -4 https://releases.hashicorp.com/vagrant/2.0.2/vagrant_2.0.2_x86_64.deb 
-dpkg -i vagrant_2.0.2_x86_64.deb
+
+VAGRANT='2.0.2'
+WGET_OPTS='-q -4'
+
+wget $WGET_OPTS https://releases.hashicorp.com/vagrant/$VAGRANT/vagrant_$VAGRANT_x86_64.deb 
+dpkg -i vagrant_$VAGRANT_x86_64.deb
 ```
 
 ### init first vm
