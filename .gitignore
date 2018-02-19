@@ -9,6 +9,7 @@
 *.cap
 *.swp
 *.bak
+
 # Build and Release Folders
 src/
 pkg/
@@ -17,6 +18,16 @@ bin-debug/
 bin-release/
 [Oo]bj/ # FlashDevelop obj
 [Bb]in/ # FlashDevelop bin
+
+# R specifics
+R/*
+.RStudio
+lib/*
+.rstudio-desktop/*         
+.rstudio/*
+.config/*                  
+.nv/*
+.cache/*
 
 # Other files and folders
 .settings/

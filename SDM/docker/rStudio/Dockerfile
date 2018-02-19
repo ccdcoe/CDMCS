@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y sudo curl openssl libssl-dev libcurl4-o
 apt-get build-dep -y r-cran-rgl && \
 rm -rf /var/lib/apt/lists/*
 
+# not actually needed as packages can be installed into the project folder under ./R/, as regular user
+#COPY packages.R /tmp/packages.R
+#RUN Rscript /tmp/packages.R
+
 ARG rstudio="rstudio-xenial-1.1.423-amd64.deb"
 ENV rstudio=${rstudio}
 
@@ -28,8 +32,6 @@ RUN export uid=1000 gid=1000 && \
     chown ${uid}:${gid} -R /home/${user} && \
     mkdir /data && chown ${uid}:${gid} /data
 
-#COPY packages.R /tmp/packages.R
-#RUN Rscript /tmp/packages.R
 
 USER ${user}
 ENV HOME /home/${user}
