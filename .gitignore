@@ -21,13 +21,13 @@ bin-release/
 
 # R specifics
 **/R/*
-.RStudio
-lib/*
-.rstudio-desktop/*         
-.rstudio/*
-.config/*                  
-.nv/*
-.cache/*
+**/.RStudio
+**/lib/*
+**/.rstudio-desktop/*         
+**/.rstudio/*
+**/.config/*                  
+**/.nv/*
+**/.cache/*
 
 # Other files and folders
 .settings/
