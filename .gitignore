@@ -30,6 +30,8 @@ bin-release/
 **/.nv/*
 **/.cache/*
 **/.jupyter/*
+**/.local/*
+**/.ipynb_checkpoints/*
 
 # Other files and folders
 .settings/
