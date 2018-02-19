@@ -16,11 +16,9 @@
 ### Getting started:
 
 * https://www.vagrantup.com/docs/getting-started/
-
 * [prepare](https://www.vagrantup.com/docs/getting-started/project_setup.html)
 * [up & ssh](https://www.vagrantup.com/docs/getting-started/up.html)
 * [destroy](https://www.vagrantup.com/docs/getting-started/teardown.html)
-
 * [automated provisioning](https://www.vagrantup.com/docs/getting-started/provisioning.html)
 * [boxes](https://www.vagrantup.com/docs/getting-started/boxes.html)
 
