@@ -4,16 +4,16 @@
 * https://www.vagrantup.com/docs/why-vagrant/
 * http://slides.com/hillar/vagrant#/
 
-## Vagrant is :
+## Vagrant is
 * a tool for building complete development environments.
 * is a tool for building and distributing development environments.
 * an automation tool with a domain-specific language (DSL) that is used to automate the creation of VMs and VM environments.
 
-## install:
+## Install
 
 * https://www.vagrantup.com/downloads.html
 
-### Getting started:
+### Getting started
 
 * https://www.vagrantup.com/docs/getting-started/
 * [prepare](https://www.vagrantup.com/docs/getting-started/project_setup.html)

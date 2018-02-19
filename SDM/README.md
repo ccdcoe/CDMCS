@@ -13,23 +13,27 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 0 :: Intro:: Feb 26 2018, starts at 13:00
 
- * 13:00 - 14:45
-   * [Intro](/common/day_intro.md)
-   * [vagrant](/common/vagrant.intro.md)
-   * [docker](/common/docker.intro.md)
- * 15:00 - 16:45
-   * [build dev environment]()
-   * [Kafka setup and clustering]()
+* 13:00 - 14:45
+  * [Intro](/common/day_intro.md)
+  * [vagrant](/common/vagrant.intro.md)
+  * [docker](/common/docker.intro.md)
+  * build dev environments 
+    * [with docker](/SDM/docker/)
+    * [with vagrant](/SDM/vagrant/)
+* 15:00 - 16:45
+  * [distance functions]()
+
 
 ## Day 1 :: Data Science :: Feb 27 2018
 
 * 09:00 - 11:45
-  * Rundown of various algorithms and methods
+  * [Multivariate time-series forecasting for anomaly detection](/SDM)
 * 13:00 - 16:45
 
 ## Day 2 :: Science :: Feb 28 2018
 
  * 09:00 - 11:45
+   * [Kafka setup and clustering]()
    * [Kafka's own scripts]()
    * Custom [consumers]() and [producers]()
 
