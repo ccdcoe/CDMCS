@@ -9,4 +9,5 @@
 
 The most basic distance function in vector space.
 
-d = \sqrt{2}
+$d = \sqrt{2}$
+
