@@ -9,6 +9,7 @@
 *.cap
 *.swp
 *.bak
+*.tgz
 
 # Build and Release Folders
 src/
