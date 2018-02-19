@@ -19,5 +19,5 @@ PROJECT=$HOME/CDMCS/SDM/docker/rStudio
 DATA=$HOME/data
 ```
 ```
-docker run --rm -ti -e "DISPLAY" -v /tmp/.X11-unix/:/tmp/.X11-unix -v $PROJECT:/home/vagrant --device=/dev/dri:/dev/dri -v $DATA:/mnt ccdcoe/rstudio
+docker run --rm -ti -e "DISPLAY" -v /tmp/.X11-unix/:/tmp/.X11-unix --device=/dev/dri:/dev/dri -v $PROJECT:/home/vagrant -v $DATA:/mnt ccdcoe/rstudio
 ```
