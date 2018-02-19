@@ -50,12 +50,23 @@ vagrant status
 vagrant up
 ```
 
-### use ssh
+### SSH to virtual machine
+
+It is possible to SSH into virtual machines by using vagrant wrapper commands.
+
 ```
 vagrant ssh
 ```
 
+Prior command is roughly equvelant to this regular openssh-client command.
+```
+ssh -i .vagrant/machines/bridge/virtualbox/private_key vagrant@192.168.13.254
+```
+
 ### start over
+
+Sometimes you will mess up your box while developing and it is going to be easier to destroy everyting and start from scratch. Do not be afraid of doing that, this is why Vagrant was created in the first place.
+
 ```
 vagrant destroy
 vagrant status
@@ -63,11 +74,10 @@ vagrant up
 ```
 
 ### see all vms
+
+You have to be located in the folder where Vagrant environment was initiated. However, it is possible to find all initiated vagrant environments regardless where you are located in file system.
+
 ```
 vagrant global-status
 ```
 
-### ssh manually
-```
-ssh -i .vagrant/machines/bridge/virtualbox/private_key vagrant@192.168.13.254
-```
