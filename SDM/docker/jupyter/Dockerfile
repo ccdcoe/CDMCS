@@ -10,7 +10,6 @@ RUN wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/
 RUN apt-get update && apt-get install -y pkg-config libzmq3-dev && apt-get remove && apt-get autoremove && apt-get clean
 
 USER jovyan
-RUN conda install --quiet --yes "r-mvtnorm"
 
 ENV GOVERSION 1.9.4
 ENV GOROOT /home/jovyan/go
@@ -23,3 +22,8 @@ RUN go get golang.org/x/tools/cmd/goimports
 RUN go get -u github.com/gopherdata/gophernotes
 RUN mkdir -p ~/.local/share/jupyter/kernels/gophernotes
 RUN cp ${GOPATH}/src/github.com/gopherdata/gophernotes/kernel/* ~/.local/share/jupyter/kernels/gophernotes 
+
+RUN conda install --quiet --yes "r-mvtnorm"
+RUN conda install --quiet --yes "r-forecast"
+RUN conda install --quiet --yes "r-tm"
+RUN conda install --quiet --yes "r-cluster" "r-fpc"
