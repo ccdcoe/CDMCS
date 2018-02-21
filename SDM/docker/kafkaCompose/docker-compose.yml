@@ -16,7 +16,7 @@ services:
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_ZOOKEEPER_CONNECT:  zoo1:2181,
     volumes:
-      - "/home/student/data/ex/kafka-0/:/kafka"
+      - "/home/student/data/ex/kafka/0/:/kafka"
   zoo1:
     image: elevy/zookeeper:latest
     environment:
