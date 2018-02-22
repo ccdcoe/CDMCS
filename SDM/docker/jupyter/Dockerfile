@@ -19,9 +19,14 @@ ENV PATH=$PATH:${GOPATH}/bin:${GOROOT}/bin
 RUN mkdir -p ${GOPATH}
 RUN cd /home/jovyan && wget -4 -q https://storage.googleapis.com/golang/go${GOVERSION}.linux-amd64.tar.gz && tar zxf go${GOVERSION}.linux-amd64.tar.gz -C /home/jovyan && rm go${GOVERSION}.linux-amd64.tar.gz
 RUN go get golang.org/x/tools/cmd/goimports
-RUN go get -u github.com/gopherdata/gophernotes
-RUN mkdir -p ~/.local/share/jupyter/kernels/gophernotes
-RUN cp ${GOPATH}/src/github.com/gopherdata/gophernotes/kernel/* ~/.local/share/jupyter/kernels/gophernotes 
+
+#RUN go get -u github.com/gopherdata/gophernotes
+#RUN mkdir -p ~/.local/share/jupyter/kernels/gophernotes
+#RUN cp ${GOPATH}/src/github.com/gopherdata/gophernotes/kernel/* ~/.local/share/jupyter/kernels/gophernotes 
+RUN go get github.com/yunabe/lgo/cmd/lgo && go get -d github.com/yunabe/lgo/cmd/lgo-internal
+ENV LGOPATH /home/jovyan/lgo
+RUN mkdir -p ${LGOPATH} && lgo install && ${GOPATH}/src/github.com/yunabe/lgo/bin/install_kernel
+RUN go get github.com/spaolacci/murmur3
 
 RUN conda install --quiet --yes "r-mvtnorm"
 RUN conda install --quiet --yes "r-forecast"
