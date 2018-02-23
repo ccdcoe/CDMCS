@@ -57,9 +57,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 Before You Come To Class please browse trough ...
 
   * [Apache Kafka Introduction](https://kafka.apache.org/intro)
+  * [Jupyter](http://jupyter.org/)
 
 Might be beneficial to look at ...
 
   * [Python scikit-learn](http://scikit-learn.org)
-i * [Project R](https://www.r-project.org/)
+  * [Project R](https://www.r-project.org/)
+  * [JupyterLab](http://jupyterlab.readthedocs.io/en/stable/index.html)
+  * [LogCluster](https://github.com/ristov/logcluster)
 
