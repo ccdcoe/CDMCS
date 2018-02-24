@@ -14,7 +14,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 ## Day 0 :: Intro:: Feb 26 2018, starts at 13:00
 
 * 13:00 - 14:45
-  * [Intro](/common/day_intro.md)
+  * [intro](/common/day_intro.md)
   * [vagrant](/common/vagrant.intro.md)
   * [docker](/common/docker.intro.md)
   * build dev environments 
@@ -27,15 +27,15 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 ## Day 1 :: Data Science :: Feb 27 2018
 
 * 09:00 - 11:45
-  * [Multivariate time-series forecasting for anomaly detection](/SDM)
+  * [multivariate time-series forecasting for anomaly detection](/SDM)
 * 13:00 - 16:45
 
 ## Day 2 :: Science :: Feb 28 2018
 
  * 09:00 - 11:45
-   * [Kafka setup and clustering]()
-   * [Kafka's own scripts]()
-   * Custom [consumers]() and [producers]()
+   * [kafka setup and clustering]()
+   * [kafka's own scripts]()
+   * custom [consumers]() and [producers]()
 
  * 13:00 - 16:45
 
@@ -48,8 +48,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 ## Day +1 :: Outro :: Mar 2 2018, ends at 12:00
 
 * 09:00 - 09:45
-  * Recap
-  * Save and make backups
+  * recap
+  * save and make backups
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 
