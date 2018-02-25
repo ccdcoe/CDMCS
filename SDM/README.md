@@ -26,23 +26,33 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 1 :: Data Science :: Feb 27 2018
 
-* 09:00 - 11:45
+  * [data science basics](SDM/R-jupyter)
   * [multivariate time-series forecasting for anomaly detection](/SDM)
+
+* 09:00 - 11:45
+  * ...
 * 13:00 - 16:45
+  * ...
 
-## Day 2 :: Science :: Feb 28 2018
+## Day 2 :: Streaming applications :: Feb 28 2018
 
- * 09:00 - 11:45
-   * [kafka setup and clustering]()
-   * [kafka's own scripts]()
-   * custom [consumers]() and [producers]()
+* [SSL certificate stream classification]()
+* [kafka, producers, consumers]()
 
- * 13:00 - 16:45
+* 09:00 - 11:45
+  * ...
+* 13:00 - 16:45
+  * ...
 
 ## Day 3 :: Group work / probabilistic data structures :: Mar 1 2018
 
+* [Probstruct](SDM/go-jupyter)
+* [Mining log data](SDM/python-jupyter/011-apriori-logcluster.ipynb)
+
 * 09:00 - 11:45
+  * ..
 * 13:00 - 16:45
+  * ..
 
 
 ## Day +1 :: Outro :: Mar 2 2018, ends at 12:00
