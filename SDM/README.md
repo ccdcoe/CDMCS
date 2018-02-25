@@ -26,7 +26,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 1 :: Data Science :: Feb 27 2018
 
-  * [data science basics](SDM/R-jupyter)
+  * [data science basics](/SDM/R-jupyter)
   * [multivariate time-series forecasting for anomaly detection](/SDM)
 
 * 09:00 - 11:45
@@ -37,7 +37,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 ## Day 2 :: Streaming applications :: Feb 28 2018
 
 * [SSL certificate stream classification]()
-* [kafka, producers, consumers]()
+* [kafka, producers, consumers](/SDM/kafka/)
 
 * 09:00 - 11:45
   * ...
@@ -46,8 +46,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 3 :: Group work / probabilistic data structures :: Mar 1 2018
 
-* [Probstruct](SDM/go-jupyter)
-* [Mining log data](SDM/python-jupyter/011-apriori-logcluster.ipynb)
+* [probstruct](/SDM/go-jupyter)
+* [mining log data](/SDM/python-jupyter/011-apriori-logcluster.ipynb)
 
 * 09:00 - 11:45
   * ..
