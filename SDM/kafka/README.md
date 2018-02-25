@@ -3,8 +3,11 @@
 ## Key concepts
 
 > Apache Kafka is a distributed streaming platform.
+
 > Kafka can be run as a single instance node, but it is meant to run as a cluster on one or more servers.
+
 > Kafka stores streams of records in categories called 'topics'.
+
 > Kafka relies on [ZooKeeper](https://zookeeper.apache.org/) to cooridinate its distributed cluster.
 
 See: 
