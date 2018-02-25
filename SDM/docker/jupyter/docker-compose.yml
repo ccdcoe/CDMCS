@@ -1,0 +1,27 @@
+version: '2'
+services:
+  notebook: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ccdcoe/sdm-jupyter-notebook:latest
+    container_name: sdm_jupyter_notebook
+    volumes:
+      - ../../:/home/jovyan/books
+      - ${HOME}/data:/home/jovyan/data
+    ports:
+      - 8888:8888
+  lab:
+    build:
+      context: ./jupyterLab/
+      dockerfile: ./Dockerfile
+    image: ccdcoe/sdm-jupyter-lab:latest
+    container_name: sdm_jupyter_lab
+    volumes:
+      - ../../:/home/jovyan/books
+      - ${HOME}/data:/home/jovyan/data
+    ports:
+      - 8889:8888
+    depends_on:
+      - notebook
+    
