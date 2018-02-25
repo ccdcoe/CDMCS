@@ -13,7 +13,7 @@ RSTUDIO_SERVER="https://download2.rstudio.org/rstudio-server-1.1.383-amd64.deb"
 RSTUDIO_SERVER_INSTALL="$BASE/provision/rstudio-server.deb"
 WGET_OPTS="-4 -q"
 
-mkdir -p $CUDA_INSTALL
+mkdir -p $BASE/provision
 [[ -f $CUDA_INSTALL ]] || wget $WGET_OPTS $CUDA -O $CUDA_INSTALL
 
 chmod u+x $CUDA_INSTALL
