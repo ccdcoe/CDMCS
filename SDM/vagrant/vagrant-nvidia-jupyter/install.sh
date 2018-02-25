@@ -83,6 +83,6 @@ nvidia-smi
 
 #docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 #reboot
-#apt-get install -y python3 python3-pip
+apt-get install -y python3 python3-pip
 pip3 install --upgrade pip
 pip3 install --upgrade jupyter
