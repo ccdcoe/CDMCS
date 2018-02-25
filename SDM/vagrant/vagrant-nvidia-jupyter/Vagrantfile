@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+LIBVIRT_POOL = 'fast'
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/ubuntu1604"
+  config.vm.synced_folder ".", "/vagrant", type: "nfs", nfs_udp: false
+  config.vm.network "public_network", :dev => "br0", :type => "bridge", :mode => "bridge", :ip => "192.168.144.25"
+  config.vm.provider "libvirt" do |v|
+    v.storage_pool_name = LIBVIRT_POOL
+    v.memory = 4096
+    v.cpus = 2
+    v.machine_type = "q35"
+    v.cpu_mode = "host-passthrough"
+    v.kvm_hidden = true
+    v.pci :bus => '0x01', :slot => '0x00', :function => '0x0'
+  end
+  #config.vm.provision "docker", images: ["nvidia/cuda", "tensorflow/tensorflow:latest-gpu"]
+  config.vm.provision "shell", path: "install.sh"
+end
