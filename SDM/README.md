@@ -26,19 +26,16 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 1 :: Data Science :: Feb 27 2018
 
-  * [data science basics](/SDM/R-jupyter)
-  * [multivariate time-series forecasting for anomaly detection](/SDM)
-
 * 09:00 - 11:45
-  * ...
+  * [data science basics](/SDM/R-jupyter)
 * 13:00 - 16:45
-  * ...
+   * time-series forecasting for anomaly detection
 
 ## Day 2 :: Streaming applications :: Feb 28 2018
 
 * [SSL certificate stream classification]()
 * [kafka, producers, consumers](/SDM/kafka/)
-
+* [logcluster intro](/SDM/)
 * 09:00 - 11:45
   * ...
 * 13:00 - 16:45
