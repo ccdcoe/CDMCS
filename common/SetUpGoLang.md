@@ -7,7 +7,7 @@
 
 ```
 
-GOLANG="go1.7.4.linux-amd64.tar.gz"
+GOLANG="go1.10.linux-amd64.tar.gz"
 
 cd /tmp
 wget -q -4 https://storage.googleapis.com/golang/$GOLANG
