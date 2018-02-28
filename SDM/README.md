@@ -33,7 +33,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 
 ## Day 2 :: Streaming applications :: Feb 28 2018
 
-* [SSL certificate stream classification]()
+* [SSL certificate stream classification](/common/certstream-mining.md)
 * [kafka, producers, consumers](/SDM/kafka/)
 * [logcluster intro](/SDM/)
 * 09:00 - 11:45
