@@ -37,6 +37,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
   * [log mining, logcluster](/SDM/python-jupyter/011-apriori-logcluster.ipynb)
   * [SSL certificate stream classification](/common/certstream-mining.md)
 * 13:00 - 16:45
+  * [set up go](/common/SetUpGoLang.md)
   * [probabilistic data structures](/SDM/go-jupyter)
   * ...
 
