@@ -21,7 +21,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
     * [with docker](/SDM/docker/)
     * [with vagrant](/SDM/vagrant/)
 * 15:00 - 16:45
-  * [distance functions]()
+  * [distance functions](/SDM/R-jupyter/001-distances.ipynb)
 
 
 ## Day 1 :: Data Science :: Feb 27 2018
@@ -29,28 +29,23 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops.
 * 09:00 - 11:45
   * [data science basics](/SDM/R-jupyter)
 * 13:00 - 16:45
-   * time-series forecasting for anomaly detection
+   * hands-on: time-series forecasting for anomaly detection
 
-## Day 2 :: Streaming applications :: Feb 28 2018
-
-* [SSL certificate stream classification]()
-* [kafka, producers, consumers](/SDM/kafka/)
-* [logcluster intro](/SDM/)
+## Day 2 :: Text and log mining / probabilistic data structures :: Feb 28 2018
 * 09:00 - 11:45
+  * [text data mining](/SDM/R-jupyter/009-text-data-mining.ipynb)
+  * [log mining, logcluster](/SDM/python-jupyter/011-apriori-logcluster.ipynb)
+  * [SSL certificate stream classification](/common/certstream-mining.md)
+* 13:00 - 16:45
+  * [probabilistic data structures](/SDM/go-jupyter)
+  * ...
+
+## Day 3 :: Streaming applications / data day :: Mar 1 2018
+* 09:00 - 11:45
+  * [kafka, producers, consumers](/SDM/kafka/)
   * ...
 * 13:00 - 16:45
   * ...
-
-## Day 3 :: Group work / probabilistic data structures :: Mar 1 2018
-
-* [probstruct](/SDM/go-jupyter)
-* [mining log data](/SDM/python-jupyter/011-apriori-logcluster.ipynb)
-
-* 09:00 - 11:45
-  * ..
-* 13:00 - 16:45
-  * ..
-
 
 ## Day +1 :: Outro :: Mar 2 2018, ends at 12:00
 
