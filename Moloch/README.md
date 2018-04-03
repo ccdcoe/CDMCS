@@ -45,10 +45,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ----
 
-# Before You Come To Class please
+# Before You Come To Class
 
-* [Prepare your laptop](/Moloch/vagrant/singlehost/README.md#get-it-running-on-your-laptop-before-you-come-to-classroom)
-* browse trough ..
+* [Prepare your laptop](/Moloch/prepare-laptop.md)
+* browse trough ...
   * [molo.ch](http://molo.ch/)
   * [moloch FAQ](https://github.com/aol/moloch/wiki/FAQ)
   * [moloch wiki](https://github.com/aol/moloch/wiki)
