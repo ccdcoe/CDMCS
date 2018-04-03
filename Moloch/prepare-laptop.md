@@ -12,14 +12,14 @@
 
 # Moloch (& Suricata (&& EEK)) in single box
 
-* [Moloch](http://molo.ch/)** is full packet capturing, indexing, and database system.
-* MOLOCH is not IDS
+* **[Moloch](http://molo.ch/)** is full packet capturing, indexing, and database system.
+  * Moloch is not an IDS
 * Some other software is necessary:
- * [WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
- * [ElasticSearch](https://www.elastic.co/products/elasticsearch)* is a search engine based on Lucene.
+  * **[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
+  * **[ElasticSearch](https://www.elastic.co/products/elasticsearch)** is a search engine based on Lucene.
 * We will also have:
- * [Suricata](https://suricata-ids.org/)** is a network threat detection engine.
- * [EveBox](https://evebox.org/)* is a web based Suricata "eve log" event (including *alerts*) viewer and has [API to query alerts](http://evebox.readthedocs.io/en/latest/api.html#get-api-1-alerts).
+  * **[Suricata](https://suricata-ids.org/)** is a network threat detection engine.
+  * **[EveBox](https://evebox.org/)** is a web based Suricata "eve log" event (including *alerts*) viewer and has [API to query alerts](http://evebox.readthedocs.io/en/latest/api.html#get-api-1-alerts).
 
 
 
