@@ -37,7 +37,7 @@ kafka-configs.sh              kafka-delete-records.sh      kafka-reassign-partit
 bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
 ```
 
-Or you could just have Kafka create a new topic when something is published into a non-existing topic. This is currently enabled by default.
+Or you could just have Kafka create a new topic when something is published into a non-existing topic. This is enabled by default.
 
 ```
 auto.create.topics.enable=true
@@ -58,14 +58,15 @@ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 ### Receive message (consumer)
 
 ```
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 ```
 
 
 ### Change retention period
 
 ```
+# Change the retention period to 1h
 bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic test --config retention.ms=3600000
 ```
 
