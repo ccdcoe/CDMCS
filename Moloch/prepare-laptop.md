@@ -72,6 +72,8 @@ The Vagrant box will automatically start after provisioning. It can be started i
 
 Once the Ubuntu virtual machine has booted, it will start Moloch (and Suricata and Evebox and Elasticsearch). You can then access your **Moloch viewer** at **http://192.168.10.11:8005**. By default, your development environment will have an admin account created for you to use - the username will be `admin` and the password will be `admin`.
 
+To connect to the server via SSH, simply run `vagrant ssh`. If you are running Windows (without ssh on your PATH), this might not work. Please fix it or find alternative means of connecting to your box via SSH.
+
 To stop the server, simply run `vagrant halt`.
 
 Should you need to access the virtual machine (for example, to manually fix something without restarting the box), run `vagrant ssh` from the *dirnameyoujustcreated* folder. You will now be logged in as the `ubuntu` user.
