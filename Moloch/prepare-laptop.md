@@ -15,7 +15,7 @@
 * **[Moloch](http://molo.ch/)** is full packet capturing, indexing, and database system.
   * Moloch is not an IDS
 * Some other software is necessary:
-  * **[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)* is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
+  * **[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)** is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
   * **[ElasticSearch](https://www.elastic.co/products/elasticsearch)** is a search engine based on Lucene.
 * We will also have:
   * **[Suricata](https://suricata-ids.org/)** is a network threat detection engine.
@@ -23,9 +23,8 @@
 
 
 
-<!-- * WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert. -->
 
-### one small picture ..
+### Suricata and Moloch in one small picture
 ![grp](https://www.gravizo.com/svg?digraph%20suricata2moloch%20{eth0%20%20-%3E%20%22moloch-capture%22%20-%3E%20wise%20%22elastic.suricata%22%20%20-%3E%20%22evebox.api%22%20-%3E%20wise%20-%3E%20%22moloch-capture%22%22moloch-capture%22%20-%3E%20%22elastic.sessions%22%20-%3E%20%20%22moloch-viewer%22eth0%20-%3E%20suricata%20-%3E%20%22eve.json%22%20-%3E%20%22evebox.import%22%20-%3E%20%22elastic.suricata%22%20-%3E%22evebox.ui%22{rank=same;%20%22moloch-capture%22%20suricata}{rank=same;%20wise%20%22eve.json%22}{rank=same;%20%22evebox.api%22%20%22evebox.import%22}{rank=same;%20%20%22elastic.suricata%22%20%20%22elastic.sessions%22}{rank=same;%20%20%22moloch-viewer%22%20%22evebox.ui%22%20}})
 ```
 digraph suricata2moloch {
@@ -39,6 +38,10 @@ eth0  -> "moloch-capture" -> wise -> "moloch-capture" -> "elastic.sessions" ->  
 {rank=same;  "moloch-viewer" "evebox.ui" }
 }
 ```
+
+* WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
+
+
 
 
 # Instructions
