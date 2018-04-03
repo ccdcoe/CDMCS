@@ -39,7 +39,7 @@ eth0  -> "moloch-capture" -> wise -> "moloch-capture" -> "elastic.sessions" ->  
 }
 ```
 
-* WISE plugin **[source.suricata.js](source.suricata.js)** *"connects"* Moloch session to Suricata alert.
+* WISE plugin **[source.suricata.js](/Moloch/vagrant/singlehost/source.suricata.js)** *"connects"* Moloch session to Suricata alert.
 
 
 
@@ -66,7 +66,7 @@ To create and provision a new virtual machine (UPDATE: fixed links from HTML pag
 Running `vagrant up` for the first time will run provisioning, which will:
 - Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
-- Run the provisioning script ([installMolochSuricataEveboxKibana.sh](installMolochSuricataEveboxKibana.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
+- Run the provisioning script ([installMolochSuricataEveboxKibana.sh](/Moloch/vagrant/singlehost/installMolochSuricataEveboxKibana.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
 The Vagrant box will automatically start after provisioning. It can be started in future with `vagrant up` from the *dirnameyoujustcreated* directory.
 
