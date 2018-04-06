@@ -53,6 +53,8 @@ echo $start >  /vagrant/provision.log
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
+which docker && docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 redis
+
 echo "Installing prerequisite packages..."
 apt-get update && apt-get -y install wget curl python-minimal libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
 
@@ -109,7 +111,7 @@ cd $PKGDIR
 dpkg -s moloch || dpkg -i $MOLOCH
 
 echo "Configuring moloch"
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | sed 's|lo||'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep 'eth|ens|eno'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
 [[ -f config.ini ]] || cp config.ini.sample config.ini
 sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
