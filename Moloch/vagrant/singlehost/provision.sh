@@ -18,6 +18,9 @@ PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 PATH=$PATH:/data/moloch/bin
 
+grep PATH /home/vagrant/.bashrc || echo 'PATH=$PATH:/data/moloch/bin' >> /home/vagrant/.bashrc
+grep PATH /root/.bashrc || echo 'PATH=$PATH:/data/moloch/bin' >> /root/.bashrc
+
 # versions
 ELA="elasticsearch-6.2.3.deb"
 KIBANA="kibana-6.2.3-amd64.deb"
@@ -115,6 +118,17 @@ sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
 
+echo "Configuring wise"
+cp wise.ini.sample wiseService.ini
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
+grep CDMCS wiseService.ini || cat >> wiseService.ini <<EOF
+# CDMCS
+[reversedns]
+ips=10.0.0.0/8
+field=asset
+EOF
+
+echo "Configuring databases"
 cd /data/moloch/db
 if [[ `./db.pl localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
   echo "y" | ./db.pl localhost:9200 init
@@ -123,19 +137,26 @@ cd /data/moloch/bin
 ./moloch_update_geo.sh > /dev/null 2>&1
 chown nobody:daemon /data/moloch/raw
 
+echo "Configuring interfaces"
 for iface in ${ifaces//;/ }; do
   echo "Setting capture params for $iface"
   for i in rx tx tso gso gro tx nocache copy sg rxvlan; do ethtool -K $iface $i off > /dev/null 2>&1; done
 done
 
-echo "starting up capture"
+echo "Starting up wise"
+cd /data/moloch/wiseService
+PIDFILE=/var/run/wise.pid
+[[ -f $PIDFILE ]] || nohup node wiseService.js > >(logger -p daemon.info -t wise) 2> >(logger -p daemon.err -t wise) & sleep 1 ; echo $! > $PIDFILE
+
+echo "Starting up capture"
 PIDFILE=/var/run/capture.pid
-[[ -f $PIDFILE ]]|| nohup moloch-capture -c /data/moloch/etc/config.ini > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > $PIDFILE
+[[ -f $PIDFILE ]] || nohup moloch-capture -c /data/moloch/etc/config.ini > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > $PIDFILE
 sleep 2 && egrep "capture:.+ERROR" /var/log/syslog
 
 echo "Starting up viewer"
 cd /data/moloch/viewer
 PIDFILE=/var/run/viewer.pid
+node addUser.js vagrant vagrant vagrant --admin
 [[ -f $PIDFILE ]] || nohup node viewer.js -c ../etc/config.ini > >(logger -p daemon.info -t viewer) 2> >(logger -p daemon.err -t viewer) & sleep 1 ; echo $! > $PIDFILE
 sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
 
