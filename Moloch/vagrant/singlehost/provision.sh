@@ -16,6 +16,7 @@ PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
+PATH=$PATH:/data/moloch/bin
 
 # versions
 ELA="elasticsearch-6.2.3.deb"
@@ -105,10 +106,11 @@ cd $PKGDIR
 dpkg -s moloch || dpkg -i $MOLOCH
 
 echo "Configuring moloch"
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | sed 's|lo||'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
 [[ -f config.ini ]] || cp config.ini.sample config.ini
 sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
-sed -i "s/MOLOCH_INTERFACE/enp3s0/g"              config.ini
+sed -i "s/MOLOCH_INTERFACE/$ifaces/g"             config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
@@ -117,5 +119,27 @@ cd /data/moloch/db
 if [[ `./db.pl localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
   echo "y" | ./db.pl localhost:9200 init
 fi
+cd /data/moloch/bin
+./moloch_update_geo.sh > /dev/null 2>&1
+chown nobody:daemon /data/moloch/raw
+
+for iface in ${ifaces//;/ }; do
+  echo "Setting capture params for $iface"
+  for i in rx tx tso gso gro tx nocache copy sg rxvlan; do ethtool -K $iface $i off > /dev/null 2>&1; done
+done
+
+echo "starting up capture"
+PIDFILE=/var/run/capture.pid
+[[ -f $PIDFILE ]]|| nohup moloch-capture -c /data/moloch/etc/config.ini > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > $PIDFILE
+sleep 2 && egrep "capture:.+ERROR" /var/log/syslog
+
+echo "Starting up viewer"
+cd /data/moloch/viewer
+PIDFILE=/var/run/viewer.pid
+[[ -f $PIDFILE ]] || nohup node viewer.js -c ../etc/config.ini > >(logger -p daemon.info -t viewer) 2> >(logger -p daemon.err -t viewer) & sleep 1 ; echo $! > $PIDFILE
+sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
+
+chmod u+x /vagrant/genTraffic.sh
+/vagrant/genTraffic.sh
 
 echo "DONE :: start $start end $(date)"
