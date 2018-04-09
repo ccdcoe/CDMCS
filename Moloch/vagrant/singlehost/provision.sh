@@ -53,10 +53,10 @@ echo $start >  /vagrant/provision.log
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
-which docker && docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 redis
+which docker && docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 --name redis0 redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install wget curl python-minimal libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install wget curl python-minimal python-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
 
 #FILE=/etc/profile
 #grep "proxy" $FILE || cat >> $FILE <<EOF
@@ -111,7 +111,7 @@ cd $PKGDIR
 dpkg -s moloch || dpkg -i $MOLOCH
 
 echo "Configuring moloch"
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep 'eth|ens|eno'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
 [[ -f config.ini ]] || cp config.ini.sample config.ini
 sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
@@ -128,6 +128,10 @@ grep CDMCS wiseService.ini || cat >> wiseService.ini <<EOF
 [reversedns]
 ips=10.0.0.0/8
 field=asset
+
+[cache]
+type=redis
+url=redis://127.0.0.1:6379/0
 EOF
 
 echo "Configuring databases"
@@ -161,6 +165,191 @@ PIDFILE=/var/run/viewer.pid
 node addUser.js vagrant vagrant vagrant --admin
 [[ -f $PIDFILE ]] || nohup node viewer.js -c ../etc/config.ini > >(logger -p daemon.info -t viewer) 2> >(logger -p daemon.err -t viewer) & sleep 1 ; echo $! > $PIDFILE
 sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
+
+# suricata
+install_suricata_from_ppa(){
+  add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
+  && apt-get update > /dev/null \
+  && apt-get install -y suricata > /dev/null
+}
+echo "Provisioning Suricata"
+suricata -V || install_suricata_from_ppa
+systemctl stop suricata
+
+touch  /etc/suricata/threshold.config
+
+FILE=/etc/suricata/suricata.yaml
+grep "cdmcs" $FILE || cat >> $FILE <<EOF
+include: /etc/suricata/cdmcs-detect.yaml
+include: /etc/suricata/cdmcs-logging.yaml
+EOF
+
+touch /var/lib/suricata/rules/suricata.rules
+FILE=/etc/suricata/cdmcs-detect.yaml
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
+af-packet:
+  - interface: `echo $ifaces | cut -d";" -f1`
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: `echo $ifaces | cut -d";" -f2`
+    cluster-id: 97
+    cluster-type: cluster_flow
+    defrag: yes
+default-rule-path: /etc/suricata/rules
+rule-files:
+ - /var/lib/suricata/rules/suricata.rules
+sensor-name: CDMCS
+EOF
+
+FILE=/etc/suricata/cdmcs-logging.yaml
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
+outputs:
+  - fast:
+      enabled: yes
+      filename: fast.log
+      append: yes
+  - eve-log:
+      enabled: 'yes'
+      filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
+      filename: eve.json
+      redis:
+        server: 127.0.0.1
+        port: 6379
+        async: true ## if redis replies are read asynchronously
+        mode: list
+        pipelining:
+          enabled: yes ## set enable to yes to enable query pipelining
+          batch-size: 10 ## number of entry to keep in buffer
+
+      types:
+        - alert:
+            metadata: yes              # add L7/applayer fields, flowbit and other vars to the alert
+            tagged-packets: yes
+            xff:
+              enabled: no
+              mode: extra-data
+              deployment: reverse
+              header: X-Forwarded-For
+        - http:
+            extended: yes     # enable this for extended logging information
+        - dns:
+            query: yes     # enable logging of DNS queries
+            answer: yes    # enable logging of DNS answers
+        - tls:
+            extended: yes     # enable this for extended logging information
+        - files:
+            force-magic: no   # force logging magic on all logged files
+        - smtp:
+        - ssh
+        - stats:
+            totals: yes       # stats for all threads merged together
+            threads: no       # per thread stats
+            deltas: no        # include delta values
+        - flow
+EOF
+
+[[ -f /etc/init.d/suricata ]] && rm /etc/init.d/suricata
+FILE=/etc/systemd/system/suricata.service
+grep "suricata" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=suricata daemon
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/run/
+ExecStart=/usr/bin/suricata -c /etc/suricata/suricata.yaml --pidfile /var/run/suricata.pid --af-packet -D -vvv
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
+EOF
+check_service suricata
+
+echo "Provisioning Suricata rules"
+pip install suricata-update
+suricata-update update-sources
+
+for src in et/open ptresearch/attackdetection oisf/trafficid; do suricata-update list-enabled-sources | grep $src || suricata-update enable-source $src ; done
+suricata-update >> /vagrant/provision.log 2>&1
+
+echo "Provisioning InfluxDB"
+cd $PKGDIR
+[[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
+dpkg -s influxdb || dpkg -i $INFLUX > /dev/null 2>&1
+systemctl stop influxdb.service
+check_service influxdb
+
+echo "Provisioning Grafana"
+cd $PKGDIR
+[[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
+apt-get -y install libfontconfig > /dev/null 2>&1
+dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
+systemctl stop grafana-server.service
+check_service grafana-server
+
+sleep 1
+curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d '{
+  "name": "telegraf",
+  "type": "influxdb",
+  "access": "proxy",
+  "url": "http://localhost:8086",
+  "database": "telegraf",
+  "isDefault": true
+}'
+
+echo "Provisioning Telegraf"
+cd $PKGDIR
+[[ -f $TELEGRAF ]] || wget $WGET_PARAMS https://dl.influxdata.com/telegraf/releases/$TELEGRAF -O $TELEGRAF
+dpkg -i $TELEGRAF > /dev/null 2>&1
+
+systemctl stop telegraf.service
+FILE=/etc/telegraf/telegraf.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+[global_tags]
+  year = "2018"
+
+[agent]
+  hostname = "CDMCS"
+  omit_hostname = false
+  interval = "1s"
+  round_interval = true
+  metric_buffer_limit = 1000
+  flush_buffer_when_full = true
+  collection_jitter = "0s"
+  flush_interval = "60s"
+  flush_jitter = "10s"
+  debug = false
+  quiet = true
+
+[[outputs.influxdb]]
+  database  = "telegraf"
+  urls  = ["http://localhost:8086"]
+
+[[inputs.cpu]]
+  percpu = true
+  totalcpu = true
+[[inputs.disk]]
+  ignore_fs = ["tmpfs", "devtmpfs"]
+[[inputs.diskio]]
+[[inputs.kernel]]
+[[inputs.mem]]
+[[inputs.net]]
+[[inputs.netstat]]
+[[inputs.processes]]
+[[inputs.swap]]
+[[inputs.system]]
+EOF
+
+check_service telegraf
 
 chmod u+x /vagrant/genTraffic.sh
 /vagrant/genTraffic.sh
