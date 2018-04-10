@@ -53,7 +53,8 @@ echo $start >  /vagrant/provision.log
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
-which docker && docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 --name redis0 redis
+#which docker && docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 --name redis0 redis
+which docker && docker run -dit --restart unless-stopped -p 6379:6379 --name redis0 redis
 
 echo "Installing prerequisite packages..."
 apt-get update && apt-get -y install wget curl python-minimal python-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
@@ -217,20 +218,21 @@ outputs:
       append: yes
   - eve-log:
       enabled: 'yes'
-      filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
+      filetype: redis
       filename: eve.json
       redis:
         server: 127.0.0.1
+        key: suricata
         port: 6379
-        async: true ## if redis replies are read asynchronously
-        mode: list
+        async: true
+        mode: publish
         pipelining:
-          enabled: yes ## set enable to yes to enable query pipelining
-          batch-size: 10 ## number of entry to keep in buffer
+          enabled: yes
+          batch-size: 10
 
       types:
         - alert:
-            metadata: yes              # add L7/applayer fields, flowbit and other vars to the alert
+            metadata: yes
             tagged-packets: yes
             xff:
               enabled: no
@@ -238,22 +240,23 @@ outputs:
               deployment: reverse
               header: X-Forwarded-For
         - http:
-            extended: yes     # enable this for extended logging information
+            extended: yes
         - dns:
-            query: yes     # enable logging of DNS queries
-            answer: yes    # enable logging of DNS answers
+            query: yes
+            answer: yes
         - tls:
-            extended: yes     # enable this for extended logging information
+            extended: yes
         - files:
-            force-magic: no   # force logging magic on all logged files
+            force-magic: no
         - smtp:
         - ssh
         - stats:
-            totals: yes       # stats for all threads merged together
-            threads: no       # per thread stats
-            deltas: no        # include delta values
+            totals: yes
+            threads: no
+            deltas: no
         - flow
 EOF
+grep DC_SERVERS /etc/suricata/suricata.yaml || sed -i '/ENIP_SERVER/a\ \ \ \ DC_SERVERS: "[192.168.10.250/32]"' /etc/suricata/suricata.yaml
 
 [[ -f /etc/init.d/suricata ]] && rm /etc/init.d/suricata
 FILE=/etc/systemd/system/suricata.service
