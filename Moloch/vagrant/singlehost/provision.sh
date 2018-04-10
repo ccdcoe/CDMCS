@@ -131,7 +131,7 @@ field=asset
 
 [cache]
 type=redis
-url=redis://127.0.0.1:6379/0
+url=redis://127.0.0.1:6379/1
 EOF
 
 echo "Configuring databases"
