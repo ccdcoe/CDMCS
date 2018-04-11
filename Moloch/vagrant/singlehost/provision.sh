@@ -225,7 +225,7 @@ outputs:
         key: suricata
         port: 6379
         async: true
-        mode: publish
+        mode: list
         pipelining:
           enabled: yes
           batch-size: 10
@@ -239,22 +239,22 @@ outputs:
               mode: extra-data
               deployment: reverse
               header: X-Forwarded-For
-        - http:
-            extended: yes
-        - dns:
-            query: yes
-            answer: yes
-        - tls:
-            extended: yes
-        - files:
-            force-magic: no
-        - smtp:
-        - ssh
-        - stats:
-            totals: yes
-            threads: no
-            deltas: no
-        - flow
+#        - http:
+#            extended: yes
+#        - dns:
+#            query: yes
+#            answer: yes
+#        - tls:
+#            extended: yes
+#        - files:
+#            force-magic: no
+#        - smtp:
+#        - ssh
+#        - stats:
+#            totals: yes
+#            threads: no
+#            deltas: no
+#        - flow
 EOF
 grep DC_SERVERS /etc/suricata/suricata.yaml || sed -i '/ENIP_SERVER/a\ \ \ \ DC_SERVERS: "[192.168.10.250/32]"' /etc/suricata/suricata.yaml
 
@@ -281,8 +281,10 @@ echo "Provisioning Suricata rules"
 pip install suricata-update
 suricata-update update-sources
 
-for src in et/open ptresearch/attackdetection oisf/trafficid; do suricata-update list-enabled-sources | grep $src || suricata-update enable-source $src ; done
+for src in et/open ptresearch/attackdetection oisf/trafficid; do suricata-update list-enabled-sources | grep $src || suricata-update enable-source $src >> /vagrant/provision.log 2>&1 ; done
 suricata-update >> /vagrant/provision.log 2>&1
+echo "Reloading Suricata rules"
+suricatasc -c "reload-rules"
 
 echo "Provisioning InfluxDB"
 cd $PKGDIR
