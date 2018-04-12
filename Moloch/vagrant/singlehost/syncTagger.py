@@ -142,7 +142,9 @@ class Tagger():
         self.passwd = kwargs.get("passwd", "vagrant")
         self.direct = kwargs.get("direct", False)
 
-        self.maxmsgs        = kwargs.get("maxmsgs", 10000)
+        self.maxmsgs    = kwargs.get("maxmsgs", 10000)
+        self.interval   = kwargs.get("interval", 120)
+        self.lastflush  = time.time()
 
         self.debug = kwargs.get("debug", False)
 
@@ -162,7 +164,7 @@ class Tagger():
                 self.Post(Alert(msg))
             else:
                 self.Add(msg)
-                if len(self.alerts) == self.maxmsgs: self.Flush()
+                if len(self.alerts) == self.maxmsgs or self.timeDiff(): self.Flush()
 
             if not self.run: break
         if not self.direct: self.Flush()
@@ -171,10 +173,14 @@ class Tagger():
     def Add(self, msg):
         return self.alerts.append(Alert(msg))
 
+    def timeDiff(self):
+        return True if int(time.time() - self.lastflush) > self.interval else False
+
     def Flush(self):
         print("flushing", len(self.alerts), "alerts")
         for alert in self.alerts:
             ret = self.Post(alert)
+        self.lastflush = time.time()
         self.alerts = []
         return self
 
@@ -199,6 +205,7 @@ def arguments():
     parser.add_argument('-D', '--debug', action='store_true', default=False)
     parser.add_argument('-m', '--mode', default='redisListRange')
     parser.add_argument('-d', '--direct', action='store_true', default=False)
+    parser.add_argument('-i', '--interval', default=60, type=int)
     return parser.parse_args()
 
 def isGenerator(obj):
@@ -244,5 +251,5 @@ if __name__ == "__main__":
         print(MODE, "mode not supported or not yet implemented, should be one of", modes)
         sys.exit(1)
 
-    t = Tagger(stream.Run(), host=MHOST, maxmsgs=10000, direct=ARGS.direct, debug=DEBUG)
+    t = Tagger(stream.Run(), host=MHOST, maxmsgs=10000, direct=ARGS.direct, interval=ARGS.interval, debug=DEBUG)
     print("Done pulling", stream.Count(), ", successful addTags responses:", t.Stream(), ", messages errors:", stream.JSONerrCount())
