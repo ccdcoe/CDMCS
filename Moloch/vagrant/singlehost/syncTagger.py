@@ -38,8 +38,7 @@ class Alert():
 
     def rfc3339toEpoch(self, ts):
         ts = datetime.strptime(ts, '%Y-%m-%dT%H:%M:%S.%f%z')
-        # NOTE! Fix teh timezone hack!!!
-        return int(time.mktime(ts.timetuple())) + 10800
+        return int(time.mktime(ts.timetuple()))
 
     def expression(self):
         return "ip.src = %s && port.src = %s && ip.dst = %s && port.dst = %s" % self.FourTuple()

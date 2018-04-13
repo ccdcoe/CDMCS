@@ -296,7 +296,7 @@ echo "Starting alert tagger"
 cd /vagrant
 pip3 install redis
 PIDFILE=/var/run/alertTagger.pid
-[[ -f $PIDFILE ]] || nohup python3 syncTagger.py -D -m redisListPop -i 15 > >(logger -p daemon.info -t tagger) 2> >(logger -p daemon.err -t tagger) & sleep 1 ; echo $! > $PIDFILE
+[[ -f $PIDFILE ]] || nohup python3 syncTagger.py -D -m redisListPop -i 120 > >(logger -p daemon.info -t tagger) 2> >(logger -p daemon.err -t tagger) & sleep 1 ; echo $! > $PIDFILE
 
 echo "Provisioning InfluxDB"
 cd $PKGDIR
