@@ -133,6 +133,12 @@ field=asset
 [cache]
 type=redis
 url=redis://127.0.0.1:6379/1
+
+[file:ip]
+file=/vagrant/tagger.txt
+tags=ipwise
+type=ip
+format=tagger
 EOF
 
 echo "Configuring databases"
