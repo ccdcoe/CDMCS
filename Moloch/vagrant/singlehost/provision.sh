@@ -57,7 +57,7 @@ export DEBIAN_FRONTEND=noninteractive
 which docker && docker run -dit --restart unless-stopped -p 6379:6379 --name redis0 redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install wget curl python-minimal python-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
 
 #FILE=/etc/profile
 #grep "proxy" $FILE || cat >> $FILE <<EOF
@@ -291,6 +291,12 @@ for src in et/open ptresearch/attackdetection oisf/trafficid; do suricata-update
 suricata-update >> /vagrant/provision.log 2>&1
 echo "Reloading Suricata rules"
 suricatasc -c "reload-rules"
+
+echo "Starting alert tagger"
+cd /vagrant
+pip3 install redis
+PIDFILE=/var/run/alertTagger.pid
+[[ -f $PIDFILE ]] || nohup python3 syncTagger.py -D -m redisListPop -i 15 > >(logger -p daemon.info -t tagger) 2> >(logger -p daemon.err -t tagger) & sleep 1 ; echo $! > $PIDFILE
 
 echo "Provisioning InfluxDB"
 cd $PKGDIR

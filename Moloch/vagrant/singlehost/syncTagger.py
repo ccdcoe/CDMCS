@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import redis
 import time
@@ -8,7 +8,6 @@ import json
 import argparse
 import sys, signal
 import types
-import asyncio
 
 class Alert():
     def __init__(self, eve):
@@ -88,6 +87,7 @@ class RedisHandler():
             return e
 
         self.run = True
+        self.debug = kwargs.get("debug", False)
 
         self.jsonerrors = 0
         self.count = 0
@@ -107,11 +107,12 @@ class RedisHandler():
     def Pull(self):
         for msg in self.conn.lrange(self.topic, 0, -1):
             try:
-                msg = json.loads(msg)
+                msg = self.json2dict(msg)
                 yield msg if msg["event_type"] == "alert" else next
                 self.count += 1
             except Exception as e:
                 self.jsonerrors += 1
+                if self.debug: print(e)
             if not self.run: break
         return self
 
@@ -120,13 +121,17 @@ class RedisHandler():
             msg = self.conn.blpop(self.topic, timeout=1)
             if msg:
                 try:
-                    msg = json.loads(msg[1])
+                    msg = self.json2dict(msg[1])
                     yield msg if msg and msg["event_type"] == "alert" else next
                     self.count += 1
                 except Exception as e:
                     self.jsonerrors += 1
+                    if self.debug: print(e)
             time.sleep(0.001)
         return self
+
+    def json2dict(self, msg):
+        return json.loads(msg.decode())
 
     def JSONerrCount(self):
         return self.jsonerrors
@@ -200,14 +205,6 @@ class Tagger():
     def GetSuccessful(self):
         return self.success
 
-def arguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-D', '--debug', action='store_true', default=False)
-    parser.add_argument('-m', '--mode', default='redisListRange')
-    parser.add_argument('-d', '--direct', action='store_true', default=False)
-    parser.add_argument('-i', '--interval', default=60, type=int)
-    return parser.parse_args()
-
 def isGenerator(obj):
     return True if isinstance(obj, types.GeneratorType) else False
 
@@ -226,13 +223,21 @@ def simple():
         except Exception as e:
             if DEBUG: print(ret.text)
 
+def arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-D', '--debug', action='store_true', default=False)
+    parser.add_argument('-m', '--mode', default='redisListRange')
+    parser.add_argument('-d', '--direct', action='store_true', default=False)
+    parser.add_argument('-i', '--interval', default=60, type=int)
+    return parser.parse_args()
+
 ARGS = arguments()
 
-modes = ['redisListRange', 'redisListPop',]
+MODES = ['redisListRange', 'redisListPop',]
 MHOST="192.168.10.11"
 ALERTSRC=MHOST
 
-DEBUG=ARGS.debug
+#DEBUG=ARGS.debug
 MODE=ARGS.mode
 
 # to be deprecated
@@ -244,12 +249,12 @@ BASE="http://%s:%s/addTags?" % (MHOST, MPORT)
 
 if __name__ == "__main__":
     if MODE == "redisListRange":
-        stream = RedisHandler(host=ALERTSRC, mode="range")
+        stream = RedisHandler(host=ALERTSRC, mode="range", debug=ARGS.debug)
     elif MODE == "redisListPop":
-        stream = RedisHandler(host=ALERTSRC, mode="pop")
+        stream = RedisHandler(host=ALERTSRC, mode="pop", debug=ARGS.debug)
     else:
-        print(MODE, "mode not supported or not yet implemented, should be one of", modes)
+        print(MODE, "mode not supported or not yet implemented, should be one of", MODES)
         sys.exit(1)
 
-    t = Tagger(stream.Run(), host=MHOST, maxmsgs=10000, direct=ARGS.direct, interval=ARGS.interval, debug=DEBUG)
+    t = Tagger(stream.Run(), host=MHOST, maxmsgs=10000, direct=ARGS.direct, interval=ARGS.interval, debug=ARGS.debug)
     print("Done pulling", stream.Count(), ", successful addTags responses:", t.Stream(), ", messages errors:", stream.JSONerrCount())
