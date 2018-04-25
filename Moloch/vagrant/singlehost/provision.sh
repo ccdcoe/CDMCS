@@ -57,7 +57,7 @@ export DEBIAN_FRONTEND=noninteractive
 which docker && docker run -dit --restart unless-stopped -p 6379:6379 --name redis0 redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install jq wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev >> /vagrant/provision.log 2>&1
 
 #FILE=/etc/profile
 #grep "proxy" $FILE || cat >> $FILE <<EOF
