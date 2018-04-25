@@ -173,6 +173,31 @@ node addUser.js vagrant vagrant vagrant --admin
 [[ -f $PIDFILE ]] || nohup node viewer.js -c ../etc/config.ini > >(logger -p daemon.info -t viewer) 2> >(logger -p daemon.err -t viewer) & sleep 1 ; echo $! > $PIDFILE
 sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
 
+# parliament
+
+PARLIAMENTPASSWORD=admin
+if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
+   if curl ${EXPOSE}:8008 > /dev/null 2>&1; then
+     echo "already in use ${EXPOSE}:8008"
+   else
+      echo "preparing parliament.."  
+      cd /data/moloch/parliament
+      rm parliament.json
+      /data/moloch/bin/node parliament.js >> /data/moloch/logs/parliament.log 2>&1 & 
+      echo $! > /var/run/parliament.pid  
+      sleep 1
+      token=$(curl -s -XPUT  ${EXPOSE}:8008/parliament/api/auth/update -d newPassword=${PARLIAMENTPASSWORD} | jq .token | sed 's/"//g')
+      H="Content-Type: application/json;charset=UTF-8"
+      GROUP='group1'
+      id=$(curl -s -XPOST -H "${H}" ${EXPOSE}:8008/parliament/api/groups --data "{\"token\":\"${token}\", \"title\":\"${GROUP}\"}"| jq .group.id)
+      CLUSTER='cluster1'
+      URL="http://${EXPOSE}:8005"
+      curl -s -XPOST -H "${H}" ${EXPOSE}:8008/parliament/api/groups/${id}/clusters --data "{\"token\":\"${token}\", \"title\":\"${CLUSTER}\",\"url\":\"${URL}\"}"
+   fi
+else  
+  echo "can not get eshealth from ${EXPOSE}:8005"
+fi
+
 # suricata
 install_suricata_from_ppa(){
   add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
