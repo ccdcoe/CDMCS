@@ -14,6 +14,7 @@ check_service(){
 DEBUG=true
 PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
+[ -z $1 ] || EXPOSE=$1
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 PATH=$PATH:/data/moloch/bin
@@ -178,11 +179,11 @@ sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
 PARLIAMENTPASSWORD=admin
 if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
    if curl ${EXPOSE}:8008 > /dev/null 2>&1; then
-     echo "already in use ${EXPOSE}:8008"
+     echo "parliament: already in use ${EXPOSE}:8008"
    else
-      echo "preparing parliament.."  
+      echo "parliament: preparing ..."  
       cd /data/moloch/parliament
-      rm parliament.json
+      [ -f parliament.json ] && mv parliament.json parliament.json.$(date +%s)
       /data/moloch/bin/node parliament.js >> /data/moloch/logs/parliament.log 2>&1 & 
       echo $! > /var/run/parliament.pid  
       sleep 1
@@ -195,7 +196,7 @@ if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
       curl -s -XPOST -H "${H}" ${EXPOSE}:8008/parliament/api/groups/${id}/clusters --data "{\"token\":\"${token}\", \"title\":\"${CLUSTER}\",\"url\":\"${URL}\"}"
    fi
 else  
-  echo "can not get eshealth from ${EXPOSE}:8005"
+  echo "parliament: can not get eshealth from ${EXPOSE}:8005"
 fi
 
 # suricata
