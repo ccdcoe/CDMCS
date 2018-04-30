@@ -310,6 +310,7 @@ def arguments():
     parser.add_argument('-t',   '--topic',      default="suricata-alert")
     parser.add_argument('-mh',  '--moloHost',   default="localhost")
     parser.add_argument('-mp',  '--moloPort',   default=8005)
+    parser.add_argument('-d',   '--delay',      0)
     return parser.parse_args()
 
 ARGS = arguments()
@@ -335,6 +336,7 @@ if __name__ == "__main__":
         passwd="admin", 
         workers=ARGS.workers, 
         rate_ms=ARGS.rate,
-        tz_offset_hours=ARGS.timezone
+        tz_offset_hours=ARGS.timezone,
+        delay=ARGS.delay
     )
     t.Stream()
