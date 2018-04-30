@@ -38,19 +38,16 @@ Install the latest versions of Vagrant and VirtualBox for your operating systems
 If you get any error message, [fix them before creating any VMs](https://www.vagrantup.com/docs/virtualbox/common-issues.html).
 
 
-To create and provision a new virtual machine (UPDATE: fixed links from HTML page to raw):
+To create and provision a new empty virtual machine:
 
     mkdir somedirnameyoulike
     cd dirnameyoujustcreated
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/installMolochSuricataEveboxKibana.sh
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
     vagrant up
-
 
 Running `vagrant up` for the first time will run provisioning, which will:
 - Download the [Ubuntu 16.04 base image](https://atlas.hashicorp.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
-- Run the provisioning script ([installMolochSuricataEveboxKibana.sh](/Moloch/vagrant/singlehost/installMolochSuricataEveboxKibana.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
+- Run the provisioning script ([provision.sh](/Moloch/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
 The Vagrant box will automatically start after provisioning. It can be started in future with `vagrant up` from the *dirnameyoujustcreated* directory.
 
