@@ -32,3 +32,9 @@ THEN=$((NOW - 300))
 
 curl -GET -u vagrant --digest "192.168.10.11:8005/connections.json" --data "length=10&startTime=$THEN&stopTime=$NOW"
 ```
+
+Standard viewer queries can be placed after `expression` parameter to narrow down the results.
+
+```
+curl -GET -u vagrant --digest "192.168.10.11:8005/connections.json" --data "length=10&startTime=$THEN&stopTime=$NOW&expression=" --data-urlencode "ip==192.168.10.11"
+```
