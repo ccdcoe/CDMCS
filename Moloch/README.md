@@ -37,7 +37,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 3 :: Usage :: May 10 2018
 
   * 09:00 - 12:30
-    * [Moloch API](https://github.com/aol/moloch/wiki/API)
+    * [Moloch API](/Moloch/api.md)
     * [WISE](https://github.com/aol/moloch/wiki/WISE)
     * [High-bandwidth optimizations](/Moloch/optimize.md)
 
