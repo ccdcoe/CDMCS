@@ -18,7 +18,7 @@ curl -GET -u vagrant --digest 192.168.10.11:8005/connections.csv
 curl -GET -u vagrant --digest 192.168.10.11:8005/sessions.csv
 ```
 
-## Adding query parameters
+## Using query parameters
 
 HTTP get parameters can be used to modify search results.
 
@@ -37,4 +37,12 @@ Standard viewer queries can be placed after `expression` parameter to narrow dow
 
 ```
 curl -GET -u vagrant --digest "192.168.10.11:8005/connections.json" --data "length=10&startTime=$THEN&stopTime=$NOW&expression=" --data-urlencode "ip==192.168.10.11"
+```
+
+## Adding tags to connections
+
+Tags can be added by sending a POST request to desired sessions. Query parameters are same as connectons API, but comma-separated list of tags can be sent via HTTP POST body.
+
+```
+curl -POST -u vagrant --digest "192.168.10.11:8005/addTags?startTime=$THEN&stopTime=$NOW&expression=" --data "tags=myfirsttag,hello"
 ```
