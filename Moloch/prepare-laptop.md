@@ -40,6 +40,12 @@ To create and provision a new empty virtual machine:
 
     mkdir somedirnameyoulike
     cd dirnameyoujustcreated
+    vagrant box add ubuntu/xenial64
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/provision.sh
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/tagger.py
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/genTraffic.sh
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/tagger.txt
     vagrant up
 
 Running `vagrant up` for the first time will run provisioning, which will:
