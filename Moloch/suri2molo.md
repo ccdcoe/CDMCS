@@ -24,7 +24,5 @@
 * ...
 
 https://github.com/inliniac/suricata/blob/master/suricata.yaml.in#L148
-
 https://redmine.openinfosecfoundation.org/issues/1582
-
 https://github.com/inliniac/suricata/blob/master/src/alert-syslog.c
