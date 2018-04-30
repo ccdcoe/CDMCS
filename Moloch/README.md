@@ -10,10 +10,13 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 0 :: Intro:: May 7 2018, starts at 13:00
 
- * 13:00 - 14:00 [Intro](/common/day_intro.md), [vagrant](/common/vagrant.intro.md)
- * 14:00 - 15:00 [singlehost](/Moloch/vagrant/singlehost/)
- * 15:30 - 16:15 [basic config](/Moloch/config.md)
- * 16:15 - 17:00 [basic queries](/Moloch/classroom/day_intro/Basicqueries.md)
+ * 13:00 - 14:00 
+    * [Intro](/common/day_intro.md)
+    * [vagrant](/common/vagrant.intro.md) 
+    * [singlehost](/Moloch/vagrant/singlehost/)
+ * 15:30 - 16:45 
+    * [basic config](/Moloch/config.md)
+    * Basic usage
 
 ## Day 1 :: Single Box :: May 8 2018
 
@@ -25,8 +28,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 2 :: Scale up :: May 9 2018
 
-* 09:00 - 10:30 [metrix](https://github.com/ccdcoe/CDMCS/tree/master/TICK/vagrant/singlehost#singlehost-tickag),[Telegraf](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Telegraf),[InfluxDB](https://github.com/ccdcoe/CDMCS/tree/master/TICK/InfluxDB),[Grafana](https://github.com/ccdcoe/CDMCS/tree/master/TICK/Grafana); SALT [Minions](/common/SetUpMinions.md) & [Master](/common/SetUpMaster.md)
-* 11:00 - 12:30 [Multiple Hosts Monitoring Multiple Network Segments](https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments)
+* 09:00 - 12:30 [Multiple Hosts Monitoring Multiple Network Segments](https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments)
 
 * 13:30 - 16:45 Digging
 
