@@ -23,6 +23,7 @@
 
 ### Suricata and Moloch
 
+* Singlehost setup **[environment](/Moloch/vagrant/singlehost)** - full vagrant environment that includes moloch capture, viewer, backend document storage, threat intelligence and IDS tagging
 * Old WISE plugin **[source.suricata.js](/Moloch/vagrant/singlehost/old/source.suricata.js)** *"connects"* Moloch session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
 * New tagger script **[tagger.py](/Moloch/vagrant/singlehost/tagger.py)** *"queries"* Moloch for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
 
