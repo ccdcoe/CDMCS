@@ -38,8 +38,8 @@ If you get any error message, [fix them before creating any VMs](https://www.vag
 
 To create and provision a new empty virtual machine:
 
-    mkdir somedirnameyoulike
-    cd dirnameyoujustcreated
+    mkdir something
+    cd something
     vagrant box add ubuntu/xenial64
     wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
     wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/provision.sh
