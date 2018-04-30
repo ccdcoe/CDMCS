@@ -1,4 +1,4 @@
-##!/usr/bin/env python3
+#!/usr/bin/env python3
 
 import time
 from datetime import datetime, tzinfo, timezone
@@ -113,7 +113,7 @@ class Tagger():
                     loop.run_until_complete(self.AsyncFlush())
                     #if self.debug and self.lastTS: print("last alert from:", self.lastTS)
             except Exception as e:
-                pass
+                if self.debug: print(e)
             if not self.run: break
 
         if len(self.alerts) > 0:
@@ -134,7 +134,7 @@ class Tagger():
                     s = json.loads(resp.text)
                     if s["success"]: success += 1
                 except Exception as e:
-                    pass
+                    if self.debug: print(e, ":", resp)
 
             if self.debug: print("flushed", len(self.alerts), "success:", success, "last alert from:", self.lastTS)
         took = int(time.time() * 1000) - start
@@ -289,6 +289,25 @@ class KafkaHandler():
     def Count(self): return self.count
     def JSONerrCount(self): return self.errors
 
+class FileHandler():
+    def __init__(self):
+        self.path   =   kwargs.get("path", None)
+        self.run    =   True
+
+        signal.signal(signal.SIGINT, self.Exit)
+        signal.signal(signal.SIGTERM, self.Exit)
+
+    def Run(self):
+        with open(self.file, "r") as f:
+            for line in f:
+                yield json.loads(line.rstrip())
+                if not self.run: break
+
+    def Exit(self, signum, frame):
+        print("Caught", signum)
+        self.run = False
+        return
+
 def isGenerator(obj):
     return True if isinstance(obj, types.GeneratorType) else False
 
@@ -301,20 +320,22 @@ def normalizeIP6(addr):
 
 def arguments():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-D',   '--debug',      action='store_true',    default=False)
+    parser.add_argument('-d',   '--delay',      default=10,             type=int)
     parser.add_argument('-w',   '--workers',    default=100,            type=int)
     parser.add_argument('-r',   '--rate',       default=1000,           type=int)
     parser.add_argument('-tz',  '--timezone',   default=3,              type=int)
-    parser.add_argument('-D',   '--debug',      action='store_true',    default=False)
     parser.add_argument('-m',   '--mode',       default='redisListRange')
     parser.add_argument('-s',   '--src',        default="localhost")
     parser.add_argument('-t',   '--topic',      default="suricata-alert")
     parser.add_argument('-mh',  '--moloHost',   default="localhost")
     parser.add_argument('-mp',  '--moloPort',   default=8005)
-    parser.add_argument('-d',   '--delay',      0)
+    parser.add_argument('-mu',  '--moloUser',   default="vagrant")
+    parser.add_argument('-mpw', '--moloPword',  default="vagrant")
     return parser.parse_args()
 
 ARGS = arguments()
-MODES = ['redisListRange', 'redisListPop', 'kafka']
+MODES = ['redisListRange', 'redisListPop', 'kafka', 'file']
 
 if __name__ == "__main__":
     if ARGS.mode == MODES[0]:
@@ -323,6 +344,8 @@ if __name__ == "__main__":
         stream = RedisHandler(host=ARGS.src, mode="pop", debug=ARGS.debug, topic=ARGS.topic)
     elif ARGS.mode == MODES[2]:
         stream = KafkaHandler(hosts=ARGS.src, debug=ARGS.debug, topic=ARGS.topic, group_id="ls18-tagger")
+    elif ARGS.mode  == MODES[3]:
+        stream = FileHandler(path=ARGS.src)
     else:
         print(ARGS.mode, "mode not supported or not yet implemented, should be one of", MODES)
         sys.exit(1)
@@ -332,8 +355,8 @@ if __name__ == "__main__":
         host=ARGS.moloHost, 
         port=ARGS.moloPort, 
         debug=ARGS.debug, 
-        user="admin", 
-        passwd="admin", 
+        user=ARGS.moloUser, 
+        passwd=ARGS.moloPword, 
         workers=ARGS.workers, 
         rate_ms=ARGS.rate,
         tz_offset_hours=ARGS.timezone,

@@ -24,7 +24,7 @@
 ### Suricata and Moloch
 
 * Old WISE plugin **[source.suricata.js](/Moloch/vagrant/singlehost/old/source.suricata.js)** *"connects"* Moloch session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
-* New tagger script **[tagger.py](/Moloch/vagrant/singlehost/tagger.py)** *"queries"* Moloch for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match
+* New tagger script **[tagger.py](/Moloch/vagrant/singlehost/tagger.py)** *"queries"* Moloch for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
 
 # Instructions
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
@@ -34,7 +34,6 @@ Install the latest versions of Vagrant and VirtualBox for your operating systems
     vagrant status
 
 If you get any error message, [fix them before creating any VMs](https://www.vagrantup.com/docs/virtualbox/common-issues.html).
-
 
 To create and provision a new empty virtual machine:
 
