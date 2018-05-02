@@ -14,11 +14,12 @@ Install dependencies
 apt-get install -y openjdk-8-jre-headless apt-transport-https
 ```
 
-Install elasticsearch (5)
+Install elasticsearch (6)
 
 ```
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.1.deb
-dpkg -i elasticsearch-5.3.1.deb
+VER=6.2.4
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-$VER.deb
+dpkg -i elasticsearch-$VER.deb
 ```
 
 Set up ES java heap size.
@@ -27,6 +28,8 @@ Set up ES java heap size.
 free -m
 vim /etc/elasticsearch/jvm.options
 ```
+
+Rule of thumb is 50 per cent of all system memory but no more than 31(ish) gigabytes. It's okay to use less for testing environment that also houses moloch capture, viewer, wise, etc.
 
 ```
 -Xms512m
