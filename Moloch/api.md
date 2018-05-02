@@ -131,8 +131,45 @@ tags = tagData(tags)
 queries = [ query(then, now, e) for e in expressions ]
 queries = [ urllib3.request.urlencode(q) for q in queries ]
 
+start = int(time.time() * 1000)
+
 for q in queries:
         url = host + "addTags?" + q
         resp = requests.post(url, auth=requests.auth.HTTPDigestAuth(user, passwd), data=tags)
         print(resp.text)
+
+took = int(time.time() * 1000) - start
+print(took, "ms")
+```
+
+## Async queries with python asyncio
+
+ * running HTTP queries one at a time and waiting for each to complete before starting next one is very inefficient in practice
+ * profound speed difference with higher bulk size
+ * python 3.5 needed for this example to work
+ * extends previous script
+
+```
+import asyncio
+import functools
+import concurrent.futures
+
+async def AsyncFlush():
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=len(queries)) as executor:
+                loop = asyncio.get_event_loop()
+                futures = [ loop.run_in_executor( executor, functools.partial(requests.post, host + "addTags?" + q, data=tags, auth=requests.auth.HTTPDigestAuth(user, passwd)) ) for q in queries ]
+
+                success = 0
+                for resp in await asyncio.gather(*futures):
+                        print(resp.text)
+
+
+start = int(time.time() * 1000)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(AsyncFlush())
+
+took = int(time.time() * 1000) - start
+print(took, "ms")
 ```
