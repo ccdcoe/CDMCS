@@ -123,15 +123,6 @@ Start moloch-capture
 /opt/moloch/bin/moloch-capture --help
 ```
 
-Verify FPC data (initial)
-
-```
-ls -lah /srv/pcap
-tcpdump -r *.pcap -c1
-curl -ss -XGET localhost:9200/_cat/indices
-curl -ss -XGET localhost:9200/sessions-*/_search?pretty -d '{"size":1}'
-```
-
 Create user for viewer
 
 ```
@@ -157,6 +148,12 @@ curl localhost:9200/_cat/indices
 
 ```
 curl localhost:9200/sessions2-YYMMDD/_search?pretty
+```
+```
+ls -lah /srv/pcap
+tcpdump -r *.pcap -c1
+curl -ss -XGET localhost:9200/_cat/indices
+curl -ss -XGET localhost:9200/sessions-*/_search?pretty -d '{"size":1}'
 ```
 
 ### Finally, ...

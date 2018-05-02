@@ -18,10 +18,10 @@ echo "Pulling moloch"
 cd $HOME/moloch-build
 git checkout tags/$VER
 
-echo "Building"
-./easybutton-build.sh -d $HOME/moloch-$VER >> /vagrant/provision.log 2>&1
-sudo chown -R $ME $HOME/moloch-$VER
+#echo "Building"
+#./easybutton-build.sh -d $HOME/moloch-$VER >> /vagrant/provision.log 2>&1
+#sudo chown -R $ME $HOME/moloch-$VER
 
-echo "Installing"
-make install >> /vagrant/provision.log 2>&1
-moloch-capture --help
+#echo "Installing"
+#make install >> /vagrant/provision.log 2>&1
+#moloch-capture --help
