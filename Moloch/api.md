@@ -148,6 +148,7 @@ print(took, "ms")
  * profound speed difference with higher bulk size
  * python 3.5 needed for this example to work
  * extends previous script
+ * `functools.partial` is used as asynio wrapper cannot take named arguments
 
 ```
 import asyncio
