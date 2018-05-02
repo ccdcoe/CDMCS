@@ -91,3 +91,48 @@ for api in apis:
                 data = json.loads(resp.text)
                 print(data)
 ```
+
+## Adding data with HTTP POST
+
+```
+#!/usr/bin/env python3
+
+import urllib3, requests
+import time
+import json
+
+def query(start, stop, expr):
+        return {
+                "startTime": start,
+                "stopTime": stop,
+                "expression": expr
+        }
+
+def tagData(tags): return { "tags": ','.join(tags) }
+
+host = "http://192.168.10.11:8005/"
+user = "vagrant"
+passwd = user
+
+now = int(time.time())
+then = now - 300
+expressions = [
+        "ip==192.168.10.11",
+        "ip==192.168.10.1"
+        ]
+
+tags = [
+        "tag1",
+        "tag2",
+        "tag3"
+        ]
+tags = tagData(tags)
+
+queries = [ query(then, now, e) for e in expressions ]
+queries = [ urllib3.request.urlencode(q) for q in queries ]
+
+for q in queries:
+        url = host + "addTags?" + q
+        resp = requests.post(url, auth=requests.auth.HTTPDigestAuth(user, passwd), data=tags)
+        print(resp.text)
+```
