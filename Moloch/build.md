@@ -8,7 +8,9 @@ see
 
 ## Elasticsearch
 
-Install dependencies
+ * see [our full elasticsearch section for more info](/common/elastic)
+
+Install dependencies. 
 
 ```
 apt-get install -y openjdk-8-jre-headless apt-transport-https
