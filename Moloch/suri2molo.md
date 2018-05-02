@@ -5,8 +5,10 @@
 * WISE
 * or ADD TAG  
 
+
 * WISE :: https://github.com/ccdcoe/CDMCS/blob/master/Moloch/vagrant/singlehost/source.suricata.js
 * TAG :: https://gist.github.com/hillar/409a18e1604c70bb3804
+
 
 * WISE <-
   * ELASTIC https://github.com/aol/moloch/blob/master/capture/plugins/wiseService/source.elasticesearch.js
@@ -17,7 +19,7 @@
 
 ## suricata can output to
 
-* fail (json)
+* file (json)
 * syslog
 * redis
 * LUA
