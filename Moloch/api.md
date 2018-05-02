@@ -49,6 +49,7 @@ curl -POST -u vagrant --digest "192.168.10.11:8005/addTags?startTime=$THEN&stopT
 
 # Scripting with python3
 
+## Requesting data with HTTP GET
 ```
 #!/usr/bin/env python3
 
