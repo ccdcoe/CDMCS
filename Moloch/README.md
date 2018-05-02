@@ -24,7 +24,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [build from source](/Moloch/build.md)
     * [config](/Moloch/config.md)
 
- * 13:00 - 16:45 Digging
+ * 13:30 - 16:45 Digging
 
 ## Day 2 :: Scale up :: May 9 2018
 
@@ -41,12 +41,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [WISE](https://github.com/aol/moloch/wiki/WISE)
     * [High-bandwidth optimizations](/Moloch/optimize.md)
 
-  * 13:00 - 16:45 Digging
+  * 13:30 - 16:45 Digging
 
 ## Day +1 :: :: May 11 2018, ends at 12:00
 
   * 09:00 - 12:00
-    * Enter content here
+    * Propose what content you would like to see here
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----
