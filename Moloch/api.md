@@ -146,7 +146,7 @@ print(took, "ms")
 
  * running HTTP queries one at a time and waiting for each to complete before starting next one is very inefficient in practice
  * profound speed difference with higher bulk size
- * python 3.5 needed for this example to work
+ * python 3.4 needed for this example to work, tested on 3.5
  * extends previous script
  * `functools.partial` is used as asynio wrapper cannot take named arguments
 
