@@ -52,24 +52,22 @@ curl -ss -XGET localhost:9200/_cat/nodes
 
 ## Moloch
 
-### Dependencies
+### Nodejs
+
+Dependency for viewer. Node 8.9 is required for Moloch 1.0.0 and beyond, 6.13 for 0.50 and older.
 
 * https://nodejs.org/dist/
-
-```
-sudo apt-get -y install build-essential git
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
 
 ### get the source
 ```
 git clone https://github.com/aol/moloch
 cd moloch
-git checkout -b 'v0.18.2'
+git checkout -b 'v1.1.0'
 ```
 
 ### configure, make install
+
+ * PS! Check the filesystem paths. Chosen `/opt/moloch` is arbitrary choice of the instructor and may not reflect your environment. Vagrant build machine will use non-privileged directory in user home directory.
 
 ```
 ./easybutton-build.sh -d /opt/moloch
@@ -78,7 +76,7 @@ sudo make install
 
 ### Basic configuration
 
-Download geoIP databases
+Download geoIP databases.
 
 ```
 cd /opt/moloch/bin
@@ -145,6 +143,20 @@ Start viewer
 
 ```
 nodejs viewer.js -c /opt/moloch/etc/config.ini
+```
+
+### testing capture without viewer
+
+```
+curl localhost:9200/_cat/indices
+```
+
+ * expect to see index `sessions2-YYMMDD`
+  * problem with capture if missing, please read capture console logs carefully
+ * if present, check if you actually have messages in the index
+
+```
+curl localhost:9200/sessions2-YYMMDD/_search?pretty
 ```
 
 ### Finally, ...

@@ -3,7 +3,7 @@
 # it will set up system-wide prereqs to build and configure moloch as regular user
 #
 
-MOLOVER="v1.0.0-rc2"
+MOLOVER="v1.1.0"
 USER="vagrant"
 
 if [ "$(id -u)" != "0" ]; then
