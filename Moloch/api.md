@@ -4,7 +4,7 @@
 * https://github.com/ccdcoe/otta/blob/master/python/main.py
 * https://github.com/ccdcoe/CDMCS/blob/master/Moloch/vagrant/singlehost/tagger.py
 
-## Simple queries with curl
+# Simple queries with curl
 
 Moloch uses digest authentication, this must be handled from whatever cli tool you use. If your moloch user name is not vagrant then change the `-u` parameter or add a new user through viewer.
 
@@ -45,4 +45,48 @@ Tags can be added by sending a POST request to desired sessions. Query parameter
 
 ```
 curl -POST -u vagrant --digest "192.168.10.11:8005/addTags?startTime=$THEN&stopTime=$NOW&expression=" --data "tags=myfirsttag,hello"
+```
+
+# Scripting with python3
+
+```
+#!/usr/bin/env python3
+
+import urllib3, requests
+import time
+import json
+
+def query(start, stop, expr):
+        return {
+                "startTime": start,
+                "stopTime": stop,
+                "expression": expr
+        }
+
+host = "http://192.168.10.11:8005/"
+user = "vagrant"
+passwd = user
+
+now = int(time.time())
+then = now - 300
+expressions = [
+        "ip==192.168.10.11",
+        "ip==192.168.10.1",
+        "(ip==192.168.10.1||ip==192.168.10.11)&&port==443"
+        ]
+
+apis = [
+        "connections.json",
+        "sessions.json"
+        ]
+
+queries = [ query(then, now, e) for e in expressions ]
+queries = [ urllib3.request.urlencode(q) for q in queries ]
+
+for api in apis:
+        for q in queries:
+                url = host + api + "?" + q
+                resp = requests.get(url, auth=requests.auth.HTTPDigestAuth(user, passwd))
+                data = json.loads(resp.text)
+                print(data)
 ```
