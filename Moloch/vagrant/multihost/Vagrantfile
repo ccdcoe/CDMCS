@@ -1,0 +1,70 @@
+# vi: set ft=ruby :
+
+# PLEASE CHANGE
+STUDENT = 'XX'
+
+# define network segments, PUB_NET should be changed to whatever is used in classroom
+PRIV_NET = '192.168.10.'
+PUB_NET = 'XX.XX.XX.'
+
+# minion/worker parameters, please reduce CPU/MEM if you wish to create more than one box on laptop
+MEM = 2048
+CPU = 4
+IMG = 'ubuntu/xenial64'
+BOXES = 2
+
+DEPLOY_MASTER = true
+MASTER_IP = '192.168.10.20'
+MASTER_CPU = 2
+MASTER_MEM = 512
+SALT = 'stable'
+
+
+Vagrant.configure(2) do |config|
+  # provision master separately
+  if DEPLOY_MASTER == true
+    config.vm.define 'master' do |master|
+      master.vm.box = IMG 
+      master.vm.hostname = 'master'
+      master.vm.network :private_network, ip: MASTER_IP
+      master.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--cpus", MASTER_CPU]
+        vb.customize ["modifyvm", :id, "--memory", MASTER_MEM]
+      end
+      master.vm.provision :salt do |salt|
+        salt.master_config = "conf/master"
+        salt.masterless = false
+        salt.run_highstate = false
+        salt.install_type = SALT
+        salt.install_master = true
+      end
+    end
+  end
+  # provision workers as defined by user
+  (1..BOXES).each do |count|
+    name = 'host-' + count.to_s
+    ip = PRIV_NET + (20 + count).to_s
+    config.vm.define name do |config|
+      config.vm.box = IMG
+      config.vm.hostname = name
+      config.vm.network 'private_network',
+        ip: ip
+      config.vm.provider "virtualbox" do |v|
+        v.customize ["modifyvm", :id, "--memory", MEM]
+        v.customize ["modifyvm", :id, "--cpus", CPU]
+      end
+      # only create salt env if user actually wants to create a master
+      if DEPLOY_MASTER == true
+        config.vm.provision "shell",
+          inline: "grep salt /etc/hosts || sudo echo \"#{MASTER_IP}\"  salt >> /etc/hosts"
+        config.vm.provision :salt do |salt|
+          salt.minion_config = "conf/minion"
+          salt.masterless = false
+          salt.run_highstate = false
+          salt.install_type = SALT
+          salt.install_master = false
+        end
+      end
+    end
+  end
+end
