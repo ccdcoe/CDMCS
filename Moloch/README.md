@@ -30,7 +30,9 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 2 :: Scale up :: May 9 2018
 
   * 09:00 - 12:30 
+    * [Multihost](https://github.com/aol/moloch/wiki/Multiple-Host-HOWTO)
     * [Multiple Hosts Monitoring Multiple Network Segments](https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments)
+    * [Parliament](https://github.com/aol/moloch/tree/master/parliament)
     * [Group work](/Moloch/vagrant/multihost/)
 
   * 13:30 - 16:45 

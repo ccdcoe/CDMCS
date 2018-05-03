@@ -1,17 +1,18 @@
 # vi: set ft=ruby :
 
 # PLEASE CHANGE
-STUDENT = 'XX'
+STUDENT = 13
 
 # define network segments, PUB_NET should be changed to whatever is used in classroom
 PRIV_NET = '192.168.10.'
-PUB_NET = 'XX.XX.XX.'
+#PUB_NET = 'XX.XX.XX.'
+PUB_NET = '192.168.17.'
 
 # minion/worker parameters, please reduce CPU/MEM if you wish to create more than one box on laptop
 MEM = 2048
 CPU = 4
 IMG = 'ubuntu/xenial64'
-BOXES = 2
+BOXES = 3
 
 DEPLOY_MASTER = true
 MASTER_IP = '192.168.10.20'
@@ -42,13 +43,22 @@ Vagrant.configure(2) do |config|
   end
   # provision workers as defined by user
   (1..BOXES).each do |count|
+
+    # per box local variables
     name = 'host-' + count.to_s
     ip = PRIV_NET + (20 + count).to_s
+    if STUDENT != nil
+      pub_ip  = PUB_NET + (STUDENT + count - 1).to_s
+    end
     config.vm.define name do |config|
       config.vm.box = IMG
       config.vm.hostname = name
       config.vm.network 'private_network',
         ip: ip
+      if STUDENT != nil
+        config.vm.network 'public_network',
+          ip: pub_ip
+      end
       config.vm.provider "virtualbox" do |v|
         v.customize ["modifyvm", :id, "--memory", MEM]
         v.customize ["modifyvm", :id, "--cpus", CPU]
