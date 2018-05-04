@@ -1,20 +1,19 @@
 # vi: set ft=ruby :
 
 # PLEASE CHANGE
-STUDENT = 13
+STUDENT = nil
 
 # define network segments, PUB_NET should be changed to whatever is used in classroom
 PRIV_NET = '192.168.10.'
-#PUB_NET = 'XX.XX.XX.'
-PUB_NET = '192.168.17.'
+PUB_NET = 'XX.XX.XX.'
 
 # minion/worker parameters, please reduce CPU/MEM if you wish to create more than one box on laptop
-MEM = 2048
+MEM = 4096
 CPU = 4
 IMG = 'ubuntu/xenial64'
-BOXES = 3
+BOXES = 1
 
-DEPLOY_MASTER = true
+DEPLOY_MASTER = false
 MASTER_IP = '192.168.10.20'
 MASTER_CPU = 2
 MASTER_MEM = 512
