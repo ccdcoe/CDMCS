@@ -56,7 +56,7 @@ cd /data/moloch/wiseService && ../bin/node wiseService.js
 ### Update asset list periodically
 
 ```
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import pickle
 import ssl
