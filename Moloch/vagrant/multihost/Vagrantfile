@@ -2,10 +2,11 @@
 
 # PLEASE CHANGE
 STUDENT = nil
-
-# define network segments, PUB_NET should be changed to whatever is used in classroom
-PRIV_NET = '192.168.10.'
 PUB_NET = 'XX.XX.XX.'
+
+# define private network segments
+PRIV_NET = '192.168.10.'
+PRIV_NET_START = 20
 
 # minion/worker parameters, please reduce CPU/MEM if you wish to create more than one box on laptop
 MEM = 4096
@@ -14,7 +15,7 @@ IMG = 'ubuntu/xenial64'
 BOXES = 1
 
 DEPLOY_MASTER = false
-MASTER_IP = '192.168.10.20'
+MASTER_IP = PRIV_NET + PRIV_NET_START.to_s
 MASTER_CPU = 2
 MASTER_MEM = 512
 SALT = 'stable'
@@ -45,7 +46,7 @@ Vagrant.configure(2) do |config|
 
     # per box local variables
     name = 'host-' + count.to_s
-    ip = PRIV_NET + (20 + count).to_s
+    ip = PRIV_NET + (PRIV_NET_START + count).to_s
     if STUDENT != nil
       pub_ip  = PUB_NET + (STUDENT + count - 1).to_s
     end
