@@ -12,4 +12,4 @@
   * Salt master-minion setup is optional, documentation on that can be found [here](/Suricata/vagrant/multihost/README.md)
   * Consider enabling saltmaster if you decide on multi-host vagrant setup
   * Once your cluster is up and running, each student must set up parliament (and maybe also multi-cluster in config.ini), thus bridging all the clusters together
-  * tl;dl - set up multiple moloch clusters where each student is a small node, then create multi-cluster parliament setup. If time, wargames, more on salt, sending sessions from one cluster to another, [pcaps and more pcaps](http://malware-traffic-analysis.net/)
+  * tl;dr - set up multiple moloch clusters where each student is a small node, then create multi-cluster parliament setup. If time, wargames, more on salt, sending sessions from one cluster to another, [pcaps and more pcaps](http://malware-traffic-analysis.net/)
