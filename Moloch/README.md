@@ -15,8 +15,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [vagrant](/common/vagrant.intro.md) 
     * [singlehost](/Moloch/vagrant/singlehost/)
  * 15:30 - 16:45 
-    * [basic config](/Moloch/config.md)
-    * Basic usage
+    * [Basic usage](/Moloch/queries.md)
 
 ## Day 1 :: Single Box :: May 8 2018
 
