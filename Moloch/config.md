@@ -8,4 +8,4 @@ See
 * https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html
 
 ----
-next -> [Config tasks](/tasks/config.md)
+next -> [Config tasks](/Moloch/tasks/config.md)
