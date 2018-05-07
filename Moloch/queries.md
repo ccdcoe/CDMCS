@@ -8,7 +8,7 @@
   * Combine that query with filter that shows all non-HTTP traffic on those ports
   * Write similar filters for TLS, SSH and DNS traffic
   * Filter out all traffic that does not contain any payload
-  * Likewise, only look for traffic that reaches moloch maximum payload size (10000 packets)
+  * Likewise, only look for traffic that reaches moloch maximum session size (10000 packets)
   * Write a query that filters out your team domain controllers 
 
 ## Usage
