@@ -3,6 +3,7 @@
 # PLEASE CHANGE
 STUDENT = nil
 PUB_NET = 'XX.XX.XX.'
+PUB_SUB = 21
 
 # define private network segments
 PRIV_NET = '192.168.10.'
@@ -12,9 +13,9 @@ PRIV_NET_START = 20
 MEM = 4096
 CPU = 4
 IMG = 'ubuntu/xenial64'
-BOXES = 1
+BOXES = 2
 
-DEPLOY_MASTER = false
+DEPLOY_MASTER = true
 MASTER_IP = PRIV_NET + PRIV_NET_START.to_s
 MASTER_CPU = 2
 MASTER_MEM = 512
@@ -58,7 +59,8 @@ Vagrant.configure(2) do |config|
         ip: ip
       if STUDENT != nil
         config.vm.network 'public_network',
-          ip: pub_ip
+          ip: pub_ip,
+          netmask: PUB_SUB
       end
       config.vm.provider "virtualbox" do |v|
         v.customize ["modifyvm", :id, "--memory", MEM]

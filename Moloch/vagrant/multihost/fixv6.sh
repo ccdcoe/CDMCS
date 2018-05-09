@@ -11,3 +11,4 @@ sysctl -p
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
+sed -i 's/archive.ubuntu/ee.archive.ubuntu/g' /etc/apt/sources.list
