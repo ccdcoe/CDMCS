@@ -1,0 +1,16 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'moloch-singlehost-lite' do |box|
+    box.vm.box = "ubuntu/xenial64"
+    box.vm.hostname = 'moloch-singlehost-lite'
+    box.vm.network :private_network, ip: "192.168.10.15"
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+    end
+    config.vm.provision "docker", images: ["redis"]
+    config.vm.provision "shell", path: "provision.sh"
+  end
+end
