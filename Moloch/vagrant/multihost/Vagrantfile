@@ -49,7 +49,9 @@ Vagrant.configure(2) do |config|
     # per box local variables
     name = 'host-' + count.to_s
     if STUDENT != nil
-      name = 'host-' + count.to_s + '-' + STUDENT.to_s
+      hostname = 'host-' + count.to_s + '-' + STUDENT.to_s
+    else
+      hostname = name
     end
     ip = PRIV_NET + (PRIV_NET_START + count).to_s
     if STUDENT != nil
@@ -57,7 +59,7 @@ Vagrant.configure(2) do |config|
     end
     config.vm.define name do |config|
       config.vm.box = IMG
-      config.vm.hostname = name
+      config.vm.hostname = hostname
       config.vm.network 'private_network',
         ip: ip
       if STUDENT != nil
