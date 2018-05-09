@@ -48,6 +48,9 @@ Vagrant.configure(2) do |config|
 
     # per box local variables
     name = 'host-' + count.to_s
+    if STUDENT != nil
+      name = 'host-' + count.to_s + '-' + STUDENT.to_s
+    end
     ip = PRIV_NET + (PRIV_NET_START + count).to_s
     if STUDENT != nil
       pub_ip  = PUB_NET + (STUDENT + count - 1).to_s
