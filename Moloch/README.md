@@ -50,7 +50,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day +1 :: :: May 11 2018, ends at 12:00
 
   * 09:00 - 12:00
-    * Propose what content you would like to see here
+    * [Bolliwood dashboards](/common/elastic/kibana.queries.md)
+    * Some more digging...
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----
