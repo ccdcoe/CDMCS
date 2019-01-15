@@ -14,8 +14,11 @@ Our goal is to make our students understand fundamental concepts that can be bro
 
 Please visit:
 
-* http://suricata-ids.org/
-* http://molo.ch/
+ * http://suricata-ids.org/
+ * http://molo.ch/
+
+See:
+  * [Prerequisites](prerequisites/)
 
 # Current Classes
 

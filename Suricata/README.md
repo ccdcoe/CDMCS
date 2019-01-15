@@ -9,7 +9,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 > Suricata is a free and open source, mature, fast and robust network threat detection engine. The Suricata engine is capable of real time intrusion detection (IDS), inline intrusion prevention (IPS), network security monitoring (NSM) and offline pcap processing.
 
-## Day 0 :: Intro:: Feb 12 2018, starts at 13:00
+## Day 0 :: Intro:: Feb 11 2019, starts at 13:00
 
  * 13:00 - 14:45
    * [Intro](/common/day_intro.md)
@@ -20,7 +20,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [intro to rules](/Suricata/rules/rules.intro.md)
    * [intro to dashboarding]()
 
-## Day 1 :: Single Box :: Feb 13 2018
+## Day 1 :: Single Box :: Feb 12 2019
 
  * 09:00 - 12:30
    * [build from source](/Suricata/setup/build.md)
@@ -31,7 +31,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [evebox](/Suricata/evebox)
    * [scirius](/Suricata/scirius)
 
-## Day 2 :: Scale up :: Feb 14 2018
+## Day 2 :: Scale up :: Feb 13 2019
 
 * 09:00 - 12:30
   * [multihost with](/Suricata/vagrant/multihost) [salt](/common/salt)
@@ -42,7 +42,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * [indexing alert log](/Suricata/logging/)
   * [Dashboarding and aggregations](/common/kibana.md)
 
-## Day 3 :: Usage :: Feb 15 2018
+## Day 3 :: Usage :: Feb 14 2019
 
 * 09:00 - 12:30
   * [indexing alert log](/Suricata/logging/)
@@ -51,7 +51,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 * 13:30 - 16:45
   * [Suricata LUA](/Suricata/lua)
 
-## Day +1 :: :: Feb 16 2018, ends at 12:00
+## Day +1 :: :: Feb 15 2019, ends at 12:00
 
 * 09:00 - 10:30
   * [IPS](/Suricata/suricata/ips-intro.md)
