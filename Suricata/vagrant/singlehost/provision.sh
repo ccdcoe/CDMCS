@@ -13,17 +13,15 @@ PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
 # versions
-ELA="elasticsearch-6.1.2.deb"
-KIBANA="kibana-6.1.2-amd64.deb"
-LOGSTASH="logstash-6.1.2.deb"
-INFLUX="influxdb_1.4.2_amd64.deb"
-TELEGRAF="telegraf_1.5.1-1_amd64.deb"
-GRAFANA="grafana_4.6.3_amd64.deb"
-EVEBOX="evebox_0.9.0_amd64.deb"
+ELA="elasticsearch-oss-6.5.4.deb"
+KIBANA="kibana-oss-6.5.4-amd64.deb"
+LOGSTASH="logstash-oss-6.5.4.deb"
+INFLUX="influxdb_1.7.3_amd64.deb"
+TELEGRAF="telegraf_1.9.2-1_amd64.deb"
+GRAFANA="grafana_5.4.3_amd64.deb"
+EVEBOX="evebox_0.10.1_amd64.deb"
+SCIRIUS="scirius_3.1.0-1_amd64.deb"
 
-# for deb
-SCIRIUS="scirius_1.2.8-1_amd64.deb"
-# for git
 SCIRIUS_PATH="/opt/scirius"
 SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
 
@@ -38,28 +36,20 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
 sysctl -p
 
+echo "Configuring DOCKER"
+docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
+
 echo "Provisioning REDIS"
 # no persistent storage, only use as mem cache
-docker run -dit --restart unless-stopped -p 127.0.0.1:6379:6379 redis
-
-#FILE=/etc/profile
-#grep "proxy" $FILE || cat >> $FILE <<EOF
-#http_proxy=$PROXY
-#https_proxy=$PROXY
-#export http_proxy
-#export https_proxy
-#EOF
-#source /etc/profile
+docker ps -a | grep redis || docker run -dit --name redis -h redis --restart unless-stopped -p 127.0.0.1:6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
 [[ -f $FILE ]] ||  echo 'Acquire::ForceIPv4 "true";' | sudo tee $FILE
 export DEBIAN_FRONTEND=noninteractive
 mkdir -p /vagrant/pkgs
 
-#cd /tmp && rm -f snoopy-install.sh && wget -O snoopy-install.sh https://github.com/a2o/snoopy/raw/install/doc/install/bin/snoopy-install.sh && chmod 755 snoopy-install.sh && ./snoopy-install.sh stable
-
 # basic software
-apt-get update > /dev/null && apt-get install -y curl htop vim tmux > /dev/null
+apt-get update > /dev/null && apt-get install -y curl htop vim tmux software-properties-common python3-software-properties jq python3 python3-pip > /dev/null
 
 # suricata
 install_suricata_from_ppa(){
@@ -69,20 +59,27 @@ install_suricata_from_ppa(){
 }
 echo "Provisioning SURICATA"
 suricata -V || install_suricata_from_ppa
+pip3 install --upgrade suricata-update
 
-[[ -f /etc/suricata/rules/scirius.rules ]] || touch /etc/suricata/rules/scirius.rules
+touch  /etc/suricata/threshold.config
+mkdir -p /var/lib/suricata/rules
+[[ -f /var/lib/suricata/rules/scirius.rules ]] || touch /etc/suricata/rules/scirius.rules
+[[ -f /var/lib/suricata/rules/suricata.rules ]] || touch /etc/suricata/rules/suricata.rules
+
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
+pgrep Suricata || [[ -f /var/run/suricata.pid ]] && rm /var/run/suricata.pid
 
-if $DEBUG ; then suricata -T || exit 1 ; fi
-touch  /etc/suricata/threshold.config
+echo "Configuring SURICATA"
 
+echo "Adding includes for SURICATA"
 FILE=/etc/suricata/suricata.yaml
 grep "cdmcs" $FILE || cat >> $FILE <<EOF
 include: /etc/suricata/cdmcs-detect.yaml
 include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
+echo "Adding detects for SURICATA"
 FILE=/etc/suricata/cdmcs-detect.yaml
 grep "CDMCS" $FILE || cat >> $FILE <<EOF
 %YAML 1.1
@@ -97,13 +94,15 @@ af-packet:
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
-default-rule-path: /etc/suricata/rules
+default-rule-path: /var/lib/suricata/rules
 rule-files:
- - scirius.rules
+ - suricata.rules
 sensor-name: CDMCS
 EOF
 
+echo "Adding outputs for SURICATA"
 FILE=/etc/suricata/cdmcs-logging.yaml
+
 grep "CDMCS" $FILE || cat >> $FILE <<EOF
 %YAML 1.1
 ---
@@ -128,29 +127,44 @@ outputs:
 
       types:
         - alert:
-            metadata: yes              # add L7/applayer fields, flowbit and other vars to the alert
+            payload: yes             # enable dumping payload in Base64
+            payload-buffer-size: 4kb # max size of payload buffer to output in eve-log
+            payload-printable: yes   # enable dumping payload in printable (lossy) format
+            packet: yes              # enable dumping of packet (without stream segments)
+            http-body: yes           # enable dumping of http body in Base64
+            http-body-printable: yes # enable dumping of http body in printable format
+            metadata: no             # enable inclusion of app layer metadata with alert. Default yes
             tagged-packets: yes
-            xff:
-              enabled: no
-              mode: extra-data
-              deployment: reverse
-              header: X-Forwarded-For
         - http:
             extended: yes     # enable this for extended logging information
         - dns:
-            query: yes     # enable logging of DNS queries
-            answer: yes    # enable logging of DNS answers
+            version: 2
         - tls:
             extended: yes     # enable this for extended logging information
         - files:
             force-magic: no   # force logging magic on all logged files
+        - drop:
+            alerts: yes      # log alerts that caused drops
         - smtp:
+            extended: yes # enable this for extended logging information
+        - dnp3
+        - nfs
+        - smb
+        - tftp
+        - ikev2
+        - krb5
+        - dhcp:
+            enabled: yes
+            extended: yes
         - ssh
         - stats:
             totals: yes       # stats for all threads merged together
-            threads: no       # per thread stats
-            deltas: no        # include delta values
+            threads: yes       # per thread stats
+            deltas: yes        # include delta values
+        # bi-directional flows
         - flow
+        # uni-directional flows
+        #- netflow
 EOF
 
 #if $DEBUG ; then suricata -T -vvv; fi
@@ -173,18 +187,16 @@ WantedBy=multi-user.target
 EOF
 check_service suricata
 
-# java
-install_oracle_java() {
-  echo "Installing oracle Java"
-  echo 'oracle-java8-installer shared/accepted-oracle-license-v1-1 boolean true' | debconf-set-selections \
-  && add-apt-repository ppa:webupd8team/java \
-  && apt-get update > /dev/null \
-  && apt-get -y install oracle-java8-installer > /dev/null
-}
+echo "Updating rules"
+suricata-update enable-source ptresearch/attackdetection
+suricata-update enable-source sslbl/ssl-fp-blacklist
+suricata-update enable-source oisf/trafficid
+suricata-update add-source cdmcs https://raw.githubusercontent.com/ccdcoe/CDMCS/2018/Suricata/vagrant/singlehost/local.rules
+suricata-update list-enabled-sources
+suricata-update
+suricatasc -c "reload-rules" || exit 1
+
 echo "Provisioning JAVA"
-# https://askubuntu.com/questions/966107/cant-install-oracle-java-8-in-ubuntu-16-04
-# java -version || install_oracle_java
-#apt-get update
 apt-get install -y openjdk-8-jre-headless
 
 # elastic
@@ -192,6 +204,9 @@ echo "Provisioning ELASTICSEARCH"
 cd $PKGDIR
 [[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
 dpkg -s elasticsearch || dpkg -i $ELA > /dev/null 2>&1
+
+sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
+sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
 
 check_service elasticsearch
 
@@ -252,6 +267,8 @@ curl -ss -XPUT localhost:9200/_template/suricata -d @/vagrant/elastic-default-te
 chown root:logstash /var/log/suricata/eve.json
 
 /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
+sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
+sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
 
 check_service logstash
 
@@ -317,7 +334,7 @@ dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
 systemctl stop grafana-server.service
 check_service grafana-server
 
-sleep 1
+sleep 5
 curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d '{
     "name": "telegraf",
     "type": "influxdb",
@@ -331,7 +348,7 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
 config_scirius(){
   cd /opt
   git clone https://github.com/StamusNetworks/scirius
-  cd scirius && git checkout tags/scirius-1.2.8
+  cd scirius && git checkout tags/scirius-3.1.0
 
   /usr/local/bin/virtualenv ./
   source $SCIRIUS_PATH/bin/activate
@@ -339,6 +356,14 @@ config_scirius(){
   pip install -r requirements.txt
   pip install --upgrade urllib3
   pip install gunicorn pyinotify python-daemon
+
+  npm install -g npm@latest webpack@3.11
+  npm install
+  cd hunt
+  npm install
+  npm run build
+  cd ..
+
   python manage.py syncdb  --noinput
   echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
   chown www-data db.sqlite3
@@ -373,11 +398,12 @@ echo "Provisioning SCIRIUS"
 cd $PKGDIR
 [[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
 
-apt-get install -y nginx python-pip dbconfig-common sqlite3 > /dev/null
+apt-get install -y nginx python-pip dbconfig-common sqlite3 npm > /dev/null
 pip install --upgrade pip virtualenv #urllib3 chardet
 
-grep 1 /var/log/vagrant-provisioned.log || config_scirius
+#grep 1 /var/log/vagrant-provisioned.log || config_scirius
 #dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
+#apt-get -f install -y
 
 FILE=/etc/systemd/system/scirius.service
 grep "scirius" $FILE || cat > $FILE <<EOF
@@ -396,47 +422,47 @@ Environment=PATH=$VIRTUAL_ENV/bin:$PATH
 [Install]
 WantedBy=multi-user.target
 EOF
-check_service scirius
+#check_service scirius
 
-systemctl stop nginx.service
-FILE=/etc/nginx/sites-available/scirius
-grep scirius $FILE || cat > $FILE <<'EOF'
-server {
-   listen 0.0.0.0:80;
-   access_log /var/log/nginx/scirius.access.log;
-   error_log /var/log/nginx/scirius.error.log;
-
-   #error_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=error;
-   #access_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=info main;
-
-   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
-   location /static/rules {
-       alias /opt/scirius/rules/static/rules/;
-       expires 30d;
-   }
-   location /static/js {
-       alias /opt/scirius/rules/static/js/;
-       expires 30d;
-   }
-   location /static/fonts {
-       alias /opt/scirius/rules/static/fonts/;
-       expires 30d;
-   }
-   location /static/django_tables2 {
-       alias /opt/scirius/lib/python2.7/site-packages/django_tables2/static/django_tables2/;
-       expires 30d;
-   }
-   location / {
-       proxy_pass http://unix:/tmp/scirius.sock:/;
-       proxy_read_timeout 600;
-       proxy_set_header Host $http_host;
-       proxy_redirect off;
-       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-   }
-}
-EOF
-[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
-[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
+#systemctl stop nginx.service
+#FILE=/etc/nginx/sites-available/scirius
+#grep scirius $FILE || cat > $FILE <<'EOF'
+#server {
+#   listen 0.0.0.0:80;
+#   access_log /var/log/nginx/scirius.access.log;
+#   error_log /var/log/nginx/scirius.error.log;
+#
+#   #error_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=error;
+#   #access_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=info main;
+#
+#   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
+#   location /static/rules {
+#       alias /opt/scirius/rules/static/rules/;
+#       expires 30d;
+#   }
+#   location /static/js {
+#       alias /opt/scirius/rules/static/js/;
+#       expires 30d;
+#   }
+#   location /static/fonts {
+#       alias /opt/scirius/rules/static/fonts/;
+#       expires 30d;
+#   }
+#   location /static/django_tables2 {
+#       alias /opt/scirius/lib/python2.7/site-packages/django_tables2/static/django_tables2/;
+#       expires 30d;
+#   }
+#   location / {
+#       proxy_pass http://unix:/tmp/scirius.sock:/;
+#       proxy_read_timeout 600;
+#       proxy_set_header Host $http_host;
+#       proxy_redirect off;
+#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#   }
+#}
+#EOF
+#[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
+#[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
 
 check_service nginx
 
@@ -508,4 +534,39 @@ echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
 while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
 
+sleep 5
+
 netstat -anutp
+curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": "now-1h",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "events": {
+      "terms": {
+        "field": "event_type.keyword",
+        "size": 20
+      }
+    },
+    "alertTop10": {
+      "terms": {
+        "field": "alert.signature.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+' | jq .
