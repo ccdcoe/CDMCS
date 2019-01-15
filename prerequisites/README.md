@@ -20,6 +20,7 @@ This page lists some simple commands, code snippets and questions that attendees
   * [Linux file system hierarchy](http://www.tldp.org/LDP/Linux-Filesystem-Hierarchy/html/)
   * [Vim](https://www.vim.org/) or [Nano](https://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/). First one is preferred and used by teachers.
   * ["Predictable" network interface naming](https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/)
+  * [tcpdump](https://www.tcpdump.org/manpages/tcpdump.1.html)
 
 ### Explain the following commands and scripts
 
