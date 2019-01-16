@@ -6,6 +6,7 @@ check_service(){
 }
 
 # params
+DOCKERIZE=true
 DEBUG=true
 PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
@@ -25,6 +26,11 @@ SCIRIUS="scirius_3.1.0-1_amd64.deb"
 SCIRIUS_PATH="/opt/scirius"
 SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
 
+DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4"
+DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.5.4"
+DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:6.5.4"
+DOCKER_EVEBOX="jasonish/evebox"
+
 start=$(date)
 
 # basic OS config
@@ -41,7 +47,7 @@ docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdm
 
 echo "Provisioning REDIS"
 # no persistent storage, only use as mem cache
-docker ps -a | grep redis || docker run -dit --name redis -h redis --restart unless-stopped -p 127.0.0.1:6379:6379 --log-driver syslog --log-opt tag="redis" redis
+docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 127.0.0.1:6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
 [[ -f $FILE ]] ||  echo 'Acquire::ForceIPv4 "true";' | sudo tee $FILE
@@ -196,43 +202,105 @@ suricata-update list-enabled-sources
 suricata-update
 suricatasc -c "reload-rules" || exit 1
 
-echo "Provisioning JAVA"
-apt-get install -y openjdk-8-jre-headless
+if [[ !$DOCKERIZE ]]; then
+  echo "Provisioning JAVA"
+  apt-get install -y openjdk-8-jre-headless
+fi
+
+if [[ $DOCKERIZE ]]; then 
+  sysctl -w vm.max_map_count=262144
+fi
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
-cd $PKGDIR
-[[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
-dpkg -s elasticsearch || dpkg -i $ELA > /dev/null 2>&1
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep elastic || docker run -dit --name elastic -h elastic --network cdmcs -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped -p 127.0.0.1:9200:9200 --log-driver syslog --log-opt tag="elastic" $DOCKER_ELA 
+else
+  cd $PKGDIR
+  [[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
+  dpkg -s elasticsearch || dpkg -i $ELA > /dev/null 2>&1
 
-sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
-sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
+  sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
+  sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
+fi
 
 check_service elasticsearch
+sleep 3
+
+curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/json' -d '
+{
+ "order" : 0,
+ "version" : 0,
+ "template" : "*",
+ "settings" : {
+   "index" : {
+     "refresh_interval" : "5s",
+     "number_of_shards" : 3,
+     "number_of_replicas" : 0
+   }
+ }, "mappings" : {
+    "_default_" : {
+      "dynamic_templates" : [ {
+        "message_field" : {
+          "path_match" : "message",
+          "match_mapping_type" : "string",
+          "mapping" : {
+            "type" : "text",
+            "norms" : false
+          }
+        }
+      }, {
+        "string_fields" : {
+          "match" : "*",
+          "match_mapping_type" : "string",
+          "mapping" : {
+            "type" : "text", "norms" : false,
+            "fields" : {
+              "keyword" : { "type": "keyword", "ignore_above": 256 }
+            }
+          }
+        }
+      } ],
+      "properties" : {
+        "@timestamp": { "type": "date"},
+        "@version": { "type": "keyword"},
+        "geoip"  : {
+          "dynamic": true,
+          "properties" : {
+            "ip": { "type": "ip" },
+            "location" : { "type" : "geo_point" },
+            "latitude" : { "type" : "half_float" },
+            "longitude" : { "type" : "half_float" }
+          }
+        }
+      }
+    }
+  }
+}
+'
 
 # kibana
 echo "Provisioning KIBANA"
-cd $PKGDIR
-[[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
-dpkg -s kibana || dpkg -i $KIBANA > /dev/null 2>&1
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep kibana || docker run -dit --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" --restart unless-stopped -p 5601:5601 --log-driver syslog --log-opt tag="kibana" $DOCKER_KIBANA
+else
+  cd $PKGDIR
+  [[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
+  dpkg -s kibana || dpkg -i $KIBANA > /dev/null 2>&1
 
-FILE=/etc/kibana/kibana.yml
-grep "provisioned" $FILE || cat >> $FILE <<EOF
+  FILE=/etc/kibana/kibana.yml
+  grep "provisioned" $FILE || cat >> $FILE <<EOF
 # provisioned
 server.host: "0.0.0.0"
 EOF
-
-check_service kibana
-
-# set up default index pattern
-sleep 5
+  check_service kibana
+fi
 
 # logstash
-echo "Provisioning LOGSTASH"
-cd $PKGDIR
-[[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
-dpkg -s logstash || dpkg -i $LOGSTASH > /dev/null 2>&1
+grep redis /etc/hosts || echo "127.0.0.1 redis" >> /etc/hosts
+grep elastic /etc/hosts || echo "127.0.0.1 elastic" >> /etc/hosts
 
+mkdir -p /etc/logstash/conf.d/
 FILE=/etc/logstash/conf.d/suricata.conf
 grep "CDMCS" $FILE || cat >> $FILE <<EOF
 input {
@@ -242,7 +310,7 @@ input {
   }
   redis {
     data_type => "list"
-    host => "127.0.0.1"
+    host => "redis"
     port => 6379
     key  => "suricata"
     tags => ["suricata", "CDMCS", "fromredis"]
@@ -258,19 +326,27 @@ filter {
 }
 output {
   elasticsearch {
-    hosts => ["localhost"]
+    hosts => ["elastic"]
     index => "suricata-%{+YYYY.MM.dd.hh}"
   }
 }
 EOF
-curl -ss -XPUT localhost:9200/_template/suricata -d @/vagrant/elastic-default-template.json -H'Content-Type: application/json'
-chown root:logstash /var/log/suricata/eve.json
 
-/usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
-sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
-sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
+echo "Provisioning LOGSTASH"
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep logstash || docker run -dit --name logstash -h logstash --network cdmcs -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped --log-driver syslog --log-opt tag="logstash" $DOCKER_LOGSTASH
+  sleep 5
+else
+  cd $PKGDIR
+  [[ -f $LOGSTASH ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/logstash/$LOGSTASH -O $LOGSTASH
+  dpkg -s logstash || dpkg -i $LOGSTASH > /dev/null 2>&1
+  chown root:logstash /var/log/suricata/eve.json
+  /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/suricata.conf -t || exit 1
+  sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
+  sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
 
-check_service logstash
+  check_service logstash
+fi
 
 echo "Provisioning RSYSLOG"
 add-apt-repository ppa:adiscon/v8-stable
@@ -364,7 +440,7 @@ config_scirius(){
   npm run build
   cd ..
 
-  python manage.py syncdb  --noinput
+  python manage.py migrate  --noinput
   echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
   chown www-data db.sqlite3
   chown -R www-data $SCIRIUS_PATH
@@ -463,26 +539,29 @@ EOF
 #EOF
 #[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
 #[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
-
-check_service nginx
+#check_service nginx
 
 # evebox
 echo "Provisioning EVEBOX"
-cd $PKGDIR
-[[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O $EVEBOX
-dpkg -i $EVEBOX > /dev/null 2>&1
-grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
-systemctl stop evebox.service
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep evebox || docker run -dit --name evebox -h evebox --network cdmcs --restart unless-stopped -p 5636:5636 --log-driver syslog --log-opt tag="evebox" $DOCKER_EVEBOX -e http://elastic:9200 --index suricata --elasticsearch-keyword keyword
+else
+  cd $PKGDIR
+  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O $EVEBOX
+  dpkg -i $EVEBOX > /dev/null 2>&1
+  grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
+  systemctl stop evebox.service
 
-FILE=/etc/default/evebox
-grep "CDMCS" $FILE || cat > $FILE <<'EOF'
+  FILE=/etc/default/evebox
+  grep "CDMCS" $FILE || cat > $FILE <<'EOF'
 # CDMCS
 #CONFIG="-c /etc/evebox/evebox.yaml"
 ELASTICSEARCH_URL="-e http://localhost:9200"
 EVEBOX_OPTS="--index suricata"
 EOF
 
-check_service evebox
+  check_service evebox
+fi
 
 # telegraf
 echo "Provisioning TELEGRAF"
