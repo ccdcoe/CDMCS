@@ -435,9 +435,9 @@ fi
 
 # grafana
 echo "Provisioning GRAFANA"
-mkdir -p /etc/grafana/provisioning/
+mkdir -p /etc/grafana/provisioning/dashboards/
 
-FILE=/etc/grafana/provisioning/dashboards.yml
+FILE=/etc/grafana/provisioning/dashboards/cdmcs.yml
 [[ -f $FILE ]] || cat > $FILE <<EOF
 apiVersion: 1
 
@@ -449,7 +449,7 @@ providers:
   disableDeletion: false
   updateIntervalSeconds: 10
   options:
-    path: /vagrant/grafana-provisioning/
+    path: /vagrant/grafana-provision/
 EOF
 
 if [ $DOCKERIZE = true ]; then
