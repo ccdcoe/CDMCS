@@ -6,7 +6,7 @@ check_service(){
 }
 
 # params
-DOCKERIZE=false
+DOCKERIZE=true
 DEBUG=true
 PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
@@ -435,20 +435,40 @@ fi
 
 # grafana
 echo "Provisioning GRAFANA"
+mkdir -p /etc/grafana/provisioning/
+
+FILE=/etc/grafana/provisioning/dashboards.yml
+[[ -f $FILE ]] || cat > $FILE <<EOF
+apiVersion: 1
+
+providers:
+- name: 'cdmcs'
+  orgId: 1
+  folder: ''
+  type: file
+  disableDeletion: false
+  updateIntervalSeconds: 10
+  options:
+    path: /vagrant/grafana-provisioning/
+EOF
+
 if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
+  docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 -v /etc/grafana/provisioning:/etc/grafana/provisioning -v /vagrant:/vagrant --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
 else
   cd $PKGDIR
   [[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
   apt-get -y install libfontconfig > /dev/null 2>&1
   dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
+
+  sed -i "s/;provisioning = conf\/provisioning/provisioning = \/etc/\/grafana\/provisioning/g" /etc/grafana/grafana.ini 
   systemctl stop grafana-server.service
+
   check_service grafana-server
 fi
 
 sleep 10
 echo "configuring grafana data sources"
-curl -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d "{
+curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d "{
     \"name\": \"telegraf\",
     \"type\": \"influxdb\",
     \"access\": \"proxy\",

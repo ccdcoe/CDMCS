@@ -1,7 +1,0 @@
-{
-  "type": "index-pattern",
-  "index-pattern": {
-    "title": "suricata-*",
-    "timeFieldName": "timestamp"
-  }
-}
