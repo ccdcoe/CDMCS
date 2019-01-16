@@ -6,7 +6,7 @@ check_service(){
 }
 
 # params
-DOCKERIZE=true
+DOCKERIZE=false
 DEBUG=true
 PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
@@ -30,6 +30,8 @@ DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.5.4"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:6.5.4"
 DOCKER_EVEBOX="jasonish/evebox"
+DOCKER_INFLUXDB="influxdb"
+DOCKER_GRAFANA="grafana/grafana"
 
 start=$(date)
 
@@ -72,6 +74,30 @@ mkdir -p /var/lib/suricata/rules
 [[ -f /var/lib/suricata/rules/scirius.rules ]] || touch /etc/suricata/rules/scirius.rules
 [[ -f /var/lib/suricata/rules/suricata.rules ]] || touch /etc/suricata/rules/suricata.rules
 
+FILE=/var/lib/suricata/rules/custom.rules
+[[ -f $FILE ]] || cat > $FILE <<EOF
+alert http \$HOME_NET any -> \$EXTERNAL_NET any (msg:"CDMCS: External Windows executable download"; flow:established,to_server; content:"GET "; uricontent:".exe"; nocase; classtype:policy-violation; sid:3000001; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;) alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
+alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
+alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000004; rev:1;)
+EOF
+
+FILE=/var/lib/suricata/rules/self-signed-cert.lua
+[[ -f $FILE ]] || cat > $FILE <<EOF
+function init (args)
+    local needs = {}
+    needs["tls"] = tostring(true)
+    return needs
+end
+function match(args)
+    version, subject, issuer, fingerprint = TlsGetCertInfo();
+    if subject == issuer then
+        return 1
+    else
+        return 0
+    end
+end
+EOF
+
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 pgrep Suricata || [[ -f /var/run/suricata.pid ]] && rm /var/run/suricata.pid
@@ -102,7 +128,8 @@ af-packet:
     defrag: yes
 default-rule-path: /var/lib/suricata/rules
 rule-files:
- - suricata.rules
+ -  suricata.rules
+ -  custom.rules
 sensor-name: CDMCS
 EOF
 
@@ -118,6 +145,8 @@ outputs:
       enabled: yes
       filename: fast.log
       append: yes
+  - tls-store:
+      enabled: yes
   - eve-log:
       enabled: 'yes'
       filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
@@ -197,7 +226,7 @@ echo "Updating rules"
 suricata-update enable-source ptresearch/attackdetection
 suricata-update enable-source sslbl/ssl-fp-blacklist
 suricata-update enable-source oisf/trafficid
-suricata-update add-source cdmcs https://raw.githubusercontent.com/ccdcoe/CDMCS/2018/Suricata/vagrant/singlehost/local.rules
+#suricata-update add-source cdmcs https://raw.githubusercontent.com/ccdcoe/CDMCS/2018/Suricata/vagrant/singlehost/local.rules
 suricata-update list-enabled-sources
 suricata-update
 suricatasc -c "reload-rules" || exit 1
@@ -222,9 +251,9 @@ else
 
   sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
   sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
+  check_service elasticsearch
 fi
 
-check_service elasticsearch
 sleep 3
 
 curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/json' -d '
@@ -395,30 +424,39 @@ check_service rsyslogd
 
 # influx
 echo "Provisioning INFLUXDB"
-cd $PKGDIR
-[[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
-dpkg -s influxdb || dpkg -i $INFLUX > /dev/null 2>&1
-systemctl stop influxdb.service
-check_service influxdb
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep influx || docker run -dit --name influx -h influx --network cdmcs --restart unless-stopped -p 8086:8086 --log-driver syslog --log-opt tag="influx" $DOCKER_INFLUXDB
+else
+  cd $PKGDIR
+  [[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
+  dpkg -s influxdb || dpkg -i $INFLUX > /dev/null 2>&1
+  systemctl stop influxdb.service
+  check_service influxdb
+fi
 
 # grafana
 echo "Provisioning GRAFANA"
-cd $PKGDIR
-[[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
-apt-get -y install libfontconfig > /dev/null 2>&1
-dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
-systemctl stop grafana-server.service
-check_service grafana-server
+if [[ $DOCKERIZE ]]; then
+  docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
+else
+  cd $PKGDIR
+  [[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
+  apt-get -y install libfontconfig > /dev/null 2>&1
+  dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
+  systemctl stop grafana-server.service
+  check_service grafana-server
+fi
 
-sleep 5
-curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d '{
-    "name": "telegraf",
-    "type": "influxdb",
-    "access": "proxy",
-    "url": "http://localhost:8086",
-    "database": "telegraf",
-    "isDefault": true
-}'
+sleep 10
+echo "configuring grafana data sources"
+curl -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type: application/json" -d "{
+    \"name\": \"telegraf\",
+    \"type\": \"influxdb\",
+    \"access\": \"proxy\",
+    \"url\": \"http://$EXPOSE:8086\",
+    \"database\": \"telegraf\",
+    \"isDefault\": true
+}"
 
 # scirius
 config_scirius(){
@@ -607,11 +645,24 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.system]]
 EOF
 
+grep "suricata-command" /etc/crontab || echo "* *     * * *   root    chgrp telegraf /var/run/suricata/suricata-command.socket > /dev/null 2>&1" >> /etc/crontab
+
+chgrp telegraf /var/run/suricata/suricata-command.socket
+FILE=/etc/telegraf/telegraf.d/suricata.conf
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[[inputs.exec]]
+  commands = [ "suricatasc -c 'dump-counters'" ]
+  timeout = "5s"
+  name_suffix = "_suricata"
+  data_format = "json"
+EOF
+
 check_service telegraf
 
 echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
 while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
+while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep 5 ; done &
 
 sleep 5
 
