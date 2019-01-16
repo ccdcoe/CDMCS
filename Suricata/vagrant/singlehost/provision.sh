@@ -48,7 +48,6 @@ echo "Configuring DOCKER"
 docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
 
 echo "Provisioning REDIS"
-# no persistent storage, only use as mem cache
 docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 127.0.0.1:6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
@@ -231,18 +230,18 @@ suricata-update list-enabled-sources
 suricata-update
 suricatasc -c "reload-rules" || exit 1
 
-if [[ !$DOCKERIZE ]]; then
+if [ $DOCKERIZE = false ]; then
   echo "Provisioning JAVA"
   apt-get install -y openjdk-8-jre-headless
 fi
 
-if [[ $DOCKERIZE ]]; then 
+if [ $DOCKERIZE = true ]; then 
   sysctl -w vm.max_map_count=262144
 fi
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep elastic || docker run -dit --name elastic -h elastic --network cdmcs -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped -p 127.0.0.1:9200:9200 --log-driver syslog --log-opt tag="elastic" $DOCKER_ELA 
 else
   cd $PKGDIR
@@ -310,7 +309,7 @@ curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/js
 
 # kibana
 echo "Provisioning KIBANA"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep kibana || docker run -dit --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" --restart unless-stopped -p 5601:5601 --log-driver syslog --log-opt tag="kibana" $DOCKER_KIBANA
 else
   cd $PKGDIR
@@ -362,7 +361,7 @@ output {
 EOF
 
 echo "Provisioning LOGSTASH"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep logstash || docker run -dit --name logstash -h logstash --network cdmcs -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped --log-driver syslog --log-opt tag="logstash" $DOCKER_LOGSTASH
   sleep 5
 else
@@ -424,7 +423,7 @@ check_service rsyslogd
 
 # influx
 echo "Provisioning INFLUXDB"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep influx || docker run -dit --name influx -h influx --network cdmcs --restart unless-stopped -p 8086:8086 --log-driver syslog --log-opt tag="influx" $DOCKER_INFLUXDB
 else
   cd $PKGDIR
@@ -436,7 +435,7 @@ fi
 
 # grafana
 echo "Provisioning GRAFANA"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
 else
   cd $PKGDIR
@@ -581,7 +580,7 @@ EOF
 
 # evebox
 echo "Provisioning EVEBOX"
-if [[ $DOCKERIZE ]]; then
+if [ $DOCKERIZE = true ]; then
   docker ps -a | grep evebox || docker run -dit --name evebox -h evebox --network cdmcs --restart unless-stopped -p 5636:5636 --log-driver syslog --log-opt tag="evebox" $DOCKER_EVEBOX -e http://elastic:9200 --index suricata --elasticsearch-keyword keyword
 else
   cd $PKGDIR
