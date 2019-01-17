@@ -12,9 +12,9 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 0 :: Intro:: Feb 11 2019, starts at 13:00
 
  * 13:00 - 14:45
-   * [Intro](/common/day_intro.md)
+   * [Intro](day_intro.md)
    * [what is Suricata](/Suricata/suricata/README.md)
-   * [vagrant](/common/vagrant.intro.md)
+   * [vagrant](/common/vagrant.intro.md), [docker](/common/docker.intro.md)
    * [singlehost](/Suricata/vagrant/singlehost/)
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/rules.intro.md)
