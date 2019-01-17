@@ -124,3 +124,39 @@ See following examples on how to create more complex multi-vm environments:
   * [Suricata two host setup with salt master](/Suricata/vagrant/multihost/Vagrantfile)
 
 Note that individual boxes can be programmed explicitly or created by looping over a data structure. Vagrant is a ruby library after all, so use scripting power as needed.
+
+## Vagrant file server
+
+By default the local working directory is mapped to `/vagrant` inside the VM. Thus, files can be shared between host and guest, or between guests in multi-vm environment. But any folder can be mapped.
+
+```
+  box.vm.synced_folder "../", "/srv/uponelevel", disabled: false
+```
+
+Several sync drivers are supported, such as virtualbox guest additions, rsync or NFS. Note that some base boxes do not have virtualbox additions installed, sometimes due to licencing issues. Rsync simple copies files between host and guest and does not keep them up to date in real time. NFS requires server to be installed on host. Furthermore, vagrant user must have permissions to modify `/etc/exports` file.
+
+## Alternative providers
+
+Virtualbox is the default hypervisor used by Vagrant. However, alternative hypervisors can be used, such as hyper-v, libvirt, or even cloud providers like azure. Configuring things like CPU core count and memory amount is usually provider specific and has to be defined as such in the same file.
+
+```
+Vagrant.configure("2") do |config|
+  config.vm.box = "generic/ubuntu1604"
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--cpus", "2"]
+  end
+  config.vm.provider "libvirt" do |v|
+    v.memory = 4096
+    v.cpus = 2
+    v.machine_type = "q35"
+  end
+end
+```
+
+Different providers may have different features and operate differently. For example, libvirt provider allows alternative virtual hardware customization options and starts up multi-vm environments asynchronously. However, it is not packaged with Vagrant and should be installed as plugin and updated manually.
+
+```
+vagrant up --provider virtualbox
+vagrant up --provider libvirt
+```
