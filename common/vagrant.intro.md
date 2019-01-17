@@ -13,7 +13,17 @@
 
 * https://www.vagrantup.com/downloads.html
 
-### Getting started
+Please install the latest version from vagrant providers. Package from debian/ubuntu package repos will be out of date and bad things may happen.
+
+```
+VAGRANT='<LATEST>'
+WGET_OPTS='-q -4'
+
+wget $WGET_OPTS https://releases.hashicorp.com/vagrant/$VAGRANT/vagrant_$VAGRANT_x86_64.deb 
+dpkg -i vagrant_$VAGRANT_x86_64.deb
+```
+
+## Getting started
 
 * https://www.vagrantup.com/docs/getting-started/
 * [prepare](https://www.vagrantup.com/docs/getting-started/project_setup.html)
@@ -22,29 +32,45 @@
 * [automated provisioning](https://www.vagrantup.com/docs/getting-started/provisioning.html)
 * [boxes](https://www.vagrantup.com/docs/getting-started/boxes.html)
 
-## Basic usage
-
-### install vagrant
+Vagrant is a ruby wrapper/library which allows virtual machines to be automatically deployed for development. Deployment parameters would be stored in local `Vagrantfile`. Provisioning scripts and configuration management tools can be invoked upon first `vagrant up` or subsequent `vagrant provision` commands to automatically deploy and configure software inside the virtual machine.
 
 ```
-apt-get install virtualbox
+$SHELL = <<SCRIPT
+apt-get update && apt-get install -y git htop vim build-essential
+SCRIPT
 
-VAGRANT='2.0.2'
-WGET_OPTS='-q -4'
-
-wget $WGET_OPTS https://releases.hashicorp.com/vagrant/$VAGRANT/vagrant_$VAGRANT_x86_64.deb 
-dpkg -i vagrant_$VAGRANT_x86_64.deb
+Vagrant.configure(2) do |config|
+  config.vm.define 'CDMCS' do |box|
+    box.vm.box = "ubuntu/bionic64"
+    box.vm.hostname = 'CDMCS'
+    box.vm.network :private_network, ip: "192.168.10.11"
+    box.vm.synced_folder ".", "/vagrant", disabled: false
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", "2"]
+    end
+    config.vm.provision "shell", inline: $SHELL
+  end
+end
 ```
 
-### init first vm
+This example configures a single Ubuntu 18.04 virtual machine with 2GB ram, 2 CPU cores and sandboxed static network address `192.168.10.11`. Inline script will automatically install whatever packages the user needs.
+
+## init first vm
+
+Most vagrant commands rely upon local `Vagrantfile`. A minimal environment can be created using `vagrant init` command with desired base image as final argument. That box can be a custom image from local system, or alternatively a public box can be pulled from repository.
+
 ```
 cd $HOME
 mkdir vagrant_getting_started
 cd vagrant_getting_started
-vagrant init ubuntu/xenial64
+vagrant init ubuntu/bionic64
 ```
 
-### run vm
+## run vm
+
+Following commands will check if local vagrant machines are running and then start any stopped machine.
+
 ```
 vagrant status
 vagrant up
@@ -58,14 +84,17 @@ It is possible to SSH into virtual machines by using vagrant wrapper commands.
 vagrant ssh
 ```
 
-Prior command is roughly equvelant to this regular openssh-client command.
+Note that vagrant is meant for development and thus SSH access must be preconfigured from box provider. SSH keys are packaged into the box itself. System is designed for ease of use not security. Prior command is roughly equvelant to this regular openssh-client command.
+
 ```
 ssh -i .vagrant/machines/bridge/virtualbox/private_key vagrant@192.168.13.254
 ```
 
-### start over
+Common practice is to create a regular user `vagrant` with password `vagrant`. That user has passwordless sudo privilege to the system. But actual user name and default password is up to box author.
 
-Sometimes you will mess up your box while developing and it is going to be easier to destroy everyting and start from scratch. Do not be afraid of doing that, this is why Vagrant was created in the first place.
+## start over
+
+Sometimes you will mess up your box while developing and it is going to be easier to destroy everything and start from scratch. Do not be afraid of doing that, this is why Vagrant was created in the first place. Just make sure you update any deployment scripts with any progress you do not wish to lose.
 
 ```
 vagrant destroy
@@ -73,7 +102,13 @@ vagrant status
 vagrant up
 ```
 
-### see all vms
+A non-interactive alias to make this process faster would look like this.
+
+```
+alias whatever='vagrant destroy -f && vagrant up'
+```
+
+## see all vms
 
 You have to be located in the folder where Vagrant environment was initiated. However, it is possible to find all initiated vagrant environments regardless where you are located in file system.
 
@@ -81,3 +116,11 @@ You have to be located in the folder where Vagrant environment was initiated. Ho
 vagrant global-status
 ```
 
+## multi-vm environment
+
+See following examples on how to create more complex multi-vm environments:
+
+  * [Moloch two host setup with salt master](/Moloch/vagrant/multihost/Vagrantfile)
+  * [Suricata two host setup with salt master](/Suricata/vagrant/multihost/Vagrantfile)
+
+Note that individual boxes can be programmed explicitly or created by looping over a data structure. Vagrant is a ruby library after all, so use scripting power as needed.

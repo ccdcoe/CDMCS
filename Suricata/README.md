@@ -14,11 +14,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 13:00 - 14:45
    * [Intro](day_intro.md)
    * [what is Suricata](/Suricata/suricata/README.md)
-   * [vagrant](/common/vagrant.intro.md), [docker](/common/docker.intro.md)
+   * [vagrant](/common/vagrant.intro.md), [docker](/common/docker.md)
    * [singlehost](/Suricata/vagrant/singlehost/)
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/rules.intro.md)
-   * [intro to dashboarding]()
 
 ## Day 1 :: Single Box :: Feb 12 2019
 
