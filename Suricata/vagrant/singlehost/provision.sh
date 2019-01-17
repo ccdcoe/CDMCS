@@ -6,7 +6,7 @@ check_service(){
 }
 
 # params
-DOCKERIZE=true
+DOCKERIZE=false
 DEBUG=true
 PROXY=http://192.168.10.1:3128
 EXPOSE=192.168.10.11
@@ -98,6 +98,48 @@ function match(args)
 end
 EOF
 
+mkdir -p /var/lib/suricata/scripts
+FILE=/var/lib/suricata/scripts/new-observed-tls.lua
+[[ -f $FILE ]] || cat > $FILE <<EOF
+function init (args)
+    local needs = {}
+    needs["protocol"] = "tls"
+    return needs
+end
+function setup (args)
+    name = "tls.log"
+    filename = SCLogPath() .. "/" .. name
+    file = assert(io.open(filename, "a"))
+    seen = {}
+end
+function log(args)
+    version, subject, issuer, fingerprint = TlsGetCertInfo()
+    serial = TlsGetCertSerial()
+    if version == nil then
+        version = "<nil>"
+    end
+    if subject == nil then
+        subject = "<nil>"
+    end
+    if issuer == nil then
+        issuer = "<nil>"
+    end
+    if fingerprint == nil then
+        fingerprint = "<nil>"
+    end
+    if fingerprint ~= nil then
+        if seen[fingerprint] == nil then
+            file:write(version .. "|" .. subject .. "|" .. issuer .. "|" .. fingerprint .. "|" .. serial .. "\n");
+            file:flush();
+            seen[fingerprint] = true
+        end
+    end
+end
+function deinit (args)
+    file:close(file)
+end
+EOF
+
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 pgrep Suricata || [[ -f /var/run/suricata.pid ]] && rm /var/run/suricata.pid
@@ -147,6 +189,11 @@ outputs:
       append: yes
   - tls-store:
       enabled: yes
+  - lua:
+      enabled: yes
+      scripts-dir: /var/lib/suricata/scripts/
+      scripts:
+        - new-observed-tls.lua
   - eve-log:
       enabled: 'yes'
       filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
@@ -159,7 +206,6 @@ outputs:
         pipelining:
           enabled: yes ## set enable to yes to enable query pipelining
           batch-size: 10 ## number of entry to keep in buffer
-
       types:
         - alert:
             payload: yes             # enable dumping payload in Base64
@@ -346,9 +392,7 @@ input {
   }
 }
 filter {
-  json {
-    source => "message"
-  }
+  json { source => "message" }
   if 'syslog' not in [tags] {
     mutate { remove_field => [ "message", "Hostname" ] }
   }
@@ -386,7 +430,6 @@ grep "CDMCS" $FILE || cat >> $FILE <<'EOF'
 # CDMCS
 module(load="omelasticsearch")
 module(load="mmjsonparse")
-
 template(name="suricata-index" type="list") {
     constant(value="suricata-")
     property(name="timereported" dateFormat="rfc3339" position.from="1" position.to="4")
@@ -397,15 +440,11 @@ template(name="suricata-index" type="list") {
     constant(value=".")
     property(name="timereported" dateFormat="rfc3339" position.from="12" position.to="13")
 }
-
 template(name="JSON" type="list") {
     property(name="$!all-json")
 }
-
 if $syslogtag contains 'suricata' and $msg startswith ' @cee:' then {
-
   action(type="mmjsonparse")
-
   if $parsesuccess == "OK" then action(
     type="omelasticsearch"
     template="JSON"
@@ -414,7 +453,6 @@ if $syslogtag contains 'suricata' and $msg startswith ' @cee:' then {
     searchIndex="suricata-index"
     dynSearchIndex="on"
   )
-
 }
 EOF
 
@@ -632,7 +670,6 @@ FILE=/etc/telegraf/telegraf.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [global_tags]
   year = "2018"
-
 [agent]
   hostname = "CDMCS"
   omit_hostname = false
@@ -645,11 +682,9 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
   flush_jitter = "10s"
   debug = false
   quiet = true
-
 [[outputs.influxdb]]
   database  = "telegraf"
   urls  = ["http://localhost:8086"]
-
 [[inputs.cpu]]
   percpu = true
   totalcpu = true
