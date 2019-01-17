@@ -135,3 +135,22 @@ Note that docker-compose will automatically handle this common network unless ex
 ## Persistence
 
 Docker file system is volatile and should only be used to store application code, dependencies, and critical system tools and libraries. No data should be stored there unless it is for testing or development! Furthermore, Docker file system layers can degrade the performance of IO intensive application.
+
+A simple solution would be to map a local file system folder as docker volume with `-v` flag.
+
+```
+docker run -it -d -v /home/user/appdata:/usr/share/elasticsearch/data -p 127.0.0.1:9200:9200 $DOCKER_ELA 
+```
+
+Note that *UID* inside the container must have write permissions to the host folder, otherwise the app will fail. It is possible to also remap the UID via docker command line flags, but a proper way to handle this is to create a dedicated volume.
+
+```
+docker volume create myvol
+docker run -it -d -v myvol:/usr/share/elasticsearch/data -p 127.0.0.1:9200:9200 $DOCKER_ELA 
+```
+
+Note that this volume is not using docker virtual filesystems and is actually kept separate on host filesystem (unless using alternative drivers). Verify the data by looking into docker data dir.
+
+```
+ls -lah /var/lib/docker/volumes/
+```
