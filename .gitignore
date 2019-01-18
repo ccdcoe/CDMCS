@@ -58,3 +58,6 @@ Suricata/docker/dalton/dalton/
 Suricata/vagrant/multihost/states/top.sls
 Suricata/vagrant/multihost/states/test.sls
 Suricata/vagrant/multihost/pillar
+
+.venv/*
+venv/*

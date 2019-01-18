@@ -29,6 +29,9 @@ DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:6.5.4"
 DOCKER_EVEBOX="jasonish/evebox"
 DOCKER_INFLUXDB="influxdb"
 DOCKER_GRAFANA="grafana/grafana"
+DOCKER_MONGO="mongo:latest"
+DOCKER_ALERTA_API="markuskont/alerta-api:latest"
+DOCKER_ALERTA_PROXY="markuskont/alerta-proxy:latest"
 
 start=$(date)
 
@@ -54,6 +57,8 @@ mkdir -p /vagrant/pkgs
 
 # basic software
 apt-get update > /dev/null && apt-get install -y curl htop vim tmux software-properties-common python3-software-properties jq python3 python3-pip > /dev/null
+
+su vagrant -c bash -c "pip3 install --user elasticsearch redis"
 
 # suricata
 install_suricata_from_ppa(){
@@ -277,6 +282,7 @@ suricata-update enable-source oisf/trafficid
 #suricata-update add-source cdmcs https://raw.githubusercontent.com/ccdcoe/CDMCS/2018/Suricata/vagrant/singlehost/local.rules
 suricata-update list-enabled-sources
 suricata-update
+sleep 3
 suricatasc -c "reload-rules" || exit 1
 
 if [ $DOCKERIZE = false ]; then
@@ -435,6 +441,44 @@ output {
     manage_template => false
   }
 }
+EOF
+
+FILE=/var/lib/suricata/scripts/alert2alerta.py
+[[ -f $FILE ]] || cat > $FILE <<EOF
+#!/usr/bin/env python3
+
+import json
+import requests
+import sys
+
+line = sys.stdin.readline()
+data = json.loads(line)
+
+assets = { "192.168.10.11": "singlehost" }
+
+if data["src_ip"] in assets:
+    resource = data["src_ip"]
+elif data["dest_ip"] in assets:
+    resource = data["dest_ip"]
+else:
+    resource = data["dest_ip"]
+
+headers = { "Content-Type": "application/json" }
+alert = {
+        "environment": "Production",
+        "event": data["alert"]["signature"],
+        "resource": resource,
+        "text": "Alert from {} to {} for {}".format(data["src_ip"], data["dest_ip"], data["alert"]["signature"]),
+        "service": [resource],
+        "severity": "major",
+        "value": data["alert"]["severity"],
+        "timeout": 60,
+        }
+
+url = "http://192.168.10.11:8080/api/alert"
+
+resp = requests.post(url, data=json.dumps(alert), headers=headers)
+print(resp.json())
 EOF
 
 if [ $DOCKERIZE = true ]; then
@@ -779,6 +823,13 @@ FILE=/etc/telegraf/telegraf.d/suricata.conf
 EOF
 
 check_service telegraf
+
+echo "Provisioning ALERTA"
+docker volume ls | grep alerta || docker volume create alerta
+docker ps -a | grep alerta-mongo || docker run -dit --name alerta-mongo -h alerta-mongo --network cdmcs --restart unless-stopped --log-driver syslog --log-opt tag="alerta-mongo" $DOCKER_MONGO
+sleep 1
+docker ps -a | grep alerta-api || docker run -dit --name alerta-api -h alerta-api --network cdmcs --restart unless-stopped -v alerta:/var/alerta/run -e "DATABASE_URL=mongodb://alerta-mongo:27017/alerts" --log-driver syslog --log-opt tag="alerta-api" $DOCKER_ALERTA_API
+docker ps -a | grep alerta-proxy || docker run -dit --name alerta-proxy -h alerta-proxy --network cdmcs --restart unless-stopped -v alerta:/var/alerta/run -p 8080:80 --log-driver syslog --log-opt tag="alerta-proxy" $DOCKER_ALERTA_PROXY
 
 echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
