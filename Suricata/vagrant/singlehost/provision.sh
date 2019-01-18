@@ -554,8 +554,8 @@ export SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
 config_scirius(){
   SCIRIUS_PATH=$1
   SCIRIUS_CONF=$2
-  WGET_PARAMS=$3
-  EXPOSE=$4
+  EXPOSE=$3
+  echo "$SCIRIUS_PATH | $SCIRIUS_CONF | $EXPOSE"
 
   cd $SCIRIUS_PATH && git checkout tags/scirius-3.1.0
 
@@ -567,14 +567,15 @@ config_scirius(){
   pip install gunicorn pyinotify python-daemon
 
   NODE_VERSION="v10.15.0"
-  wget $WGET_PARAMS https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
+  wget -4 -q https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
   tar -xJf node-$NODE_VERSION-linux-x64.tar.xz 
   NPM=node-$NODE_VERSION-linux-x64/bin/npm
   mkdir ~/.npm-global
-  npm config set prefix '~/.npm-global'
   grep 'npm-global' ~/.profile || echo 'export PATH=~/.npm-global/bin:$PATH' > ~/.profile
   grep $NODE_VERSION ~/.profile || echo "export PATH=$SCIRIUS_PATH/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
   source ~/.profile
+
+  npm config set prefix '~/.npm-global'
 
   npm install -g npm@latest webpack@3.11
   npm install
@@ -586,6 +587,7 @@ config_scirius(){
   python manage.py migrate  --noinput
   echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
   #chown www-data db.sqlite3
+  /home/vagrant/.npm-global/bin/webpack
 
   echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"'  >> $SCIRIUS_CONF
@@ -596,7 +598,7 @@ config_scirius(){
   echo 'SURICATA_NAME_IS_HOSTNAME = True'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_HOSTNAME = "host"' >> $SCIRIUS_CONF
   echo 'USE_KIBANA = True' >> $SCIRIUS_CONF
-  echo "KIBANA_URL = \"$EXPOSE:5601\"" >> $SCIRIUS_CONF
+  echo "KIBANA_URL = \"http://$EXPOSE:5601\"" >> $SCIRIUS_CONF
   echo 'KIBANA_INDEX = ".kibana"' >> $SCIRIUS_CONF
   echo "USE_EVEBOX = True" >> $SCIRIUS_CONF
   echo "EVEBOX_ADDRESS = \"$EXPOSE:5636\"" >> $SCIRIUS_CONF
@@ -624,7 +626,7 @@ chown -R vagrant $SCIRIUS_PATH
 chown vagrant /var/lib/suricata/rules
 
 export -f config_scirius
-grep 1 /home/vagrant/scirius.log || su vagrant -c "bash -c \"echo $SCIRIUS_PATH; config_scirius $SCIRIUS_PATH $SCIRIUS_CONF $WGET_PARAMS $EXPOSE\""
+grep 1 /home/vagrant/scirius.log || su vagrant -c " bash -c \"config_scirius \"$SCIRIUS_PATH\" \"$SCIRIUS_CONF\" \"$EXPOSE\"\" "
 chown -R www-data $SCIRIUS_PATH
 
 #dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
@@ -665,6 +667,18 @@ server {
        alias /opt/scirius/rules/static/rules/;
        expires 30d;
    }
+   location /static/bundles/{
+       alias /opt/scirius/rules/static/bundles/;
+       expires 30d;
+   }
+   location /static/textures/{
+       alias /opt/scirius/rules/static/bundles/;
+       expires 30d;
+   }
+   location /static/dist {
+       alias /opt/scirius/rules/static/dist/;
+       expires 30d;
+   }
    location /static/js {
        alias /opt/scirius/rules/static/js/;
        expires 30d;
@@ -696,7 +710,7 @@ if [ $DOCKERIZE = true ]; then
   docker ps -a | grep evebox || docker run -dit --name evebox -h evebox --network cdmcs --restart unless-stopped -p 5636:5636 --log-driver syslog --log-opt tag="evebox" $DOCKER_EVEBOX -e http://elastic:9200 --index suricata --elasticsearch-keyword keyword
 else
   cd $PKGDIR
-  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O --index suricata --elasticsearch-keyword keyword
+  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O 
   dpkg -i $EVEBOX > /dev/null 2>&1
   grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
   systemctl stop evebox.service
@@ -704,9 +718,8 @@ else
   FILE=/etc/default/evebox
   grep "CDMCS" $FILE || cat > $FILE <<'EOF'
 # CDMCS
-#CONFIG="-c /etc/evebox/evebox.yaml"
 ELASTICSEARCH_URL="-e http://localhost:9200"
-EVEBOX_OPTS=$EVEBOX_OPTS
+EVEBOX_OPTS="--index suricata --elasticsearch-keyword keyword"
 EOF
 
   check_service evebox
