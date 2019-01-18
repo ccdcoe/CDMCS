@@ -23,9 +23,6 @@ GRAFANA="grafana_5.4.3_amd64.deb"
 EVEBOX="evebox_0.10.1_amd64.deb"
 SCIRIUS="scirius_3.1.0-1_amd64.deb"
 
-SCIRIUS_PATH="/opt/scirius"
-SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
-
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.5.4"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:6.5.4"
@@ -48,7 +45,7 @@ echo "Configuring DOCKER"
 docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
 
 echo "Provisioning REDIS"
-docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 127.0.0.1:6379:6379 --log-driver syslog --log-opt tag="redis" redis
+docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
 [[ -f $FILE ]] ||  echo 'Acquire::ForceIPv4 "true";' | sudo tee $FILE
@@ -78,6 +75,10 @@ FILE=/var/lib/suricata/rules/custom.rules
 alert http \$HOME_NET any -> \$EXTERNAL_NET any (msg:"CDMCS: External Windows executable download"; flow:established,to_server; content:"GET "; uricontent:".exe"; nocase; classtype:policy-violation; sid:3000001; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;) 
 alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
 alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
+EOF
+
+FILE=/var/lib/suricata/rules/lua.rules
+[[ -f $FILE ]] || cat > $FILE <<EOF
 alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000004; rev:1;)
 EOF
 
@@ -172,6 +173,7 @@ default-rule-path: /var/lib/suricata/rules
 rule-files:
  -  suricata.rules
  -  custom.rules
+ -  lua.rules
 sensor-name: CDMCS
 EOF
 
@@ -302,14 +304,33 @@ fi
 
 sleep 3
 
+
+# kibana
+echo "Provisioning KIBANA"
+if [ $DOCKERIZE = true ]; then
+  docker ps -a | grep kibana || docker run -dit --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" --restart unless-stopped -p 5601:5601 --log-driver syslog --log-opt tag="kibana" $DOCKER_KIBANA
+else
+  cd $PKGDIR
+  [[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
+  dpkg -s kibana || dpkg -i $KIBANA > /dev/null 2>&1
+
+  FILE=/etc/kibana/kibana.yml
+  grep "provisioned" $FILE || cat >> $FILE <<EOF
+# provisioned
+server.host: "0.0.0.0"
+EOF
+  check_service kibana
+fi
+
+echo "Provisioning ELASTIC TEMPLATES"
 curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/json' -d '
 {
  "order" : 0,
  "version" : 0,
- "template" : "*",
+ "index_patterns" : "*",
  "settings" : {
    "index" : {
-     "refresh_interval" : "5s",
+     "refresh_interval" : "1s",
      "number_of_shards" : 3,
      "number_of_replicas" : 0
    }
@@ -352,32 +373,42 @@ curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/js
     }
   }
 }
-'
+' || exit 1
 
-# kibana
-echo "Provisioning KIBANA"
-if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep kibana || docker run -dit --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" --restart unless-stopped -p 5601:5601 --log-driver syslog --log-opt tag="kibana" $DOCKER_KIBANA
-else
-  cd $PKGDIR
-  [[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
-  dpkg -s kibana || dpkg -i $KIBANA > /dev/null 2>&1
-
-  FILE=/etc/kibana/kibana.yml
-  grep "provisioned" $FILE || cat >> $FILE <<EOF
-# provisioned
-server.host: "0.0.0.0"
-EOF
-  check_service kibana
-fi
+curl -s -XPUT localhost:9200/_template/suricata   -H'Content-Type: application/json' -d '
+{
+  "order": 10,
+  "version": 0,
+  "index_patterns": "suricata-*",
+  "mappings":{
+    "_doc": {
+      "properties": {
+        "src_ip": { 
+          "type": "ip",
+          "fields": {
+            "keyword" : { "type": "keyword", "ignore_above": 256 }
+          }
+        }
+        "dest_ip": { 
+          "type": "ip",
+          "fields": {
+            "keyword" : { "type": "keyword", "ignore_above": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+' || exit 1
 
 # logstash
+echo "Provisioning LOGSTASH"
 grep redis /etc/hosts || echo "127.0.0.1 redis" >> /etc/hosts
 grep elastic /etc/hosts || echo "127.0.0.1 elastic" >> /etc/hosts
 
 mkdir -p /etc/logstash/conf.d/
 FILE=/etc/logstash/conf.d/suricata.conf
-grep "CDMCS" $FILE || cat >> $FILE <<EOF
+grep "CDMCS" $FILE || cat > $FILE <<EOF
 input {
   file {
     path => "/var/log/suricata/eve.json"
@@ -401,11 +432,11 @@ output {
   elasticsearch {
     hosts => ["elastic"]
     index => "suricata-%{+YYYY.MM.dd.hh}"
+    manage_template => false
   }
 }
 EOF
 
-echo "Provisioning LOGSTASH"
 if [ $DOCKERIZE = true ]; then
   docker ps -a | grep logstash || docker run -dit --name logstash -h logstash --network cdmcs -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped --log-driver syslog --log-opt tag="logstash" $DOCKER_LOGSTASH
   sleep 5
@@ -499,7 +530,7 @@ else
   apt-get -y install libfontconfig > /dev/null 2>&1
   dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
 
-  sed -i "s/;provisioning = conf\/provisioning/provisioning = \/etc/\/grafana\/provisioning/g" /etc/grafana/grafana.ini 
+  sed -i 's/;provisioning = conf\/provisioning/provisioning = \/etc/\/grafana\/provisioning/g' /etc/grafana/grafana.ini 
   systemctl stop grafana-server.service
 
   check_service grafana-server
@@ -517,10 +548,16 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
 }"
 
 # scirius
+export SCIRIUS_PATH="/opt/scirius"
+export SCIRIUS_CONF=$SCIRIUS_PATH/scirius/local_settings.py
+
 config_scirius(){
-  cd /opt
-  git clone https://github.com/StamusNetworks/scirius
-  cd scirius && git checkout tags/scirius-3.1.0
+  SCIRIUS_PATH=$1
+  SCIRIUS_CONF=$2
+  WGET_PARAMS=$3
+  EXPOSE=$4
+
+  cd $SCIRIUS_PATH && git checkout tags/scirius-3.1.0
 
   /usr/local/bin/virtualenv ./
   source $SCIRIUS_PATH/bin/activate
@@ -528,6 +565,16 @@ config_scirius(){
   pip install -r requirements.txt
   pip install --upgrade urllib3
   pip install gunicorn pyinotify python-daemon
+
+  NODE_VERSION="v10.15.0"
+  wget $WGET_PARAMS https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
+  tar -xJf node-$NODE_VERSION-linux-x64.tar.xz 
+  NPM=node-$NODE_VERSION-linux-x64/bin/npm
+  mkdir ~/.npm-global
+  npm config set prefix '~/.npm-global'
+  grep 'npm-global' ~/.profile || echo 'export PATH=~/.npm-global/bin:$PATH' > ~/.profile
+  grep $NODE_VERSION ~/.profile || echo "export PATH=$SCIRIUS_PATH/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
+  source ~/.profile
 
   npm install -g npm@latest webpack@3.11
   npm install
@@ -538,8 +585,7 @@ config_scirius(){
 
   python manage.py migrate  --noinput
   echo "from django.contrib.auth.models import User; User.objects.create_superuser('vagrant', 'vagrant@localhost', 'vagrant')" | python manage.py shell
-  chown www-data db.sqlite3
-  chown -R www-data $SCIRIUS_PATH
+  #chown www-data db.sqlite3
 
   echo 'ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"'  >> $SCIRIUS_CONF
   echo 'ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"'  >> $SCIRIUS_CONF
@@ -556,24 +602,31 @@ config_scirius(){
   echo "EVEBOX_ADDRESS = \"$EXPOSE:5636\"" >> $SCIRIUS_CONF
 
   # adding sources to rulesets
-  python $SCIRIUS_PATH/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz http sigs
+  python $SCIRIUS_PATH/manage.py addsource "ETOpen Ruleset" https://rules.emergingthreats.net/open/suricata-4.1/emerging.rules.tar.gz http sigs
   python $SCIRIUS_PATH/manage.py addsource "PT Research Ruleset" https://github.com/ptresearch/AttackDetection/raw/master/pt.rules.tar.gz http sigs
-  python $SCIRIUS_PATH/manage.py addsource "CDMCS Custom Sigs" https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Suricata/vagrant/singlehost/local.rules http sig
+  #python $SCIRIUS_PATH/manage.py addsource "CDMCS Custom Sigs" https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Suricata/vagrant/singlehost/local.rules http sig
   python $SCIRIUS_PATH/manage.py defaultruleset "CDMCS ruleset"
-  python $SCIRIUS_PATH/manage.py addsuricata suricata "Suricata on CDMCS" /etc/suricata/rules "CDMCS ruleset"
+  python $SCIRIUS_PATH/manage.py addsuricata suricata "Suricata on CDMCS" /var/lib/suricata/rules "CDMCS ruleset"
   python $SCIRIUS_PATH/manage.py updatesuricata
   python $SCIRIUS_PATH/suricata/scripts/suri_reloader -p /etc/suricata/rules  -l /var/log/suri-reload.log -D
   deactivate
-  echo "1" > /var/log/vagrant-provisioned.log
+  echo "1" > /home/vagrant/scirius.log
 }
 echo "Provisioning SCIRIUS"
 cd $PKGDIR
-[[ -f $SCIRIUS ]] || wget $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
+[[ -f $SCIRIUS ]] || wget -q $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
 
-apt-get install -y nginx python-pip dbconfig-common sqlite3 npm > /dev/null
+apt-get install -y nginx python-pip dbconfig-common sqlite3 > /dev/null
 pip install --upgrade pip virtualenv #urllib3 chardet
 
-#grep 1 /var/log/vagrant-provisioned.log || config_scirius
+[[ -d $SCIRIUS_PATH ]] || git clone https://github.com/StamusNetworks/scirius $SCIRIUS_PATH
+chown -R vagrant $SCIRIUS_PATH
+chown vagrant /var/lib/suricata/rules
+
+export -f config_scirius
+grep 1 /home/vagrant/scirius.log || su vagrant -c "bash -c \"echo $SCIRIUS_PATH; config_scirius $SCIRIUS_PATH $SCIRIUS_CONF $WGET_PARAMS $EXPOSE\""
+chown -R www-data $SCIRIUS_PATH
+
 #dpkg -s scirius || dpkg -i $SCIRIUS > /dev/null 2>&1
 #apt-get -f install -y
 
@@ -594,48 +647,48 @@ Environment=PATH=$VIRTUAL_ENV/bin:$PATH
 [Install]
 WantedBy=multi-user.target
 EOF
-#check_service scirius
+check_service scirius
 
-#systemctl stop nginx.service
-#FILE=/etc/nginx/sites-available/scirius
-#grep scirius $FILE || cat > $FILE <<'EOF'
-#server {
-#   listen 0.0.0.0:80;
-#   access_log /var/log/nginx/scirius.access.log;
-#   error_log /var/log/nginx/scirius.error.log;
-#
-#   #error_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=error;
-#   #access_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=info main;
-#
-#   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
-#   location /static/rules {
-#       alias /opt/scirius/rules/static/rules/;
-#       expires 30d;
-#   }
-#   location /static/js {
-#       alias /opt/scirius/rules/static/js/;
-#       expires 30d;
-#   }
-#   location /static/fonts {
-#       alias /opt/scirius/rules/static/fonts/;
-#       expires 30d;
-#   }
-#   location /static/django_tables2 {
-#       alias /opt/scirius/lib/python2.7/site-packages/django_tables2/static/django_tables2/;
-#       expires 30d;
-#   }
-#   location / {
-#       proxy_pass http://unix:/tmp/scirius.sock:/;
-#       proxy_read_timeout 600;
-#       proxy_set_header Host $http_host;
-#       proxy_redirect off;
-#       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#   }
-#}
-#EOF
-#[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
-#[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
-#check_service nginx
+systemctl stop nginx.service
+FILE=/etc/nginx/sites-available/scirius
+grep scirius $FILE || cat > $FILE <<'EOF'
+server {
+   listen 0.0.0.0:80;
+   access_log /var/log/nginx/scirius.access.log;
+   error_log /var/log/nginx/scirius.error.log;
+
+   #error_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=error;
+   #access_log syslog:server=unix:/dev/log,faility=local7,tag=nginx,severity=info main;
+
+   # https://docs.djangoproject.com/en/dev/howto/static-files/#serving-static-files-in-production
+   location /static/rules {
+       alias /opt/scirius/rules/static/rules/;
+       expires 30d;
+   }
+   location /static/js {
+       alias /opt/scirius/rules/static/js/;
+       expires 30d;
+   }
+   location /static/fonts {
+       alias /opt/scirius/rules/static/fonts/;
+       expires 30d;
+   }
+   location /static/django_tables2 {
+       alias /opt/scirius/lib/python2.7/site-packages/django_tables2/static/django_tables2/;
+       expires 30d;
+   }
+   location / {
+       proxy_pass http://unix:/tmp/scirius.sock:/;
+       proxy_read_timeout 600;
+       proxy_set_header Host $http_host;
+       proxy_redirect off;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   }
+}
+EOF
+[[ -f /etc/nginx/sites-enabled/scirius ]] || ln -s $FILE /etc/nginx/sites-enabled
+[[ -f /etc/nginx/sites-enabled/default ]] && rm /etc/nginx/sites-enabled/default
+check_service nginx
 
 # evebox
 echo "Provisioning EVEBOX"
@@ -643,7 +696,7 @@ if [ $DOCKERIZE = true ]; then
   docker ps -a | grep evebox || docker run -dit --name evebox -h evebox --network cdmcs --restart unless-stopped -p 5636:5636 --log-driver syslog --log-opt tag="evebox" $DOCKER_EVEBOX -e http://elastic:9200 --index suricata --elasticsearch-keyword keyword
 else
   cd $PKGDIR
-  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O $EVEBOX
+  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O --index suricata --elasticsearch-keyword keyword
   dpkg -i $EVEBOX > /dev/null 2>&1
   grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
   systemctl stop evebox.service
@@ -653,7 +706,7 @@ else
 # CDMCS
 #CONFIG="-c /etc/evebox/evebox.yaml"
 ELASTICSEARCH_URL="-e http://localhost:9200"
-EVEBOX_OPTS="--index suricata"
+EVEBOX_OPTS=$EVEBOX_OPTS
 EOF
 
   check_service evebox
@@ -669,7 +722,7 @@ systemctl stop telegraf.service
 FILE=/etc/telegraf/telegraf.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [global_tags]
-  year = "2018"
+  year = "2019"
 [agent]
   hostname = "CDMCS"
   omit_hostname = false
@@ -719,7 +772,7 @@ while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done
 while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
 while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep 5 ; done &
 
-sleep 5
+sleep 10
 
 netstat -anutp
 curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '
