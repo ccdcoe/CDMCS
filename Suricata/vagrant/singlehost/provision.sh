@@ -394,7 +394,7 @@ curl -s -XPUT localhost:9200/_template/suricata   -H'Content-Type: application/j
           "fields": {
             "keyword" : { "type": "keyword", "ignore_above": 256 }
           }
-        }
+        },
         "dest_ip": { 
           "type": "ip",
           "fields": {
