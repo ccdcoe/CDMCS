@@ -381,31 +381,31 @@ curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/js
 }
 ' || exit 1
 
-curl -s -XPUT localhost:9200/_template/suricata   -H'Content-Type: application/json' -d '
-{
-  "order": 10,
-  "version": 0,
-  "index_patterns": "suricata-*",
-  "mappings":{
-    "_doc": {
-      "properties": {
-        "src_ip": { 
-          "type": "ip",
-          "fields": {
-            "keyword" : { "type": "keyword", "ignore_above": 256 }
-          }
-        },
-        "dest_ip": { 
-          "type": "ip",
-          "fields": {
-            "keyword" : { "type": "keyword", "ignore_above": 256 }
-          }
-        }
-      }
-    }
-  }
-}
-' || exit 1
+#curl -s -XPUT localhost:9200/_template/suricata   -H'Content-Type: application/json' -d '
+#{
+#  "order": 10,
+#  "version": 0,
+#  "index_patterns": "suricata-*",
+#  "mappings":{
+#    "_doc": {
+#      "properties": {
+#        "src_ip": { 
+#          "type": "ip",
+#          "fields": {
+#            "keyword" : { "type": "keyword", "ignore_above": 256 }
+#          }
+#        },
+#        "dest_ip": { 
+#          "type": "ip",
+#          "fields": {
+#            "keyword" : { "type": "keyword", "ignore_above": 256 }
+#          }
+#        }
+#      }
+#    }
+#  }
+#}
+#' || exit 1
 
 # logstash
 echo "Provisioning LOGSTASH"
