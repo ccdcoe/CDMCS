@@ -56,7 +56,7 @@ export DEBIAN_FRONTEND=noninteractive
 mkdir -p /vagrant/pkgs
 
 # basic software
-apt-get update > /dev/null && apt-get install -y curl htop vim tmux software-properties-common python3-software-properties jq python3 python3-pip > /dev/null
+apt-get update > /dev/null && apt-get install -y curl htop vim tmux software-properties-common python3-software-properties jq python3 python3-pip libcap2-bin > /dev/null
 
 su vagrant -c bash -c "pip3 install --user elasticsearch redis"
 
@@ -830,6 +830,9 @@ docker ps -a | grep alerta-mongo || docker run -dit --name alerta-mongo -h alert
 sleep 1
 docker ps -a | grep alerta-api || docker run -dit --name alerta-api -h alerta-api --network cdmcs --restart unless-stopped -v alerta:/var/alerta/run -e "DATABASE_URL=mongodb://alerta-mongo:27017/alerts" --log-driver syslog --log-opt tag="alerta-api" $DOCKER_ALERTA_API
 docker ps -a | grep alerta-proxy || docker run -dit --name alerta-proxy -h alerta-proxy --network cdmcs --restart unless-stopped -v alerta:/var/alerta/run -p 8080:80 --log-driver syslog --log-opt tag="alerta-proxy" $DOCKER_ALERTA_PROXY
+
+setcap cap_net_raw,cap_net_admin=eip $(which suricata)
+setcap "CAP_NET_RAW+eip"  $(which suricata)
 
 echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
