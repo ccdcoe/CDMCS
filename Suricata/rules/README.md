@@ -162,6 +162,9 @@ A rule consists of the following:
 * meta data
 * threshold configuration
 
-## Exercise - writing a basic rule
+## Exercise - write rules that trigger on following conditions
 
-* Write a rule that detects facebook TLS certificates
+* Facebook certificate
+* DNS zone transfer
+* DNS domain with .su suffix
+* Curl user-agent
