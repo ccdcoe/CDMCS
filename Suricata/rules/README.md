@@ -118,7 +118,19 @@ alert tcp any any -> any any (msg:"testing"; classtype:bad-unknown; sid:990001; 
 Finally, run suricata from command line against the pcap file from prior step while exclusively loading your rule file. Note that we also redefine our default logging directory, so we are able to see the output.
 
 ```
-suricata -S rules/custom.rules -r /tmp/my.pcap -l logs/ -vvv
+suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv
+```
+
+Fast is human-readable plaintext format from Snort days. 
+
+```
+cat logs/fast.log
+```
+
+While good for debugging and developing rules, fast log pretty much deprecated in favor of eve JSON format logs.
+
+```
+cat logs/eve.json | jq .
 ```
 
 ### more useful example
@@ -152,12 +164,4 @@ A rule consists of the following:
 
 ## Exercise - writing a basic rule
 
-* Generate a pcap file that contains http connecitons to following links
-  * https://www.facebook.com
-  * http://sysadminnid.tumblr.com/
-  * http://syssadminnid.tumblr.com/
-* Write a rule that triggers an alert whenever someone visits [this site](http://sysadminnid.tumblr.com/)
-* Modify this rule to only fire on established responses
-* Find the term "Nagios pisaraid ei usu" from established responses
-* Use proper hexadecimal encoding to match special bytes and ensure that rule fires for both "sysadminnid" and "SysAdminnid"
-
+* Write a rule that detects facebook TLS certificates

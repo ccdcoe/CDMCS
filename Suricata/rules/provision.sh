@@ -48,16 +48,9 @@ outputs:
       enabled: yes
       filename: fast.log
       append: yes
-  - tls-store:
-      enabled: yes
-  - lua:
-      enabled: yes
-      scripts-dir: /var/lib/suricata/scripts/
-      scripts:
-        - new-observed-tls.lua
   - eve-log:
       enabled: 'yes'
-      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
+      filetype: regular
       filename: eve.json
       types:
         - alert:
@@ -91,14 +84,6 @@ outputs:
             enabled: yes
             extended: yes
         - ssh
-        - stats:
-            totals: yes       # stats for all threads merged together
-            threads: yes       # per thread stats
-            deltas: yes        # include delta values
-        # bi-directional flows
-        - flow
-        # uni-directional flows
-        #- netflow
 EOF
 
 FILE=/etc/suricata/suricata.yaml
@@ -107,3 +92,4 @@ include: /etc/suricata/cdmcs-detect.yaml
 include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
+apt-get install -y tcpdump tcpreplay jq
