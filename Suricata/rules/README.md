@@ -1,11 +1,14 @@
 # Suricata rules
 
 > Suricata alerting is rule-based. Commonly, rulesets are externally developed.
+
 > There are multiple rule sources, some free some commertial
+
 > You need to manage and update your rules every day!
 
+> https://suricata.readthedocs.io/en/latest/rules/
+
 Possible sources:
-* https://suricata.readthedocs.io/en/latest/rules/
 * https://rules.emergingthreats.net/open/
 * https://github.com/ptresearch/AttackDetection#suricata-pt-open-ruleset
 * https://github.com/OISF/suricata-trafficid
