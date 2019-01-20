@@ -58,18 +58,19 @@ grep -h -v '^ *#' *.rules | cut -s -d' ' -f2 | sort | uniq -c | sort -n
 
 Note that `-h` key will disable filename display for grep while `-v` enables inverse search.
 
-## Tcpdump
+## Generating packets for testing
 
  * https://www.sans.org/security-resources/tcpip.pdf
  * https://www.tcpdump.org/tcpdump_man.html
  * https://wiki.wireshark.org/DisplayFilters
 
-Find your interfaces.
+Find your interfaces that will be talking to the destination.
 
 ```
 route -n
 ip link show
 ip addr show
+ip route show
 ```
 
 Start the capture process and write all port `80` traffic to pcap file.
@@ -96,7 +97,7 @@ Load the pcap into suricata
 ```
 suricata -r /vagrant/capture.pcap -vvv
 ```
-## Writing Rule
+## Writing your first rule
 
 > Do not write rules, buy from professionals!
 
