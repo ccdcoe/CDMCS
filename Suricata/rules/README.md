@@ -1,12 +1,10 @@
 # Suricata rules
 
 > Suricata alerting is rule-based. Commonly, rulesets are externally developed.
-
 > There are multiple rule sources, some free some commertial
-
 > You need to manage and update your rules every day!
 
-> https://suricata.readthedocs.io/en/latest/rules/
+This is a simple getting started page for writing your first rule. Please refer to [official documentation](https://suricata.readthedocs.io/en/latest/rules/) for more information.
 
 Possible sources:
 * https://rules.emergingthreats.net/open/
@@ -105,11 +103,26 @@ suricata -r /vagrant/capture.pcap -vvv
 
 ### basic rule template
 
+Create a new file for custom rules.
+
+```
+vim rules/custom.rules
+```
+
+Then enter this skeleton.
+
 ```
 alert tcp any any -> any any (msg:"testing"; classtype:bad-unknown; sid:990001; rev:1;)
 ```
 
+Finally, run suricata from command line against the pcap file from prior step while exclusively loading your rule file. Note that we also redefine our default logging directory, so we are able to see the output.
+
+```
+suricata -S rules/custom.rules -r /tmp/my.pcap -l logs/ -vvv
+```
+
 ### more useful example
+
 ```
 alert tcp any any -> any 443 (msg:"SURICATA Port 443 but not SSL/TLS"; app-layer-protocol:!tls; threshold: type limit, track by_src, seconds 180, count 1; classtype:bad-unknown;  sid:990002;)
 ```
