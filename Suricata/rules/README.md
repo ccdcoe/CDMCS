@@ -27,7 +27,7 @@ ET open is the default ruleset packaged with suricata. However, it can be downlo
 
 ```
 wget -4 http://rules.emergingthreats.net/open/suricata-4.1/emerging.rules.tar.gz
-tar -xzf emeging.rules.tar.gz
+tar -xzf emerging.rules.tar.gz
 ```
 
 Please keep an eye out for ruleset version. Newer version of suricata supports keywords that are missing from prior releases. Furthermore, compatibility with snort rules format is no longer a priority for core team, as Suricata has evolved.
