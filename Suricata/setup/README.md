@@ -91,3 +91,59 @@ cd libhtp
 git checkout 0.5.29
 cd ..
 ```
+
+### Basic tools and build dependencies
+
+First, make sure you have software needed for building suricata.
+
+```
+apt-get update && apt-get -y install \
+build-essential \
+autoconf \
+automake \
+libtool \
+pkg-config \
+make \
+curl \
+wget \
+git \
+unzip
+```
+
+Then install development headers for configure options. Note that this list is incomplete on purpose and only contains bare minimums.Finding correct libraries is left as an exercise for the reader. Refer to official documentation and `./configure` output when searching for libraries.
+
+```
+apt-get update && apt-get -y install \
+libpcre3 \
+libpcre3-dbg \
+libpcre3-dev \
+libpcap-dev \
+libnet1-dev \
+libyaml-0-2 \
+libyaml-dev \
+libmagic-dev \
+zlib1g \
+zlib1g-dev \
+libcap-ng-dev \
+libcap-ng0
+```
+
+### Rust
+
+ * https://doc.rust-lang.org/book/index.html
+ * https://rustup.rs/
+ * https://www.rust-lang.org/tools/install
+
+Suricata is written in C, but is gradually migrating to Rust, a low level systems programming language built for memory safety. New parsers and output modules are now written in Rust and old ones are being rewritten. Since 4.1, Rust is now enabled by default when configuring Suricata and should no longer be considered an experimental optional feature.
+
+The Rust method for installing `rust` and its package manger `cargo` is to use *rustup* toolchain that installs everything under local user home directory.
+
+```
+curl https://sh.rustup.rs -sSf | sh
+```
+
+Then make sure that rust binaries are in your `PATH`. Run the following command in console, or append to `~/.bashrc` or `~/.zshrc` or `~/.profile`, depending on shell choice.
+
+```
+export PATH="$HOME/.cargo/bin:$PATH"
+```
