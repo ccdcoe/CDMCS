@@ -121,6 +121,12 @@ Finally, run suricata from command line against the pcap file from prior step wh
 suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv
 ```
 
+Checksum errors can also be ignored with `-k` flag. That way we do not have to rewrite our pcap file nor disable checksum offloading.
+
+```
+suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
+```
+
 Fast is human-readable plaintext format from Snort days. 
 
 ```
