@@ -274,7 +274,7 @@ vagrant@buildSuricata:~/suricata/4.1.2-cdmcs$ ldd ./bin/suricata
         /lib64/ld-linux-x86-64.so.2 (0x00007fad50ac7000)
 ```
 
-Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found` should now be missing.
+Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found` 
 
 ```
 echo "/home/vagrant/Libraries/lib/" > /etc/ld.so.conf.d/suri-hyperscan.conf
