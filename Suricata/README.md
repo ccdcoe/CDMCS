@@ -17,12 +17,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [vagrant](/common/vagrant.intro.md), [docker](/common/docker.md)
    * [singlehost](/Suricata/vagrant/singlehost/)
  * 15:00 - 16:45
-   * [intro to rules](/Suricata/rules/README.md)
+   * [intro to rules](/Suricata/rules/)
 
 ## Day 1 :: Single Box :: Feb 12 2019
 
  * 09:00 - 12:30
-   * [build from source](/Suricata/setup/build.md)
+   * [build from source](/Suricata/setup/)
    * [config](/Suricata/setup/config.md)
  * 13:30 - 16:45
    * [rules, cont.](/Suricata/rules), [playing with config](/Suricata/setup/config.md)
