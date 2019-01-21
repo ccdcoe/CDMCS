@@ -89,4 +89,5 @@ HTTP parsing library `libhtp` is maintained in separate repository and must be c
 git clone https://github.com/OISF/libhtp -b 0.5.x
 cd libhtp
 git checkout 0.5.29
+cd ..
 ```
