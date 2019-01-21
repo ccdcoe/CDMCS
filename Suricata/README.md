@@ -22,10 +22,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 1 :: Single Box :: Feb 12 2019
 
  * 09:00 - 12:30
+   * [rules, cont.](/Suricata/rules)
    * [build from source](/Suricata/setup/)
    * [config](/Suricata/setup/)
  * 13:30 - 16:45
-   * [rules, cont.](/Suricata/rules), [playing with config](/Suricata/setup/config.md)
+   * [playing with config](/Suricata/setup/config.md)
    * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
    * [evebox](/Suricata/evebox)
    * [scirius](/Suricata/scirius)
