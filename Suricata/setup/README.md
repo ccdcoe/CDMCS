@@ -311,3 +311,4 @@ ldconfig
  ### Managing rules
 
   * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
+  * https://suricata-update.readthedocs.io/en/latest/
