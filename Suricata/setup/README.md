@@ -308,16 +308,40 @@ ldconfig
 
 ## Basic config
 
-### Managing rules
+## Managing rules
 
   * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
   * https://suricata-update.readthedocs.io/en/latest/
 
+```
+apt-get install python-pip
+pip install --upgrade --user suricata-update
+```
 
-#### Task
+Official rule update tool is a python script.
 
-Enable the following rule sources:
+```
+/home/vagrant/.local/bin/suricata-update --help
+/home/vagrant/.local/bin/suricata-update list-sources
+```
+
+Suricata rule database can be updated without system restart.
+
+```
+suricatasc -c "reload-rules"
+```
+
+Then add update command with reload to periodic cron task.
+
+### Exercise
+
+Set up periodic rule update.
+
+Rules should be located in this directory:
+ * `/vagrant/rules`
+
+Following rulesets should be activated:
  * et/open
  * oisf/trafficid
  * ptresearch/attackdetection
- * Store the rules under `/vagrant/rules`.
+ * tgreen/hunting
