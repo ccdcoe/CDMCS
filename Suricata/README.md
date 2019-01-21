@@ -26,35 +26,26 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [build from source](/Suricata/setup/#Build)
    * [config](/Suricata/setup/#Config)
  * 13:30 - 16:45
-   * [playing with config](/Suricata/setup/config.md)
-   * [elasticsearch](/common/elastic), [install](/common/elastic/elastic.install.md), [mappings](/common/elastic/elastic.mappings.md)
-   * [evebox](/Suricata/evebox)
-   * [scirius](/Suricata/scirius)
+   * [elasticsearch](/common/elastic)
+   * [indexing alert log](/Suricata/indexing)
+   * [evebox](/Suricata/evebox), [scirius](/Suricata/scirius)
 
 ## Day 2 :: Scale up :: Feb 13 2019
 
 * 09:00 - 12:30
-  * [multihost with](/Suricata/vagrant/multihost) [salt](/common/salt)
-  * [rules management](/Suricata/rules/rules.update.md)
 
 * 13:30 - 16:45
-  * [elastic, clustered](/common/elastic/elastic.cluster.md)
-  * [indexing alert log](/Suricata/logging/)
-  * [Dashboarding and aggregations](/common/kibana.md)
 
 ## Day 3 :: Usage :: Feb 14 2019
 
 * 09:00 - 12:30
-  * [indexing alert log](/Suricata/logging/)
-  * [Suricata unix socket](/Suricata/suricata/unixsocket.md)
-  * [Suricata loading pcaps](/Suricata/suricata/LoadPcaps.md)
+
 * 13:30 - 16:45
-  * [Suricata LUA](/Suricata/lua)
 
 ## Day +1 :: :: Feb 15 2019, ends at 12:00
 
 * 09:00 - 10:30
-  * [IPS](/Suricata/suricata/ips-intro.md)
+  * ...
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----
