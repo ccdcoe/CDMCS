@@ -303,5 +303,7 @@ ldconfig
 
  * https://wiki.wireshark.org/SampleCaptures#NFS_Protocol_Family
  * https://www.malware-traffic-analysis.net/2018/index.html
- * ```curl testmyids.com```
+ * `curl testmyids.com`
  * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
+
+ ## Basic config
