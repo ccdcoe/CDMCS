@@ -326,7 +326,8 @@ Show active config parameters
 suricata --dump-config
 ```
 
- See only active configuration. `suricata.yaml` is like a documentation in itself. See the file without comments.
+See only active configuration. `suricata.yaml` is like a documentation in itself. See the file without comments.
+
 ```
 grep -v -E '^\s*#' /etc/suricata/suricata.yaml
 # remove empty lines as well
@@ -467,4 +468,4 @@ Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suri
 
 ---
 
-[home](/Suricata)
+[back](/Suricata)
