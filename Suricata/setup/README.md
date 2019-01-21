@@ -307,3 +307,7 @@ ldconfig
  * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
 
  ## Basic config
+
+ ### Managing rules
+
+  * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
