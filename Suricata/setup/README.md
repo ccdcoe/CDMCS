@@ -280,7 +280,7 @@ Use `find` to locate missing files.
 find /home/vagrant/ -type f -name 'libhs.so*'
 ```
 
-Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found` 
+Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found`.
 
 ```
 echo "/home/vagrant/Libraries/lib/" > /etc/ld.so.conf.d/suri-hyperscan.conf
@@ -306,9 +306,15 @@ ldconfig
  * `curl testmyids.com`
  * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
 
- ## Basic config
+## Basic config
 
- ### Managing rules
+### Managing rules
 
   * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
   * https://suricata-update.readthedocs.io/en/latest/
+
+  * Enable the following rule sources:
+    * et/open
+    * oisf/trafficid
+    * ptresearch/attackdetection
+  * Store the rules under `/vagrant/rules`.
