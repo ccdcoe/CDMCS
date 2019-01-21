@@ -308,10 +308,14 @@ ldconfig
 
 ## Basic config
 
+ * https://suricata.readthedocs.io/en/latest/configuration/suricata-yaml.html#
+
+See [build](##Build) for getting the default config file.
+
 ## Managing rules
 
-  * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
-  * https://suricata-update.readthedocs.io/en/latest/
+ * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
+ * https://suricata-update.readthedocs.io/en/latest/
 
 ```
 apt-get install python-pip
@@ -331,14 +335,38 @@ Suricata rule database can be updated without system restart, but this requires 
 suricatasc -c "reload-rules"
 ```
 
+```
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+ -  suricata.rules
+```
+
 Then add update command with reload to periodic cron task.
 
 ### Exercise
 
-Set up periodic rule update. Rules should be located in `/vagrant/rules`. Following rulesets should be activated:
+Set up periodic rule update. Rules should be located in `/vagrant/var`. Following rulesets should be activated:
  * `et/open`
  * `oisf/trafficid`
  * `ptresearch/attackdetection`
  * `tgreen/hunting`
 
-## af-packet
+## Packet acquisition
+
+Modern method for getting packets from kernel space to suricata is `af-packet`. Interface can be defined as command line flag.
+
+```
+suricata --af-packet=enp0s3 -S /vagrant/var/rules/suricata.rules  -l /home/vagrant/logs -D -vvv
+```
+
+```
+af-packet:
+  - interface: enp0s3
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: enp0s8
+    cluster-id: 97
+    cluster-type: cluster_flow
+    defrag: yes
+```
