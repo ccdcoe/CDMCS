@@ -26,17 +26,18 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [build from source](/Suricata/setup/#Build)
    * [config](/Suricata/setup/#Config)
  * 13:30 - 16:45
-   * [elasticsearch](/common/elastic)
+   * [elasticsearch, intro](/common/elastic)
    * [indexing alert log](/Suricata/indexing)
    * [evebox](/Suricata/evebox), [scirius](/Suricata/scirius)
 
-## Day 2 :: Scale up :: Feb 13 2019
+## Day 2 :: Group up :: Feb 13 2019
 
 * 09:00 - 12:30
+   * [elasticsearch, clustering aspects](/common/elastic)
 
 * 13:30 - 16:45
 
-## Day 3 :: Usage :: Feb 14 2019
+## Day 3 :: Advanced concepts :: Feb 14 2019
 
 * 09:00 - 12:30
 
