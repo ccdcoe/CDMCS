@@ -325,7 +325,7 @@ Official rule update tool is a python script.
 /home/vagrant/.local/bin/suricata-update list-sources
 ```
 
-Suricata rule database can be updated without system restart.
+Suricata rule database can be updated without system restart, but this requires `unux-command`. More on this later.
 
 ```
 suricatasc -c "reload-rules"
@@ -335,13 +335,10 @@ Then add update command with reload to periodic cron task.
 
 ### Exercise
 
-Set up periodic rule update.
+Set up periodic rule update. Rules should be located in `/vagrant/rules`. Following rulesets should be activated:
+ * `et/open`
+ * `oisf/trafficid`
+ * `ptresearch/attackdetection`
+ * `tgreen/hunting`
 
-Rules should be located in this directory:
- * `/vagrant/rules`
-
-Following rulesets should be activated:
- * et/open
- * oisf/trafficid
- * ptresearch/attackdetection
- * tgreen/hunting
+## af-packet
