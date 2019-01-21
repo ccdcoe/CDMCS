@@ -280,3 +280,22 @@ Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` co
 echo "/home/vagrant/Libraries/lib/" > /etc/ld.so.conf.d/suri-hyperscan.conf
 ldconfig
 ```
+
+### Exercises
+
+ * Build your own suricata with features needed for subsequent tasks
+   * set a custom installation root of your own choosing
+     * configuration directory should be placed under /vagrant/config
+   * it must support the following features:
+     * EVE log in JSON format
+     * redis output
+     * lua scripting with just-in-time compiler
+     * unix socket support with suricatasc utility
+     * NFS logging and output
+
+#### testing and hints
+
+ * https://wiki.wireshark.org/SampleCaptures#NFS_Protocol_Family
+ * https://www.malware-traffic-analysis.net/2018/index.html
+ * ```curl testmyids.com```
+ * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
