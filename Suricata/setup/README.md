@@ -310,11 +310,11 @@ ldconfig
 
 ### Managing rules
 
-  * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
-  * https://suricata-update.readthedocs.io/en/latest/
+ * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
+ * https://suricata-update.readthedocs.io/en/latest/
 
-  * Enable the following rule sources:
-    * et/open
-    * oisf/trafficid
-    * ptresearch/attackdetection
-  * Store the rules under `/vagrant/rules`.
+ * Enable the following rule sources:
+  * et/open
+  * oisf/trafficid
+  * ptresearch/attackdetection
+ * Store the rules under `/vagrant/rules`.
