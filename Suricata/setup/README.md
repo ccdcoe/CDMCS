@@ -201,6 +201,15 @@ Adapter: ISA adapter
 fan1:        3478 RPM
 ```
 
+Finally, configure suricata with hyperscan library directories. See `cmake` flags in prior commands.
+
+```
+cd <suri-build-dir>
+./configure --prefix=<suri-install-dir> --with-libhs-includes=/home/vagrant/Libraries/include/hs  --with-libhs-libraries=/home/vagrant/Libraries/lib
+```
+
+Note that suricata may not start up with this config, as system runtime is unaware of custom shared library directory. See next section for debug.
+
 ### Build suricata
 
 Configure the software to local build directory.
@@ -221,4 +230,53 @@ Install the software
 ```
 make install
 ls -lah /home/vagrant/suricata/4.1.2
+```
+
+Install default config file.
+
+```
+make install-conf
+```
+
+Alternatively, `make install-full` will combine `make install`, `make install-conf` and will download latest et/open ruleset. However, this is not needed for this exercise as we will manage rules separately.
+
+```
+<prefix>/bin/suricata -V
+```
+
+You may experience library errors of you built dependencies by hand. For example, if you followed last section, you will now see this:
+
+```
+./bin/suricata: error while loading shared libraries: libhs.so.5: cannot open shared object file: No such file or directory
+```
+
+Use `ldd` command to debug this issue.
+
+```
+vagrant@buildSuricata:~/suricata/4.1.2-cdmcs$ ldd ./bin/suricata
+        linux-vdso.so.1 (0x00007fff9f318000)
+        libhtp.so.2 => /home/vagrant/suricata/4.1.2-cdmcs/lib/libhtp.so.2 (0x00007fad50237000)
+        libdl.so.2 => /lib/x86_64-linux-gnu/libdl.so.2 (0x00007fad50033000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007fad4fe2b000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fad4fa8d000)
+        libmagic.so.1 => /usr/lib/x86_64-linux-gnu/libmagic.so.1 (0x00007fad4f86b000)
+        libcap-ng.so.0 => /lib/x86_64-linux-gnu/libcap-ng.so.0 (0x00007fad4f666000)
+        libpcap.so.0.8 => /usr/lib/x86_64-linux-gnu/libpcap.so.0.8 (0x00007fad4f425000)
+        libnet.so.1 => /usr/lib/x86_64-linux-gnu/libnet.so.1 (0x00007fad4f20b000)
+        libjansson.so.4 => /usr/lib/x86_64-linux-gnu/libjansson.so.4 (0x00007fad4effd000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fad4edde000)
+        libyaml-0.so.2 => /usr/lib/x86_64-linux-gnu/libyaml-0.so.2 (0x00007fad4ebc0000)
+        libhs.so.5 => not found
+        libpcre.so.3 => /lib/x86_64-linux-gnu/libpcre.so.3 (0x00007fad4e94e000)
+        libz.so.1 => /lib/x86_64-linux-gnu/libz.so.1 (0x00007fad4e731000)
+        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007fad4e519000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fad4e128000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007fad50ac7000)
+```
+
+Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found` should now be missing.
+
+```
+echo "/home/vagrant/Libraries/lib/" > /etc/ld.so.conf.d/suri-hyperscan.conf
+ldconfig
 ```
