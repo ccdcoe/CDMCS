@@ -313,6 +313,7 @@ ldconfig
  * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
  * https://suricata-update.readthedocs.io/en/latest/
 
+
  * Enable the following rule sources:
   * et/open
   * oisf/trafficid
