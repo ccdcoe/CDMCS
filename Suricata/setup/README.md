@@ -274,6 +274,12 @@ vagrant@buildSuricata:~/suricata/4.1.2-cdmcs$ ldd ./bin/suricata
         /lib64/ld-linux-x86-64.so.2 (0x00007fad50ac7000)
 ```
 
+Use `find` to locate missing files.
+
+```
+find /home/vagrant/ -type f -name 'libhs.so*'
+```
+
 Using ldconfig system-wide. Apply sudo as needed. Then repeat the prior `ldd` command. Prior `not found` 
 
 ```
