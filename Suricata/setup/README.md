@@ -294,10 +294,12 @@ ldconfig
      * configuration directory should be placed under /vagrant/config
    * it must support the following features:
      * EVE log in JSON format
-     * redis output
+     * redis output with async support
      * lua scripting with just-in-time compiler
      * unix socket support with suricatasc utility
      * NFS logging and output
+     * Rule profiling
+ * Build a second suricata instance with rule profiling disabled.
 
 #### testing and hints
 
@@ -310,9 +312,29 @@ ldconfig
 
  * https://suricata.readthedocs.io/en/latest/configuration/suricata-yaml.html#
 
- ```
- suricata -c <config-dir>/suricata.yaml
- ```
+```
+suricata -c <config-dir>/suricata.yaml
+```
+
+If a configuration option is not specified in  the configuration file, Suricata uses its internal default configuration. Test configuration with `-T` flag.
+
+```
+suricata -T -vvv
+```
+
+Show active config parameters
+
+```
+suricata --dump-config
+```
+
+ See only active configuration. `suricata.yaml` is like a documentation in itself. See the file without comments.
+```
+grep -v -E '^\s*#' /etc/suricata/suricata.yaml
+# remove empty lines as well
+grep -v -E '^\s*#' /etc/suricata/suricata.yaml | grep -v '^$'
+sed -i -e 's/#.*$//' -e '/^\s*$/d' /etc/suricata/suricata.yaml
+```
 
 ## Managing rules
 
@@ -425,6 +447,12 @@ vars:
     FTP_PORTS: 21
 ```
 
+These variables are used in rules to indicate perimeter directionality.
+
+```
+#alert tcp $EXTERNAL_NET any -> $HOME_NET 143 (msg:"GPL IMAP login literal buffer overflow attempt"; flow:established,to_server; content:"LOGIN"; nocase; pcre:"/\sLOGIN\s[^\n]*?\s\{/smi"; byte_test:5,>,256,0,string,dec,relative; reference:bugtraq,6298; classtype:misc-attack; sid:2101993; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+```
+
 ## Logging and EVE JSON
 
  * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-output.html
@@ -438,3 +466,6 @@ grep "default-log-dir" suricata.yaml
 ```
  
 Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
+
+---
+[next]()
