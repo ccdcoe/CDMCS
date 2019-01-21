@@ -1,11 +1,9 @@
-# Build and initial setup
-
-## Build
+# Build
 
 see
 * http://suricata.readthedocs.io/en/latest/install.html#source
 
-### General build concepts
+## General build concepts
 
 Searching for packages
 
@@ -63,7 +61,7 @@ make distclean
 
 Note that available make subcommands are listed in `Makefile`. Depending on project, some commands may be missing. That's why `--prefix` is a good idea for cleaning up. Furthermore, some build options may conflict with each other, others are experimental. You may want to do version rollover as opposed to in-place upgrade, etc. In other words, installing multiple builds may be easier than uninstalling.
 
-### Get the suricata source
+## Get the suricata source
 
 Pull the latest from github. Note that git commands are local to working directory.
 
@@ -92,7 +90,7 @@ git checkout 0.5.29
 cd ..
 ```
 
-### Basic tools and build dependencies
+## Basic tools and build dependencies
 
 First, make sure you have software needed for building suricata. Apply `sudo` where and when needed.
 
@@ -128,7 +126,7 @@ libcap-ng-dev \
 libcap-ng0
 ```
 
-### Rust
+## Rust
 
  * https://doc.rust-lang.org/book/index.html
  * https://rustup.rs/
@@ -148,7 +146,7 @@ Then make sure that rust binaries are in your `PATH`. Run the following command 
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
-### Building hyperscan
+## Building hyperscan
 
 **Only do this if you build Suricata for performance on a platform that does not provide hyperscan binary packages. Building it will take long time and will melt your laptop! This section is only for reference!**
 
@@ -210,7 +208,7 @@ cd <suri-build-dir>
 
 Note that suricata may not start up with this config, as system runtime is unaware of custom shared library directory. See next section for debug.
 
-### Build suricata
+## Build suricata
 
 Configure the software to local build directory.
 
@@ -287,7 +285,7 @@ echo "/home/vagrant/Libraries/lib/" > /etc/ld.so.conf.d/suri-hyperscan.conf
 ldconfig
 ```
 
-### Exercises
+## Exercises
 
  * Build your own suricata with features needed for subsequent tasks
    * set a custom installation root of your own choosing
@@ -301,14 +299,14 @@ ldconfig
      * Rule profiling
  * Build a second suricata instance with rule profiling disabled.
 
-#### testing and hints
+### testing and hints
 
  * https://wiki.wireshark.org/SampleCaptures#NFS_Protocol_Family
  * https://www.malware-traffic-analysis.net/2018/index.html
  * `curl testmyids.com`
  * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
 
-## Basic config
+# Config
 
  * https://suricata.readthedocs.io/en/latest/configuration/suricata-yaml.html#
 
@@ -468,4 +466,5 @@ grep "default-log-dir" suricata.yaml
 Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
 
 ---
+
 [next]()
