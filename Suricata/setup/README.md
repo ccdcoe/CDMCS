@@ -310,7 +310,9 @@ ldconfig
 
  * https://suricata.readthedocs.io/en/latest/configuration/suricata-yaml.html#
 
-See [build](##Build) for getting the default config file.
+ ```
+ suricata -c <config-dir>/suricata.yaml
+ ```
 
 ## Managing rules
 
@@ -334,6 +336,8 @@ Suricata rule database can be updated without system restart, but this requires 
 ```
 suricatasc -c "reload-rules"
 ```
+
+Rule directory is usually defined in `suricata.yaml`.
 
 ```
 default-rule-path: /var/lib/suricata/rules
@@ -359,6 +363,8 @@ Modern method for getting packets from kernel space to suricata is `af-packet`. 
 suricata --af-packet=enp0s3 -S /vagrant/var/rules/suricata.rules  -l /home/vagrant/logs -D -vvv
 ```
 
+A proper way would be to define interfaces in `suricata.yaml`. Note that `cluster-id` values should be unique.
+
 ```
 af-packet:
   - interface: enp0s3
@@ -370,3 +376,65 @@ af-packet:
     cluster-type: cluster_flow
     defrag: yes
 ```
+
+Then run suricata with empty `--af-packet` flag.
+
+```
+suricata --af-packet -S /vagrant/var/rules/suricata.rules  -l /home/vagrant/logs -D -vvv
+```
+
+## Home networks
+
+Edit `suricata.yaml` with proper network information. You should see the following in the head of the file. **Do not forget IPv6**.
+
+```
+vars:
+  # more specific is better for alert accuracy and performance
+  address-groups:
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+    #HOME_NET: "[192.168.0.0/16]"
+    #HOME_NET: "[10.0.0.0/8]"
+    #HOME_NET: "[172.16.0.0/12]"
+    #HOME_NET: "any"
+
+    EXTERNAL_NET: "!$HOME_NET"
+    #EXTERNAL_NET: "any"
+
+    HTTP_SERVERS: "$HOME_NET"
+    SMTP_SERVERS: "$HOME_NET"
+    SQL_SERVERS: "$HOME_NET"
+    DNS_SERVERS: "$HOME_NET"
+    TELNET_SERVERS: "$HOME_NET"
+    AIM_SERVERS: "$EXTERNAL_NET"
+    DC_SERVERS: "$HOME_NET"
+    DNP3_SERVER: "$HOME_NET"
+    DNP3_CLIENT: "$HOME_NET"
+    MODBUS_CLIENT: "$HOME_NET"
+    MODBUS_SERVER: "$HOME_NET"
+    ENIP_CLIENT: "$HOME_NET"
+    ENIP_SERVER: "$HOME_NET"
+
+  port-groups:
+    HTTP_PORTS: "80"
+    SHELLCODE_PORTS: "!80"
+    ORACLE_PORTS: 1521
+    SSH_PORTS: 22
+    DNP3_PORTS: 20000
+    MODBUS_PORTS: 502
+    FILE_DATA_PORTS: "[$HTTP_PORTS,110,143]"
+    FTP_PORTS: 21
+```
+
+## Logging and EVE JSON
+
+ * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-output.html
+ * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-format.html
+ * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html
+
+When built with json support, `eve.json` should be in `default-log-dir`.
+
+```
+grep "default-log-dir" suricata.yaml
+```
+ 
+Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
