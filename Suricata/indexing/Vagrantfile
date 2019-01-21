@@ -25,6 +25,7 @@ Vagrant.configure(2) do |config|
       "jasonish/evebox"
     ]
     box.vm.provision "shell", inline: $provision_script
-    box.vm.synced_folder "../setup", "/data"
+    box.vm.synced_folder "../setup", "/buildbox"
+    box.vm.synced_folder "./", "/home/vagrant"
   end
 end
