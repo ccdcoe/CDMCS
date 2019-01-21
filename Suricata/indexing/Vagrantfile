@@ -2,10 +2,14 @@
 # vi: set ft=ruby :
 
 $provision_script = <<SCRIPT
-apt-get update && apt-get -y install python3 python3-pip
+apt-get update && apt-get -y install python3 python3-pip lua5.3 luarocks
+
 su vagrant -c "python3 -m pip install --user --upgrade pip"
 su vagrant -c "python3 -m pip install --user --upgrade jupyter"
 su vagrant -c "python3 -m pip install --user --upgrade jupyterlab"
+su vagrant -c "python3 -m pip install --user --upgrade ilua"
+
+ln -sf /usr/bin/lua5.3 /usr/bin/lua
 SCRIPT
 
 Vagrant.configure(2) do |config|
