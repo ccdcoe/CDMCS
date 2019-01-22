@@ -138,8 +138,8 @@ Then copy the URL into host machine browser. Local notebooks are accessible unde
  * [Logstash](logstash.md)
  * [logstash+redis](/common/elastic/logstash-redis-ela.conf)
  * [Ingest node](/common/elastic/elastic.ingest.md)
- * [Rsyslog](rsyslog.omelastic.md)
- * [Rsyslog+kafka](rsyslog.kafka.conf)
+ * [Rsyslog]()
+ * [Rsyslog+kafka]()
 
 # Evebox
 
@@ -259,3 +259,17 @@ npm install
 npm run build
 cd ..
 ```
+
+Run database migrations.
+
+```
+python manage.py migrate
+```
+
+Generate CSS stuff.
+
+```
+/home/vagrant/.npm-global/bin/webpack
+```
+
+Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L636) for pointing scirius to elastic.
