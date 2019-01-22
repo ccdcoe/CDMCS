@@ -80,7 +80,7 @@ curl -XGET 192.168.10.14:9200/first/_settings
 {"first":{"settings":{"index":{"creation_date":"1548158688125","number_of_shards":"5","number_of_replicas":"1","uuid":"dKmyapUCTSWaGunmnybU9A","version":{"created":"6050499"},"provided_name":"first"}}}}
 ```
 ```
-curl -XPOST 192.168.10.14:9200/first/_settings -H 'Content-Type: application/json' -d '{"first":{"settings":{"index":{"number_of_shards":"5","number_of_replicas":"0"}}}}' 
+curl -XPUT 192.168.10.14:9200/first/_settings -H 'Content-Type: application/json' -d '{"settings":{"index":{"number_of_replicas":"0"}}}'
 ```
 
 ## Playing with python
