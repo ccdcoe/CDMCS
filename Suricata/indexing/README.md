@@ -130,3 +130,15 @@ Then copy the URL into host machine browser. Local notebooks are accessible unde
 
  * [Playing with eve.json](001-load-eve.ipynb)
  * [Getting started with elasticsearch](002-elastic-intro.ipynb)
+
+## Other methods
+
+ * https://suricata.readthedocs.io/en/latest/output/index.html
+ * [Evebox esimport](evebox.md)
+ * [Logstash](logstash.md)
+ * [logstash+redis](/common/elastic/logstash-redis-ela.conf)
+ * [Ingest node](/common/elastic/elastic.ingest.md)
+ * [Rsyslog](rsyslog.omelastic.md)
+ * [Rsyslog+kafka](rsyslog.kafka.conf)
+
+# Evebox

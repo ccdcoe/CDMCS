@@ -26,22 +26,28 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [build from source](/Suricata/setup/#Build)
    * [config](/Suricata/setup/#Config)
  * 13:30 - 16:45
-   * [elasticsearch, intro](/common/elastic)
-   * [indexing alert log](/Suricata/indexing)
-   * [evebox](/Suricata/evebox), [scirius](/Suricata/scirius)
+   * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
+   * [indexing alert log](/Suricata/indexing#playing-with-python)
+   * [evebox](), [scirius](), [kibana]()
 
 ## Day 2 :: Group up :: Feb 13 2019
 
-* 09:00 - 12:30
-   * [elasticsearch, clustering aspects](/common/elastic)
+ * 09:00 - 12:30
+   * [dashboarding, cont.](/Suricata/indexing)
+   * [elastic, clustering]()
+   * [redis, syslog]()
+   * [group work]()
 
-* 13:30 - 16:45
+ * 13:30 - 16:45
+   * [group work]()
 
 ## Day 3 :: Advanced concepts :: Feb 14 2019
 
-* 09:00 - 12:30
+ * 09:00 - 12:30
+   * [ebpf and xdp]()
 
 * 13:30 - 16:45
+   * [LUA scripting]()
 
 ## Day +1 :: :: Feb 15 2019, ends at 12:00
 
