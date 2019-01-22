@@ -163,7 +163,7 @@ docker pull jasonish/evebox
 docker run -it -p 5636:5636 jasonish/evebox -e http://elasticsearch:9200
 ```
 
-[Remember docker networks]() if experiencing elastic connectivity errors. Or use exposed host port, provided elastic is not limited to localhost.
+[Remember docker networks](/common/docker.md#networking) if experiencing elastic connectivity errors. Or use exposed host port, provided elastic is not limited to localhost.
 
 ```
 docker run -it -p 5636:5636 --network elastic jasonish/evebox -e http://elasticsearch:9200
@@ -205,3 +205,57 @@ See `/etc/default/evebox` if installing from deb package.
  * https://github.com/StamusNetworks/scirius
  * https://scirius.readthedocs.io/en/latest/installation-ce.html
  * https://www.stamus-networks.com/open-source/
+
+## Setup
+
+Scirius is a web application written on django framework. Nowadays it also includes nodejs, which has had some...issues. Official documentation works, this guide simply serves as helper on some important considerations.
+
+Set up some python2 dependencies and clone the repo. Checkout version is out of date if you are from the future.
+
+```
+apt-get install -y python-pip dbconfig-common sqlite3 python-virtualenv
+git clone https://github.com/StamusNetworks/scirius
+cd scirius
+git checkout tags/scirius-3.1.0
+```
+
+Then start up virtualenv in local scirius folder. Install local deps into venv.
+
+```
+/usr/local/bin/virtualenv ./
+source ./bin/activate
+
+pip install -r requirements.txt
+pip install --upgrade urllib3
+pip install gunicorn pyinotify python-daemon
+```
+
+This is where the real *fun* begins. Let's pull a node version that actually works, set it up locally and freeze all versions. It's the [javascript way](https://en.wikipedia.org/wiki/Electron_(software_framework)).
+
+```
+NODE_VERSION="v10.15.0"
+wget -4 -q https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
+tar -xJf node-$NODE_VERSION-linux-x64.tar.xz 
+```
+
+Remember those *issues* I mentioned earlier? Well, once upon a time, `npm` as `root` blew up your entire `/etc`. So now, if you try to build node packages as root user, you are going to have a bad time. Because, [nodejs modules written in c++](http://benfarrell.com/2013/01/03/c-and-node-js-an-unholy-combination-but-oh-so-right/) is a thing. So, everything is done as `vagrant` user with explicitly configured node module directory and paths.
+
+```
+mkdir ~/.npm-global
+echo 'export PATH=~/.npm-global/bin:$PATH' > ~/.profile
+echo "export PATH=$SCIRIUS_PATH/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
+source ~/.profile
+
+npm config set prefix '~/.npm-global'
+```
+
+Now we can proceed with official guidelines.
+
+```
+npm install -g npm@latest webpack@3.11
+npm install
+cd hunt
+npm install
+npm run build
+cd ..
+```
