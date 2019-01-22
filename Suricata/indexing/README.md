@@ -142,3 +142,66 @@ Then copy the URL into host machine browser. Local notebooks are accessible unde
  * [Rsyslog+kafka](rsyslog.kafka.conf)
 
 # Evebox
+
+> Web Based Event Viewer (GUI) for Suricata EVE Events in Elastic Search
+
+ * https://evebox.org/
+ * https://github.com/jasonish/evebox
+
+## Installing
+
+Evebox is written in golang, so you actually just need to download a binary.
+
+see:
+ * https://evebox.org/files/development/
+ * https://evebox.org/files/release/latest/
+
+But there's nothing like firing up another container to host a simple Go binary.
+
+```
+docker pull jasonish/evebox
+docker run -it -p 5636:5636 jasonish/evebox -e http://elasticsearch:9200
+```
+
+[Remember docker networks]() if experiencing elastic connectivity errors. Or use exposed host port, provided elastic is not limited to localhost.
+
+```
+docker run -it -p 5636:5636 --network elastic jasonish/evebox -e http://elasticsearch:9200
+```
+
+Or installing a deb package.
+
+```
+wget -4 https://evebox.org/files/release/latest/evebox_0.10.1_amd64.deb
+dpkg -i evebox_0.10.1_amd64.deb
+```
+
+Up to you.
+
+## Linking to elasticsearch
+
+See evebox arguments.
+
+```
+evebox -h
+```
+
+**Do not expect an error message if elastic aggregation fails in background**. Just think of debuggin as fun little game. 
+
+If running evebox from console gives no error but inbox/alerts displays no logs while events, then it's likely one of those problems:
+ * events lack `.keyword` (es 5+) or `.raw` (es 2) field mappings;
+   * or elasticsearch keyword argument missing;
+   * missing index template;
+ * event `@timestamp field missing`;
+
+If events shows no logs while console displays no elastic connectivity errors, then your index pattern is likely wrong.
+
+See `/etc/default/evebox` if installing from deb package.
+
+# Scirius
+
+> Scirius is a web application for Suricata ruleset management.
+
+ * https://github.com/StamusNetworks/scirius
+ * https://scirius.readthedocs.io/en/latest/installation-ce.html
+ * https://www.stamus-networks.com/open-source/
