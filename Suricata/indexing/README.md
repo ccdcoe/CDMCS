@@ -1,25 +1,27 @@
 # Indexing alert log
 
- Having alert or network log on disk may be nice, but that approach does not really scale. Hunting needs tools that scale and can aggregate vast amounts of data. Because suricata can produce. Nowadays, [elastic stack](https://www.elastic.co/products) is the go-to method for doing that. Most front-end tools simply rely on elastic aggregations.
+Having alert or network log on disk may be nice, but that approach does not really scale. Hunting needs tools that scale and can aggregate vast amounts of data. Because suricata can produce. Nowadays, [elastic stack](https://www.elastic.co/products) is the go-to method for doing that. Most front-end tools simply rely on elastic aggregations.
 
- * [More on elasticsearch](/common/elastic/)
+## Intro
 
-## Getting started with Elastic
+Go through attached jupyter notebooks.
 
-Getting suricata alert data to elastic and exposing it where needed is surprisingly simple, but can cause a lot of confusion as many tools exist for doing it. Which to use depends on your particular needs. But keep in mind that Elastic search engine is the only core component you need. Everything else depends on you.
+ * [Playing with eve.json](001-load-eve.ipynb)
+ * [Getting started with elasticsearch](002-elastic-intro.ipynb)
 
-### First node
-
-* https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
-
-Strictly speaking, Elasticsearch only needs Java as dependency. However, these days it's easier to use docker when deploying your first testing node. Firstly, make sure your deploy host has this kernel setting in place. Otherwise, elasticsearch will fail on startup
+Make sure that notebook is running. As `vagrant` user in `indexing` box, run the following command.
 
 ```
-sysctl -w vm.max_map_count=262144
+jupyter lab --ip=192.168.10.14
 ```
 
-Then start the container in console. Note that `-d` flag can be used to daemonize it, but running it from dedicated console window has the benefit of exposing the logs. Very useful for initial debug.
+Note that `ip` is needed if running notebook inside a vagrant VM, and it should correspond to private address of box that is accessible from hypervisor. Then look for the following line in console output:
 
 ```
-docker run -ti --name my-first-elastic -p 9200:9200 -e "discovery.type=single-node" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "cluster.name=cdmcs" docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4
+    To access the notebook, open this file in a browser:
+        file:///run/user/1000/jupyter/nbserver-11679-open.html
+    Or copy and paste one of these URLs:
+        http://192.168.10.14:8888/?token=<TOKEN>
 ```
+
+Then copy the URL into host machine browser. Local notebooks are accessible under `localbox` sync point.
