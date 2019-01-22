@@ -46,14 +46,17 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 09:00 - 12:30
    * [ebpf and xdp]()
 
-* 13:30 - 16:45
+ * 13:30 - 16:45
    * [LUA scripting]()
 
 ## Day +1 :: :: Feb 15 2019, ends at 12:00
 
-* 09:00 - 10:30
-  * ...
-  * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+ * 09:00 - 10:30
+   * ...
+   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+
+### Homeless topics
+ * [IPS]()
 
 ----
 
