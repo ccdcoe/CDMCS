@@ -34,7 +34,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 09:00 - 12:30
    * [dashboarding, cont.](/Suricata/indexing)
-   * [elastic, clustering]()
+   * [logstsh, elastic, clustering]()
    * [redis, syslog]()
    * [group work]()
 
@@ -57,11 +57,15 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ### Homeless topics
  * [IPS]()
+ * [Alerta]()
+ * [septun/RSS]()
 
 ----
 
 Before You Come To Class please browse trough ..
 
-* [Suricata](/Suricata/suricata/README.md)
-* [Scirius](/Suricata/scirius/README.md)
-* [Evebox](/Suricata/evebox/README.md)
+ * [prereqs](https://github.com/ccdcoe/CDMCS/tree/master/prerequisites)
+ * [singlehost](https://github.com/ccdcoe/CDMCS/tree/master/Suricata/vagrant/singlehost)
+ * [suricata](https://suricata.readthedocs.io/en/latest/)
+ * [vagrant](https://github.com/ccdcoe/CDMCS/tree/master/common/vagrant)
+ * []
