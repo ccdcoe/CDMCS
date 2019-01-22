@@ -89,7 +89,17 @@ Note that number of shards cannot be changed once index is already created. Nor 
 curl "192.168.10.14:9200/first/_mappings" | jq .
 ```
 
-Proper method to handle this issue is to [create a template](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L332). Note that `order` and `index-patterns` allows [overriding configuration values based on index name, and each field can be mapped into multiple types](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L384). Usually a string field that is mapped as `text` has a mapping with suffix `.keyword` that has a type `keyword`.
+Proper method to handle this issue is to [create a template](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L332). Note that `order` and `index-patterns` allows [overriding configuration values based on index name, and each field can be mapped into multiple types](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L384). Usually a string field that is mapped as `text` has a mapping with suffix `.keyword` that has a type `keyword`. You can delete an index if you messed up like this:
+
+```
+curl -XDELETE localhost:9200/first
+```
+
+You can also delete by wildcard.
+
+```
+curl -XDELETE "localhost:9200/*"
+```
 
 Finally, elastic is not meant for document storage or retreival. Keep your golden storage somewhere else, elastic is for `_search` and [data aggregations](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L845)
 
