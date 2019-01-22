@@ -47,6 +47,42 @@ Then verify that document exists via HTTP GET.
 curl -XGET localhost:9200/first/doc/AAAA
 ```
 
+Also verify indices.
+
+```
+curl localhost:9200/_cat/indices
+```
+
+Note that cluster health is `YELLOW`. This is because each index is distributed into shards. Each shard can have `N >= 0` replicas, which default being 1. In other words, each shard can have a redundant copy that also serves increases search throughput as replicas are open for reading while main shard is busy with search task. However, replica cannot be assigned to the same host as primary, so new single-host setup is perpetually degraded. We can verify this when looking at `_cat/shards`.
+
+```
+curl localhost:9200/_cat/shards
+```
+```
+first 1 p STARTED    0   261b 172.17.0.2 _rGSnmd
+first 1 r UNASSIGNED
+first 2 p STARTED    0   261b 172.17.0.2 _rGSnmd
+first 2 r UNASSIGNED
+first 3 p STARTED    1 15.3kb 172.17.0.2 _rGSnmd
+first 3 r UNASSIGNED
+first 4 p STARTED    1 15.4kb 172.17.0.2 _rGSnmd
+first 4 r UNASSIGNED
+first 0 p STARTED    0   261b 172.17.0.2 _rGSnmd
+first 0 r UNASSIGNED
+```
+
+This can be fixed by altering index settings.
+
+```
+curl -XGET 192.168.10.14:9200/first/_settings
+```
+```
+{"first":{"settings":{"index":{"creation_date":"1548158688125","number_of_shards":"5","number_of_replicas":"1","uuid":"dKmyapUCTSWaGunmnybU9A","version":{"created":"6050499"},"provided_name":"first"}}}}
+```
+```
+curl -XPOST 192.168.10.14:9200/first/_settings -H 'Content-Type: application/json' -d '{"first":{"settings":{"index":{"number_of_shards":"5","number_of_replicas":"0"}}}}' 
+```
+
 ## Playing with python
 
 Make sure that notebook is running. As `vagrant` user in `indexing` box, run the following command.
