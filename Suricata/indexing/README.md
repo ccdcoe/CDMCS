@@ -243,7 +243,7 @@ Remember those *issues* I mentioned earlier? Well, once upon a time, `npm` as `r
 ```
 mkdir ~/.npm-global
 echo 'export PATH=~/.npm-global/bin:$PATH' > ~/.profile
-echo "export PATH=$SCIRIUS_PATH/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
+echo "export PATH=$$PWD/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
 source ~/.profile
 
 npm config set prefix '~/.npm-global'
