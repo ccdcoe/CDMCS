@@ -1,6 +1,6 @@
 # Build
 
-see
+See
 * http://suricata.readthedocs.io/en/latest/install.html#source
 
 ## General build concepts
@@ -352,18 +352,28 @@ Official rule update tool is a python script.
 /home/vagrant/.local/bin/suricata-update list-sources
 ```
 
-Suricata rule database can be updated without system restart, but this requires `unux-command`. More on this later.
-
-```
-suricatasc -c "reload-rules"
-```
-
 Rule directory is usually defined in `suricata.yaml`.
 
 ```
 default-rule-path: /var/lib/suricata/rules
 rule-files:
  -  suricata.rules
+```
+
+## Reloading rules via unix-socket
+
+Suricata rule database can be updated without system restart, but this requires `unix-command` to be enabled in `suricata.yaml`.
+
+```
+unix-command:
+  enabled: auto
+  #filename: custom.socket
+```
+
+Make sure you have read permissions for socket, or just use `sudo` as needed.
+
+```
+suricatasc -c "reload-rules"
 ```
 
 Then add update command with reload to periodic cron task.
@@ -465,6 +475,15 @@ grep "default-log-dir" suricata.yaml
 ```
  
 Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
+
+### Before moving on!
+
+ * Configure suricata with your Vagrant box uplink subnet as home network.
+ * Run Suricata in daemon mode with up to date rules
+ * Configure `/vagrant/logs` as destination for `eve.json`
+ * Read some pcap files with non-daemonized version of suricata from [malware traffic analysis site](http://malware-traffic-analysis.net/)
+   * Any pcap file is fine, it's mainly for generating some interesting data for next exercises
+   * Look for zip files. Password is usually `INFECTED`
 
 ---
 
