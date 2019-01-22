@@ -59,6 +59,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * [IPS]()
  * [Alerta]()
  * [septun/RSS]()
+ * [pcap via unix socket]()
+ * [suricata stats to TICK]()
 
 ----
 
