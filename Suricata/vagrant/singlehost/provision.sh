@@ -20,7 +20,7 @@ LOGSTASH="logstash-oss-6.5.4.deb"
 INFLUX="influxdb_1.7.3_amd64.deb"
 TELEGRAF="telegraf_1.9.2-1_amd64.deb"
 GRAFANA="grafana_5.4.3_amd64.deb"
-EVEBOX="evebox_0.10.1_amd64.deb"
+EVEBOX="evebox_0.10.2_amd64.deb"
 SCIRIUS="scirius_3.1.0-1_amd64.deb"
 
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4"
@@ -205,6 +205,12 @@ outputs:
       enabled: 'yes'
       filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
       filename: eve.json
+
+      #prefix: "@cee: "
+      #identity: "suricata"
+      #facility: local5
+      #level: Info
+
       redis:
         server: 127.0.0.1
         port: 6379
@@ -381,31 +387,31 @@ curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/js
 }
 ' || exit 1
 
-#curl -s -XPUT localhost:9200/_template/suricata   -H'Content-Type: application/json' -d '
-#{
-#  "order": 10,
-#  "version": 0,
-#  "index_patterns": "suricata-*",
-#  "mappings":{
-#    "_doc": {
-#      "properties": {
-#        "src_ip": { 
-#          "type": "ip",
-#          "fields": {
-#            "keyword" : { "type": "keyword", "ignore_above": 256 }
-#          }
-#        },
-#        "dest_ip": { 
-#          "type": "ip",
-#          "fields": {
-#            "keyword" : { "type": "keyword", "ignore_above": 256 }
-#          }
-#        }
-#      }
-#    }
-#  }
-#}
-#' || exit 1
+curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/json' -d '
+{
+  "order": 10,
+  "version": 0,
+  "index_patterns": "suricata-*",
+  "mappings":{
+    "doc": {
+      "properties": {
+        "src_ip": { 
+          "type": "ip",
+          "fields": {
+            "keyword" : { "type": "keyword", "ignore_above": 256 }
+          }
+        },
+        "dest_ip": { 
+          "type": "ip",
+          "fields": {
+            "keyword" : { "type": "keyword", "ignore_above": 256 }
+          }
+        }
+      }
+    }
+  }
+}
+' || exit 1
 
 # logstash
 echo "Provisioning LOGSTASH"
@@ -439,6 +445,7 @@ output {
     hosts => ["elastic"]
     index => "suricata-%{+YYYY.MM.dd.hh}"
     manage_template => false
+    document_type => "doc"
   }
 }
 EOF
@@ -505,6 +512,15 @@ grep "CDMCS" $FILE || cat >> $FILE <<'EOF'
 # CDMCS
 module(load="omelasticsearch")
 module(load="mmjsonparse")
+template(
+  name="with-logstash-timestamp-format" 
+  type="list") {
+    constant(value="{\"@timestamp\":\"")                property(name="timegenerated" dateFormat="rfc3339")
+    constant(value="\",")                               property(name="$!all-json"    position.from="3")
+}
+template(name="JSON" type="list") {
+    property(name="$!all-json")
+}
 template(name="suricata-index" type="list") {
     constant(value="suricata-")
     property(name="timereported" dateFormat="rfc3339" position.from="1" position.to="4")
@@ -515,18 +531,16 @@ template(name="suricata-index" type="list") {
     constant(value=".")
     property(name="timereported" dateFormat="rfc3339" position.from="12" position.to="13")
 }
-template(name="JSON" type="list") {
-    property(name="$!all-json")
-}
 if $syslogtag contains 'suricata' and $msg startswith ' @cee:' then {
   action(type="mmjsonparse")
   if $parsesuccess == "OK" then action(
     type="omelasticsearch"
-    template="JSON"
+    template="with-logstash-timestamp-format"
     server="127.0.0.1"
     serverport="9200"
     searchIndex="suricata-index"
     dynSearchIndex="on"
+    searchType="doc"
   )
 }
 EOF
@@ -754,7 +768,7 @@ if [ $DOCKERIZE = true ]; then
   docker ps -a | grep evebox || docker run -dit --name evebox -h evebox --network cdmcs --restart unless-stopped -p 5636:5636 --log-driver syslog --log-opt tag="evebox" $DOCKER_EVEBOX -e http://elastic:9200 --index suricata --elasticsearch-keyword keyword
 else
   cd $PKGDIR
-  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O 
+  [[ -f $EVEBOX ]] || wget $WGET_PARAMS https://evebox.org/files/release/latest/$EVEBOX -O $EVEBOX
   dpkg -i $EVEBOX > /dev/null 2>&1
   grep "suricata" /etc/default/evebox || echo 'ELASTICSEARCH_INDEX="suricata"' >> /etc/default/evebox
   systemctl stop evebox.service
@@ -842,6 +856,7 @@ while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep
 sleep 10
 
 netstat -anutp
+curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '{"size": 1, "query": {"term": {"event_type": "alert"}}}' | jq .
 curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '
 {
   "size": 0,
