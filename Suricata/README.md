@@ -34,9 +34,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 09:00 - 12:30
    * [dashboarding, cont.](/Suricata/indexing)
-   * [logstsh, elastic, clustering]()
-   * [redis, syslog]()
-   * [group work]()
+   * [elastic clustering](/Suricata/advanced-indexing)
 
  * 13:30 - 16:45
    * [group work]()
