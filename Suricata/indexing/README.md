@@ -273,3 +273,17 @@ Generate CSS stuff.
 ```
 
 Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L636) for pointing scirius to elastic.
+
+# Kibana
+
+The most well-known frontend for elastic stack. And easiest to set up. Basic config involes just pointing toward elastic proxy. Note that image should be in same private network as elasticsearch cluster if docker is used. Alternatively, kibana can also be pointed toward exposed elastic proxy on host. Default port is `5601`, host port should be forwarded there to enable http access.
+
+```
+docker run -it --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" -p 5601:5601 docker.elastic.co/kibana/kibana-oss:6.5.4
+```
+
+Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs. But most useful tab by far is `Dev tools` which functions as autocomplete-enabled IDE for elastic API. You can test any previously used curl or python queries in this tab.
+
+---
+
+[back](/Suricata)

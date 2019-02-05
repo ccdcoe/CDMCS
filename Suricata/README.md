@@ -28,7 +28,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 13:30 - 16:45
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
    * [indexing alert log](/Suricata/indexing#playing-with-python)
-   * [evebox](), [scirius](), [kibana]()
+   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
 
 ## Day 2 :: Group up :: Feb 13 2019
 
