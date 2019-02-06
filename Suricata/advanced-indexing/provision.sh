@@ -4,6 +4,11 @@ net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 EOF
+
+grep "max_map_count" $FILE || cat >> $FILE <<EOF
+vm.max_map_count = 262144
+EOF
+
 sysctl -p
 
 FILE=/etc/apt/apt.conf.d/99force-ipv4
