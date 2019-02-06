@@ -43,58 +43,9 @@ rule-files:
 sensor-name: CDMCS-rules
 EOF
 
-FILE=/etc/suricata/cdmcs-logging.yaml
-grep "CDMCS" $FILE || cat >> $FILE <<EOF
-%YAML 1.1
----
-# CDMCS
-outputs:
-  - fast:
-      enabled: yes
-      filename: fast.log
-      append: yes
-  - eve-log:
-      enabled: 'yes'
-      filetype: regular
-      filename: eve.json
-      types:
-        - alert:
-            payload: yes             # enable dumping payload in Base64
-            payload-buffer-size: 4kb # max size of payload buffer to output in eve-log
-            payload-printable: yes   # enable dumping payload in printable (lossy) format
-            packet: yes              # enable dumping of packet (without stream segments)
-            http-body: yes           # enable dumping of http body in Base64
-            http-body-printable: yes # enable dumping of http body in printable format
-            metadata: no             # enable inclusion of app layer metadata with alert. Default yes
-            tagged-packets: yes
-        - http:
-            extended: yes     # enable this for extended logging information
-        - dns:
-            version: 2
-        - tls:
-            extended: yes     # enable this for extended logging information
-        - files:
-            force-magic: no   # force logging magic on all logged files
-        - drop:
-            alerts: yes      # log alerts that caused drops
-        - smtp:
-            extended: yes # enable this for extended logging information
-        - dnp3
-        - nfs
-        - smb
-        - tftp
-        - ikev2
-        - krb5
-        - dhcp:
-            enabled: yes
-            extended: yes
-        - ssh
-EOF
-
 FILE=/etc/suricata/suricata.yaml
 grep "cdmcs" $FILE || cat >> $FILE <<EOF
 include: /etc/suricata/cdmcs-detect.yaml
-include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
 [[ -f /etc/init.d/suricata ]] && rm /etc/init.d/suricata
