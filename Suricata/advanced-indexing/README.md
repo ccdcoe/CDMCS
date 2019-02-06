@@ -115,8 +115,109 @@ redis-cli
 127.0.0.1:6379> KEYS *
 1) "suricata"
 ```
-# logstash
 
+# Alerta
+
+Alerting tends to turn whatever tool is used into a log server. E-mail is especially bad for this. But you need to know what the situation is right now, how the alert levels have elevated or dropped, how the alerts correspond to your assets, how the alerts are correlated, etc. Alerta is the tool for doing that.
+
+ * https://docs.alerta.io/en/latest/quick-start.html
+
+Alerta is simply a python API supported by a mongodb database (though is not the only option). Firstly, we need to set up our mongo instance. There are two methods:
+
+ * [set up debian ppa](https://docs.mongodb.com/master/tutorial/install-mongodb-on-ubuntu/)
+ * [use a docker image](https://docs.docker.com/samples/library/mongo/)
+
+Mongo only needs to be accessible to alerta api daemon. And `localhost` is good enough for testing environment. Then install CLI tool and daemon from pip. Note that `$HOME/.local/bin` should be in path for subsequent commands.
+
+```
+python3 -m pip install --user alerta alerta-server
+```
+
+Then run the API server with default options while listening to all interfaces. Listening part is important because old web ui uses *CORS*.
+
+```
+alertad run --port 8080 --host 0.0.0.0
+```
+
+Speaking of *CORS*, we should update `/etc/alertad.conf` (or local version if you modified `ALERTA_SVR_CONF_FILE` env variable) for the ip/domain/port that will later be used for web ui!
+
+```
+CORS_ORIGINS = [
+    'http://192.168.10.15:8000'
+]
+```
+
+Note that you should use whatever IP/Port you decide to use. Vagrant box public ip should be added and port `8000` is simply for reference. Then set up the web ui.
+
+```
+wget -O alerta-web.tgz https://github.com/alerta/angular-alerta-webui/tarball/master
+tar zxvf alerta-web.tgz
+cd alerta-angular-alerta-webui-*/app
+python3 -m http.server 8000
+```
+
+Make sure to edit `config.json` in `app` directory to point to correct endpoint.
+
+```
+{"endpoint": "http://192.168.10.15:8080"}
+```
+
+Due to *CORS*, this endpoint should be exposed to the user. So, localhost is not going to be good if you are serving it remotely.
+
+**Important!** - Old web ui is deprecated. See [new web ui](https://github.com/alerta/beta.alerta.io) for future reference.
+
+## Usage
+
+Web ui is simply for colorful pictures, first verify that everything works via command line tool.
+
+```
+alerta send -r web01 -e NodeDown -E Production -S Website -s major -t "Web server is down." -v ERROR
+```
+```
+alerta top
+```
+
+Then see the web ui. If it does not work, it is most likely *CORS* or *endpoint* in `app/config.json`
+
+## Config
+
+ * https://docs.alerta.io/en/latest/configuration.html?highlight=levels
+
+Many things can be customized, including alert levels.
+
+```
+SEVERITY_MAP = {
+    'erm, what!??': 1,
+    'wat': 2,
+    'interesting': 3,
+    'ok': 4,
+    'meh': 5
+}
+DEFAULT_NORMAL_SEVERITY = 'ok'  # 'normal', 'ok', 'cleared'
+DEFAULT_PREVIOUS_SEVERITY = 'interesting'
+
+COLOR_MAP = {
+    'severity': {
+            'erm, what!??': "red",
+            'wat': "orange",
+            'interesting': "yellow",
+            'ok': "skyblue",
+            'meh': "green"
+    },
+    'text': 'black',
+    'highlight': 'skyblue '
+}
+```
+
+## Housekeeping
+
+Expired alerts do not go away by themselves, they have to be clean up via periodic cleanup job. Edit the crontab via `crontab -e`.
+
+```
+* * * * *  alerta housekeeping
+```
+
+# logstash
  * https://www.elastic.co/guide/en/logstash/master/index.html
 
 ```
