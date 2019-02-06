@@ -66,6 +66,7 @@ path:
 
 * https://redis.io/topics/quickstart
 
+Redis is in-memory data structure store, commonly used as buffer or memory cache. It can be deployed by building it yourself or just running the docker container.
 
 ```
 wget http://download.redis.io/redis-stable.tar.gz

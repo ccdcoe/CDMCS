@@ -279,7 +279,7 @@ Type=forking
 [Install]
 WantedBy=multi-user.target
 EOF
-check_service suricata
+check_service suricata || exit 1
 
 echo "Updating rules"
 suricata-update enable-source ptresearch/attackdetection

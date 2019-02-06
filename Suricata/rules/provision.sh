@@ -1,3 +1,4 @@
+
 FILE=/etc/sysctl.conf
 grep "disable_ipv6" $FILE || cat >> $FILE <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -92,4 +93,5 @@ include: /etc/suricata/cdmcs-detect.yaml
 include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
+service suricata stop
 apt-get install -y tcpdump tcpreplay jq
