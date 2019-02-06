@@ -7,7 +7,7 @@ Single-node setups only get you so far. At one point you have to scale out.
 Elastic config options are in `elasticsearch.yml`. It should be placed under `/etc/elasticsearch` if installed from deb or bound under `/usr/share/elasticsearch/config/elasticsearch.yml` if running from docker images. Also, make sure that each node is bound to distinct port on host if running from container.
 
 ```
-docker run -ti -p 9200:9200 -p 9300-9400:9300-9400 -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+docker run -ti -p 9200:9200 -p 9300:9300 -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
 ```
 
 Firstly, all nodes should be configured to belong to common cluster.
@@ -55,7 +55,7 @@ Binding elastic to specific interfaces can be a good idea if your box has multip
 
 ```
 network:
-  host: 192.168.10.140
+  host: 0.0.0.0
 ```
 
 Both data and log directories can be customized if needed. Multiple data directories can be defined, for example in systems with multiple disks. Note that elastic is not really designed for scaling much inside the host, so data directory is picked simply based on disk usage.
