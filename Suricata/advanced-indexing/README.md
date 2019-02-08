@@ -218,6 +218,7 @@ Expired alerts do not go away by themselves, they have to be clean up via period
 ```
 
 # logstash
+
  * https://www.elastic.co/guide/en/logstash/master/index.html
 
 ```
