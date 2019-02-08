@@ -1,5 +1,5 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/cyber-defence-monitoring-course-suite-module-1-1.html) environment... hands-on 90% talk 10% **slides 0%**
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-suite-module-1-feb-2019/) environment... hands-on 90% talk 10% **slides 0%**
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
@@ -12,7 +12,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 0 :: Intro:: Feb 11 2019, starts at 13:00
 
  * 13:00 - 14:45
-   * [Intro](day_intro.md)
+   * [Intro](/common/day_intro.md)
    * [what is Suricata](/Suricata/suricata/README.md)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
    * [singlehost](/Suricata/vagrant/singlehost/)
@@ -51,6 +51,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 09:00 - 10:30
    * ...
+ * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ### Homeless topics
