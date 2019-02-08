@@ -43,7 +43,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 14 2019
 
  * 09:00 - 12:30
-   * [ebpf and xdp]()
+   * [ebpf and xdp](https://suricata.readthedocs.io/en/latest/capture-hardware/ebpf-xdp.html)
 
  * 13:30 - 16:45
    * [LUA scripting](/Suricata/lua)
