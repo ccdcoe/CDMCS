@@ -19,7 +19,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/)
 
-## Day 1 :: Single Box :: Feb 12 2019
+## Day 1 :: Single box, setting up :: Feb 12 2019
 
  * 09:00 - 12:30
    * [rules, cont.](/Suricata/rules)
@@ -30,24 +30,25 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [indexing alert log](/Suricata/indexing#playing-with-python)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
 
-## Day 2 :: Group up :: Feb 13 2019
+## Day 2 :: Group up, scale out :: Feb 13 2019
 
  * 09:00 - 12:30
    * [dashboarding, cont.](/Suricata/indexing)
-   * [elastic clustering](/Suricata/advanced-indexing)
+   * [elastic clustering](/Suricata/advanced-indexing#clustered-elasticsearch)
+   * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
 
  * 13:30 - 16:45
-   * [group work]()
+   * [group work on alert handling](/Suricata/advanced-indexing#alerta)
 
-## Day 3 :: Advanced concepts :: Feb 14 2019
+## Day 3 :: Advanced stuff, hipster tech :: Feb 14 2019
 
  * 09:00 - 12:30
    * [ebpf and xdp]()
 
  * 13:30 - 16:45
-   * [LUA scripting]()
+   * [LUA scripting](/Suricata/lua)
 
-## Day +1 :: :: Feb 15 2019, ends at 12:00
+## Day +1 :: Encore :: Feb 15 2019, ends at 12:00
 
  * 09:00 - 10:30
    * ...
