@@ -64,3 +64,6 @@ venv/*
 
 # suricata rules
 *.rules
+
+# Lua scripts written as example or test
+*.lua
