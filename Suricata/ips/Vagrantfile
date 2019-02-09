@@ -5,17 +5,13 @@ DEPLOY_SEC = true
 
 $buildSuricata = <<SCRIPT
 export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get build-dep suricata -y
+apt-get update && apt-get install -y libpcre3 libpcre3-dbg libpcre3-dev build-essential libpcap-dev libnet1-dev libyaml-0-2 libyaml-dev pkg-config zlib1g zlib1g-dev libcap-ng-dev libcap-ng0 make libmagic-dev libjansson-dev libnss3-dev libgeoip-dev liblua5.1-dev libhiredis-dev libevent-dev python-yaml rustc cargo build-essential autoconf automake libtool pkg-config make curl wget git unzip
 git clone https://github.com/OISF/suricata
 cd suricata
 git clone https://github.com/OISF/libhtp.git -b 0.5.x
-./autogen.sh
-./configure --help
-SCRIPT
-
-$setupWebServer = <<SCRIPT
-export DEBIAN_FRONTEND=noninteractive
-apt-get update && apt-get install -y nginx
+chown -R vagrant /home/vagrant/suricata
+#./autogen.sh
+#./configure --help
 SCRIPT
 
 Vagrant.configure(2) do |config|
@@ -32,22 +28,10 @@ Vagrant.configure(2) do |config|
     end
   end
   config.vm.define 'bridge' do |box|
-    box.vm.box = "ubuntu/xenial64"
+    box.vm.box = "ubuntu/bionic64"
     box.vm.hostname = 'bridge'
     box.vm.network :private_network, ip: "192.168.12.254", virtualbox__intnet: "INT"
-    box.vm.network :private_network, ip: "192.168.10.30"
     box.vm.provision "shell", inline: $buildSuricata
-  end
-  if DEPLOY_SEC == true
-    config.vm.define 'sec' do |box|
-      box.vm.box = "ubuntu/xenial64"
-      box.vm.hostname = 'sec'
-      box.vm.network :private_network, ip: "192.168.10.31"
-      config.vm.provider :virtualbox do |vb|
-        vb.customize ["modifyvm", :id, "--cpus", 4]
-        vb.customize ["modifyvm", :id, "--memory", 4096]
-      end
-    end
   end
 end
 
