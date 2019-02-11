@@ -617,9 +617,11 @@ config_scirius(){
 
   cd $SCIRIUS_PATH && git checkout tags/scirius-3.1.0
 
-  /usr/local/bin/virtualenv ./
+  echo "installing changing to venv"
+  virtualenv ./
   source $SCIRIUS_PATH/bin/activate
 
+  pip install --upgrade pip
   pip install -r requirements.txt
   pip install --upgrade urllib3
   pip install gunicorn pyinotify python-daemon
@@ -676,8 +678,8 @@ echo "Provisioning SCIRIUS"
 cd $PKGDIR
 [[ -f $SCIRIUS ]] || wget -q $WGET_PARAMS http://packages.stamus-networks.com/selks4/debian/pool/main/s/scirius/$SCIRIUS -O $SCIRIUS
 
-apt-get install -y nginx python-pip dbconfig-common sqlite3 > /dev/null
-pip install --upgrade pip virtualenv #urllib3 chardet
+apt-get install -y nginx python-pip python-virtualenv dbconfig-common sqlite3 > /dev/null
+#pip install --upgrade pip virtualenv #urllib3 chardet
 
 [[ -d $SCIRIUS_PATH ]] || git clone https://github.com/StamusNetworks/scirius $SCIRIUS_PATH
 chown -R vagrant $SCIRIUS_PATH
