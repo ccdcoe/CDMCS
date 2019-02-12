@@ -352,6 +352,18 @@ Official rule update tool is a python script.
 /home/vagrant/.local/bin/suricata-update list-sources
 ```
 
+Enable a new rule source.
+
+```
+/home/vagrant/.local/bin/suricata-update enable-source tgreen/hunting
+```
+
+Update rules
+
+```
+/home/vagrant/.local/bin/suricata-update -D /vagrant
+```
+
 Rule directory is usually defined in `suricata.yaml`.
 
 ```
@@ -475,6 +487,18 @@ grep "default-log-dir" suricata.yaml
 ```
  
 Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
+
+### Todo list
+
+ * Home nets;
+ * Default log direcotry;
+ * eve.json output;
+ * af-packet input;
+ * rules;
+    * update;
+    * Rule directory;
+    * rule file;
+ * run suricata with `--af-packet` argument;
 
 ### Before moving on!
 
