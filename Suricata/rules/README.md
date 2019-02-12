@@ -175,4 +175,4 @@ A rule consists of the following:
 * DNS domain with .su suffix
 * Curl user-agent
 * TLS connection from HOME_NET to toto.com domain (we need to exclude toto.communism.fr)
-* Alert on JPEG image taken with a NIKON D700
+* Alert on JPEG image taken with a NIKON D700 (example: http://home.regit.org/wp-content/uploads/2017/07/20170705_0237.jpg)
