@@ -174,3 +174,5 @@ A rule consists of the following:
 * DNS zone transfer
 * DNS domain with .su suffix
 * Curl user-agent
+* TLS connection from HOME_NET to toto.com domain (we need to exclude toto.communism.fr)
+* Alert on JPEG image taken with a NIKON D700
