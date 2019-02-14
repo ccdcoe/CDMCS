@@ -56,7 +56,7 @@ echo started at $START
 echo finished at $END
 
 echo "NOW YOU CAN BUILD AN EBPF/XDP SURICATA"
-echo "see: https://github.com/ccdcoe/CDMCS/blob/master/Suricata/ebpf/Readme.md for tasks"
+echo "see: https://github.com/ccdcoe/CDMCS/blob/master/Suricata/ebpf/README.md for tasks"
 
 SCRIPT
 
