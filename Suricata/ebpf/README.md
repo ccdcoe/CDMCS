@@ -1,8 +1,8 @@
 # eBPF and XDP
 
 See
-* https://github.com/regit/suricata/blob/ebpf-xdp-update-8.2/doc/userguide/capture-hardware/ebpf-xdp.rst
-* https://home.regit.org/~regit/suricata-ebpf.pdf
+* Documentation: https://github.com/regit/suricata/blob/ebpf-xdp-update-8.2/doc/userguide/capture-hardware/ebpf-xdp.rst
+* Talk on Suricata, XDP and eBPF: https://home.regit.org/~regit/suricata-ebpf.pdf
 
 ## Building a eBPF enable Suricata
 
