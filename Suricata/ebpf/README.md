@@ -15,6 +15,8 @@ make
 make install
 ```
 
+Switch to `suricata` directory in home directory.
+
 To enable eBPF support you need to pass a series of flags to suricata configure:
 
 ```
@@ -24,7 +26,7 @@ To enable eBPF support you need to pass a series of flags to suricata configure:
 You can then build and install the software 
 
 ```
-make -4
+make -j4
 make install
 make install-conf
 ```
