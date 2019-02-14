@@ -37,7 +37,7 @@ a custom kernel. To do so download the following packages:
 * https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17/linux-modules-4.17.0-041700-generic_4.17.0-041700.201806041953_amd64.deb
 * https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17/linux-image-unsigned-4.17.0-041700-generic_4.17.0-041700.201806041953_amd64.deb
 
-And install them with `dpkg -i linux*deb`. Once done remove the previous kernel and reboot.
+And install them with `dpkg -i linux*deb`. Once done reboot the box.
 
 ## Setup
 
