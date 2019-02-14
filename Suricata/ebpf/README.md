@@ -76,7 +76,7 @@ start when IP are added.
 
 ### Add some more logic
 
-Update `filter.c` to only accept traffic on the port 22 for the IP address in the pass list.
+Update `filter.c` to only accept traffic on the port 22 for the IP addresses in the pass list.
 
 ---
 
