@@ -1,0 +1,74 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$provision_script = <<SCRIPT
+
+WGET_PARAMS="-4 -q"
+
+START=`date`
+echo "Building Suricata ..."
+apt-get update && apt-get -qq -y install \
+libpcre3 \
+libpcre3-dbg \
+libpcre3-dev \
+build-essential \
+autoconf \
+automake \
+libtool \
+libpcap-dev \
+libnet1-dev \
+libyaml-0-2 \
+libyaml-dev \
+pkg-config \
+zlib1g \
+zlib1g-dev \
+libcap-ng-dev \
+libcap-ng0 \
+make \
+libmagic-dev \
+libnss3-dev \
+libelf-dev \
+libjansson-dev \
+curl \
+wget \
+git \
+clang \
+unzip
+
+cd /home/vagrant
+
+[[ -d libbpf ]] || git clone https://github.com/libbpf/libbpf.git
+
+[[ -d suricata ]] || git clone https://github.com/regit/suricata.git
+cd suricata && git checkout -b ebpf-xdp-update-8.2 origin/ebpf-xdp-update-8.2
+
+[[ -d libhtp ]] || git clone https://github.com/OISF/libhtp.git
+cd libhtp && git checkout tags/0.5.29 && cd ..
+
+pwd
+./autogen.sh
+
+chown -R vagrant:vagrant /home/vagrant
+
+END=`date`
+
+echo started at $START
+echo finished at $END
+
+echo "NOW YOU CAN BUILD AN EBPF/XDP SURICATA"
+echo "see: https://github.com/ccdcoe/CDMCS/blob/master/Suricata/ebpf/Readme.md for tasks"
+
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'buildEBPF' do |box|
+      box.vm.box = "ubuntu/bionic64"
+      box.vm.hostname = 'buildEBPF'
+      box.vm.network :private_network, ip: "192.168.10.16"
+      box.vm.provider :virtualbox do |vb|
+       vb.customize ["modifyvm", :id, "--memory", "2048"]
+       vb.customize ["modifyvm", :id, "--cpus", "4"]
+      end
+  end
+  config.vm.provision "shell", inline: $provision_script
+end
