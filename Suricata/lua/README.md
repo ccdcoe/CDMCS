@@ -251,7 +251,7 @@ server {
 }
 ```
 
-Sping up a web server container with new key/cert and config mounted as volumes.
+Spin up a web server container with new key/cert and config mounted as volumes.
 
 ```
 docker run -ti --rm --name some-nginx -p 80:80 -p 443:443 -v $PWD/keys/nginx.key:/etc/nginx/ssl/nginx.key -v $PWD/keys/nginx.crt:/etc/nginx/ssl/nginx.crt -v $PWD/nginx.conf:/etc/nginx/conf.d/default.conf:ro -v $PWD/web:/usr/share/nginx/html:ro nginx
