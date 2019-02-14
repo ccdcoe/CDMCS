@@ -18,7 +18,7 @@ make install
 To enable eBPF support you need to pass a series of flags to suricata configure:
 
 ```
-./configure --enable-ebpf --enable-ebpf-build CC=clang
+./configure --enable-ebpf --enable-ebpf-build CC=clang-6.0
 ```
 
 You can then build and install the software 
