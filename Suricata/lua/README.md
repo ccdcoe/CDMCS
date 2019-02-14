@@ -220,6 +220,48 @@ You should be able to observe new alerts in fast.log and eve.json.
     * Alert when certificate is very recent, e.g. newer than 3 hours;
     * Add the calculated age of certificate to alert as flow variable;
 
+##### Testing TLS task with docker
+
+Generate a self-signed certificate.
+
+```
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout keys/nginx.key -out keys/nginx.crt
+```
+
+Create `nginx.conf` file.
+
+```
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server ipv6only=on;
+
+        listen 443 ssl;
+
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+
+        server_name your_domain.com;
+        ssl_certificate /etc/nginx/ssl/nginx.crt;
+        ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}
+```
+
+Sping up a web server container with new key/cert and config mounted as volumes.
+
+```
+docker run -ti --rm --name some-nginx -p 80:80 -p 443:443 -v $PWD/keys/nginx.key:/etc/nginx/ssl/nginx.key -v $PWD/keys/nginx.crt:/etc/nginx/ssl/nginx.crt -v $PWD/nginx.conf:/etc/nginx/conf.d/default.conf:ro -v $PWD/web:/usr/share/nginx/html:ro nginx
+```
+
+Visit your web site in browser or use `curl`.
+
+```
+curl -k -s https://localhost
+```
+
 ### Output
 
 * https://suricata.readthedocs.io/en/latest/output/lua-output.html
