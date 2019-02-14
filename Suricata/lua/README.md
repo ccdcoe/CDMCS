@@ -216,7 +216,7 @@ You should be able to observe new alerts in fast.log and eve.json.
     * `cat eve.json | jq .tls.ja3.hash | sort | uniq -c | sort -h`
  * Write a simple lua rule that implements a JA3 signature blacklist;
     * Modify that rule to function as a whilelist, i.e. you should get an alert when unapproved TLS client communicates on the network;
- * Adopt a [self-signed TLS rule example from Stamus Networks](https://www.stamus-networks.com/2015/07/24/finding-self-signed-tls-certificates-suricata-and-luajit-scripting/);
+ * Adapt a [self-signed TLS rule example from Stamus Networks](https://www.stamus-networks.com/2015/07/24/finding-self-signed-tls-certificates-suricata-and-luajit-scripting/);
  * Write a simple rule that checks when an observed TLS certificate was generated;
     * Alert when certificate is very recent, e.g. newer than 3 hours;
     * Add the calculated age of certificate to alert as flow variable;
@@ -341,6 +341,7 @@ Tail the `tls.log` file in suricata log directory. You should observe new record
 
 #### Tasks
 
+ * Adapt the [suricata stats lua script from Victor Julien](https://github.com/inliniac/surilua/blob/master/stats.lua);
  * Enhance the example script;
     * Record is missing timestamp, add it;
     * Set up persistence for observed fingerprints by storing observations in Redis, as opposed to process memory;
