@@ -66,7 +66,11 @@ easily later.
 ### Setting things up 
 
 Find an IP address you can communicate with on `enp0s8` and add it to the block list
-with scbpf. Once done, verify no traffic is seen anymore with this IP address.
+with `scbpf`.
+
+The syntax is `scbpf -F /sys/fs/bpf/suricata-enp0s8-ipv4_drop -A -k 1.2.3.4` where `1.2.3.4` is the IP to add.
+
+Once done, verify no traffic is seen anymore with this IP address.
 
 One can use `suricatasc` to get interface statistics and/or analyze eve.json output
 for significative events.
