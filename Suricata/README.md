@@ -32,10 +32,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 09:00 - 12:30
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
    * [indexing alert log](/Suricata/indexing#playing-with-python)
-   * [elastic clustering](/Suricata/advanced-indexing#clustered-elasticsearch)
-   * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
 
  * 13:30 - 16:45
+   * [elastic clustering](/Suricata/advanced-indexing#clustered-elasticsearch)
+   * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
 
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 14 2019
