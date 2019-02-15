@@ -48,8 +48,9 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day +1 :: Encore :: Feb 15 2019, ends at 12:00
 
- * 09:00 - 10:30
-   * ...
+ * 09:00 - 11:00
+   * [load pcap via unix socket](/Suricata/unix-socket)
+   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
@@ -57,7 +58,6 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * [IPS]()
  * [Alerta]()
  * [septun/RSS]()
- * [pcap via unix socket]()
  * [suricata stats to TICK]()
 
 ----
