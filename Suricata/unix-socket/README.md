@@ -49,6 +49,23 @@ suricatasc -c "pcap-file /tmp/mycapture.pcap /tmp/capturelogs"
 suricatasc -c "pcap-file /tmp/pcapdir /tmp/capturelogs"
 ```
 
+## Checksum errors
+
+Checksums in pcap files are often simply placeholders that do not correspond to actual packet hash values. This can cause troubles for all packet capture tools. tcprewrite (from the tcpreplay package) can be used to hack around this issue.
+
+```
+apt-get install tcpreplay
+tcprewrite -C -i /tmp/infile.pcap -o /tmp/outfile.pcap
+```
+
+Alternatively you can disable checksum checks for PCAPs loaded via unix socket by changing the following in the suricata.yaml
+
+```
+pcap-file:
+  checksum-checks: no
+```
+
+
 ## For loop is easy
 
 ```
