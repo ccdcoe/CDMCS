@@ -8,7 +8,9 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Moloch is a large scale, open source, full packet capturing, indexing, and database system.
 > Moloch is not meant to replace Intrusion Detection Systems (IDS). Moloch augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-## Day 1 :: Intro & Single Box:: April 23 2019, **starts at 09:00!**
+**NB! Note that that due to public holidays, we are unconventionally staring our course on Tuesday at 09:00 and working until Friday afternoon.**
+
+## Day 1 :: Intro & Single Box:: April 23 2019, starts at 09:00!
 
  * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
@@ -44,7 +46,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   
   * 09:00 - 12:30 
     * [Bolliwood dashboards](/common/elastic/kibana.queries.md)
-    * <Suggest your own topics here>
+    * Suggest your own topics here
   * 13:30 - 16:45 
     * Some more digging...
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
