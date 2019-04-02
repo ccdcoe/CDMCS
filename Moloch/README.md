@@ -8,25 +8,28 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Moloch is a large scale, open source, full packet capturing, indexing, and database system.
 > Moloch is not meant to replace Intrusion Detection Systems (IDS). Moloch augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-## Day 0 :: Intro:: May 7 2018, starts at 13:00
+## Day 1 :: Intro & Single Box:: April 23 2019, **starts at 09:00!**
 
- * 13:00 - 14:00 
+ * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
     * [vagrant](/common/vagrant.intro.md) 
     * [singlehost](/Moloch/vagrant/singlehost/)
- * 15:30 - 16:45 
     * [Basic usage](/Moloch/tasks/queries.md)
-
-## Day 1 :: Single Box :: May 8 2018
-
- * 09:00 - 12:30 
+ * 13:30 - 17:00 
     * [build from source](/Moloch/build.md)
     * [config](/Moloch/config.md)
 
- * 13:30 - 16:45 
+## Day 2 :: Usage & extending functionality :: April 24 2019
+
+  * 09:00 - 12:30
+    * [Moloch API](/Moloch/api.md)
+    * [WISE](https://github.com/aol/moloch/wiki/WISE)
+    * [High-bandwidth optimizations](/Moloch/optimize.md)
+
+ * 13:30 - 17:00 
     * Digging
 
-## Day 2 :: Scale up :: May 9 2018
+## Day 3 :: Teamwork & Scale up :: April 25 2019
 
   * 09:00 - 12:30 
     * [Multihost](https://github.com/aol/moloch/wiki/Multiple-Host-HOWTO)
@@ -34,23 +37,15 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [Parliament](https://github.com/aol/moloch/tree/master/parliament)
     * [Group work](/Moloch/vagrant/multihost/)
 
-  * 13:30 - 16:45 
+* 13:30 - 17:00 
     * Digging
 
-## Day 3 :: Usage :: May 10 2018
-
-  * 09:00 - 12:30
-    * [Moloch API](/Moloch/api.md)
-    * [WISE](https://github.com/aol/moloch/wiki/WISE)
-    * [High-bandwidth optimizations](/Moloch/optimize.md)
-
-  * 13:30 - 16:45 
-    * Digging
-
-## Day +1 :: :: May 11 2018, ends at 12:00
-
-  * 09:00 - 12:00
+## Day 4 ::  :: April 26 2019, **ends at 17:00**
+  
+  * 09:00 - 12:30 
     * [Bolliwood dashboards](/common/elastic/kibana.queries.md)
+    * <Suggest your own topics here>
+  * 13:30 - 16:45 
     * Some more digging...
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
