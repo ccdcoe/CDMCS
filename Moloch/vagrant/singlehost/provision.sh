@@ -1,5 +1,3 @@
-#!/bin/bash
-
 check_service(){
   systemctl daemon-reload
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
@@ -8,7 +6,7 @@ check_service(){
 }
 
 # params
-DOCKERIZE=true
+DOCKERIZE=false
 DEBUG=true
 EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
@@ -67,7 +65,7 @@ echo "Provisioning REDIS"
 docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install jq wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install jq wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
 
 echo "Provisioning JAVA"
 if [ $DOCKERIZE = false ]; then
@@ -301,8 +299,6 @@ sleep 3
 suricatasc -c "reload-rules" || exit 1
 
 echo "Provision moloch"
-#cp /vagrant/buildMoloch.sh /home/$USER/buildMoloch.sh && chown $USER /home/$USER/buildMoloch.sh
-#[[ -f /home/$USER/moloch-$MOLOCH/bin/moloch-capture ]] || time su -c "bash /home/$USER/buildMoloch.sh $MOLOCH" $USER
 cd $PKGDIR
 [[ -f $MOLOCH ]] || wget $WGET_PARAMS https://files.molo.ch/builds/ubuntu-18.04/$MOLOCH
 dpkg -s moloch || dpkg -i $MOLOCH
@@ -368,22 +364,72 @@ ulimit -l unlimited
 grep memlocl /etc/security/limits.conf || echo "nofile 128000 - memlock unlimited" >> /etc/security/limits.conf
 mkdir /data/moloch/raw && chown nobody:daemon /data/moloch/raw
 
-echo "Starting up wise"
-cd /data/moloch/wiseService
-PIDFILE=/var/run/wise.pid
-[[ -f $PIDFILE ]] || nohup node wiseService.js > >(logger -p daemon.info -t wise) 2> >(logger -p daemon.err -t wise) & sleep 1 ; echo $! > $PIDFILE
+echo "Configuring systemd services"
 
-echo "Starting up capture"
+FILE=/etc/systemd/system/moloch-wise.service
+grep "moloch-wise" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Moloch WISE
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/data/moloch/bin/node wiseService.js -c /data/moloch/etc/wiseService.ini
+WorkingDirectory=/data/moloch/wiseService
+SyslogIdentifier=moloch-wise
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/moloch-viewer.service
+grep "moloch-viewer" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Moloch Viewer
+After=network.target moloch-wise.service
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini
+WorkingDirectory=/data/moloch/viewer
+SyslogIdentifier=moloch-viewer
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/moloch-capture.service
+grep "moloch-capture" $FILE || cat > $FILE <<EOF
 PIDFILE=/var/run/capture.pid
-[[ -f $PIDFILE ]] || nohup moloch-capture -c /data/moloch/etc/config.ini > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > $PIDFILE
-sleep 2 && egrep "capture:.+ERROR" /var/log/syslog
+[Unit]
+Description=Moloch Capture
+After=network.target moloch-wise.service moloch-viewer.service
 
-echo "Starting up viewer"
-cd /data/moloch/viewer
-PIDFILE=/var/run/viewer.pid
-node addUser.js vagrant vagrant vagrant --admin
-[[ -f $PIDFILE ]] || nohup node viewer.js -c ../etc/config.ini > >(logger -p daemon.info -t viewer) 2> >(logger -p daemon.err -t viewer) & sleep 1 ; echo $! > $PIDFILE
-sleep 2 && egrep "viewer:.+ERROR" /var/log/syslog
+[Service]
+Type=simple
+Restart=on-failure
+#ExecStartPre=-/data/moloch/bin/start-capture-interfaces.sh
+ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /data/moloch/bin/moloch-capture -c /data/moloch/etc/config.ini --host cdmcs
+WorkingDirectory=/data/moloch
+LimitCORE=infinity
+LimitMEMLOCK=infinity
+SyslogIdentifier=moloch-capture
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+for service in wise viewer capture ; do
+  systemctl enable moloch-$service.service
+  systemctl start moloch-$service.service
+  systemctl status moloch-$service.service
+done
+
+echo "Adding viewer user"
+cd /data/moloch/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
 
 # parliament
 PARLIAMENTPASSWORD=admin
@@ -565,3 +611,6 @@ while : ; do dig NS berylia.org @1.1.1.1 > /dev/null 2>&1 ; sleep 22 ; done &
 while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep 38 ; done &
 
 echo "DONE :: start $start end $(date)"
+
+echo "Sleeping 60 seconds for data to ingest"; sleep 60
+curl -ss -u vagrant:vagrant --digest "http://localhost:8005/sessions.json?counts=0&date=1&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21" | jq .
