@@ -8,7 +8,7 @@ check_service(){
 }
 
 # params
-DOCKERIZE=false
+DOCKERIZE=true
 DEBUG=true
 EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
@@ -50,6 +50,9 @@ grep "disable_ipv6" $FILE || cat >> $FILE <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
+EOF
+grep "vm.max_map_count" $FILE || cat >> $FILE <<EOF
+vm.max_map_count=262144
 EOF
 sysctl -p
 
@@ -319,7 +322,7 @@ sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so;suricata.so
 
 echo "Configuring wise"
 TAGGER_FILE="/data/moloch/etc/tagger.txt"
-[[ -f $FILE ]] || cat > $FILE <<EOF
+[[ -f $TAGGER_FILE ]] || cat > $TAGGER_FILE <<EOF
 #field:cdmcs.name;kind:lotermfield;count:true;friendly:Name;db:cdmcs.name;help:Traffic owner;shortcut:0
 #field:cdmcs.type;kind:lotermfield;count:true;friendly:Type;db:cdmcs.type;help:Traffic type;shortcut:1
 192.168.10.11;0=local
@@ -500,13 +503,65 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.processes]]
 [[inputs.swap]]
 [[inputs.system]]
+[[inputs.interrupts]]
 EOF
+
+FILE=/etc/telegraf/telegraf.d/elastic.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+[[inputs.elasticsearch]]
+  servers = ["http://localhost:9200"]
+  http_timeout = "5s"
+  local = false
+  cluster_health = true
+  cluster_stats = true
+  cluster_stats_only_from_master = false
+EOF
+
+FILE=/etc/telegraf/telegraf.d/ethtool.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+[[inputs.exec]]
+  commands = ["/home/vagrant/go/bin/ethflux enp"]
+  timeout = "5s"
+  data_format = "influx"
+EOF
+
+FILE=/etc/telegraf/telegraf.d/moloch.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+[[inputs.procstat]]
+  pid_finder = "pgrep"
+  exe = "moloch-capture"
+EOF
+
+if [ $DOCKERIZE = true ]; then
+  FILE=/etc/telegraf/telegraf.d/elastic.conf
+  grep "CDMCS" $FILE || cat > $FILE <<EOF
+[[inputs.docker]]
+  endpoint = "unix:///var/run/docker.sock"
+  gather_services = false
+  container_names = []
+  container_name_include = []
+  container_name_exclude = []
+  timeout = "5s"
+  perdevice = true
+  total = false
+  docker_label_include = []
+  docker_label_exclude = []
+  tag_env = ["JAVA_HOME", "HEAP_SIZE"]
+EOF
+
+  # massive privilege escalation issue
+  echo "Adding telegraf user to Docker group. Massive privilege escalation. Do not do at home!"
+  adduser telegraf docker
+fi
 
 check_service telegraf
 
 echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
+while : ; do curl -s https://sysadminnid.tumblr.com/ > /dev/null 2>&1 ; sleep 30 ; done &
 while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
 while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep 5 ; done &
+while : ; do dig NS berylia.org @1.1.1.1 > /dev/null 2>&1 ; sleep 22 ; done &
+while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep 38 ; done &
 
 echo "DONE :: start $start end $(date)"
