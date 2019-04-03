@@ -613,4 +613,4 @@ while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep 38 ; done &
 echo "DONE :: start $start end $(date)"
 
 echo "Sleeping 60 seconds for data to ingest"; sleep 60
-curl -ss -u vagrant:vagrant --digest "http://localhost:8005/sessions.json?counts=0&date=1&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21" | jq .
+curl -ss -u vagrant:vagrant --digest "http://localhost:8005/sessions.json?counts=0&date=1&length=3&expression=suricata.signature%20%3D%3D%20EXISTS%21" | jq .
