@@ -12,11 +12,12 @@ EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
-GOPATH=/home/vagrant/go/
-GOROOT=/home/vagrant/.local/go
-PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin
+HOME=/home/vagrant
+GOPATH=$HOME/go/
+GOROOT=$HOME/.local/go
+PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin:$HOME/.local/go
 
-grep PATH /home/vagrant/.bashrc || echo "export PATH=$PATH" >> /home/vagrant/.bashrc
+grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 
 # versions
@@ -157,48 +158,6 @@ function match(args)
 end
 EOF
 
-mkdir -p /var/lib/suricata/scripts
-FILE=/var/lib/suricata/scripts/new-observed-tls.lua
-[[ -f $FILE ]] || cat > $FILE <<EOF
-function init (args)
-    local needs = {}
-    needs["protocol"] = "tls"
-    return needs
-end
-function setup (args)
-    name = "tls.log"
-    filename = SCLogPath() .. "/" .. name
-    file = assert(io.open(filename, "a"))
-    seen = {}
-end
-function log(args)
-    version, subject, issuer, fingerprint = TlsGetCertInfo()
-    serial = TlsGetCertSerial()
-    if version == nil then
-        version = "<nil>"
-    end
-    if subject == nil then
-        subject = "<nil>"
-    end
-    if issuer == nil then
-        issuer = "<nil>"
-    end
-    if fingerprint == nil then
-        fingerprint = "<nil>"
-    end
-    if fingerprint ~= nil then
-        if seen[fingerprint] == nil then
-            file:write(version .. "|" .. subject .. "|" .. issuer .. "|" .. fingerprint .. "|" .. serial .. "\n");
-            file:flush();
-            seen[fingerprint] = true
-        end
-    end
-end
-function deinit (args)
-    file:close(file)
-end
-EOF
-
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 pgrep Suricata || [[ -f /var/run/suricata.pid ]] && rm /var/run/suricata.pid
@@ -249,11 +208,6 @@ outputs:
       append: yes
   - tls-store:
       enabled: yes
-  - lua:
-      enabled: yes
-      scripts-dir: /var/lib/suricata/scripts/
-      scripts:
-        - new-observed-tls.lua
   - eve-log:
       enabled: 'yes'
       filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
@@ -316,7 +270,7 @@ sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
 
 echo "Configuring capture plugins"
-sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
 
 echo "Configuring wise"
 TAGGER_FILE="/data/moloch/etc/tagger.txt"
@@ -349,6 +303,82 @@ file=$TAGGER_FILE
 tags=ipwise
 type=ip
 format=tagger
+EOF
+
+grep bloom wiseService.ini || cat >> wiseService.ini <<EOF
+[bloom]
+bits=300000
+functions=16
+tag=bloom
+EOF
+
+cd /data/moloch/wiseService
+
+PATH=$PATH npm install bloomfilter
+PATH=$PATH npm install hashtable
+
+FILE="/data/moloch/wiseService/source.bloom.js"
+grep CDMCS $FILE || cat >> $FILE <<EOF
+/* [bloom]
+ * bits=200000
+ * functions=16
+ * tag=newdns
+ */
+
+'use strict';
+
+var wiseSource     = require('./wiseSource.js')
+  , util           = require('util')
+  , bloom          = require('bloomfilter')
+  ;
+
+//////////////////////////////////////////////////////////////////////////////////
+function BloomSource (api, section) {
+  BloomSource.super_.call(this, api, section);
+
+  this.bits = api.getConfig(section, "bits");
+  this.fn = api.getConfig(section, "functions");
+  this.tagval = api.getConfig(section, "tag");
+
+  // Check if variables needed are set, if not return
+  if (this.bits === undefined) {
+    return console.log(this.section, "- Bloom filter bits undefined");
+  }
+  if (this.fn === undefined) {
+    return console.log(this.section, "- Bloom filter hash functions undefined");
+  }
+  if (this.tag === undefined) {
+    this.tab == "bloom";
+  }
+
+  this.dns = new bloom.BloomFilter(
+    this.bits, // number of bits to allocate.
+    this.fn    // number of hash functions.
+  );
+
+  this.tagsField = this.api.addField("field:tags");
+
+  // Memory data sources will have this section to load their data
+  this.cacheTimeout = -1;
+  //setImmediate(this.load.bind(this));
+  //setInterval(this.load.bind(this), 5*60*1000);
+
+  // Add the source as available
+  this.api.addSource("bloom", this);
+}
+util.inherits(BloomSource, wiseSource);
+//////////////////////////////////////////////////////////////////////////////////
+BloomSource.prototype.getDomain = function(domain, cb) {
+  if (!this.dns.test(domain)) {
+    this.dns.add(domain);
+    return cb(null, {num: 1, buffer: wiseSource.encode(this.tagsField, this.tagval)});
+  }
+  return cb(null, wiseSource.emptyResult);
+};
+//////////////////////////////////////////////////////////////////////////////////
+exports.initSource = function(api) {
+  var source = new BloomSource(api, "bloom");
+};
 EOF
 
 echo "Configuring databases"
@@ -429,6 +459,90 @@ for service in wise viewer capture ; do
   systemctl start moloch-$service.service
   systemctl status moloch-$service.service
 done
+
+pgrep moloch-capture || exit 1
+
+mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
+su - vagrant -c "pip3 install --user --upgrade psutil"
+
+FILE=/home/vagrant/.local/bin/set-capture-affinit.py
+grep "get_numa_cores" $FILE || cat > $FILE <<EOF
+#!/usr/bin/env python3
+
+import psutil
+import subprocess
+import re
+import sys
+import os.path
+
+def get_moloch_capture_parent():
+    procs = {p.pid: p.info for p in psutil.process_iter(attrs=['pid', 'name', 'username'])}
+    parent = {k: v for k, v in procs.items() if "moloch-capture" in v["name"]}
+    parent = list(parent.values())[0]["pid"]
+    parent = psutil.Process(pid=parent)
+    return parent
+
+def get_moloch_workers(parent):
+    workers = parent.threads()
+    workers = [w.id for w in workers]
+    workers = [psutil.Process(pid=p) for p in workers]
+    workers = [{"pid": p.pid, "name": p.name()} for p in workers]
+    return workers
+
+def get_numa_cores(node):
+    numa = subprocess.run(['numactl', '--hardware'], stdout=subprocess.PIPE).stdout.decode('utf-8')
+    numa = numa.split("\n")
+    numa = [v.split(":")[1].strip() for v in numa if "node {} cpus:".format(NODE) in v][0]
+    numa = numa.split()
+    numa = [int(v) for v in numa]
+    return numa
+
+NODE=0
+CAP_IFACE="enp0s3"
+
+if __name__ == "__main__":
+
+    numa = get_numa_cores(NODE)
+
+    intr_thread = numa[0]
+    cap_thread = numa[1]
+    worker_threads = numa[2:]
+
+    cap_pattern = re.compile("^moloch-(?:capture|simple|af\d+-\d+)$")
+    pkt_pattern = re.compile("^moloch-pkt\d+$")
+
+    parent = get_moloch_capture_parent()
+    workers = get_moloch_workers(parent)
+
+    cap_threads = [t for t in workers if cap_pattern.match(t["name"])]
+    pkt_threads = [t for t in workers if pkt_pattern.match(t["name"])]
+
+    if len(pkt_threads) > len(worker_threads):
+        print("Too many moloch workers for {} cpu threads".format(len(worker_threads)))
+        sys.exit(1)
+
+    for thread in cap_threads:
+        subprocess.call(['/usr/bin/sudo', 'taskset', '-pc', str(cap_thread), str(thread["pid"])])
+
+    for i, thread in enumerate(pkt_threads):
+        subprocess.call(['/usr/bin/sudo', 'taskset', '-pc', str(worker_threads[i]), str(thread["pid"])])
+
+    lines = []
+    with open("/proc/interrupts", "rb") as f:
+        lines = [l.decode().split(":")[0].lstrip() for l in f if CAP_IFACE in l.decode()]
+
+    if len(lines) == 0 or len(lines) > 1:
+        print("found {} irq for {}, should be 1".format(len(lines), CAP_IFACE))
+        sys.exit(1)
+
+    irq = lines[0]
+    irq = os.path.join('/proc/irq', str(irq), 'smp_affinity_list')
+
+    subprocess.Popen(['/usr/bin/sudo /bin/bash -c \'echo {} > {}\''.format(intr_thread, irq)], shell=True)
+EOF
+chown vagrant $FILE
+chmod u+x $FILE
+su - vagrant -c "python3 $FILE"
 
 echo "Adding viewer user"
 cd /data/moloch/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
@@ -629,3 +743,4 @@ echo "DONE :: start $start end $(date)"
 
 echo "Sleeping 120 seconds for data to ingest."; sleep 120
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
+curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
