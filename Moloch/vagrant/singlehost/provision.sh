@@ -395,7 +395,7 @@ chown nobody:daemon /data/moloch/raw
 
 echo "Configuring system limits"
 ulimit -l unlimited
-grep memlocl /etc/security/limits.conf || echo "nofile 128000 - memlock unlimited" >> /etc/security/limits.conf
+grep memlock /etc/security/limits.conf || echo "nofile 128000 - memlock unlimited" >> /etc/security/limits.conf
 mkdir /data/moloch/raw && chown nobody:daemon /data/moloch/raw
 
 echo "Configuring systemd services"
