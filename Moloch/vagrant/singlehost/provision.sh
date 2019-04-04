@@ -381,6 +381,8 @@ exports.initSource = function(api) {
 };
 EOF
 
+wget $WGET_PARAMS https://raw.githubusercontent.com/markuskont/moloch/master/wiseService/source.ls19.js -O /data/moloch/wiseService/source.ls19.js
+
 echo "Configuring databases"
 cd /data/moloch/db
 if [[ `./db.pl localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
