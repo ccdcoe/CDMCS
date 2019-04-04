@@ -12,7 +12,9 @@ EXPOSE=192.168.10.11
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
-PATH=$PATH:/data/moloch/bin
+GOPATH=/home/vagrant/go/
+GOROOT=/home/vagrant/.local/go
+PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin
 
 grep PATH /home/vagrant/.bashrc || echo "export PATH=$PATH" >> /home/vagrant/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
@@ -20,16 +22,16 @@ grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 # versions
 ELA="elasticsearch-oss-6.6.2.deb"
 KIBANA="kibana-oss-6.6.2-amd64.deb"
-INFLUX="influxdb_1.7.3_amd64.deb"
-TELEGRAF="telegraf_1.9.4-1_amd64.deb"
-GRAFANA="grafana_5.4.3_amd64.deb"
-EVEBOX="evebox_0.10.2_amd64.deb"
+INFLUX="influxdb_1.7.5_amd64.deb"
+GRAFANA="grafana_6.1.0_amd64.deb"
+
+TELEGRAF="telegraf_1.10.2-1_amd64.deb"
+GOLANG="go1.12.1.linux-amd64.tar.gz"
 
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.2"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.6.2"
-DOCKER_EVEBOX="jasonish/evebox"
-DOCKER_INFLUXDB="influxdb"
-DOCKER_GRAFANA="grafana/grafana"
+DOCKER_INFLUXDB="influxdb:alpine"
+DOCKER_GRAFANA="grafana/grafana:latest"
 
 MOLOCH="moloch_1.7.1-1_amd64.deb"
 USER="vagrant"
@@ -65,7 +67,7 @@ echo "Provisioning REDIS"
 docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 6379:6379 --log-driver syslog --log-opt tag="redis" redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install jq wget curl python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
 
 echo "Provisioning JAVA"
 if [ $DOCKERIZE = false ]; then
@@ -411,7 +413,7 @@ After=network.target moloch-wise.service moloch-viewer.service
 Type=simple
 Restart=on-failure
 #ExecStartPre=-/data/moloch/bin/start-capture-interfaces.sh
-ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /data/moloch/bin/moloch-capture -c /data/moloch/etc/config.ini --host cdmcs
+ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /data/moloch/bin/moloch-capture -c /data/moloch/etc/config.ini --host $(hostname)
 WorkingDirectory=/data/moloch
 LimitCORE=infinity
 LimitMEMLOCK=infinity
@@ -510,6 +512,19 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
     \"isDefault\": true
 }"
 
+# golang
+echo "Provisioning GOLANG"
+source ~/.bashrc
+
+mkdir -p $GOPATH/{bin,src,pkg} && chown -R vagrant $GOPATH
+mkdir -p $GOROOT && chown -R vagrant $GOROOT
+cd $PKGDIR
+[[ -f $GOLANG ]] || wget $WGET_PARAMS https://dl.google.com/go/$GOLANG -O $GOLANG
+tar -xzf $GOLANG -C /home/vagrant/.local
+su - vagrant -c "PATH=$PATH go env"
+su - vagrant -c "PATH=$PATH go get -u github.com/DCSO/ethflux"
+su - vagrant -c "PATH=$PATH go install github.com/DCSO/ethflux"
+
 # telegraf
 echo "Provisioning TELEGRAF"
 cd $PKGDIR
@@ -566,7 +581,7 @@ EOF
 FILE=/etc/telegraf/telegraf.d/ethtool.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.exec]]
-  commands = ["/home/vagrant/go/bin/ethflux enp"]
+  commands = ["$GOPATH/bin/ethflux enp"]
   timeout = "5s"
   data_format = "influx"
 EOF
@@ -579,7 +594,7 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
 EOF
 
 if [ $DOCKERIZE = true ]; then
-  FILE=/etc/telegraf/telegraf.d/elastic.conf
+  FILE=/etc/telegraf/telegraf.d/docker.conf
   grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.docker]]
   endpoint = "unix:///var/run/docker.sock"
@@ -603,14 +618,14 @@ fi
 check_service telegraf
 
 echo "making some noise"
-while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep 1 ; done &
-while : ; do curl -s https://sysadminnid.tumblr.com/ > /dev/null 2>&1 ; sleep 30 ; done &
-while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep 30 ; done &
-while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep 5 ; done &
-while : ; do dig NS berylia.org @1.1.1.1 > /dev/null 2>&1 ; sleep 22 ; done &
-while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep 38 ; done &
+while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+while : ; do curl -s https://sysadminnid.tumblr.com/ > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+while : ; do dig NS berylia.org @1.1.1.1 > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
 
 echo "DONE :: start $start end $(date)"
 
-echo "Sleeping 60 seconds for data to ingest"; sleep 60
-curl -ss -u vagrant:vagrant --digest "http://localhost:8005/sessions.json?counts=0&date=1&length=3&expression=suricata.signature%20%3D%3D%20EXISTS%21" | jq .
+echo "Sleeping 120 seconds for data to ingest."; sleep 120
+curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
