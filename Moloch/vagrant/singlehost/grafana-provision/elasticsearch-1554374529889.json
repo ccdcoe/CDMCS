@@ -535,12 +535,6 @@
               "key": "host",
               "operator": "=~",
               "value": "/^$elahost$/"
-            },
-            {
-              "condition": "AND",
-              "key": "path",
-              "operator": "=",
-              "value": "/srv"
             }
           ]
         }
@@ -798,19 +792,6 @@
                 "type": "math"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "capture-2"
-            },
-            {
-              "condition": "AND",
-              "key": "interface",
-              "operator": "=",
-              "value": "enp130s0f1"
-            }
           ]
         }
       ],
