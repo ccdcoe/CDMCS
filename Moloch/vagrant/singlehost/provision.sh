@@ -262,7 +262,8 @@ dpkg -s moloch || dpkg -i $MOLOCH
 echo "Configuring moloch"
 delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
-[[ -f config.ini ]] || cp config.ini.sample config.ini
+FILE=/data/moloch/etc/config.ini
+[[ -f config.ini ]] || cp config.ini.sample $FILE
 sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
 sed -i "s/MOLOCH_INTERFACE/$ifaces/g"             config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
@@ -272,11 +273,24 @@ sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
 echo "Configuring capture plugins"
 sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
 
+echo "Configuring custom views and fields"
+grep "custom-fields" $FILE || cat >> $FILE <<EOF
+[custom-fields]
+cdmcs.name=kind:lotermfield;count:true;friendly:Name;db:cdmcs.name;help:Traffic owner
+cdmcs.type=kind:lotermfield;count:true;friendly:Type;db:cdmcs.type;help:Traffic type
+EOF
+
+grep "custom-views" $FILE || cat >> $FILE <<EOF
+[custom-views]
+ls19=title:Locked Shields 2019;require:ls19;fields:ls19.target,ls19.name,ls19.short,ls19.zone,ls19.team,ls19.ws_template,ls19.ws_iter,ls19.ws_family,ls19.ws_release,ls19.ws_arch
+cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
+EOF
+
 echo "Configuring wise"
 TAGGER_FILE="/data/moloch/etc/tagger.txt"
 [[ -f $TAGGER_FILE ]] || cat > $TAGGER_FILE <<EOF
-#field:cdmcs.name;kind:lotermfield;count:true;friendly:Name;db:cdmcs.name;help:Traffic owner;shortcut:0
-#field:cdmcs.type;kind:lotermfield;count:true;friendly:Type;db:cdmcs.type;help:Traffic type;shortcut:1
+#field:cdmcs.name;shortcut:0
+#field:cdmcs.type;shortcut:1
 192.168.10.11;0=local
 10.0.2.15;0=local
 8.8.8.8;0=google;1=dns
@@ -286,6 +300,10 @@ TAGGER_FILE="/data/moloch/etc/tagger.txt"
 66.6.33.31;0=tumblr;1=web
 66.6.33.159;0=tumblr;1=web
 EOF
+
+for addr in $(dig A sysadminnid.tumblr.com | grep IN | grep -v \; | pcregrep -o1 'tumblr\.com\.\s+\d+\s+\w+\s+A\s+(\S+)'); do
+  docker exec redis redis-cli set $addr "$addr;cdmcs.name=tumblr;cdmcs.type=web"
+done
 
 cp wise.ini.sample wiseService.ini
 grep CDMCS wiseService.ini || cat >> wiseService.ini <<EOF
@@ -301,6 +319,12 @@ url=redis://127.0.0.1:6379/1
 [file:ip]
 file=$TAGGER_FILE
 tags=ipwise
+type=ip
+format=tagger
+
+[redis:ip]
+url=redis://127.0.0.1:6379/0
+tags=redis
 type=ip
 format=tagger
 EOF
