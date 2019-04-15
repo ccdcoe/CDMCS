@@ -8,7 +8,7 @@ check_service(){
 # params
 DOCKERIZE=false
 DEBUG=true
-EXPOSE=192.168.10.11
+EXPOSE=127.0.0.1
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
