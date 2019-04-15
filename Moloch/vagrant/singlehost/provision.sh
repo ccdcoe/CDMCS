@@ -21,20 +21,20 @@ grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 
 # versions
-ELA="elasticsearch-oss-6.6.2.deb"
-KIBANA="kibana-oss-6.6.2-amd64.deb"
+ELA="elasticsearch-oss-6.7.0.deb"
+KIBANA="kibana-oss-6.7.0-amd64.deb"
 INFLUX="influxdb_1.7.5_amd64.deb"
 GRAFANA="grafana_6.1.0_amd64.deb"
 
 TELEGRAF="telegraf_1.10.2-1_amd64.deb"
 GOLANG="go1.12.1.linux-amd64.tar.gz"
 
-DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.2"
-DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.6.2"
+DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.0"
+DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.7.0"
 DOCKER_INFLUXDB="influxdb:alpine"
 DOCKER_GRAFANA="grafana/grafana:latest"
 
-MOLOCH="moloch_1.7.1-1_amd64.deb"
+MOLOCH="moloch_1.8.0-1_amd64.deb"
 USER="vagrant"
 
 mkdir -p $PKGDIR
