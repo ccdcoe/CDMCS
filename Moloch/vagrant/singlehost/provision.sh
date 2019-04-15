@@ -37,7 +37,7 @@ DOCKER_GRAFANA="grafana/grafana:latest"
 MOLOCH="moloch_1.8.0-1_amd64.deb"
 USER="vagrant"
 
-if [[ -n $(ip link show | grep eth) ]]; then
+if [[ -n $(ip link show | grep eth0) ]]; then
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
 else
