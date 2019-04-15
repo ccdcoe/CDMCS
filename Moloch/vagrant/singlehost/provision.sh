@@ -37,6 +37,14 @@ DOCKER_GRAFANA="grafana/grafana:latest"
 MOLOCH="moloch_1.8.0-1_amd64.deb"
 USER="vagrant"
 
+if [[ -n $(ip link show | grep eth) ]]; then
+  IFACE_EXT="eth0"
+  IFACE_INT="eth1"
+else
+  IFACE_EXT="enp0s3"
+  IFACE_INT="enp0s8"
+fi
+
 mkdir -p $PKGDIR
 
 if [ "$(id -u)" != "0" ]; then
@@ -178,11 +186,11 @@ grep "CDMCS" $FILE || cat >> $FILE <<EOF
 ---
 # CDMCS
 af-packet:
-  - interface: enp0s3
+  - interface: $IFACE_EXT
     cluster-id: 98
     cluster-type: cluster_flow
     defrag: yes
-  - interface: enp0s8
+  - interface: $IFACE_INT
     cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
@@ -284,6 +292,11 @@ grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
 ls19=title:Locked Shields 2019;require:ls19;fields:ls19.target,ls19.name,ls19.short,ls19.zone,ls19.team,ls19.ws_template,ls19.ws_iter,ls19.ws_family,ls19.ws_release,ls19.ws_arch
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
+EOF
+
+grep "wise-types" $FILE || cat >> $FILE <<EOF
+[wise-types]
+mac=db:srcMac;db:dstMac
 EOF
 
 echo "Configuring wise"
@@ -524,7 +537,7 @@ def get_numa_cores(node):
     return numa
 
 NODE=0
-CAP_IFACE="enp0s3"
+CAP_IFACE="$IFACE_EXT"
 
 if __name__ == "__main__":
 

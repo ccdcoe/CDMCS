@@ -1,6 +1,30 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+$script = <<-SCRIPT
+systemctl stop systemd-resolved.service
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+SCRIPT
+
+$docker = <<-SCRIPT
+export DEBIAN_FRONTEND=noninteractive
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+apt-get -qq -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get update && apt-get install -qq -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker.service
+systemctl start docker.service
+SCRIPT
+
 Vagrant.configure(2) do |config|
   config.vm.define 'moloch' do |box|
     box.vm.box = "ubuntu/bionic64"
@@ -14,8 +38,10 @@ Vagrant.configure(2) do |config|
       hv.cpus = 4
       hv.maxmemory = 4096
       override.vm.box = "generic/ubuntu1804"
+      override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
-    config.vm.provision "docker", images: ["redis"]
+    config.vm.provision "shell", inline: $script
+    config.vm.provision "shell", inline: $docker
     config.vm.provision "shell", path: "provision.sh"
   end
 end
