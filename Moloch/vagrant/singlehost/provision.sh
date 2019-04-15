@@ -40,9 +40,11 @@ USER="vagrant"
 if [[ -n $(ip link show | grep eth0) ]]; then
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
+  IFACE_PATTERN="eth"
 else
   IFACE_EXT="enp0s3"
   IFACE_INT="enp0s8"
+  IFACE_PATTERN="enp"
 fi
 
 mkdir -p $PKGDIR
@@ -735,7 +737,7 @@ EOF
 FILE=/etc/telegraf/telegraf.d/ethtool.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.exec]]
-  commands = ["$GOPATH/bin/ethflux enp"]
+  commands = ["$GOPATH/bin/ethflux $IFACE_PATTERN"]
   timeout = "5s"
   data_format = "influx"
 EOF
