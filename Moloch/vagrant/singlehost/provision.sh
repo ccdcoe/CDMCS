@@ -190,10 +190,6 @@ af-packet:
     cluster-id: 98
     cluster-type: cluster_flow
     defrag: yes
-  - interface: $IFACE_INT
-    cluster-id: 97
-    cluster-type: cluster_flow
-    defrag: yes
 default-rule-path: /var/lib/suricata/rules
 rule-files:
  -  suricata.rules
