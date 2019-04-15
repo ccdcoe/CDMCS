@@ -621,6 +621,11 @@ fi
 echo "Provisioning GRAFANA"
 mkdir -p /etc/grafana/provisioning/dashboards/
 
+DASHBOARDS=/vagrant/grafana-provision
+if [ ! -d $DASHBOARDS ]; then
+  DASHBOARDS=/home/vagrant/cdmcs/Moloch/vagrant/singlehost/grafana-provision
+  git clone https://github.com/ccdcoe/cdmcs.git /home/vagrant/cdmcs
+fi
 FILE=/etc/grafana/provisioning/dashboards/cdmcs.yml
 [[ -f $FILE ]] || cat > $FILE <<EOF
 apiVersion: 1
@@ -633,7 +638,7 @@ providers:
   disableDeletion: false
   updateIntervalSeconds: 10
   options:
-    path: /vagrant/grafana-provision/
+    path: $DASHBOARDS
 EOF
 
 if [ $DOCKERIZE = true ]; then
