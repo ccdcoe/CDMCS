@@ -10,7 +10,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 **NB! Note that that due to public holidays, we are unconventionally staring our course on Tuesday at 09:00 and working until Friday afternoon.**
 
-## Day 1 :: Intro & Single Box:: April 23 2019, starts at 09:00!
+## Day 1 :: Intro ,single box, building :: April 23 2019, starts at 09:00!
 
  * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
@@ -18,11 +18,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [singlehost](/Moloch/vagrant/singlehost/)
     * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
  * 13:30 - 17:00 
-    * [rules + config, cont](/Moloch/setup)
+    * [build + config, cont](/Moloch/setup)
     * [Queries and UI](/Moloch/queries)
     * [Moloch API](/Moloch/api/)
 
-## Day 2 :: Usage & extending functionality :: April 24 2019
+## Day 2 :: Labeling the traffic :: April 24 2019
 
   * 09:00 - 12:30
     * [API, cont](/Moloch/api/)
@@ -32,7 +32,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [WISE - writing a custom plugin](/Moloch/wise/#Plugins)
     * [WISE - parsing exercise pcap](/Moloch/wise/#Plugins)
 
-## Day 3 :: Teamwork & Scale up :: April 25 2019
+## Day 3 :: Group up, scale out :: April 25 2019
 
   * 09:00 - 12:30 
     * Digging
@@ -41,7 +41,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * 13:30 - 17:00 
     * [Clustering teamwork](/Moloch/cluster)
 
-## Day 4 ::  :: April 26 2019, **ends at 17:00**
+## Day 4 :: Cross-class cluster, performance tuning :: April 26 2019, **ends at 17:00**
   
   * 09:00 - 12:30 
     * [Parliament](/Moloch/cluster/#Parliament)
