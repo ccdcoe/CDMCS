@@ -14,49 +14,49 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
  * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
-    * [vagrant](/common/vagrant.intro.md) 
+    * [vagrant](/common/vagrant/), [docker](/common/docker)
     * [singlehost](/Moloch/vagrant/singlehost/)
-    * [Basic usage](/Moloch/tasks/queries.md)
+    * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
  * 13:30 - 17:00 
-    * [build from source](/Moloch/build.md)
-    * [config](/Moloch/config.md)
+    * [rules + config, cont](/Moloch/setup)
+    * [Queries and UI](/Moloch/queries)
+    * [Moloch API](/Moloch/api/)
 
 ## Day 2 :: Usage & extending functionality :: April 24 2019
 
   * 09:00 - 12:30
-    * [Moloch API](/Moloch/api.md)
-    * [WISE](https://github.com/aol/moloch/wiki/WISE)
-    * [High-bandwidth optimizations](/Moloch/optimize.md)
+    * [API, cont](/Moloch/api/)
+    * [WISE - asset tagging and threat intel](/Moloch/wise/#Usage)
 
- * 13:30 - 17:00 
-    * Digging
+  * 13:30 - 17:00 
+    * [WISE - writing a custom plugin](/Moloch/wise/#Plugins)
+    * [WISE - parsing exercise pcap](/Moloch/wise/#Plugins)
 
 ## Day 3 :: Teamwork & Scale up :: April 25 2019
 
   * 09:00 - 12:30 
-    * [Multihost](https://github.com/aol/moloch/wiki/Multiple-Host-HOWTO)
-    * [Multiple Hosts Monitoring Multiple Network Segments](https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments)
-    * [Parliament](https://github.com/aol/moloch/tree/master/parliament)
-    * [Group work](/Moloch/vagrant/multihost/)
-
-* 13:30 - 17:00 
     * Digging
+    * [Clustering intro](/Moloch/cluster)
+
+  * 13:30 - 17:00 
+    * [Clustering teamwork](/Moloch/cluster)
 
 ## Day 4 ::  :: April 26 2019, **ends at 17:00**
   
   * 09:00 - 12:30 
-    * [Bolliwood dashboards](/common/elastic/kibana.queries.md)
-    * Suggest your own topics here
+    * [Parliament](/Moloch/cluster/#Parliament)
+    * digging
   * 13:30 - 16:45 
-    * Some more digging...
+    * [Tuning the capture](/Moloch/optimize)
+    * [Bolliwood dashboards]()
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----
 
 # Before You Come To Class
 
-* [Prepare your laptop](/Moloch/prepare-laptop.md)
-* browse trough ...
+  * [Prepare your laptop](/Moloch/prepare-laptop.md)
+  * browse trough ...
   * [molo.ch](http://molo.ch/)
   * [moloch FAQ](https://github.com/aol/moloch/wiki/FAQ)
   * [moloch wiki](https://github.com/aol/moloch/wiki)
