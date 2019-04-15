@@ -49,7 +49,7 @@ To create and provision a new empty virtual machine:
     vagrant up
 
 Running `vagrant up` for the first time will run provisioning, which will:
-- Download the [Ubuntu 16.04 base image](https://app.vagrantup.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
+- Download the [Ubuntu 18.04 base image](https://app.vagrantup.com/ubuntu/boxes/bionic64) and [Ubuntu 16.04 base image](https://app.vagrantup.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
 - Run the provisioning script ([provision.sh](/Moloch/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
