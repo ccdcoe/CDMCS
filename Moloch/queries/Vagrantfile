@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$script = <<-SCRIPT
+systemctl stop systemd-resolved.service
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+SCRIPT
+
+$docker = <<-SCRIPT
+export DEBIAN_FRONTEND=noninteractive
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+apt-get -qq -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get update && apt-get install -qq -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker.service
+systemctl start docker.service
+SCRIPT
+
+$jupyter = <<-SCRIPT
+wget -4 -q https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.ubuntu.18.04_amd64.deb -O /tmp/ps.deb
+dpkg -i /tmp/ps.deb
+apt-get update && apt-get install python3 python3-pip
+su - vagrant -c "pip3 install --upgrade --user jupyter jupyterlab powershell_kernel"
+su - vagrant -c "python3 -m powershell_kernel.install"
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'moloch-querybox' do |box|
+    box.vm.box = "ubuntu/bionic64"
+    box.vm.hostname = 'moloch-querybox'
+    box.vm.network :private_network, ip: "192.168.10.13"
+    box.vm.provider :hyperv do |hv, override|
+      hv.cpus = 4
+      hv.maxmemory = 2048
+      override.vm.box = "generic/ubuntu1804"
+      #override.vm.synced_folder ".", "/vagrant", type: "smb"
+    end
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+    end
+    config.vm.provision "shell", inline: $script
+    config.vm.provision "shell", inline: $docker
+    config.vm.provision "shell", inline: $jupyter
+  end
+end
