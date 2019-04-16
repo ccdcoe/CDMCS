@@ -23,6 +23,7 @@ add-apt-repository \
 apt-get update && apt-get install -qq -y docker-ce docker-ce-cli containerd.io
 systemctl enable docker.service
 systemctl start docker.service
+adduser vagrant docker
 SCRIPT
 
 Vagrant.configure(2) do |config|
