@@ -1,0 +1,59 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$script = <<-SCRIPT
+systemctl stop systemd-resolved.service
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+SCRIPT
+
+$docker = <<-SCRIPT
+export DEBIAN_FRONTEND=noninteractive
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+apt-get -qq -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get update && apt-get install -qq -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker.service
+systemctl start docker.service
+SCRIPT
+
+$moloch = <<-SCRIPT
+apt-get update && apt-get install build-essential git
+mkdir /home/vagrant/build
+git clone https://github.com/aol/moloch.git /home/vagrant/build/moloch
+chown -R vagrant:vagrant /home/vagrant/build
+adduser vagrant docker
+SCRIPT
+
+$jupyter = <<-SCRIPT
+apt-get update && apt-get install python3 python3-pip
+su - vagrant -c "pip3 install --upgrade --user jupyter jupyterlab"
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'moloch-build' do |box|
+    box.vm.box = "ubuntu/bionic64"
+    box.vm.hostname = 'moloch-build'
+    box.vm.network :private_network, ip: "192.168.10.12"
+    box.vm.provider :hyperv do |hv, override|
+      hv.cpus = 4
+      hv.maxmemory = 2048
+      override.vm.box = "generic/ubuntu1804"
+      #override.vm.synced_folder ".", "/vagrant", type: "smb"
+    end
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+    end
+    config.vm.provision "shell", inline: $script
+    config.vm.provision "shell", inline: $docker
+    config.vm.provision "shell", inline: $moloch
+  end
+end
