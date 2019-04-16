@@ -45,6 +45,8 @@ Capture issues:
 
 ## Components
 
+ * https://github.com/aol/moloch/wiki/Architecture#single-host
+
 ### Capture
 
 Tcpdump-like tool written in C. Responsible for capturing packets from wire or reading from pcap file. Parses the sessions, writes raw packets into pcap files on disk and flushes indexed session data into elasticsearch. Optionally may ask for threat intelligence from WISE for various fields, such as IP, domain, md5, ja3, etc. Requires database but can be run independently from viewer. May require wise.
