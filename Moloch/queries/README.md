@@ -50,6 +50,20 @@ Admin tab for various things. Like chaning the interface color...but still usefu
 
 Admin tab but user limitations can be can be configured here. Like enabling hunt tab, allowing for search in email traffic, applying forced view limitations via query, etc.
 
+## Tasks
+
+On exercise data.
+
+ * Find all sessions that are tagged by Suricata alert;
+  * Filter only alerts with highest severity;
+  * Split the view per signature, choose some that seem interesting and investigate the source and destination addresses;
+ * Find plaintext http on port 443;
+  * Filter for traffic that contains data;
+ * Investigate time-series data per gamenet host;
+  * Drill down to specific protocols;
+ * Investigate traffic between workstations;
+  * Filter only traffic for your team;
+
 # API
 
 # Managing elastic

@@ -25,11 +25,19 @@ systemctl start docker.service
 SCRIPT
 
 $jupyter = <<-SCRIPT
-wget -4 -q https://github.com/PowerShell/PowerShell/releases/download/v6.2.0/powershell_6.2.0-1.ubuntu.18.04_amd64.deb -O /tmp/ps.deb
-dpkg -i /tmp/ps.deb
-apt-get update && apt-get install python3 python3-pip
-su - vagrant -c "pip3 install --upgrade --user jupyter jupyterlab powershell_kernel"
-su - vagrant -c "python3 -m powershell_kernel.install"
+apt-get update && apt-get install -y python3 python3-pip
+su - vagrant -c "pip3 install --user --upgrade jupyter jupyterlab elasticsearch"
+su - vagrant -c "mkdir ~/.jupyter"
+cat >> /home/vagrant/.jupyter/jupyter_notebook_config.json <<EOF
+{
+  "NotebookApp": {
+    "password": "sha1:8df0e1970aef:d7e2823edc213e98342eee0b0ba2d2e652613311"
+  }
+}
+EOF
+chown vagrant /home/vagrant/.jupyter/jupyter_notebook_config.json
+su - vagrant -c "nohup /home/vagrant/.local/bin/jupyter lab --ip=0.0.0.0 & sleep 1"
+echo "Visit port 8888. Password is vagrant"
 SCRIPT
 
 Vagrant.configure(2) do |config|
@@ -41,14 +49,14 @@ Vagrant.configure(2) do |config|
       hv.cpus = 4
       hv.maxmemory = 2048
       override.vm.box = "generic/ubuntu1804"
+      override.vm.provision "shell", inline: $script
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
     box.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048"]
       vb.customize ["modifyvm", :id, "--cpus", "4"]
     end
-    config.vm.provision "shell", inline: $script
-    config.vm.provision "shell", inline: $docker
-    config.vm.provision "shell", inline: $jupyter
+    box.vm.provision "shell", inline: $docker
+    box.vm.provision "shell", inline: $jupyter
   end
 end

@@ -39,10 +39,10 @@ Vagrant.configure(2) do |config|
       hv.cpus = 4
       hv.maxmemory = 4096
       override.vm.box = "generic/ubuntu1804"
+      override.vm.provision "shell", inline: $script
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
-    config.vm.provision "shell", inline: $script
-    config.vm.provision "shell", inline: $docker
-    config.vm.provision "shell", path: "provision.sh"
+    box.vm.provision "shell", inline: $docker
+    box.vm.provision "shell", path: "provision.sh"
   end
 end
