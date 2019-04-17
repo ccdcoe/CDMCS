@@ -219,6 +219,8 @@ outputs:
       enabled: 'yes'
       filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
       filename: eve.json
+      community-id: yes
+      community-id-seed: 0
       types:
         - alert:
             payload: no             # enable dumping payload in Base64
