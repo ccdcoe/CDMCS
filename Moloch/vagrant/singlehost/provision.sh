@@ -88,7 +88,7 @@ fi
 # elastic
 echo "Provisioning ELASTICSEARCH"
 if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep elastic || docker run -dit --name elastic -h elastic --network cdmcs -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped -p 127.0.0.1:9200:9200 --log-driver syslog --log-opt tag="elastic" $DOCKER_ELA 
+  docker ps -a | grep elastic || docker run -dit --name elastic -h elastic --network cdmcs -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped -p 9200:9200 --log-driver syslog --log-opt tag="elastic" $DOCKER_ELA 
 else
   cd $PKGDIR
   [[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
@@ -96,6 +96,7 @@ else
 
   sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
   sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
+  grep "network.host: 0.0.0.0" /etc/elasticsearch/elasticsearch.yml || echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
   check_service elasticsearch
 fi
 

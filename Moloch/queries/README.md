@@ -144,6 +144,10 @@ echo $cid | while read line ; do echo $line ; curl -ss -u $USER:$PASS --digest \
 	-GET http://$HOST:8005/sessions.csv ; done
 ```
 
+## Python examples
+
+See attached jupyter notebooks.
+
 # Hunting trip
 
 ## Task

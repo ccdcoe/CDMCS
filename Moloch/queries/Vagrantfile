@@ -40,11 +40,19 @@ su - vagrant -c "nohup /home/vagrant/.local/bin/jupyter lab --ip=0.0.0.0 & sleep
 echo "Visit port 8888. Password is vagrant"
 SCRIPT
 
+$check_notebooks = <<-SCRIPT
+if [ ! -d /home/vagrant/notebooks ]; then
+  mkdir -p /home/vagrant/notebooks && cd /home/vagrant/notebooks
+  wget -4 -q https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/queries/001-moloch-api.ipynb -O /home/vagrant/notebooks/001-moloch-api.ipynb
+fi
+SCRIPT
+
 Vagrant.configure(2) do |config|
   config.vm.define 'moloch-querybox' do |box|
     box.vm.box = "ubuntu/bionic64"
     box.vm.hostname = 'moloch-querybox'
     box.vm.network :private_network, ip: "192.168.10.13"
+    box.vm.synced_folder "./", "/home/vagrant/notebooks"
     box.vm.provider :hyperv do |hv, override|
       hv.cpus = 4
       hv.maxmemory = 2048
@@ -58,5 +66,6 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provision "shell", inline: $docker
     box.vm.provision "shell", inline: $jupyter
+    box.vm.provision "shell", inline: $check_notebooks
   end
 end
