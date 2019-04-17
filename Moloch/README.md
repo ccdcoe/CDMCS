@@ -19,13 +19,13 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
  * 13:30 - 17:00 
     * [build + config, cont](/Moloch/setup)
-    * [Queries and UI](/Moloch/queries/#using-the-viewer)
-    * [Moloch API](/Moloch/queries/#api)
+    * [Basic queries and UI](/Moloch/queries/#using-the-viewer)
+    * [Moloch API](/Moloch/queries/#api), [Hunting trip](/Moloch/queries/#hunting-trip)
 
 ## Day 2 :: Labeling the traffic :: April 24 2019
 
   * 09:00 - 12:30
-    * [API, cont](/Moloch/queries/#api)
+    * [Hunting trip, cont](/Moloch/queries/#hunting-trip)
     * [WISE - asset tagging and threat intel](/Moloch/wise/#Usage)
 
   * 13:30 - 17:00 
@@ -60,5 +60,4 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * [molo.ch](http://molo.ch/)
   * [moloch FAQ](https://github.com/aol/moloch/wiki/FAQ)
   * [moloch wiki](https://github.com/aol/moloch/wiki)
-  * [Goodbye single host, woot!](https://github.com/aol/moloch/commit/8c472d939fad305d1c4134bde0ca8754faeaff84)
   * [InfoSec matters - Moloch FPC](http://blog.infosecmatters.net/2017/05/moloch-fpc.html)
