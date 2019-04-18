@@ -1,0 +1,48 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$script = <<-SCRIPT
+systemctl stop systemd-resolved.service
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+SCRIPT
+
+$docker = <<-SCRIPT
+export DEBIAN_FRONTEND=noninteractive
+echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
+apt-get -qq -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+apt-get update && apt-get install -qq -y docker-ce docker-ce-cli containerd.io
+systemctl enable docker.service
+systemctl start docker.service
+adduser vagrant docker
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define 'moloch-threatintel' do |box|
+    box.vm.box = "ubuntu/bionic64"
+    box.vm.hostname = 'moloch-threatintel'
+    box.vm.network :private_network, ip: "192.168.10.14"
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", "3072"]
+      vb.customize ["modifyvm", :id, "--cpus", "4"]
+    end
+    box.vm.provider :hyperv do |hv, override|
+      hv.cpus = 4
+      hv.maxmemory = 3072
+      override.vm.box = "generic/ubuntu1804"
+      override.vm.provision "shell", inline: $script
+      #override.vm.synced_folder ".", "/vagrant", type: "smb"
+    end
+    box.vm.provision "shell", inline: $docker
+    box.vm.provision "shell", path: "provision.sh"
+  end
+end
