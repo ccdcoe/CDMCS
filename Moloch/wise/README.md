@@ -112,3 +112,70 @@ type=ip
 format=tagger
 fields=field:custom.owner;kind:lotermfield;count:true;friendly:Name;db:custom.owner;help:Traffic owner\nfield:custom.type;kind:lotermfield;count:true;friendly:Type;db:custom.type;help:Traffic type
 ```
+
+### config.ini
+
+`[custom-fields]` section can be added to main `config.ini`.
+
+```
+[custom-fields]
+custom.owner=kind:lotermfield;count:true;friendly:Name;db:custom.owner;help:Traffic owner
+custom.type=kind:lotermfield;count:true;friendly:Type;db:custom.type;help:Traffic type
+```
+
+## Adding those types to Session view
+
+New types will be displayed in SPI view automatically, but will not be reflected in opened Sessions. That has to be configured manually.
+
+```
+[custom-views]
+custom=title:Totally Custom;require:custom;fields:custom.owner,custom.type
+```
+
+## Pulling data from remote sources
+
+Maybe we have multiple capture instances that need to be synced. Or maybe we simply don't want to manage arbitrary files in the system. We could use *Redis* plugin that is nearly identical to *file*. Firstly, let's fire up a docker instance.
+
+```
+docker run -tid --name -p 6379:6379 redis
+```
+
+And check that it is up and running by setting a key.
+
+```
+docker exec redis redis-cli set key "value"
+docker exec redis redis-cli get key
+```
+
+Create a `wise.ini` section for redis plugin. Assuming that field has already created by any of three methods listed before. Note that `0` at the end of url refers to redis database. If redis is also used as wise cache, then change that to some other number (will be created if does not exist).
+
+```
+[redis:ip]
+url=redis://127.0.0.1:6379/0
+tags=redis
+type=ip
+format=tagger
+```
+
+Reload the wise service as always and set some fields.
+
+```
+docker exec redis redis-cli set 208.67.222.222 "208.67.222.222;custom.type=dns;custom.owner=opendns"
+docker exec redis redis-cli set 208.67.220.220 "208.67.220.220;custom.type=dns;custom.owner=opendns"
+```
+
+Run some test queries against those servers and see if plugin works.
+
+```
+for domain in google.com neti.ee berylia.org ; do dig A $domain @208.67.222.222 ; done
+```
+
+## Tasks
+
+  * Create three custom groups `ls19`, `cdmcs` and `whatever` of fields. Each group should be defined using a different method (file, fields and custom-fields);
+    * Each group should have at least two arbitrary fields (up to you);
+    * Using file input plugin, verify that all three groups are present if SPI view;
+  * If a session is enriched with custom tag, it should be present in Sessions tab;
+  * Using Emerging Threats [IP drop list](http://rules.emergingthreats.net/blockrules/compromised-ips.txt) generate redis plugin entries where `drop.source` field is `emergingthreats`;
+    * Entries should expire if not updated in a reasonable time (1 minute should be sufficient for course);
+    * ICMP ping should be enough to verify it works **ONLY DO IT IN YOUR DISPOSABLE VM!!!**;
