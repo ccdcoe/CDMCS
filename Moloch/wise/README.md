@@ -179,3 +179,9 @@ for domain in google.com neti.ee berylia.org ; do dig A $domain @208.67.222.222 
   * Using Emerging Threats [IP drop list](http://rules.emergingthreats.net/blockrules/compromised-ips.txt) generate redis plugin entries where `drop.source` field is `emergingthreats`;
     * Entries should expire if not updated in a reasonable time (1 minute should be sufficient for course);
     * ICMP ping should be enough to verify it works **ONLY DO IT IN YOUR DISPOSABLE VM!!!**;
+
+# Writing a WISE plugin
+
+  * https://github.com/aol/moloch/wiki/Adding-new-WISE-sources
+
+WISE has quite a few plugins to integrate popular data sources and threat intelligence feed, but what if we want to do more comprex processing on run lookups agains something more obscure?
