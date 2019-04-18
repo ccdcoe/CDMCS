@@ -84,4 +84,31 @@ Then reload wise service and look at SPI view. You may need to wait for a bit or
 
 ## Creating custom fields
 
-While the simple example works, it does not solve our initial problem. We depend on `asset` field that already exists in Moloch database. Some fields, like `tags`, allow for multiple values, but the result would be quite messy when seen under SPI view. And aggregations can become difficult. Luckily, we can create custom fields that can be grouped together under SPI view.
+While the simple example works, it does not solve our initial problem. We depend on `asset` field that already exists in Moloch database. Some fields, like `tags`, allow for multiple values, but the result would be quite messy when seen under SPI view. And aggregations can become difficult. Luckily, we can create custom fields that can be grouped together under SPI view. And it's difficult to scale if new logical types are added in future. In other words, logical `owner` that is Google or Cloudflare (or us) and `type` which is DNS, are difficult to separate.
+
+Rather, we would like to have our own `custom` field group with sub fields `owner` and `type`. This can be done in multiple ways. See [tagger format](https://github.com/aol/moloch/wiki/TaggerFormat) for more.
+
+### File plugin comments
+
+Custom fields can be prepended to file plugin source file as comments.
+
+```
+#field:custom.owner;kind:lotermfield;count:true;friendly:Name;db:custom.owner;help:Traffic owner
+#field:custom.type;kind:lotermfield;count:true;friendly:Type;db:custom.type;help:Traffic type
+8.8.8.8;custom.owner=google;custom.type=dns
+1.1.1.1;custom.owner=cloudflare;custom.type=dns
+192.168.10.14;custom.owner=us;custom.type=vagrant
+```
+
+### WISE plugin config option
+
+`fields` parameter can be specified when invoking the plugin. Note that newline separates the types.
+
+```
+[file:iptagger]
+file=/tmp/assets.txt
+tags=ipwisetagger
+type=ip
+format=tagger
+fields=field:custom.owner;kind:lotermfield;count:true;friendly:Name;db:custom.owner;help:Traffic owner\nfield:custom.type;kind:lotermfield;count:true;friendly:Type;db:custom.type;help:Traffic type
+```
