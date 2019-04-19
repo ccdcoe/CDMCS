@@ -244,7 +244,7 @@ And finally export it as a new section `useless`.
 
 ```javascript
 exports.initSource = function(api) {
-  var source = new BloomSource(api, "useless");
+  var source = new UselessSource(api, "useless");
 };
 ```
 
@@ -359,6 +359,6 @@ UselessSource.prototype.getDomain = function(domain, cb) {
 };
 
 exports.initSource = function(api) {
-  var source = new BloomSource(api, "useless");
+  var source = new UselessSource(api, "useless");
 };
 ```
