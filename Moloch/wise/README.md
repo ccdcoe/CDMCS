@@ -185,3 +185,52 @@ for domain in google.com neti.ee berylia.org ; do dig A $domain @208.67.222.222 
   * https://github.com/aol/moloch/wiki/Adding-new-WISE-sources
 
 WISE has quite a few plugins to integrate popular data sources and threat intelligence feed, but what if we want to do more comprex processing on run lookups agains something more obscure?
+
+## source.useless.js
+
+Let's start off by creating a skeleton of a wise plugin, called `source.useless.js` in `wiseService` folder. It should have a periodic task every N seconds and it should print every X'th looked up item into a console. Start by importing the libraries. Most importantly, our plugin simpley extends `wiseSource.js`.
+
+```
+'use strict';
+
+var wiseSource     = require('./wiseSource.js')
+  , util           = require('util')
+  ;
+```
+
+Any additional deps should be added here. For example, if we wanted to interact with filesystem, like load or store data in files, we would need the `fs` module.
+
+```
+var wiseSource    = require('./wiseSource.js')
+  , util          = require('util')
+  , fs            = require('fs')
+  ;
+```
+
+Then define a new source function that parses `X` and `N` from the config file section `[useless]`. 
+
+```javascript
+function UselessSource (api, section) {
+  UselessSource.super_.call(this, api, section);
+
+  this.N = api.getConfig(section, "N");
+  this.X = api.getConfig(section, "X");
+
+  // Check if variables needed are set, if not return
+  if (this.N === undefined) {
+    return console.log(this.section, "- Useless N undefined");
+  }
+  if (this.X === undefined) {
+    return console.log(this.section, "- Useless X undefined");
+  }
+
+  // Memory data sources will have this section to load their data
+  this.cacheTimeout = -1;
+
+  this.api.addSource("useless", this);
+}
+```
+
+```
+util.inherits(UselessSource, wiseSource);
+```

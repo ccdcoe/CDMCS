@@ -146,7 +146,7 @@ echo $cid | while read line ; do echo $line ; curl -ss -u $USER:$PASS --digest \
 
 ## Python examples
 
-See attached jupyter notebooks.
+ * See attached jupyter notebooks;
 
 # Hunting trip
 
