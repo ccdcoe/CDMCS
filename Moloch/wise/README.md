@@ -190,7 +190,7 @@ WISE has quite a few plugins to integrate popular data sources and threat intell
 
 Let's start off by creating a skeleton of a wise plugin, called `source.useless.js` in `wiseService` folder. It should have a periodic task every N seconds and it should print every X'th looked up item into a console. Start by importing the libraries. Most importantly, our plugin simpley extends `wiseSource.js`.
 
-```
+```javascript
 'use strict';
 
 var wiseSource     = require('./wiseSource.js')
@@ -200,7 +200,7 @@ var wiseSource     = require('./wiseSource.js')
 
 Any additional deps should be added here. For example, if we wanted to interact with filesystem, like load or store data in files, we would need the `fs` module.
 
-```
+```javascript
 var wiseSource    = require('./wiseSource.js')
   , util          = require('util')
   , fs            = require('fs')
@@ -224,6 +224,9 @@ function UselessSource (api, section) {
     return console.log(this.section, "- Useless X undefined");
   }
 
+  console.log("N is ", this.N);
+  console.log("X is ", this.X);
+
   // Memory data sources will have this section to load their data
   this.cacheTimeout = -1;
 
@@ -231,6 +234,131 @@ function UselessSource (api, section) {
 }
 ```
 
-```
+This module would be loaded unless `N` or `X` are undefined. Then say that our new source inherits methods from `wiseSource`.
+
+```javascript
 util.inherits(UselessSource, wiseSource);
+```
+
+And finally export it as a new section `useless`.
+
+```javascript
+exports.initSource = function(api) {
+  var source = new BloomSource(api, "useless");
+};
+```
+
+This should allow us to call this skeleton of a module by simply defining it in `wise.ini`.
+
+```
+[useless]
+X = 10
+N = 15
+```
+
+However, the module does not really do anything other than print `N` and `X` values. Suppose we want to spam these values periodically, we can do that by defining a source variable as function. The output would be seen in `wiseService.js` logs.
+
+```javascript
+UselessSource.prototype.spam = function() {
+  console.log("N is ", this.N);
+  console.log("X is ", this.X);
+};
+```
+
+In reality, this would be the place for pulling data from external sources, storing our data periodically, printing detailed statistics, etc. It won't kick in, unless we start a periodic routing in `UselessSource` main function.
+
+```javascript
+  setInterval(this.spam.bind(this), this.N*1000);
+```
+
+We can also replace the `console.log()` statements in `UselessSource` with immediate invocation of this function, as it does exactly the same thing. Doing this is a good idea anyway, as if we were to pull threat intel in this function, we would need to wait N seconds before the data was actually loaded.
+
+```javascript
+  setImmediate(this.spam.bind(this));
+```
+
+Finally, we would like to do something during wise type lookups. This should be defined as `getItem` function. For example, to implement a domain lookup, we would need something like this.
+
+```javascript
+UselessSource.prototype.getDomain = function(domain, cb) {
+  console.log(domain);
+  cb(null, undefined);
+};
+```
+
+If we wanted to implement some logic into this function, we would likely need to define whatever variables or data structures in the main `UselessSource` function.
+
+```javascript
+function UselessSource (api, section) {
+  UselessSource.super_.call(this, api, section);
+
+  this.N = api.getConfig(section, "N");
+  this.X = api.getConfig(section, "X");
+
+  this.i = 0;
+  ...
+```
+
+And then we can use it in lookup function.
+
+```javascript
+UselessSource.prototype.getDomain = function(domain, cb) {
+  if (this.i%this.X===0) {
+    console.log(domain);
+  };
+  this.i = this.i + 1;
+  cb(null, undefined);
+};
+```
+
+Putting it all together.
+
+```javascript
+'use strict';
+
+var wiseSource     = require('./wiseSource.js')
+  , util           = require('util')
+  ;
+
+function UselessSource (api, section) {
+  UselessSource.super_.call(this, api, section);
+
+  this.N = api.getConfig(section, "N");
+  this.X = api.getConfig(section, "X");
+
+  // Check if variables needed are set, if not return
+  if (this.N === undefined) {
+    return console.log(this.section, "- Useless N undefined");
+  }
+  if (this.X === undefined) {
+    return console.log(this.section, "- Useless X undefined");
+  }
+
+  setInterval(this.spam.bind(this), this.N*1000);
+  setImmediate(this.spam.bind(this));
+
+  // Memory data sources will have this section to load their data
+  this.cacheTimeout = -1;
+
+  this.api.addSource("useless", this);
+}
+
+util.inherits(UselessSource, wiseSource);
+
+UselessSource.prototype.spam = function() {
+  console.log("N is ", this.N);
+  console.log("X is ", this.X);
+};
+
+UselessSource.prototype.getDomain = function(domain, cb) {
+  if (this.i%this.X===0) {
+    console.log(domain);
+  };
+  this.i = this.i + 1;
+  cb(null, undefined);
+};
+
+exports.initSource = function(api) {
+  var source = new BloomSource(api, "useless");
+};
 ```
