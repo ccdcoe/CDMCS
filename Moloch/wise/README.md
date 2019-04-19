@@ -215,6 +215,7 @@ function UselessSource (api, section) {
 
   this.N = api.getConfig(section, "N");
   this.X = api.getConfig(section, "X");
+  this.i = 0;
 
   // Check if variables needed are set, if not return
   if (this.N === undefined) {
@@ -348,6 +349,7 @@ util.inherits(UselessSource, wiseSource);
 UselessSource.prototype.spam = function() {
   console.log("N is ", this.N);
   console.log("X is ", this.X);
+  console.log("i is ", this.i);
 };
 
 UselessSource.prototype.getDomain = function(domain, cb) {
