@@ -384,7 +384,7 @@ Now we have a useless skeleton of a wise plugin. Suppose we want to create a sim
 ]
 ```
 
-We can use the useless skeleton, apply some sed magic, and throw away anyting not needed.
+We can use the useless skeleton, apply some sed magic, and throw away anything not needed.
 
 ```javascript
 'use strict';
