@@ -364,3 +364,230 @@ exports.initSource = function(api) {
   var source = new UselessSource(api, "useless");
 };
 ```
+
+## making it somewhat useful
+
+Now we have a useless skeleton of a wise plugin. Suppose we want to create a simple IP lookup utility, similar to file and redis example in the first section, and we have input data in following format:
+
+```json
+[
+  {
+    "ip": "8.8.8.8",
+    "owner": "google",
+    "type": "dns"
+  },
+  {
+    "ip": "192.168.10.14",
+    "owner": "me",
+    "type": "vagrant"
+  }
+]
+```
+
+We can use the useless skeleton, apply some sed magic, and throw away anyting not needed.
+
+```javascript
+'use strict';
+
+var wiseSource     = require('./wiseSource.js')
+  , util           = require('util')
+  ;
+
+function SomewhatUsefulSource (api, section) {
+  SomewhatUsefulSource.super_.call(this, api, section);
+
+  // Memory data sources will have this section to load their data
+  this.cacheTimeout = -1;
+
+  this.api.addSource("useful", this);
+  console.log("useful loaded");
+}
+
+util.inherits(SomewhatUsefulSource, wiseSource);
+
+SomewhatUsefulSource.prototype.getIp = function(ip, cb) {
+  cb(null, undefined);
+};
+
+exports.initSource = function(api) {
+  var source = new SomewhatUsefulSource(api, "useful");
+};
+```
+
+As before, we should define any new fields that we want to add. This should be none in `SomewhatUsefulSource` function.
+
+```javascript
+  this.owner  = this.api.addField("field:useful.owner;db:useful.owner;kind:lotermfield;friendly:Owner;help:I can haz wise field;count:false");
+  this.type   = this.api.addField("field:useful.type;db:useful.type;kind:lotermfield;friendly:Type;help:I can haz another wise field;count:false");
+```
+
+As an exercise, we are going to create a plugin that simply keeps all data in memory and periodically updates it. For that, we need to import hashtable package for storing the data.
+
+```javascript
+  HashTable     = require('hashtable'),
+```
+
+And we should instantiate one in the `SomewhatUsefulSource` function.
+
+```javascript
+  this.data = new HashTable();
+```
+
+Empty container is empty. Let's write a function to fill it. In reality, this data should be pulled via some IO reader, but that's not really important while trying to figure out WISE-specific nuances.
+
+```javascript
+SomewhatUsefulSource.prototype.load = function() {
+  var self = this;
+  this.data.clear();
+
+  var staticData = [
+    {
+      ip: "8.8.8.8",
+      owner: "google",
+      type: "dns"
+    },
+    {
+      ip: "192.168.10.14",
+      owner: "me",
+      type: "vagrant"
+    }
+  ];
+
+  i = 0;
+  staticData.forEach(function(object){
+    var encodedOwner  = wiseSource.encode(self.owner, object.owner);
+    var encodedType   = wiseSource.encode(self.type, object.type);
+    var encoded       = Buffer.concat([
+      encodedOwner,
+      encodedType
+    ]);
+    self.data.put(object.ip, {num: 2, buffer: encoded});
+    i++;
+  });
+  console.log("useful loaded", i, "items");
+};
+```
+
+So, we are looping through a data structure and filling a hashtable with key-value pairs. Fairly straightforward. But what's the deal with buffers? Well, remember that useless example IP address lookup function wasn't actually looking anything up, but simply returned `undefined` value for all queries. Instead, WISE expects a very specific object structure to be returned. The actual data must be encoded into a binary [buffer](https://nodejs.org/api/buffer.html#buffer_buffer). `num` key signifys the number of items that are encoded into the blob. We have two fields `owner` and `type`. **If this number does not match the actual count of concatenated items, than bad stuff happens.** Look at `moloch-capture` logs for callback errors. Note that `wiseSource.encode` function can actually take any even number of arguments if multiple fields are added. Odd numbered argument is field definition while even argument is the actual data. This example simply illustrates how multiple buffers can be added together via `Buffer.concat` method, and can easily be re-written to omit the concatenation.
+
+```javascript
+    var encoded  = wiseSource.encode(
+                                      self.owner, object.owner, 
+                                      self.type,  object.type,
+                                      );
+    this.data.put(object.ip, {num: 2, buffer: encoded});
+```
+
+Nevertheless, concatenation method can be useful if your intel feed has a variable number of possible values. For example, of we know the `owner` of IP addres, but not `type`. Regardeless of method, our function will be useless if not invoked in our plugin.
+
+```javascript
+  setImmediate(this.load.bind(this));
+```
+
+Finally, we simply need to implement a proper lookup.
+
+```javascript
+SomewhatUsefulSource.prototype.getIp = function(ip, cb) {
+  cb(null, this.data.get(ip));
+};
+```
+
+Note that this simply looks up for previously encoded values. We could implement the encoding logic in lookup function as well and drop the `this.data` variable and `hashtable` package altogether.
+
+```javascript
+SomewhatUsefulSource.prototype.getIp = function(ip, cb) {
+  this.staticData.forEach(function(object){
+    if (object.ip===ip) {
+      return cb(null, wiseSource.encode( self.owner, object.owner, self.type, object.type));
+    };
+  });
+  cb(null, unknown);
+};
+```
+
+This approach would be horribly inefficient as we would need to loop our entire data structure and encode values on positive match upon every single IP addres lookup, which can happen for thousands of times per second (on moderate traffic). Still, example stands in case we wanted to run lookups against external data source, as opposed to keeping everything in process memory and updating periodically.
+
+Finally, while SPI view should pick up any new fields quite easily, we do need to define any additional Sessions view sections manually in our main function. Wise will essentially inject this code into the viewer.
+
+```javascript
+  this.api.addView("useful-view",
+    "if (session.useful)\n" +
+    "  div.sessionDetailMeta.bold Useful\n" +
+    "  dl.sessionDetailMeta\n" +
+    "    +arrayList(session.useful, 'owner', 'Owner', 'useful.owner')\n"
+  );
+```
+
+### Tasks
+
+  * Putting it all together is left as an exercise to the reader;
+  * SomewhatUsefulSource is still pretty useless as data is pretty much hardcoded;
+    * Load data periodically from a json file instead;
+      * User should be able to configure the file location;
+    * **Advanced** Load data from a web server instead;
+  * Sessions view only shows `owner` field, but it should also show `type`;
+  * Add a new field into the JSON data structure (be creative), verify that this field appears in all relevant sessions;
+    * **Advanced** Make that field non mandatory. For example, our vagrant box could also have a field `bigbrother` that is missing from `8.8.8.8`, but that should not break your buffer!
+
+## Getting fancy
+
+Last example is somewhat useful, but we did not really do anything that we could not implement via built-in plugins. This example enteres all observed domains into a [bloom filter](https://github.com/ccdcoe/CDMCS/blob/master/SDM/go-jupyter/016-bloom.ipynb). Going into probabolistic data structures is outside the scope of this section, but it essentially allows us to make reasonably precise estimations on weather we have previously seen something while using a few kilobytes of memory.
+
+```javascript
+'use strict';
+
+var wiseSource     = require('./wiseSource.js')
+  , util           = require('util')
+  , bloom          = require('bloomfilter')
+  ;
+
+//////////////////////////////////////////////////////////////////////////////////
+function BloomSource (api, section) {
+  BloomSource.super_.call(this, api, section);
+
+  this.bits = api.getConfig(section, "bits");
+  this.fn = api.getConfig(section, "functions");
+  this.tagval = api.getConfig(section, "tag");
+
+  // Check if variables needed are set, if not return
+  if (this.bits === undefined) {
+    return console.log(this.section, "- Bloom filter bits undefined");
+  }
+  if (this.fn === undefined) {
+    return console.log(this.section, "- Bloom filter hash functions undefined");
+  }
+  if (this.tag === undefined) {
+    this.tab == "bloom";
+  }
+
+  this.dns = new bloom.BloomFilter(
+    this.bits, // number of bits to allocate.
+    this.fn    // number of hash functions.
+  );
+
+  this.tagsField = this.api.addField("field:tags");
+
+  // Memory data sources will have this section to load their data
+  this.cacheTimeout = -1;
+  //setImmediate(this.load.bind(this));
+  //setInterval(this.load.bind(this), 5*60*1000);
+
+  // Add the source as available
+  this.api.addSource("bloom", this);
+}
+util.inherits(BloomSource, wiseSource);
+//////////////////////////////////////////////////////////////////////////////////
+BloomSource.prototype.getDomain = function(domain, cb) {
+  if (!this.dns.test(domain)) {
+    this.dns.add(domain);
+    return cb(null, {num: 1, buffer: wiseSource.encode(this.tagsField, this.tagval)});
+  }
+  cb(null, undefined);
+};
+//////////////////////////////////////////////////////////////////////////////////
+exports.initSource = function(api) {
+  var source = new BloomSource(api, "bloom");
+};
+```
+
+Furthermore, [this badly written plugin](https://github.com/markuskont/moloch/blob/master/wiseService/source.ls19.js) was used to tag all traffic for LS19 exercise.
