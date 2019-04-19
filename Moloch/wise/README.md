@@ -528,6 +528,7 @@ Finally, while SPI view should pick up any new fields quite easily, we do need t
   * Sessions view only shows `owner` field, but it should also show `type`;
   * Add a new field into the JSON data structure (be creative), verify that this field appears in all relevant sessions;
     * **Advanced** Make that field non mandatory. For example, our vagrant box could also have a field `bigbrother` that is missing from `8.8.8.8`, but that should not break your buffer!
+  * **Advanced** Both source and destination IP-s are looked up, but directionality does not reflect in returned field. Fix that!
 
 ## Getting fancy
 
