@@ -182,6 +182,57 @@ And in our hosts file hack.
 
 We should then be able to connect to port `8005` and `8006` of our capture box and read sessions from both. Note that `--host` basically becomes redundant, as `node` field would be otherwise be derived from that. Now we set it explicitly.
 
-## Tasks
+## Sending sessions between clusters
+
+For sending sessions to another cluster, we would only need to define this section. Note that `passwordSecret` corresponds to the config parameter of remote cluster `config.ini`.
+
+```
+[moloch-clusters]
+singlehost=url:http://singlehost:8005;passwordSecret:test123;name:Single host easy button
+```
+
+As always, we also need to know where the remote viewer is.
+
+```
+192.168.10.11   singlehost
+```
 
 ## Parliament
+
+ * https://github.com/aol/moloch/tree/master/parliament
+
+In the `parliament` folder, run the app as any other NodeJS thing.
+
+```
+../bin/node parliament.js
+```
+
+Note that there is now a `parliament.json` file. You can also visit port `8008` of your box now. Set the password (and be more creative).
+
+```
+curl -s -XPUT  localhost:8008/parliament/api/auth/update -d newPassword=admin
+```
+
+Assuming no prior config, it should return a new API token as JSON key. We can use that token to add a group.
+
+```
+
+curl -s \
+  -XPOST \
+  -H "Content-Type: application/json;charset=UTF-8" \
+  localhost:8008/parliament/api/groups \
+  --data "{\"token\":\"${token}\", \"title\":\"${GROUP}\"}"
+
+```
+
+This should give us the ID of our new group. Clusters can be added under these groups.
+
+```
+curl -s \
+  -XPOST \
+  -H "Content-Type: application/json;charset=UTF-8" \
+  localhost:8008/parliament/api/groups/${id}/clusters \
+  --data "{\"token\":\"${token}\", \"title\":\"singlehost\",\"url\":\"http://singlehost:8005\"}"
+```
+
+## Tasks
