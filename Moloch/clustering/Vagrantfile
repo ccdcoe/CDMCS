@@ -39,6 +39,31 @@ systemctl start docker.service
 adduser vagrant docker
 SCRIPT
 
+PKGDIR="/vagrant/pkgs"
+WGET_PARAMS="-4 -q"
+MOLOCH="moloch_1.8.0-1_amd64.deb"
+
+$moloch = <<-SCRIPT
+
+FILE=/etc/sysctl.conf
+grep "disable_ipv6" $FILE || cat >> $FILE <<EOF
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+EOF
+grep "vm.max_map_count" $FILE || cat >> $FILE <<EOF
+vm.max_map_count=262144
+EOF
+sysctl -p
+
+mkdir -p #{PKGDIR}
+apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
+
+cd #{PKGDIR}
+[[ -f #{MOLOCH} ]] || wget #{WGET_PARAMS} https://files.molo.ch/builds/ubuntu-18.04/#{MOLOCH}
+dpkg -s moloch || dpkg -i #{MOLOCH}
+SCRIPT
+
 Vagrant.configure(2) do |config|
   (1..BOXES).each do |count|
 
@@ -63,6 +88,7 @@ Vagrant.configure(2) do |config|
         #override.vm.synced_folder ".", "/vagrant", type: "smb"
       end
       box.vm.provision "shell", inline: $docker
+      box.vm.provision "shell", inline: $moloch
     end
   end
   if SPLIT_DB_AND_MOLO == true

@@ -26,25 +26,24 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
   * 09:00 - 12:30
     * [Hunting trip, cont](/Moloch/queries/#hunting-trip)
-    * [WISE - asset tagging and threat intel](/Moloch/wise/#Usage)
+    * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
 
   * 13:30 - 17:00 
-    * [WISE - writing a custom plugin](/Moloch/wise/#Plugins)
-    * [WISE - parsing exercise pcap](/Moloch/wise/#Plugins)
+    * [WISE - Plugins...](/Moloch/wise#writing-a-wise-plugin)
 
 ## Day 3 :: Group up, scale out :: April 25 2019
 
   * 09:00 - 12:30 
     * Digging
-    * [Clustering intro](/Moloch/cluster)
+    * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch), [multinode](/Moloch/clustering#moloch-workers)
 
   * 13:30 - 17:00 
-    * [Clustering teamwork](/Moloch/cluster)
+    * [Clustering teamwork](/Moloch/clustering#Tasks)
 
 ## Day 4 :: Cross-class cluster, performance tuning :: April 26 2019, **ends at 17:00**
   
   * 09:00 - 12:30 
-    * [Parliament](/Moloch/cluster/#Parliament)
+    * [Parliament](/Moloch/clustering#Parliament)
     * digging
   * 13:30 - 16:45 
     * [Tuning the capture](/Moloch/optimize)

@@ -72,6 +72,22 @@ path:
 
 Since we are doing pretty much everything in docker, it may be better to just mount correct docker volumes to default data and log directories.
 
-## Multiviewer
+## Remote elasticsearch
 
-## Multiple clusters
+Configuring moloch capture and viewer to use a remote elasticsearch (cluster) is quite straightforward, simply point them to correct ip-port combination.
+
+```
+elasticsearch=192.168.10.14:9200
+```
+
+Suppose we have multiple elastic proxies. Those can be delimited via semicolon. Just make sure they all belong to the same cluster.
+
+```
+elasticsearch=192.168.10.14:9200;192.168.10.36:9200
+```
+
+## moloch workers
+
+## Tasks
+
+## Parliament
