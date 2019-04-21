@@ -10,7 +10,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 **NB! Note that that due to public holidays, we are unconventionally staring our course on Tuesday at 09:00 and working until Friday afternoon.**
 
-## Day 1 :: Intro ,single box, building :: April 23 2019, starts at 09:00!
+## Day 1 :: Intro, single box, building :: April 23 2019, starts at 09:00!
 
  * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
