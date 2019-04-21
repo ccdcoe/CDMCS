@@ -88,6 +88,32 @@ elasticsearch=192.168.10.14:9200;192.168.10.36:9200
 
 ## moloch workers
 
+Moloch is actually designed for clustering from the ground up. Pointing a new viewer node to existing elasticsearch cluster will already allow you to see all indexed sessions. However, opening an indexed session will likely fail. That's because viewer reads pcap data from disk, and also allows remote viewers to connetct to itsef. In other words, each viewer also acts as proxy for remote viewers. This behaviour can be observed locally as well. Suppose we would like to override the `--host` flag of our capture that would otherwise default to `hostname -f`.
+
+```
+./moloch-capture -c ../etc/config.ini --host some-host-123
+```
+
+Attempting to open a session that corresponds to query `node == some-host-123` will show you all of the SPI data, but payload will simply error.
+
+```
+Error talking to node 'some-host-123' using host 'some-host-123:8005' check viewer logs on 'host'
+```
+
+That is due to name resolution. Simply hack it with local resolver to get it working. We should add this to `/etc/hosts` of all viewer boxes.
+
+```
+192.168.10.14   some-host-123
+```
+
+And also inform our viewer of her new name.
+
+```
+../bin/node viewer.js -c ../etc/config.ini --host some-host-123
+```
+
+You should then be able to open the session as before.
+
 ## Tasks
 
 ## Parliament
