@@ -2,7 +2,7 @@
 
   * https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-multiple-network-segments
   * https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-high-traffic-networks
-  * https://github.com/aol/moloch/wiki/Architecture#multiple-hosts-monitoring-high-traffic-networks
+  * https://github.com/aol/moloch/wiki/Architecture#multiple-clusters
 
 ## Clustered elasticsearch
 
