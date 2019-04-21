@@ -106,6 +106,12 @@ That is due to name resolution. Simply hack it with local resolver to get it wor
 192.168.10.14   some-host-123
 ```
 
+Local node may also need this.
+
+```
+127.0.1.1 some-host-123
+```
+
 And also inform our viewer of her new name.
 
 ```
@@ -113,6 +119,68 @@ And also inform our viewer of her new name.
 ```
 
 You should then be able to open the session as before.
+
+### node override
+
+What if we wanted to run multiple moloch nodes on the same capture box? We could make multiple `config.ini` files but managing them might become a hassle, as most config options would be identical. Instead, we can override some config parameters based on `--node` argument of cature or viewer. Suppose we have a central router/firewall with multiple interfaces. We want to capture traffic from all interfaces and also filter that traffic by interface, as connection may come in from one NIC and go out from another, thus duplicating the session. We can add this into the `config.ini`.
+
+```
+[interface1]
+interface=enp0s3
+viewPort = 8005
+
+[interface2]
+interface=enp0s8
+viewPort = 8006
+```
+
+Then start the capture process as follows.
+
+```
+./moloch-capture -c ../etc/config.ini --node interface1
+```
+
+And another process like so.
+
+```
+./moloch-capture -c ../etc/config.ini --node interface2
+```
+
+Initial config param for `interfaces` will be overrided based on node name. We can make this more manageable by also creating a systemd service file `/etc/systemd/system/moloch-capture@.service`.
+
+```
+[Unit]
+Description=manages my worker service, instance %i
+After=multi-user.target moloch-viewer.service
+
+[Service]
+Type=simple
+User=root
+ExecStart=/data/moloch/bin/moloch-capture -c /data/moloch/etc/config.ini --node interface%i
+Restart=always
+```
+
+And after a simple `systemctl daemon-reload`, we can start these services in a loop.
+
+```
+systemctl start moloch-capture-reader\@{1..2}.service
+```
+
+This should also reflect in viewer.
+
+```
+nohup ../bin/node viewer.js -c ../etc/config.ini -n interface1 &
+nohup ../bin/node viewer.js -c ../etc/config.ini -n interface2 &
+```
+
+And in our hosts file hack.
+
+```
+127.0.1.1       interface1
+127.0.1.1       interface2
+```
+
+We should then be able to connect to port `8005` and `8006` of our capture box and read sessions from both. Note that `--host` basically becomes redundant, as `node` field would be otherwise be derived from that. Now we set it explicitly.
 
 ## Tasks
 
