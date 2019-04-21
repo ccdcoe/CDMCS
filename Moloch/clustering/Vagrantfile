@@ -2,6 +2,19 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+SPLIT_DB_AND_MOLO=true
+NAME="student"
+BOXES=1
+MEM_PER_BOX=2048
+CPU_PER_BOX=4
+
+ELA_MEM=2048
+ELA_CPU=4
+
+if SPLIT_DB_AND_MOLO == true and MEM_PER_BOX > 2048
+  puts "Separate elastic vm will be created. Consider reducing the amount of memory per box"
+end
+
 $script = <<-SCRIPT
 systemctl stop systemd-resolved.service
 echo "nameserver 1.1.1.1" > /etc/resolv.conf
@@ -28,23 +41,54 @@ adduser vagrant docker
 SCRIPT
 
 Vagrant.configure(2) do |config|
-  config.vm.define 'moloch-cluster' do |box|
-    box.vm.box = "ubuntu/bionic64"
-    box.vm.hostname = 'moloch-cluster'
-    box.vm.network "public_network"
-    box.vm.network :private_network, ip: "192.168.10.15"
-    box.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "3072"]
-      vb.customize ["modifyvm", :id, "--cpus", "4"]
+  (1..BOXES).each do |count|
+
+    start = 15 + count
+    name = ['moloch-cluster', NAME, 'box', count.to_s].join("-")
+    ip = ['192.168.10', start.to_s].join(".")
+
+    config.vm.define name do |box|
+      box.vm.box = "ubuntu/bionic64"
+      box.vm.hostname = name
+      box.vm.network "public_network"
+      box.vm.network :private_network, ip: ip
+      box.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", MEM_PER_BOX]
+        vb.customize ["modifyvm", :id, "--cpus", CPU_PER_BOX]
+      end
+      box.vm.provider :hyperv do |hv, override|
+        hv.cpus = CPU_PER_BOX
+        hv.maxmemory = MEM_PER_BOX
+        override.vm.box = "generic/ubuntu1804"
+        override.vm.provision "shell", inline: $script
+        #override.vm.synced_folder ".", "/vagrant", type: "smb"
+      end
+      box.vm.provision "shell", inline: $docker
     end
-    box.vm.provider :hyperv do |hv, override|
-      hv.cpus = 4
-      hv.maxmemory = 3072
-      override.vm.box = "generic/ubuntu1804"
-      override.vm.provision "shell", inline: $script
-      #override.vm.synced_folder ".", "/vagrant", type: "smb"
+  end
+  if SPLIT_DB_AND_MOLO == true
+
+    id = 15 + BOXES + 20
+    name = ['moloch-cluster', NAME, "ela"].join("-")
+    ip = ['192.168.10', id.to_s].join(".")
+
+    config.vm.define name do |box|
+      box.vm.box = "ubuntu/bionic64"
+      box.vm.hostname = name
+      box.vm.network "public_network"
+      box.vm.network :private_network, ip: ip
+      box.vm.provider :virtualbox do |vb|
+        vb.customize ["modifyvm", :id, "--memory", ELA_MEM]
+        vb.customize ["modifyvm", :id, "--cpus", ELA_CPU]
+      end
+      box.vm.provider :hyperv do |hv, override|
+        hv.cpus = ELA_CPU
+        hv.maxmemory = ELA_MEM
+        override.vm.box = "generic/ubuntu1804"
+        override.vm.provision "shell", inline: $script
+        #override.vm.synced_folder ".", "/vagrant", type: "smb"
+      end
+      box.vm.provision "shell", inline: $docker
     end
-    box.vm.provision "shell", inline: $docker
-    box.vm.provision "shell", path: "provision.sh"
   end
 end

@@ -71,3 +71,7 @@ path:
 ```
 
 Since we are doing pretty much everything in docker, it may be better to just mount correct docker volumes to default data and log directories.
+
+## Multiviewer
+
+## Multiple clusters
