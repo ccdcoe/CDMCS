@@ -40,16 +40,13 @@ To create and provision a new empty virtual machine:
 
     mkdir something
     cd something
-    vagrant box add ubuntu/xenial64
+    vagrant box add ubuntu/bionic64
     wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
     wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/provision.sh
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/tagger.py
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/genTraffic.sh
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/tagger.txt
     vagrant up
 
 Running `vagrant up` for the first time will run provisioning, which will:
-- Download the [Ubuntu 18.04 base image](https://app.vagrantup.com/ubuntu/boxes/bionic64) and [Ubuntu 16.04 base image](https://app.vagrantup.com/ubuntu/boxes/xenial64) <sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
+- Download the [Ubuntu 18.04 base image](https://app.vagrantup.com/ubuntu/boxes/bionic64)<sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
 - Run the provisioning script ([provision.sh](/Moloch/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
