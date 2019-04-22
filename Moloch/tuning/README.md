@@ -102,20 +102,22 @@ This approach is less proven than others. Septun mark II article used ixgbe driv
 
 ## CPU affinity and NUMA
 
-But which cores do I want to isolate (i.e., what is NUMA)? Start by exploring your system topology.
+Modern server usually has multiple CPU-s. Those cpus might not be apparent by simply looking at `top`, but in reality whenever a thread has to access memory that belongs to another CPU, it has to go through motherboard lanes. That introduces latency (compared to local access times). Furthermore, each PCI-e device is connected to a specific NUMA node. **We want our capture process to be bound to same NUMA, CPU and memory, as our physical capture card**. That way, we can rely on higher performance thanks to more frequent L3 cache hits (direct cache access should be enabled in bios). But even without those cache hits, reduction in memory latency is a really good thing. (Near) real-time is a facinating world of wonder and awe...
+
+Start by exploring the topology.
 
 ```
 apt-get install hwloc
 lstopo --logical --output-format txt
 ```
 
-Do not trust what it says! Instead, ask from a tool meant to understand NUMA. Sometames odd numbered threads are numa 0 while even numbered are numa 1. Other times, 0-19 is 0 and 20-39 is 1. Other times, 0-9 is 0, 10-19 is 1, 20-29 is 0, 30-39 is 1. Depends on your hardware, kernel, etc.
+Ask from a tool meant to understand NUMA. Numbers from `lstopo` may not correspond to what you see in `htop`. Sometames odd numbered threads are numa 0 while even numbered are numa 1. Other times, 0-19 is 0 and 20-39 is 1. Other times, 0-9 is 0, 10-19 is 1, 20-29 is 0, 30-39 is 1. Depends on your hardware, kernel, etc.
 
 ```
 numactl --hardware
 ```
 
-Then start your processes and assign them to specific cores.
+`lscpu` command can also tell you which CPU threads belong to which NUMA node. Then start your processes and assign them to specific cores.
 
 ```
 taskset -pc $core_num $pid
