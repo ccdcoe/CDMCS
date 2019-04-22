@@ -93,7 +93,7 @@ FILE=/etc/systemd/system/moloch-viewer.service
 grep "moloch-viewer" $FILE || cat > $FILE <<EOF
 [Unit]
 Description=Moloch Viewer
-After=network.target moloch-wise.service
+After=network.target
 
 [Service]
 Type=simple
@@ -111,7 +111,7 @@ grep "moloch-capture" $FILE || cat > $FILE <<EOF
 PIDFILE=/var/run/capture.pid
 [Unit]
 Description=Moloch Capture
-After=network.target moloch-wise.service moloch-viewer.service
+After=network.target moloch-viewer.service
 
 [Service]
 Type=simple
