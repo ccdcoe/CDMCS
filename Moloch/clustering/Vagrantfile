@@ -84,9 +84,9 @@ Vagrant.configure(2) do |config|
         hv.cpus = CPU_PER_BOX
         hv.maxmemory = MEM_PER_BOX
         override.vm.box = "generic/ubuntu1804"
-        override.vm.provision "shell", inline: $script
         #override.vm.synced_folder ".", "/vagrant", type: "smb"
       end
+      box.vm.provision "shell", inline: $script
       box.vm.provision "shell", inline: $docker
       box.vm.provision "shell", inline: $moloch
     end
@@ -110,9 +110,9 @@ Vagrant.configure(2) do |config|
         hv.cpus = ELA_CPU
         hv.maxmemory = ELA_MEM
         override.vm.box = "generic/ubuntu1804"
-        override.vm.provision "shell", inline: $script
         #override.vm.synced_folder ".", "/vagrant", type: "smb"
       end
+      box.vm.provision "shell", inline: $script
       box.vm.provision "shell", inline: $docker
     end
   end
