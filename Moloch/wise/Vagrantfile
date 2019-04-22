@@ -26,6 +26,22 @@ systemctl start docker.service
 adduser vagrant docker
 SCRIPT
 
+$jupyter = <<-SCRIPT
+apt-get update && apt-get install -y python3 python3-pip
+su - vagrant -c "pip3 install --user --upgrade jupyter jupyterlab elasticsearch"
+su - vagrant -c "mkdir ~/.jupyter"
+cat >> /home/vagrant/.jupyter/jupyter_notebook_config.json <<EOF
+{
+  "NotebookApp": {
+    "password": "sha1:8df0e1970aef:d7e2823edc213e98342eee0b0ba2d2e652613311"
+  }
+}
+EOF
+chown vagrant /home/vagrant/.jupyter/jupyter_notebook_config.json
+su - vagrant -c "nohup /home/vagrant/.local/bin/jupyter lab --ip=0.0.0.0 & sleep 1"
+echo "Visit port 8888. Password is vagrant"
+SCRIPT
+
 Vagrant.configure(2) do |config|
   config.vm.define 'moloch-threatintel' do |box|
     box.vm.box = "ubuntu/bionic64"
@@ -44,6 +60,7 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provision "shell", inline: $script
     box.vm.provision "shell", inline: $docker
+    box.vm.provision "shell", inline: $jupyter
     box.vm.provision "shell", path: "provision.sh"
   end
 end
