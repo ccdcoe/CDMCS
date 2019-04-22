@@ -22,9 +22,9 @@ See:
 
 # Current Classes
 
- * [Suricata :: Feb 11-15 2019](Suricata/README.md)
- * [Moloch :: Apr 23-26 2019](Moloch/README.md)
- * [Moloch mobile :: May 27-31 2019](Moloch/README.md)
+ * [Suricata :: Feb 11-15 2019](/Suricata/)
+ * [Moloch :: Apr 23-26 2019](/Moloch/)
+ * [Moloch mobile :: May 27-31 2019](/Moloch/)
 
 # Older Classes
 
