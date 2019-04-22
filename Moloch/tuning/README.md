@@ -76,7 +76,7 @@ systemctl disable irqbalaner.service
 
 This method has a nasty limit - you only have one CPU core for handling all NIC interrupts. If that core is saturated, then new packets will no longer be picked up from ringbuffer by the kernel. In other words, you are burining one CPU thread and are limited to 1-2 million PPS, depending on CPU frequency (1 million on an average 2.4GHz XEON seems to be a valid roof). It may seem a lot, but average PPS for LS was ~200k with packet deduplication (x3 without), with 500k-700k peaks. That is already a 50-70% core saturation on peak traffic.
 
-## Low entropy hashing
+### Low entropy hashing
 
 There is another way to handle this problem. Some smart people figured out that you can archieve symmteric hashing that also provides nearly perfect load balancing by replacing your NIC hash key. First, configure whatever number of queues you'd like. 
 
