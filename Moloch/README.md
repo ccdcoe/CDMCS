@@ -1,5 +1,5 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/cyber-defence-monitoring-course-suite-module-3-1.html) environment... hands-on 90% talk 10% **slides 0%**
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-suite-module-3-apr-2019/) environment... hands-on 90% talk 10% **slides 0%**
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
@@ -34,7 +34,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 3 :: Group up, scale out :: April 25 2019
 
   * 09:00 - 12:30 
-    * Digging
+    * [Hunting trip, cont](/Moloch/queries/#hunting-trip)
     * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch), [multinode](/Moloch/clustering#moloch-workers)
 
   * 13:30 - 17:00 
@@ -44,10 +44,10 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   
   * 09:00 - 12:30 
     * [Parliament](/Moloch/clustering#Parliament)
-    * digging
-  * 13:30 - 16:45 
     * [Tuning the capture](/Moloch/optimize)
     * [Bolliwood dashboards]()
+  * 13:30 - 16:45 
+    * [Hunting trip, cont](/Moloch/queries/#hunting-trip)
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ----

@@ -15,7 +15,7 @@ Note that Moloch attempts to bundle most dependencies as static libraries enclos
 export PATH=$PATH:/data/moloch/bin
 ```
 
-Please adjust `/data/moloch` prefix accordingly. **It is up to you where Moloch is built and deployed**. Environment variables must also be explicitly present in all scripts and terminals that wish to invoke any binaries in PATH. Adding this line to `$HOME/.profile` or `$HOME/.bashrc` (or `.zshrc` if you are a hipster) will ensure that these binaries are always present for logged in terminal users, but not for headless init/systemd services.
+Please adjust the `/data/moloch` prefix accordingly. **It is up to you where Moloch is built and deployed**. Environment variables must also be explicitly present in all scripts and terminals that wish to invoke any binaries in PATH. Adding this line to `$HOME/.profile` or `$HOME/.bashrc` (or `.zshrc` if you are a hipster) will ensure that these binaries are always present for logged in terminal users, but not for headless init/systemd services.
 
 If you wish to start the build process from scratch, then use `make clean`. If build process fails, then **read the logs**. Failure reasons are usually writted to stderr and mostly fall into these categories -
 
@@ -24,10 +24,10 @@ If you wish to start the build process from scratch, then use `make clean`. If b
  * Insufficient privileges to write to a folder.
 
 Common issues with nodejs are:
- * Too new NodeJS installed from tarball. Version 8.x is supported at the time of writing this tutorial, with moloch 10.x planned for Moloch 2. Node develops fast. Too fast for most projects to keep up with newer releases. Moloch needs libraries that perform well and thus many modules might even be written in C++ and have not yet been updated to be compatible with newer V8 engine API;
+ * Too new NodeJS installed from tarball. Version 8.x is supported at the time of writing this tutorial, with NodeJS 10.x planned for Moloch 2. Node develops fast. Too fast for most projects to keep up with newer releases. Moloch needs libraries that perform well and thus many modules might even be written in C++ and have not yet been updated to be compatible with newer V8 engine API;
  * Too old NodeJS installed from debian repositories. Libraries and language versions in *"stable"* LTS distributions are often ancient by the standards of bleeding edge NSM tools;
- * Wrong node package installed from repository. *Node* package in Ubuntu is not actually *nodejs*. **Use the nodejs bundled with moloch**, not anything installed on the system;
- * Nodejs, like vagrant and git, is meant to be executed in the project directory. In other words, if you want to execute `viewer.js`, you have to be located in the `viewer` directory.
+ * Wrong node package installed from repository. *Node* package in Ubuntu is not actually *nodejs*. **Use the nodejs bundled with Moloch**, not anything installed on the system;
+ * NodeJS, like vagrant and git, is meant to be executed in the project directory. In other words, if you want to execute `viewer.js`, you have to be located in the `viewer` directory.
 
 Ensure that you have correct `node` and `npm` in path.
 
@@ -49,15 +49,15 @@ Capture issues:
 
 ### Capture
 
-Tcpdump-like tool written in C. Responsible for capturing packets from wire or reading from pcap file. Parses the sessions, writes raw packets into pcap files on disk and flushes indexed session data into elasticsearch. Optionally may ask for threat intelligence from WISE for various fields, such as IP, domain, md5, ja3, etc. Requires database but can be run independently from viewer. May require wise.
+Tcpdump-like tool written in C. Responsible for capturing packets from wire or reading from pcap file. Parses the sessions, writes raw packets into pcap files on disk and flushes indexed session data into elasticsearch. Optionally may ask for threat intelligence from WISE for various fields, such as IP, domain, md5, ja3, etc. Requires a database but can be run independently from viewer. May require WISE.
 
 ### Viewer
 
-NodeJS frontent for querying and visualizing the sessions. Defaults to port `8005`. Indexed session and protocol data is read from elasticsearch while allowing sessions to also be opened. Opened sessions are are actually reconstructed from raw packets on disk as packet offsets are kept along the indexed data in elasticsearch. Requires database but may run independently from capture. May require wise. Can communicate with remote viewers to read pcaps from other capture hosts.
+NodeJS frontent for querying and visualizing the sessions. Defaults to port `8005`. Indexed session and protocol data is read from elasticsearch while allowing sessions to also be opened. Opened sessions are are actually reconstructed from raw packets on disk as packet offsets are kept along the indexed data in elasticsearch. Requires database but may run independently from capture. May require WISE. Can communicate with remote viewers to read pcaps from other capture hosts.
 
 ### Elasticsearch database
 
-Stores indexed session data, field types, viewer users, pcap file locations on disk and individual packet offsets in each pcap file. Session data does not require pcap files to exist, but session payload can not be opened if capture files are missing or not readable by viewer. Does not depend on anything other than meta indices such as *fields*, *sequences*, etc. *Sessions2* indices are stored in timestamped sequences with configurable pattern, such as hourly, daily, weekly, etc.
+Stores indexed session data, field types, viewer users, pcap file locations on disk and individual packet offsets in each pcap file. Session data does not require pcap files to exist, but session payload can not be opened if capture files are missing or not readable by viewer. Does not depend on anything other than meta indices such as *fields*, *sequences*, etc. *sessions2* indices are stored in timestamped sequences with configurable pattern, such as hourly, daily, weekly, etc.
 
 ### Pcap files
 
