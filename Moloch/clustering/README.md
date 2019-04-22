@@ -236,3 +236,16 @@ curl -s \
 ```
 
 ## Tasks
+
+  * You will be assigned into a group of 4-6 people and your task is to design a multi-viewer, multi-capture, multi-elasticsearch moloch cluster;
+    * You have to decide who hosts the following roles:
+      * es master;
+      * es data;
+      * es proxy;
+      * wise;
+      * redis data source;
+      * live capture;
+      * offline forensics capture (should process pcaps from [this site](https://malware-traffic-analysis.net/));
+    * One node can hold multiple roles, or run multiple moloch nodes, but no one person should carry all the load;
+    * You can increase the number of nodes in Vagrantfile, but make sure you have enough RAM;
+  * Once your cluster is up and runnung, and each cluster member can access traffic from all other members, then set up parliament and link up with other clusters;
