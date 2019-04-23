@@ -18,17 +18,16 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [singlehost](/Moloch/vagrant/singlehost/)
     * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
  * 13:30 - 17:00 
-    * [build + config, cont](/Moloch/setup)
-    * [Basic queries and UI](/Moloch/queries/#using-the-viewer)
-    * [Moloch API](/Moloch/queries/#api), [Hunting trip](/Moloch/queries/#hunting-trip)
+    * [build + config, cont](/Moloch/setup), [Basic digging](/Moloch/queries/#using-the-viewer)
 
 ## Day 2 :: Labeling the traffic :: April 24 2019
 
   * 09:00 - 12:30
-    * [Hunting trip, cont](/Moloch/queries/#hunting-trip)
-    * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
+    * [Moloch API intro](/Moloch/queries/#api)
+    * [Hunting trip](/Moloch/queries/#hunting-trip)
 
   * 13:30 - 17:00 
+    * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
     * [WISE - Plugins...](/Moloch/wise#writing-a-wise-plugin)
 
 ## Day 3 :: Group up, scale out :: April 25 2019
