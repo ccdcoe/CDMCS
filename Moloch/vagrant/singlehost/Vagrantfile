@@ -42,7 +42,7 @@ Vagrant.configure(2) do |config|
       override.vm.provision "shell", inline: $script
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
-    box.vm.provider :vmware_desktop do |hv, override|
+    box.vm.provider :vmware_desktop do |v, override|
       v.vmx["memsize"] = "4096"
       v.vmx["numvcpus"] = "4"
       override.vm.box = "generic/ubuntu1804"
