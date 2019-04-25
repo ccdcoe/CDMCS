@@ -520,6 +520,8 @@ Finally, while SPI view should pick up any new fields quite easily, we do need t
 
 ### Tasks
 
+If your testing pcaps have truncated data, you can tell moloch to ingore it with `readTruncatedPackets=true`.
+
   * Putting it all together is left as an exercise to the reader;
   * SomewhatUsefulSource is still pretty useless as data is pretty much hardcoded;
     * Load data periodically from a json file instead;
