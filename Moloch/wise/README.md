@@ -137,7 +137,7 @@ custom=title:Totally Custom;require:custom;fields:custom.owner,custom.type
 Maybe we have multiple capture instances that need to be synced. Or maybe we simply don't want to manage arbitrary files in the system. We could use *Redis* plugin that is nearly identical to *file*. Firstly, let's fire up a docker instance.
 
 ```
-docker run -tid --name -p 6379:6379 redis
+docker run -tid --name my-redis -p 6379:6379 redis
 ```
 
 And check that it is up and running by setting a key.
@@ -592,3 +592,10 @@ exports.initSource = function(api) {
 ```
 
 Furthermore, [this badly written plugin](https://github.com/markuskont/moloch/blob/master/wiseService/source.ls19.js) was used to tag all traffic for LS19 exercise.
+
+### Tasks
+
+ * Implement the bloom filter example; 
+ * Download `ipmap-04.15.json` from class web server;
+  * Implement `source.ls19.js` so that data is loaded from that json file;
+  * Test it against exercise pcaps, make sure that `ls19` and `workstation` data is in the indexed sessions;
