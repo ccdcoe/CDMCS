@@ -33,17 +33,15 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
   * 09:00 - 12:30 
     * [WISE - Plugins](/Moloch/wise#writing-a-wise-plugin)
-    * [Hunting trip, client-side](/Moloch/queries/#hunting-trip)
 
   * 13:30 - 17:00 
-    * [Hunting trip, client-side](/Moloch/queries/#hunting-trip)
     * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch), [multinode](/Moloch/clustering#moloch-workers)
 
 ## Day 4 :: Cross-class cluster, performance tuning :: April 26 2019, **ends at 17:00**
   
   * 09:00 - 12:30 
-    * [Clustering teamwork](/Moloch/clustering#Tasks), [Parliament](/Moloch/clustering#Parliament)
-    * [Tuning the capture](/Moloch/optimize)
+    * [Clustering teamwork, cont](/Moloch/clustering)
+    * [Hunting trip, client-side](/Moloch/queries/#hunting-trip)
   * 13:30 - 16:45 
     * [Hunting trip, network](/Moloch/queries/#hunting-trip)
     * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
