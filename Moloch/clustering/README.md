@@ -83,7 +83,7 @@ elasticsearch=192.168.10.14:9200
 Suppose we have multiple elastic proxies. Those can be delimited via semicolon. Just make sure they all belong to the same cluster.
 
 ```
-elasticsearch=192.168.10.14:9200;192.168.10.36:9200
+elasticsearch=192.168.10.14:9200,192.168.10.36:9200
 ```
 
 ## moloch workers
