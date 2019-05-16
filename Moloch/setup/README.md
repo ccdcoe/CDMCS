@@ -115,7 +115,7 @@ Before moving on to basic config, make sure that elasticsearch is up and running
 
 ```
 sysctl -w vm.max_map_count=262144
-docker run -ti --name moloch-elastic -p 9200:9200 -e "discovery.type=single-node" -e "node.name=moloch" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "cluster.name=cdmcs" docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.0
+docker run -ti --name moloch-elastic -p 9200:9200 -e "discovery.type=single-node" -e "node.name=moloch" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "cluster.name=cdmcs" docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1
 ```
 
 Add `-d` and `--restart=always` if you wish to run image as background daemon. Once up, verify connectivity by quering the `_cat` api for meta.
