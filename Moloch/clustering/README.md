@@ -9,10 +9,18 @@
 Elastic config options are in `elasticsearch.yml`. It should be placed under `/etc/elasticsearch` if installed from deb or bound under `/usr/share/elasticsearch/config/elasticsearch.yml` if running from docker images. Also, make sure that each node is bound to distinct port on host if running from container.
 
 ```
-docker run -ti -p 9200:9200 -p 9300:9300 -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0
+docker run -ti -p 9200:9200 -p 9300:9300 -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1
 ```
 
-Firstly, all nodes should be configured to belong to common cluster.
+Note that this creates a standard bridged docker network internal to your host. However, elasticsearch hosts need to be able to ping each other, which obviously won't work if nodes are unaware of each others actual networks. A node would also start advertising its internal address. **This breaks node-to-node connectivity and won't allow you to establish a cluster**.
+
+In reality, you would solve this via setting up a docker swarm and using a node-spanning overlay network. In classroom setting, the easiest hack would be to bind elastic to `host` network and bypass docker private networking altogether. So, **instead** of previous command, you should run this:
+
+```
+docker run -ti --network host -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1
+```
+
+Note the missing `-p` arguments. If container is already bound to host network stack, then port forwarding is not needed. Now we can start configuring the node itself. Note that `$PWD/elasticsearch.yml` does not exists yet. **You have to create it**. **It does not matter where it is located on host (at least, for the purpose of training)**. Firstly, all nodes should be configured to belong to common cluster.
 
 ```
 cluster:
