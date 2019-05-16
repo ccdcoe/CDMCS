@@ -32,6 +32,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ## Day 2 :: Threat intel, hipster tech :: May 29 2019
 
  * 09:00 - 12:30 
+    * [Rule format](https://github.com/aol/moloch/wiki/RulesFormat)
     * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
 
  * 13:30 - 17:00 
