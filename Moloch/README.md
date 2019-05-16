@@ -17,7 +17,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
   * 13:00 - 16:45
     * [Intro](/common/day_intro.md)
     * [vagrant](/common/vagrant/), [docker](/common/docker)
-    * [singlehost](/Moloch/vagrant/singlehost/)
+    * [singlehost](/Moloch/singlehost/)
 
 ## Day 1 :: Single box, setting up :: May 28 2019
 
@@ -62,7 +62,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 09:00 - 12:30 
     * [Intro](/common/day_intro.md)
     * [vagrant](/common/vagrant/), [docker](/common/docker)
-    * [singlehost](/Moloch/vagrant/singlehost/)
+    * [singlehost](/Moloch/singlehost/)
     * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
  * 13:30 - 17:00 
     * [build + config, cont](/Moloch/setup), [Basic digging](/Moloch/queries/#using-the-viewer)
