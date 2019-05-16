@@ -29,7 +29,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [Basic queries](/Moloch/queries/#using-the-viewer)
     * [Moloch API](/Moloch/queries/#api)
 
-## Day 2 :: Threat intel :: May 29 2019
+## Day 2 :: Threat intel, hipster tech :: May 29 2019
 
  * 09:00 - 12:30 
     * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
