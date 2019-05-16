@@ -144,6 +144,17 @@ echo $cid | while read line ; do echo $line ; curl -ss -u $USER:$PASS --digest \
 	-GET http://$HOST:8005/sessions.csv ; done
 ```
 
+Download session pcap for DNS traffic from a 15 minute interval.
+
+```
+curl -u $USER:$PASS --output dns.pcap --digest \
+        --data-urlencode "startTime=$(date -d '04/07/2019 17:00:00' +"%s")" \
+        --data-urlencode "stopTime=$(date -d '04/07/2019 17:15:00' +"%s")" \
+        --data-urlencode "expression=protocols==dns" \
+        --data-urlencode "length=10" \
+        -GET "http://$HOST:$PORT/sessions.pcap"
+```
+
 ## Python examples
 
  * See attached jupyter notebooks;
