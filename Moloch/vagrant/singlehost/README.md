@@ -96,3 +96,7 @@ Singlehost is a packaged version of most topics covered throughout the course, a
 ## What, everything is already there? Why can't we just use the working stack throughout the week?
 
 Because then you would not learn anything. Contrary to disturbingly popular opinion, you must understand how things work in order to properly defend your systems. Attacking and breaking things is orders of magnitude easier than building and defending your infrastructure. Our goal is not to teach you which button to push, but rather to increase the understanding about what that button does or weather that button even serves any purpose. Your systems back home may be vastly different and there is no *one size fits all* solution. No silver bullets.
+
+## Could I do all the tasks on my host instead?
+
+If you have a reasonably recent Linux host, sure, you *could*. But please don't. Entire curriculum is designed to be doable on disposable virtualized envoronments. **Keep your host clean**. Furthemore, Vagrant serves as a *reset button* in case you mess up (which is perfectly normal, even encouraged during learning/experimentation). In other words `vagrant destroy && vagrant up` saves a lot of pointless debug time. Doing everything on dedicated virtual machines also teaches you how these systems interact on network level, as opposed to using localhost for everything.
