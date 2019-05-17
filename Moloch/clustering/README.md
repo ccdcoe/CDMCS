@@ -190,6 +190,20 @@ And in our hosts file hack.
 
 We should then be able to connect to port `8005` and `8006` of our capture box and read sessions from both. Note that `--host` basically becomes redundant, as `node` field would be otherwise be derived from that. Now we set it explicitly.
 
+## Tasks
+
+  * You will be assigned into a group of 4-6 people and your task is to design a multi-viewer, multi-capture, multi-elasticsearch moloch cluster;
+    * You have to decide who hosts the following roles:
+      * es master;
+      * es data;
+      * es proxy;
+      * wise;
+      * redis data source;
+      * live capture;
+      * offline forensics capture (should process pcaps from [this site](https://malware-traffic-analysis.net/));
+    * One node can hold multiple roles, or run multiple moloch nodes, but no one person should carry all the load;
+    * You can increase the number of nodes in Vagrantfile, but make sure you have enough RAM;
+
 ## Sending sessions between clusters
 
 For sending sessions to another cluster, we would only need to define this section. Note that `passwordSecret` corresponds to the config parameter of remote cluster `config.ini`.
@@ -243,17 +257,13 @@ curl -s \
   --data "{\"token\":\"${token}\", \"title\":\"singlehost\",\"url\":\"http://singlehost:8005\"}"
 ```
 
+## Multies
+
+ * https://molo.ch/settings#multi-viewer-settings
+
 ## Tasks
 
-  * You will be assigned into a group of 4-6 people and your task is to design a multi-viewer, multi-capture, multi-elasticsearch moloch cluster;
-    * You have to decide who hosts the following roles:
-      * es master;
-      * es data;
-      * es proxy;
-      * wise;
-      * redis data source;
-      * live capture;
-      * offline forensics capture (should process pcaps from [this site](https://malware-traffic-analysis.net/));
-    * One node can hold multiple roles, or run multiple moloch nodes, but no one person should carry all the load;
-    * You can increase the number of nodes in Vagrantfile, but make sure you have enough RAM;
-  * Once your cluster is up and runnung, and each cluster member can access traffic from all other members, then set up parliament and link up with other clusters;
+  * Configure your viewers to be able to send and receive sessions from other groups;
+  * Set up parliament on one host, configure it to connect to all classroom clusters;
+  * Set up multies.js and multi-viewer process, configure them to be able to connect to all classroom clusters;
+  * Parliament, multies and multi-viewer processes should ideally run on different cluster nodes;
