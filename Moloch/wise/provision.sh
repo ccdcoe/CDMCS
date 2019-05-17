@@ -63,11 +63,10 @@ delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'
 cd /data/moloch/etc
 FILE=/data/moloch/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
-sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
-sed -i "s/MOLOCH_INTERFACE/$ifaces/g"             config.ini
-sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
-sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
-sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
+sed -i "s,MOLOCH_ELASTICSEARCH,localhost:9200,g"  config.ini
+sed -i "s,MOLOCH_INTERFACE,$ifaces,g"             config.ini
+sed -i "s,MOLOCH_INSTALL_DIR,/data/moloch,g"      config.ini
+sed -i "s,MOLOCH_PASSWORD,test123,g"              config.ini
 
 echo "Configuring databases"
 cd /data/moloch/db
