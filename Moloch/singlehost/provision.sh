@@ -282,7 +282,13 @@ sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
 echo "Configuring capture plugins"
 sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
 
-echo "Configuring custom views and fields"
+echo "Configuring custom stuff"
+grep "custom-fields" $FILE || cat >> $FILE <<EOF
+[override-ips]
+192.168.10.0/24=tag:private-net;country:PRIVATE;asn:AS0000 This is neat
+10.0.2.0/24=tag:private-net;country:VIRTUALBOX;asn:AS0000 This is neat
+EOF
+
 grep "custom-fields" $FILE || cat >> $FILE <<EOF
 [custom-fields]
 cdmcs.name=kind:lotermfield;count:true;friendly:Name;db:cdmcs.name;help:Traffic owner
@@ -298,6 +304,16 @@ EOF
 grep "wise-types" $FILE || cat >> $FILE <<EOF
 [wise-types]
 mac=db:srcMac;db:dstMac
+EOF
+
+grep "multi-viewer" $FILE || cat >> $FILE <<EOF
+[multi-viewer]
+elasticsearch=127.0.0.1:8200
+viewPort = 8009
+multiES = true
+multiESPort = 8200
+multiESHost = localhost
+multiESNodes = ${EXPOSE}:9200
 EOF
 
 echo "Configuring wise"
@@ -472,6 +488,40 @@ SyslogIdentifier=moloch-viewer
 WantedBy=multi-user.target
 EOF
 
+FILE=/etc/systemd/system/moloch-multies.service
+grep "moloch-multies" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Moloch ES proxy for multi-viewer
+After=network.target moloch-wise.service
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/data/moloch/bin/node multies.js -c /data/moloch/etc/config.ini -n multi-viewer
+WorkingDirectory=/data/moloch/viewer
+SyslogIdentifier=moloch-multies
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/moloch-multi-viewer.service
+grep "moloch-multi-viewer" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Moloch Viewer for proxying multiple clusters
+After=network.target moloch-wise.service moloch-multies.service
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini -n multi-viewer
+WorkingDirectory=/data/moloch/viewer
+SyslogIdentifier=moloch-multi-viewer
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 FILE=/etc/systemd/system/moloch-capture.service
 grep "moloch-capture" $FILE || cat > $FILE <<EOF
 PIDFILE=/var/run/capture.pid
@@ -494,7 +544,7 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-for service in wise viewer capture ; do
+for service in wise viewer multies multi-viewer capture ; do
   systemctl enable moloch-$service.service
   systemctl start moloch-$service.service
   systemctl status moloch-$service.service
