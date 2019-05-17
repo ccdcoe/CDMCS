@@ -14,7 +14,7 @@ docker run -ti -p 9200:9200 -p 9300:9300 -v $PWD/elasticsearch.yml:/usr/share/el
 
 Note that this creates a standard bridged docker network internal to your host. However, elasticsearch hosts need to be able to ping each other, which obviously won't work if nodes are unaware of each others actual networks. A node would also start advertising its internal address. **This breaks node-to-node connectivity and won't allow you to establish a cluster**.
 
-In reality, you would solve this via setting up a docker swarm and using a node-spanning overlay network. In classroom setting, the easiest hack would be to bind elastic to `host` network and bypass docker private networking altogether. So, `-p 9200:9200 -p 9300:9300` should be replaced by `--network host`. If container is already bound to host network stack, then port forwarding is not needed. 
+In reality, you would solve this via setting up a docker swarm and using a node-spanning overlay network. In classroom setting, the easiest hack would be to bind elastic to `host` network and bypass docker private networking altogether. So, `-p 9200:9200 -p 9300:9300` should be replaced with `--network host`. If container is already bound to host network stack, then port forwarding is not needed. 
 
 Now we can start configuring the node itself. Note that `$PWD/elasticsearch.yml` does not exists yet. **You have to create it**. **It does not matter where it is located on host (at least, for the purpose of training)**. Firstly, all nodes should be configured to belong to common cluster.
 
