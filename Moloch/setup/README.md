@@ -1,5 +1,7 @@
 # Build
 
+ **Build instructions on this page are out of sync on purpose and serve mainly illustrative goal. Do not expect getting it to work by simply copy-pasting example commands.**
+
 See
 * https://raw.githubusercontent.com/aol/moloch/master/easybutton-build.sh
 
@@ -157,6 +159,7 @@ green open queries_v2  ZeTjw9rXQImI7olqomhyoQ 1 0  0 0   230b   230b
 # Config
 
 See:
+ * https://molo.ch/settings#ini-settings
  * https://github.com/aol/moloch/wiki/Settings#Basic_Settings
 
 Create a new config file.
