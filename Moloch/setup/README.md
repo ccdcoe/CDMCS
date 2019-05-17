@@ -53,6 +53,21 @@ Capture issues:
 
 Tcpdump-like tool written in C. Responsible for capturing packets from wire or reading from pcap file. Parses the sessions, writes raw packets into pcap files on disk and flushes indexed session data into elasticsearch. Optionally may ask for threat intelligence from WISE for various fields, such as IP, domain, md5, ja3, etc. Requires a database but can be run independently from viewer. May require WISE.
 
+Online capture requires NIC offloading functions to be disabled. Modern NICs might handle certain parts of packet processing in hardware, leaving only partial packets to capture process. This is bad and should be fixed with `ethtool`. So, if you encounter an issue like this online:
+
+```
+May 17 10:00:25 reader-libpcap.c:54 reader_libpcap_pcap_cb(): ERROR - Moloch requires full packet captures caplen: 16384 pktlen: 18890
+See https://molo.ch/faq#moloch_requires_full_packet_captures_error
+```
+
+Then simply disable all offliading functions for all interfaces used to capture packets.
+
+```
+for face in enp0s3 enp0s8; do
+  ethtool -K $iface tx off sg off gro off gso off lro off tso off
+done
+```
+
 ### Viewer
 
 NodeJS frontent for querying and visualizing the sessions. Defaults to port `8005`. Indexed session and protocol data is read from elasticsearch while allowing sessions to also be opened. Opened sessions are are actually reconstructed from raw packets on disk as packet offsets are kept along the indexed data in elasticsearch. Requires database but may run independently from capture. May require WISE. Can communicate with remote viewers to read pcaps from other capture hosts.
