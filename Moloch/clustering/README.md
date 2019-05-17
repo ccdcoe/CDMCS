@@ -253,6 +253,10 @@ curl -s \
   --data "{\"token\":\"${token}\", \"title\":\"singlehost\",\"url\":\"http://singlehost:8005\"}"
 ```
 
+**See attached jupyter notebook for a sane way for doing that**.
+
+Delete `parliament.json` if you mess up and need to reset.
+
 ## Multies
 
  * https://molo.ch/settings#multi-viewer-settings
