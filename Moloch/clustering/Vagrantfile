@@ -44,7 +44,6 @@ WGET_PARAMS="-4 -q"
 MOLOCH="moloch_1.8.0-1_amd64.deb"
 
 $moloch = <<-SCRIPT
-
 FILE=/etc/sysctl.conf
 grep "disable_ipv6" $FILE || cat >> $FILE <<EOF
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -62,6 +61,44 @@ apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python
 cd #{PKGDIR}
 [[ -f #{MOLOCH} ]] || wget #{WGET_PARAMS} https://files.molo.ch/builds/ubuntu-18.04/#{MOLOCH}
 dpkg -s moloch || dpkg -i #{MOLOCH}
+SCRIPT
+
+$moloch_basic_config = <<-SCRIPT
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+delim=";"; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ethtool -K $item tx off sg off gro off gso off lro off tso off ; done
+cd /data/moloch/etc
+cp config.ini.sample config.ini
+sed -i "s,MOLOCH_ELASTICSEARCH,192.168.10.XXX:9200,g"   config.ini
+sed -i "s,MOLOCH_INTERFACE,$ifaces,g"                   config.ini
+sed -i "s,MOLOCH_INSTALL_DIR,/data/moloch,g"            config.ini
+sed -i "s,MOLOCH_PASSWORD,test123,g"                    config.ini
+cd /data/moloch/bin
+./moloch_update_geo.sh > /dev/null 2>&1
+mkdir -p /data/moloch/raw && chown nobody /data/moloch/raw
+
+SCRIPT
+
+$prep_elastic_kernel_conf = <<-SCRIPT
+grep "vm.max_map_count" /etc/sysctl.conf || echo "vm.max_map_count=262144" >> /etc/sysctl.conf
+sysctl -p
+SCRIPT
+
+$jupyter = <<-SCRIPT
+apt-get update && apt-get install -y python3 python3-pip
+su - vagrant -c "pip3 install --user --upgrade jupyter jupyterlab elasticsearch"
+su - vagrant -c "pip3 install --user --upgrade chardet"
+su - vagrant -c "pip3 install --user --upgrade urllib3"
+su - vagrant -c "mkdir ~/.jupyter"
+cat >> /home/vagrant/.jupyter/jupyter_notebook_config.json <<EOF
+{
+  "NotebookApp": {
+    "password": "sha1:8df0e1970aef:d7e2823edc213e98342eee0b0ba2d2e652613311"
+  }
+}
+EOF
+chown vagrant /home/vagrant/.jupyter/jupyter_notebook_config.json
+su - vagrant -c "nohup /home/vagrant/.local/bin/jupyter lab --ip=0.0.0.0 & sleep 1"
+echo "Visit port 8888. Password is vagrant"
 SCRIPT
 
 Vagrant.configure(2) do |config|
@@ -88,6 +125,7 @@ Vagrant.configure(2) do |config|
       end
       box.vm.provision "shell", inline: $script
       box.vm.provision "shell", inline: $docker
+      box.vm.provision "shell", inline: $jupyter
       box.vm.provision "shell", inline: $moloch
     end
   end
@@ -114,6 +152,7 @@ Vagrant.configure(2) do |config|
       end
       box.vm.provision "shell", inline: $script
       box.vm.provision "shell", inline: $docker
+      box.vm.provision "shell", inline: $prep_elastic_kernel_conf
     end
   end
 end
