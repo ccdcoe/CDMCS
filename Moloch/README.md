@@ -42,7 +42,8 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
     * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch)
     * [multinode](/Moloch/clustering#moloch-workers)
  * 13:30 - 17:00 
-    * [Clustering teamwork, cont](/Moloch/clustering)
+    * [multinode, cont](/Moloch/clustering#tasks)
+    * [multicluster](/Moloch/clustering#tasks-1)
     * [scaling the capture](/Moloch/tuning)
 
 ## Day +1 :: Encore :: May 31 2019, ends at 12:00
