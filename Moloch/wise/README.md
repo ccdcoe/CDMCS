@@ -1,15 +1,73 @@
-# WISE - With Intelligence See Everything
-
-  * https://github.com/aol/moloch/wiki/WISE#wise---with-intelligence-see-everything
-  * https://github.com/aol/moloch/tree/master/capture/plugins/wiseService
-  * https://github.com/aol/moloch/wiki/Adding-new-WISE-sources
-  * https://github.com/aol/moloch/wiki/TaggerFormat
+# Threat intelligence / encriching the data
 
 Suppose we have following information - `8.8.8.8` and `1.1.1.1` are both popular public DNS servers. Former belongs to Google and second to Cloudflare. `8.8.4.4` is also a DNS server and belongs to Google. `192.168.10.11`, `192.168.10.12`, `192.168.10.13` and `192.168.10.14` are used by us and correspond to singlehost, buildbox, api box, and current wise box. None of them are DNS servers but we might add some resolvers into this subnet in the future.
 
 Now, suppose we have a bunch of annoying analysts who want to see traffic for DNS servers OR particular organizations, but don't care much for IP addresses and don't want to write compound queries. Maybe they even want to use SPI graph on timeseries aggregations and don't want to write their own aggregators agains elasticsearch. Suppose you want to see traffic between exercise workstations and don't want to write a 1000+ element query that lists all workstation IP addresses with logical OR separator (which would result in quite an inefficient query anyway).
 
 Suppose we have a list of known bad IP addresses, or domains, or JA3 hashes...
+
+There are multiple ways to do this, for example:
+  * [addTags API endpoint](https://github.com/aol/moloch/wiki/API#addtags)
+  * [rule files](https://github.com/aol/moloch/wiki/RulesFormat)
+  * [wise](https://github.com/aol/moloch/wiki/WISE#wise---with-intelligence-see-everything)
+
+# API
+
+  * [See API reference](/Moloch/queries#api)
+
+# Rules
+
+  * https://github.com/aol/moloch/wiki/RulesFormat
+
+Simple rules can be defined for moloch-capture in yaml format. Firstly, add a `rulesFiles` directive to `config.ini`. Multiple files can be defined when separated by a semicolon.
+
+```
+rulesFiles=/data/moloch/etc/rules1.yaml;/data/moloch/etc/rules2.yaml;...
+```
+
+Then create rules in respective files. Multiple rules can be crated in a single file. Rules can be used for filtering traffic or for assigning fields based on query parameters in `fields` section.
+
+```
+version: 1
+rules:
+  - name: "Drop tls"
+    when: "fieldSet"
+    fields:
+      protocols:
+      - tls
+    ops:
+      _maxPacketsToSave: 12
+  - name: "Set custom protocol on certain hosts"
+    when: "fieldSet"
+    fields:
+      protocols:
+        - http
+        - tls
+      host.http:
+        - testmyids.com
+        - self-signed.badssl.com
+    ops:
+      "tags": "IDStest"
+  - name: "Set custom protocol when obsering programming language package downloads"
+    when: "fieldSet"
+    fields:
+      protocols:
+        - tls
+      host.http:
+        - go.googlesource.com
+        - files.pythonhosted.org
+    ops:
+      "protocols": "pkg-management"
+```
+
+Note that values given for each field are connected by logical `OR`, so this may not be the most dynamic approach if fine-grained queries are needed.
+
+# Wise
+
+  * https://github.com/aol/moloch/wiki/WISE#wise---with-intelligence-see-everything
+  * https://github.com/aol/moloch/tree/master/capture/plugins/wiseService
+  * https://github.com/aol/moloch/wiki/Adding-new-WISE-sources
+  * https://github.com/aol/moloch/wiki/TaggerFormat
 
 ## Running wise
 
@@ -170,12 +228,15 @@ Run some test queries against those servers and see if plugin works.
 for domain in google.com neti.ee berylia.org ; do dig A $domain @208.67.222.222 ; done
 ```
 
-## Tasks
+# Tasks
 
-  * Create three custom groups `ls19`, `cdmcs` and `whatever` of fields. Each group should be defined using a different method (file, fields and custom-fields);
-    * Each group should have at least two arbitrary fields (up to you);
-    * Using file input plugin, verify that all three groups are present if SPI view;
-  * If a session is enriched with custom tag, it should be present in Sessions tab;
+**Debugging following tasks in live capture can be cumbersome, use tcpdump to generate a fresh pcap file and `-r` flag wiht `--reprocess` on moloch-capture to read packets offline.**
+
+  * Create custom groups `cdmcs` and `criticality`;
+    * `criticality` should have a field `level` with possible values `low`, `medium` and `high`;
+    * `cdmcs` can contain any field chosen by you;
+    * All custom fields should show up on opened session, if present;
+    * Use at least two different field creation methods;
   * Using Emerging Threats [IP drop list](http://rules.emergingthreats.net/blockrules/compromised-ips.txt) generate redis plugin entries where `drop.source` field is `emergingthreats`;
     * Entries should expire if not updated in a reasonable time (1 minute should be sufficient for course);
     * ICMP ping should be enough to verify it works **ONLY DO IT IN YOUR DISPOSABLE VM!!!**;
@@ -365,6 +426,13 @@ exports.initSource = function(api) {
 };
 ```
 
+### Task
+
+ * Implement the `source.useless.js` plugin;
+ * Add `getIp` and `getTuple` functions;
+  * `console.log` every Z'th query for those field types;
+    * `Z` should be a custom configuration parameter added by you;
+
 ## making it somewhat useful
 
 Now we have a useless skeleton of a wise plugin. Suppose we want to create a simple IP lookup utility, similar to file and redis example in the first section, and we have input data in following format:
@@ -384,7 +452,7 @@ Now we have a useless skeleton of a wise plugin. Suppose we want to create a sim
 ]
 ```
 
-We can use the useless skeleton, apply some sed magic, and throw away anything not needed.
+Start by copying the **source.useless.js** to **source.useful.js**, then replace all `Useless` occurrences with `SomewhatUseful` and lowercase `useless` occurrences with `useful`. **Save it as a new source file, do not extend the last one!** Also, throw away everything except bare minimum. New template should look like this.
 
 ```javascript
 'use strict';
@@ -393,7 +461,7 @@ var wiseSource     = require('./wiseSource.js')
   , util           = require('util')
   ;
 
-function SomewhatUsefulSource (api, section) {
+function SomewhatUsefulSource(api, section) {
   SomewhatUsefulSource.super_.call(this, api, section);
 
   // Memory data sources will have this section to load their data
@@ -470,6 +538,7 @@ SomewhatUsefulSource.prototype.load = function() {
 
 So, we are looping through a data structure and filling a hashtable with key-value pairs. Fairly straightforward. But what's the deal with buffers? Well, remember that useless example IP address lookup function wasn't actually looking anything up, but simply returned `undefined` value for all queries. Instead, WISE expects a very specific object structure to be returned. The actual data must be encoded into a binary [buffer](https://nodejs.org/api/buffer.html#buffer_buffer). `num` key signifys the number of items that are encoded into the blob. We have two fields `owner` and `type`. **If this number does not match the actual count of concatenated items, than bad stuff happens.** Look at `moloch-capture` logs for callback errors. Note that `wiseSource.encode` function can actually take any even number of arguments if multiple fields are added. Odd numbered argument is field definition while even argument is the actual data. This example simply illustrates how multiple buffers can be added together via `Buffer.concat` method, and can easily be re-written to omit the concatenation.
 
+
 ```javascript
     var encoded  = wiseSource.encode(
                                       self.owner, object.owner, 
@@ -478,7 +547,21 @@ So, we are looping through a data structure and filling a hashtable with key-val
     this.data.put(object.ip, {num: 2, buffer: encoded});
 ```
 
-Nevertheless, concatenation method can be useful if your intel feed has a variable number of possible values. For example, of we know the `owner` of IP addres, but not `type`. Regardeless of method, our function will be useless if not invoked in our plugin.
+**This is just an example of alternative way for implementing the last snippet**. In other words, this spippet is equal to this section:
+
+```javascript
+    var encodedOwner  = wiseSource.encode(self.owner, object.owner);
+    var encodedType   = wiseSource.encode(self.type, object.type);
+    var encoded       = Buffer.concat([
+      encodedOwner,
+      encodedType
+    ]);
+    self.data.put(object.ip, {num: 2, buffer: encoded});
+```
+
+Concatenation method can be useful if your intel feed has a variable number of possible values, as incorrect `num` value will break your buffer callbacks. For example, if we know the `owner` of IP addres, but not `type`, yet still want to handle both cases with same plugin. 
+
+Regardeless of method, our function will be useless if not invoked **main function**.
 
 ```javascript
   setImmediate(this.load.bind(this));
@@ -492,7 +575,7 @@ SomewhatUsefulSource.prototype.getIp = function(ip, cb) {
 };
 ```
 
-Note that this simply looks up for previously encoded values. We could implement the encoding logic in lookup function as well and drop the `this.data` variable and `hashtable` package altogether.
+Note that this simply looks up for previously encoded values. We could implement the encoding logic in lookup function as well and drop the `this.data` variable and `hashtable` package altogether. **Again, this is simply an alternative method for implementing the prior snipped and it will break if staticData variable is not created in our main function**.
 
 ```javascript
 SomewhatUsefulSource.prototype.getIp = function(ip, cb) {
@@ -520,9 +603,12 @@ Finally, while SPI view should pick up any new fields quite easily, we do need t
 
 ### Tasks
 
-If your testing pcaps have truncated data, you can tell moloch to ingore it with `readTruncatedPackets=true` in main `config.ini`.
+If your testing pcaps have truncated data, you can tell moloch to ingore it with `readTruncatedPackets=true` in main `config.ini`. 
+  * Tasks should be achievable by following the snippets and with minimal help from google, only API usage and variable creation, so no fancy stuff here;
+  * **Advanced** tasks are for those who have prior JavaScript/nodejs experience, basic scripting skill and basic understanding about sync/async/callbacks expected;
+  * Final **brainteaser** is for very advanced users who find basic plugin writing trivial, crativity and basic programming skill expected.
 
-  * Putting it all together is left as an exercise to the reader;
+  * Implement the `source.useful.js`, read the sections not to mix up important snippets with alternative examples;
   * SomewhatUsefulSource is still pretty useless as data is pretty much hardcoded;
     * Load data periodically from a json file instead;
       * User should be able to configure the file location;
@@ -530,7 +616,8 @@ If your testing pcaps have truncated data, you can tell moloch to ingore it with
   * Sessions view only shows `owner` field, but it should also show `type`;
   * Add a new field into the JSON data structure (be creative), verify that this field appears in all relevant sessions;
     * **Advanced** Make that field non mandatory. For example, our vagrant box could also have a field `bigbrother` that is missing from `8.8.8.8`, but that should not break your buffer!
-  * **Advanced** Both source and destination IP-s are looked up, but directionality does not reflect in returned field. Fix that!
+  * **Brainteaser** Both source and destination IP-s are looked up, but directionality does not reflect in returned field. Fix that!
+    * Investigate `getTuple` function if working on it.
 
 ## Getting fancy
 
@@ -598,6 +685,7 @@ Furthermore, [this badly written plugin](https://github.com/markuskont/moloch/bl
 ### Tasks
 
  * Implement the bloom filter example; 
+  * How long does bloom filter keep marking new sessions? Explain why!
  * Download `ipmap-04.15.json` from class web server;
   * Implement `source.ls19.js` so that data is loaded from that json file;
   * Test it against exercise pcaps, make sure that `ls19` and `workstation` data is in the indexed sessions;
