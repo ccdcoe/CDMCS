@@ -603,12 +603,13 @@ Finally, while SPI view should pick up any new fields quite easily, we do need t
 
 ### Tasks
 
-If your testing pcaps have truncated data, you can tell moloch to ingore it with `readTruncatedPackets=true` in main `config.ini`. 
+Before getting started:
+  * If your testing pcaps have truncated data, you can tell moloch to ingore it with `readTruncatedPackets=true` in main `config.ini`. 
   * Tasks should be achievable by following the snippets and with minimal help from google, only API usage and variable creation, so no fancy stuff here;
   * **Advanced** tasks are for those who have prior JavaScript/nodejs experience, basic scripting skill and basic understanding about sync/async/callbacks expected;
   * Final **brainteaser** is for very advanced users who find basic plugin writing trivial, crativity and basic programming skill expected.
 
-
+Todo:
   * Implement the `source.useful.js`, read the sections not to mix up important snippets with alternative examples;
   * SomewhatUsefulSource is still pretty useless as data is pretty much hardcoded;
     * Load data periodically from a json file instead;
