@@ -21,17 +21,17 @@ grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 
 # versions
-ELA="elasticsearch-oss-6.7.0.deb"
-KIBANA="kibana-oss-6.7.0-amd64.deb"
-INFLUX="influxdb_1.7.5_amd64.deb"
-GRAFANA="grafana_6.1.0_amd64.deb"
+ELA="elasticsearch-oss-6.7.1.deb"
+KIBANA="kibana-oss-6.7.1-amd64.deb"
+INFLUX="influxdb_1.7.6_amd64.deb"
+GRAFANA="grafana_6.1.6_amd64.deb"
 
-TELEGRAF="telegraf_1.10.2-1_amd64.deb"
-GOLANG="go1.12.1.linux-amd64.tar.gz"
+TELEGRAF="telegraf_1.10.4-1_amd64.deb"
+GOLANG="go1.12.5.linux-amd64.tar.gz"
 
-DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.0"
-DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.7.0"
-DOCKER_INFLUXDB="influxdb:alpine"
+DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1"
+DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.7.1"
+DOCKER_INFLUXDB="influxdb:1.7.6-alpine"
 DOCKER_GRAFANA="grafana/grafana:latest"
 
 MOLOCH="moloch_1.8.0-1_amd64.deb"
@@ -279,8 +279,45 @@ sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
 
+echo "configuring moloch rules"
+RULE_FILE="/data/moloch/etc/rules.conf"
+grep "rules" $RULE_FILE || cat >> $RULE_FILE <<EOF
+---
+version: 1
+rules:
+  - name: "Drop tls"
+    when: "fieldSet"
+    fields:
+      protocols:
+      - tls
+    ops:
+      _maxPacketsToSave: 12
+  - name: "Set custom protocol on certain hosts"
+    when: "fieldSet"
+    fields:
+      protocols:
+        - http
+        - tls
+      host.http:
+        - testmyids.com
+        - self-signed.badssl.com
+    ops:
+      "tags": "IDStest"
+  - name: "Set custom protocol when obsering programming language package downloads"
+    when: "fieldSet"
+    fields:
+      protocols:
+        - tls
+      host.http:
+        - go.googlesource.com
+        - files.pythonhosted.org
+    ops:
+      "protocols": "pkg-management"
+EOF
+
 echo "Configuring capture plugins"
 sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
+sed -i "/\[default\]/arulesFiles=$RULE_FILE" config.ini
 
 echo "Configuring custom stuff"
 grep "custom-fields" $FILE || cat >> $FILE <<EOF
