@@ -587,6 +587,7 @@ for service in wise viewer multies multi-viewer capture ; do
   systemctl status moloch-$service.service
 done
 
+sleep 2
 pgrep moloch-capture || exit 1
 
 mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
