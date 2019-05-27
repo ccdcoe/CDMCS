@@ -10,7 +10,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 # Mobile course May 27 - May 31
 
-## Day 0 :: Intro:: May 27 2019, starts at 13:00
+## Day 0 :: Intro:: May 27 2019, starts at 12:00
 
   * 13:00 - 16:45
     * [Intro](/common/day_intro.md)
@@ -19,40 +19,41 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Day 1 :: Single box, setting up :: May 28 2019
 
- * 09:00 - 12:30 
+ * 08:00 - 11:30 
     * [build from source](/Moloch/setup/#Build)
     * [basic config](/Moloch/setup/#Config)
 
- * 13:30 - 17:00 
+ * 12:30 - 16:00 
     * [Basic queries](/Moloch/queries/#using-the-viewer)
     * [Moloch API](/Moloch/queries/#api)
 
 ## Day 2 :: Threat intel, hipster tech :: May 29 2019
 
- * 09:00 - 12:30 
+ * 08:00 - 11:30 
     * [Rule format](https://github.com/aol/moloch/wiki/RulesFormat)
     * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
 
- * 13:30 - 17:00 
+ * 12:30 - 16:00 
     * [WISE - Plugins](/Moloch/wise#writing-a-wise-plugin)
 
 ## Day 3 :: Group up, scale out :: May 30 2019
 
- * 09:00 - 12:30 
+ * 08:00 - 11:30 
     * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch)
     * [multinode](/Moloch/clustering#moloch-workers)
- * 13:30 - 17:00 
+ * 12:30 - 16:00 
     * [multinode, cont](/Moloch/clustering#tasks)
     * [multicluster](/Moloch/clustering#tasks-1)
     * [scaling the capture](/Moloch/tuning)
 
-## Day +1 :: Encore :: May 31 2019, ends at 12:00
+## Day +1 :: Encore :: May 31 2019, ends at 11:30
 
- * 09:00 - 11:00
+ * 08:00 - 11:00
    * Insert topics here
 
- * 11:00 - 12:00
+ * 11:00 - 11:30
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+
 
 # LS19 workshop April 23 - April 26
 
