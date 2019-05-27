@@ -150,7 +150,7 @@ Vagrant.configure(2) do |config|
         override.vm.box = "generic/ubuntu1804"
         #override.vm.synced_folder ".", "/vagrant", type: "smb"
       end
-      box.vm.provision "shell", inline: $script
+      #box.vm.provision "shell", inline: $script
       box.vm.provision "shell", inline: $docker
       box.vm.provision "shell", inline: $prep_elastic_kernel_conf
     end
