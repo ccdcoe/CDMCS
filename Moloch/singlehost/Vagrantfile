@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
       override.vm.provision "shell", inline: $script
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
-    box.vm.provision "shell", inline: $script
+    #box.vm.provision "shell", inline: $script
     box.vm.provision "shell", inline: $docker
     box.vm.provision "shell", path: "provision.sh"
   end
