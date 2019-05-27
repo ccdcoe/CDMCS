@@ -674,6 +674,7 @@ su - vagrant -c "python3 $FILE"
 
 echo "Adding viewer user"
 cd /data/moloch/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
+sleep 3
 
 # parliament
 PARLIAMENTPASSWORD=admin
@@ -734,7 +735,9 @@ providers:
     path: $DASHBOARDS
 EOF
 
+GRAFANA_EXPOSE=$EXPOSE
 if [ $DOCKERIZE = true ]; then
+  GRAFANA_EXPOSE="influx"
   docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 -v /etc/grafana/provisioning:/etc/grafana/provisioning -v /vagrant:/vagrant --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
 else
   cd $PKGDIR
