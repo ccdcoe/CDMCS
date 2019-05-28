@@ -261,12 +261,13 @@ Then visit port `8005` in browser for your VM private network. Run `curl` comman
 # Tasks
 
 ## Basic
-
+  * Change the following config parameters, configure users and permissions.
   * Set up moloch with **hourly** index pattern that stores pcap files in **/srv/pcap** folder as **moloch** user;
-    * Ensure that viewer is able to **see and open** all sessions;
-  * Configure `override-ips` section to tag virtualbox networks with VB country code and RIR value of your choice;
+    * Ensure that viewer is able to **see and open PCAPs** for all sessions;
+  * Configure `override-ips` section to tag virtualbox networks with **VB** country code and use a RIR value of your choice;
 
 ## Advanced
 
-  * Refer to example configs in moloch `etc` folder and [singlehost](/Moloch/vagrant/singlehost) provisioning script, create persistent systemd services for capture and viewer;
-    * Ensure that moloch services are started after `docker` service;
+  * Refer to example configs in moloch `etc` folder and the [singlehost](/Moloch/vagrant/singlehost) provisioning script, create persistent systemd services for capture and viewer;
+    * Enable the services, so they are automatically started during start-up
+    * Ensure that moloch services are started after the `docker` service running your elasticsearch;
