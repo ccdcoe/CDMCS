@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
     box.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "3072"]
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
       vb.customize ["modifyvm", :id, "--cpus", "4"]
     end
     #config.vm.provision "shell", inline: $script

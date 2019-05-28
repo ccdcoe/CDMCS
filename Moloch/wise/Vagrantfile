@@ -54,7 +54,7 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provider :hyperv do |hv, override|
       hv.cpus = 4
-      hv.maxmemory = 3072
+      hv.maxmemory = 4096
       override.vm.box = "generic/ubuntu1804"
       override.vm.provision "shell", inline: $script
       #override.vm.synced_folder ".", "/vagrant", type: "smb"
