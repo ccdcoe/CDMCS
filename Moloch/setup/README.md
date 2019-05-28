@@ -264,6 +264,7 @@ Then visit port `8005` in browser for your VM private network. Run `curl` comman
 
   * Set up moloch with **hourly** index pattern that stores pcap files in **/srv/pcap** folder as **moloch** user;
     * Ensure that viewer is able to **see and open** all sessions;
+  * Configure `override-ips` section to tag virtualbox networks with VB country code and RIR value of your choice;
 
 ## Advanced
 
