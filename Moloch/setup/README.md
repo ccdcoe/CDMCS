@@ -63,7 +63,7 @@ See https://molo.ch/faq#moloch_requires_full_packet_captures_error
 Then simply disable all offliading functions for all interfaces used to capture packets.
 
 ```
-for face in enp0s3 enp0s8; do
+for iface in enp0s3 enp0s8; do
   ethtool -K $iface tx off sg off gro off gso off lro off tso off
 done
 ```
