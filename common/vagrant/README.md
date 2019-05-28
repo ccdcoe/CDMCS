@@ -118,10 +118,10 @@ vagrant global-status
 
 ## multi-vm environment
 
-See following examples on how to create more complex multi-vm environments:
+See following examples (from year 2018 materials) on how to create more complex multi-vm environments:
 
-  * [Moloch two host setup with salt master](/Moloch/vagrant/multihost/Vagrantfile)
-  * [Suricata two host setup with salt master](/Suricata/vagrant/multihost/Vagrantfile)
+  * [Moloch two host setup with salt master](https://github.com/ccdcoe/CDMCS/blob/2018/Moloch/vagrant/multihost/Vagrantfile)
+  * [Suricata two host setup with salt master](https://github.com/ccdcoe/CDMCS/blob/2018/Suricata/vagrant/multihost/Vagrantfile)
 
 Note that individual boxes can be programmed explicitly or created by looping over a data structure. Vagrant is a ruby library after all, so use scripting power as needed.
 
