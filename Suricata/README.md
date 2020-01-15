@@ -1,5 +1,5 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-suite-module-1-feb-2019/) environment... hands-on 90% talk 10% **slides 0%**
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-module-1/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work 
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
@@ -9,7 +9,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 > Suricata is a free and open source, mature, fast and robust network threat detection engine. The Suricata engine is capable of real time intrusion detection (IDS), inline intrusion prevention (IPS), network security monitoring (NSM) and offline pcap processing.
 
-## Day 0 :: Intro:: Feb 11 2019, starts at 13:00
+## Day 0 :: Intro:: Feb 10 2020, starts at 13:00
 
  * 13:00 - 14:45
    * [Intro](/common/day_intro.md)
@@ -19,7 +19,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/)
 
-## Day 1 :: Single box, setting up :: Feb 12 2019
+## Day 1 :: Single box, setting up :: Feb 11 2020
 
  * 09:00 - 12:30
    * [rules, cont.](/Suricata/rules)
@@ -27,7 +27,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [build from source](/Suricata/setup/#Build)
    * [config](/Suricata/setup/#Config)
 
-## Day 2 :: Group up, scale out :: Feb 13 2019
+## Day 2 :: Group up, scale out :: Feb 12 2020
 
  * 09:00 - 12:30
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
@@ -38,7 +38,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
    * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
 
-## Day 3 :: Advanced stuff, hipster tech :: Feb 14 2019
+## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
  * 09:00 - 12:30
    * [ebpf and xdp](https://suricata.readthedocs.io/en/latest/capture-hardware/ebpf-xdp.html)
@@ -46,7 +46,7 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
  * 13:30 - 16:45
    * [LUA scripting](/Suricata/lua)
 
-## Day +1 :: Encore :: Feb 15 2019, ends at 12:00
+## Day +1 :: Last but not least :: Feb 14 2020, ends at 12:00
 
  * 09:00 - 11:00
    * [load pcap via unix socket](/Suricata/unix-socket)
