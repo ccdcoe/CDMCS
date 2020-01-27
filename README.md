@@ -22,9 +22,9 @@ See:
 
 # Current Classes
 
- * [Suricata :: Feb 11-15 2019](/Suricata/)
- * [Moloch :: Apr 23-26 2019](/Moloch#ls19-workshop-april-23---april-26)
- * [Moloch mobile :: May 27-31 2019](/Moloch#mobile-course-may-27---may-31)
+ * [Suricata :: Feb 10-14 2020](/Suricata/)
+ * [Suricata mobile :: Mar 02-06 2020](/Suricata/)
+ * [Moloch :: Jun 01-05 2020](/Moloch/)
 
 # Older Classes
 

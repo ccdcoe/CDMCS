@@ -5,15 +5,16 @@ This page lists some simple commands, code snippets and questions that attendees
 ## Linux command line
 
   * How to list running processes?
+   * How to kill/terminate a process?
   * Find all TCP and UDP listeners on Linux system.
   * What is a difference between process and thread?
-  * How to redirect output of one program into input of another in Unix-like system.
+  * How to redirect output of one program into input of another in Unix-like system?
   * What is the purpose of `/var`, `/home`, `/bin`, `/mnt` and `/srv` directories in Linux filesystem?
-  * What is the fundamental difference between `/srv`, `/mnt` and `/opt`
-  * How to set an IP address to network interface from command line without editing any files or restarting any services.
+   * What is the fundamental difference between `/srv`, `/mnt` and `/opt`?
+  * How to set an IP address to network interface from command line without editing any files or restarting any services?
   * What is a regular expression?
   * What is syslog?
-  - Where are log files usually located on a Linux system?
+   * Where are log files usually located on a Linux system?
 
 ### Know this stuff
 
@@ -63,3 +64,4 @@ def task(data={"foo":"bar"}):
 ```
 echo foo | python -c "import sys; print(sys.stdin.read())"
 ```
+
