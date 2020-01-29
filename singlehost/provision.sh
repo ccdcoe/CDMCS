@@ -6,7 +6,6 @@ check_service(){
 }
 
 # params
-DOCKERIZE=false
 DEBUG=true
 EXPOSE=127.0.0.1
 PKGDIR=/vagrant/pkgs
@@ -20,22 +19,35 @@ PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin:$HOME/.local/go
 grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 
-# versions
-ELA="elasticsearch-oss-6.7.1.deb"
-KIBANA="kibana-oss-6.7.1-amd64.deb"
-INFLUX="influxdb_1.7.6_amd64.deb"
-GRAFANA="grafana_6.1.6_amd64.deb"
-
-TELEGRAF="telegraf_1.10.4-1_amd64.deb"
-GOLANG="go1.12.5.linux-amd64.tar.gz"
-
-DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:6.7.1"
-DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:6.7.1"
-DOCKER_INFLUXDB="influxdb:1.7.6-alpine"
-DOCKER_GRAFANA="grafana/grafana:latest"
-
-MOLOCH="moloch_1.8.0-1_amd64.deb"
 USER="vagrant"
+
+# versions
+ELASTIC_VERSION="7.5.2"
+INFLUX_VERSION="1.7.9"
+GRAFANA_VERSION="6.6.0"
+TELEGRAF_VERSION="1.13.2"
+GOLANG_VERSION="1.13.6"
+MOLOCH_VERSION="2.2.1"
+
+ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
+KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
+INFLUX="influxdb_${INFLUX_VERSION}_amd64.deb"
+GRAFANA="grafana_${GRAFANA_VERSION}_amd64.deb"
+
+TELEGRAF="telegraf_${TELEGRAF_VERSION}-1_amd64.deb"
+GOLANG="go${GOLANG_VERSION}.linux-amd64.tar.gz"
+
+DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:${ELASTIC_VERSION}"
+DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:${ELASTIC_VERSION}"
+DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:${ELASTIC_VERSION}"
+
+DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
+DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
+
+MOLOCH="moloch_${MOLOCH_VERSION}-1_amd64.deb"
+
+ELASTSIC_MEM=512
+LOGSTASH_MEM=512
 
 if [[ -n $(ip link show | grep eth0) ]]; then
   IFACE_EXT="eth0"
@@ -75,49 +87,263 @@ echo "Configuring DOCKER"
 docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
 
 echo "Provisioning REDIS"
-docker ps -a | grep redis || docker run -dit --name redis -h redis --network cdmcs --restart unless-stopped -p 6379:6379 --log-driver syslog --log-opt tag="redis" redis
+docker ps -a | grep redis || docker run -dit \
+  --name redis \
+  -h redis \
+  --network cdmcs \
+  --restart unless-stopped \
+  -p 6379:6379 \
+  --log-driver syslog --log-opt tag="redis" \
+    redis
 
 echo "Installing prerequisite packages..."
 apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
 
 echo "Provisioning JAVA"
-if [ $DOCKERIZE = false ]; then
-  java -version || apt-get install -y openjdk-8-jre-headless >> /vagrant/provision.log 2>&1
-fi
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
-if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep elastic || docker run -dit --name elastic -h elastic --network cdmcs -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" --restart unless-stopped -p 9200:9200 --log-driver syslog --log-opt tag="elastic" $DOCKER_ELA 
-else
-  cd $PKGDIR
-  [[ -f $ELA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/elasticsearch/$ELA -O $ELA
-  dpkg -s elasticsearch || dpkg -i $ELA > /dev/null 2>&1
-
-  sed -i 's/-Xms1g/-Xms512m/g' /etc/elasticsearch/jvm.options
-  sed -i 's/-Xmx1g/-Xmx512m/g' /etc/elasticsearch/jvm.options
-  grep "network.host: 0.0.0.0" /etc/elasticsearch/elasticsearch.yml || echo "network.host: 0.0.0.0" >> /etc/elasticsearch/elasticsearch.yml
-  check_service elasticsearch
-fi
-
-sleep 3
+docker ps -a | grep elastic || docker run -dit \
+  --name elastic \
+  -h elastic \
+  --network cdmcs \
+  -e "ES_JAVA_OPTS=-Xms${ELASTSIC_MEM}m -Xmx${ELASTSIC_MEM}m" \
+  -e "discovery.type=single-node" \
+  --restart unless-stopped \
+  -p 9200:9200 \
+    $DOCKER_ELA 
 
 # kibana
 echo "Provisioning KIBANA"
-if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep kibana || docker run -dit --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" --restart unless-stopped -p 5601:5601 --log-driver syslog --log-opt tag="kibana" $DOCKER_KIBANA
-else
-  cd $PKGDIR
-  [[ -f $KIBANA ]] || wget $WGET_PARAMS https://artifacts.elastic.co/downloads/kibana/$KIBANA -O $KIBANA
-  dpkg -s kibana || dpkg -i $KIBANA > /vagrant/provision.log 2>&1
+docker ps -a | grep kibana || docker run -dit \
+  --name kibana \
+  -h kibana \
+  --network cdmcs  \
+  -e "SERVER_NAME=kibana" \
+  -e "ELASTICSEARCH_HOSTS=http://elastic:9200" \
+  --restart unless-stopped \
+  -p 5601:5601 \
+    $DOCKER_KIBANA
 
-  FILE=/etc/kibana/kibana.yml
-  grep "provisioned" $FILE || cat >> $FILE <<EOF
-# provisioned
-server.host: "0.0.0.0"
+echo "Provisioning ELASTIC TEMPLATES"
+curl -s -XPUT localhost:9200/_template/default   -H'Content-Type: application/json' -d '
+{
+ "order" : 0,
+ "version" : 0,
+ "index_patterns" : "suricata-*",
+ "settings" : {
+   "index" : {
+     "refresh_interval" : "10s",
+     "number_of_shards" : 3,
+     "number_of_replicas" : 0
+   }
+ }, "mappings" : {
+    "dynamic_templates" : [ {
+      "message_field" : {
+        "path_match" : "message",
+        "match_mapping_type" : "string",
+        "mapping" : {
+          "type" : "text",
+          "norms" : false
+        }
+      }
+    }, {
+      "string_fields" : {
+        "match" : "*",
+        "match_mapping_type" : "string",
+        "mapping" : {
+          "type" : "text", "norms" : false,
+          "fields" : {
+            "keyword" : { "type": "keyword", "ignore_above": 256 }
+          }
+        }
+      }
+    } ],
+    "properties" : {
+      "@timestamp": { "type": "date"},
+      "@version": { "type": "keyword"},
+      "geoip"  : {
+        "dynamic": true,
+        "properties" : {
+          "ip": { "type": "ip" },
+          "location" : { "type" : "geo_point" },
+          "latitude" : { "type" : "half_float" },
+          "longitude" : { "type" : "half_float" }
+        }
+      }
+    }
+  }
+}
+' || exit 1
+
+curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/json' -d '
+{
+  "order": 10,
+  "version": 0,
+  "index_patterns": [
+    "suricata-*",
+    "logstash-*"
+  ],
+  "mappings":{
+    "properties": {
+      "src_ip": { 
+        "type": "ip",
+        "fields": {
+          "keyword" : { "type": "keyword", "ignore_above": 256 }
+        }
+      },
+      "dest_ip": { 
+        "type": "ip",
+        "fields": {
+          "keyword" : { "type": "keyword", "ignore_above": 256 }
+        }
+      }
+    }
+  }
+}
+' || exit 1
+
+docker ps -a | grep evebox | docker run -tid --rm \
+  --network cdmcs \
+  -p 5636:5636 \
+    jasonish/evebox:master  \
+      -e http://elastic:9200 \
+      --index suricata \
+      --elasticsearch-keyword keyword \
+      --host 0.0.0.0 \
+
+echo "Provisioning RSYSLOG"
+add-apt-repository ppa:adiscon/v8-stable
+apt-get update
+apt-get install rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch -y
+FILE=/etc/rsyslog.d/75-elastic.conf
+grep "CDMCS" $FILE || cat >> $FILE <<'EOF'
+# CDMCS
+module(load="omelasticsearch")
+module(load="mmjsonparse")
+template(
+  name="with-logstash-timestamp-format" 
+  type="list") {
+    constant(value="{\"@timestamp\":\"")                property(name="timegenerated" dateFormat="rfc3339")
+    constant(value="\",")                               property(name="$!all-json"    position.from="3")
+}
+template(name="JSON" type="list") {
+    property(name="$!all-json")
+}
+template(name="suricata-index" type="list") {
+    constant(value="suricata-")
+    property(name="timereported" dateFormat="rfc3339" position.from="1" position.to="4")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="6" position.to="7")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="9" position.to="10")
+    constant(value=".")
+    property(name="timereported" dateFormat="rfc3339" position.from="12" position.to="13")
+}
+if $syslogtag contains 'suricata' and $msg startswith ' @cee:' then {
+  action(type="mmjsonparse")
+  if $parsesuccess == "OK" then action(
+    type="omelasticsearch"
+    template="with-logstash-timestamp-format"
+    server="127.0.0.1"
+    serverport="9200"
+    searchIndex="suricata-index"
+    dynSearchIndex="on"
+    searchType="_doc"
+  )
+}
 EOF
-  check_service kibana
-fi
+
+systemctl stop rsyslog.service
+rsyslogd -N 1 || exit 1
+check_service rsyslogd
+
+# logstash
+echo "Provisioning LOGSTASH"
+grep redis /etc/hosts || echo "127.0.0.1 redis" >> /etc/hosts
+grep elastic /etc/hosts || echo "127.0.0.1 elastic" >> /etc/hosts
+
+mkdir -p /etc/logstash/conf.d/
+FILE=/etc/logstash/conf.d/suricata.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+input {
+  file {
+    path => "/var/log/suricata/eve.json"
+    tags => ["suricata", "CDMCS", "fromfile"]
+  }
+  redis {
+    data_type => "list"
+    host => "redis"
+    port => 6379
+    key  => "suricata"
+    tags => ["suricata", "CDMCS", "fromredis"]
+  }
+}
+filter {
+  json { source => "message" }
+  if 'syslog' not in [tags] {
+    mutate { remove_field => [ "message", "Hostname" ] }
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["elastic"]
+    index => "logstash-%{+YYYY.MM.dd.hh}"
+    manage_template => false
+    document_type => "_doc"
+  }
+}
+EOF
+
+# Not enough memory on small course vm
+#docker ps -a | grep logstash || docker run -dit \
+#  --name logstash \
+#  -h logstash \
+#  --network cdmcs \
+#  -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ \
+#  -e "ES_JAVA_OPTS=-Xms${LOGSTASH_MEM}m -Xmx${LOGSTASH_MEM}m" \
+#  --restart unless-stopped \
+#    $DOCKER_LOGSTASH
+
+FILE=/var/lib/suricata/scripts/alert2alerta.py
+[[ -f $FILE ]] || cat > $FILE <<EOF
+#!/usr/bin/env python3
+
+import json
+import requests
+import sys
+
+line = sys.stdin.readline()
+data = json.loads(line)
+
+assets = { "192.168.10.11": "singlehost" }
+
+if data["src_ip"] in assets:
+    resource = data["src_ip"]
+elif data["dest_ip"] in assets:
+    resource = data["dest_ip"]
+else:
+    resource = data["dest_ip"]
+
+headers = { "Content-Type": "application/json" }
+alert = {
+        "environment": "Production",
+        "event": data["alert"]["signature"],
+        "resource": resource,
+        "text": "Alert from {} to {} for {}".format(data["src_ip"], data["dest_ip"], data["alert"]["signature"]),
+        "service": [resource],
+        "severity": "major",
+        "value": data["alert"]["severity"],
+        "timeout": 60,
+        }
+
+url = "http://192.168.10.11:8080/api/alert"
+
+resp = requests.post(url, data=json.dumps(alert), headers=headers)
+print(resp.json())
+EOF
+
+sleep 5
 
 echo "Configuring interfaces"
 for iface in ${ifaces//;/ }; do
@@ -131,6 +357,7 @@ install_suricata_from_ppa(){
   && apt-get update > /dev/null \
   && apt-get install -y suricata > /dev/null
 }
+
 echo "Provisioning SURICATA"
 suricata -V || install_suricata_from_ppa
 pip3 install --upgrade suricata-update
@@ -150,6 +377,7 @@ EOF
 FILE=/var/lib/suricata/rules/lua.rules
 [[ -f $FILE ]] || cat > $FILE <<EOF
 alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000004; rev:1;)
+alert tls any any -> any any (msg:"Recent certificate"; lua:new-cert.lua; tls.store; sid:3000005; rev:1;)
 EOF
 
 FILE=/var/lib/suricata/rules/self-signed-cert.lua
@@ -168,6 +396,28 @@ function match(args)
     end
 end
 EOF
+
+FILE=/var/lib/suricata/rules/new-cert.lua
+[[ -f $FILE ]] || cat > $FILE <<EOF
+function init (args)
+    local needs = {}
+    needs["tls"] = tostring(true)
+    needs["flowint"] = {"cert-age"}
+    return needs
+end
+function match(args)
+    notbefore = TlsGetCertNotBefore()
+    if not notbefore then
+        return 0
+    end
+    if os.time() - notbefore <  3 * 3600  then
+        ScFlowintSet(0, os.time() - notbefore)
+        return 1
+    end
+    return 0
+end
+EOF
+
 
 if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
@@ -217,20 +467,118 @@ outputs:
       enabled: yes
   - eve-log:
       enabled: 'yes'
-      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
-      filename: eve.json
+      filetype: regular
+      filename: alert.json
       community-id: yes
       community-id-seed: 0
       types:
         - alert:
-            payload: no             # enable dumping payload in Base64
-            payload-buffer-size: 4kb # max size of payload buffer to output in eve-log
-            payload-printable: no   # enable dumping payload in printable (lossy) format
-            packet: yes              # enable dumping of packet (without stream segments)
-            http-body: no           # enable dumping of http body in Base64
-            http-body-printable: no # enable dumping of http body in printable format
-            metadata: no             # enable inclusion of app layer metadata with alert. Default yes
+            payload: no
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            http-body: no
+            http-body-printable: yes
+            metadata: yes
             tagged-packets: no
+  - eve-log:
+      enabled: 'yes'
+      filetype: syslog
+      filename: eve.json
+      prefix: "@cee: "
+      identity: "suricata"
+      facility: local5
+      level: Info
+      redis:
+        server: 127.0.0.1
+        port: 6379
+        async: true
+        mode: list
+        pipelining:
+          enabled: yes
+          batch-size: 10
+      types:
+        - alert:
+            payload: yes
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            http-body: yes
+            http-body-printable: yes
+            metadata: no
+            tagged-packets: yes
+        - http:
+            extended: yes
+        - dns:
+            version: 2
+        - tls:
+            extended: yes
+        - files:
+            force-magic: no
+        - drop:
+            alerts: yes
+        - smtp:
+            extended: yes
+        - dnp3
+        - nfs
+        - smb
+        - tftp
+        - ikev2
+        - krb5
+        - dhcp:
+            enabled: yes
+            extended: yes
+        - ssh
+        - stats:
+            totals: yes
+            threads: yes
+            deltas: yes
+        - flow
+  - eve-log:
+      enabled: 'yes'
+      filetype: redis
+      filename: eve.json
+      redis:
+        server: 127.0.0.1
+        port: 6379
+        async: true
+        mode: list
+        pipelining:
+          enabled: yes
+          batch-size: 10
+      types:
+        - alert:
+            payload: no
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            http-body: no
+            http-body-printable: yes
+            metadata: yes
+            tagged-packets: no
+        - http:
+            extended: yes
+        - dns:
+            version: 2
+        - tls:
+            extended: yes
+        - files:
+            force-magic: no
+        - drop:
+            alerts: yes
+        - smtp:
+            extended: yes
+        - dnp3
+        - nfs
+        - smb
+        - tftp
+        - ikev2
+        - krb5
+        - dhcp:
+            enabled: yes
+            extended: yes
+        - ssh
+        - flow
 EOF
 
 #if $DEBUG ; then suricata -T -vvv; fi
@@ -251,6 +599,7 @@ Type=forking
 [Install]
 WantedBy=multi-user.target
 EOF
+
 check_service suricata || exit 1
 
 echo "Updating rules"
@@ -260,8 +609,8 @@ suricata-update enable-source oisf/trafficid
 suricata-update enable-source tgreen/hunting
 suricata-update list-enabled-sources
 suricata-update
-sleep 3
-suricatasc -c "reload-rules" || exit 1
+sleep 10
+suricatasc -c "reload-rules" 
 
 echo "Provision moloch"
 cd $PKGDIR
@@ -316,7 +665,7 @@ rules:
 EOF
 
 echo "Configuring capture plugins"
-sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/eve.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/alert.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
 sed -i "/\[default\]/arulesFiles=$RULE_FILE" config.ini
 
 echo "Configuring custom stuff"
@@ -334,7 +683,6 @@ EOF
 
 grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
-ls19=title:Locked Shields 2019;require:ls19;fields:ls19.target,ls19.name,ls19.short,ls19.zone,ls19.team,ls19.ws_template,ls19.ws_iter,ls19.ws_family,ls19.ws_release,ls19.ws_arch
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
 EOF
 
@@ -395,84 +743,6 @@ tags=redis
 type=ip
 format=tagger
 EOF
-
-grep bloom wiseService.ini || cat >> wiseService.ini <<EOF
-[bloom]
-bits=300000
-functions=16
-tag=bloom
-EOF
-
-cd /data/moloch/wiseService
-
-PATH=$PATH npm install bloomfilter
-PATH=$PATH npm install hashtable
-
-FILE="/data/moloch/wiseService/source.bloom.js"
-grep CDMCS $FILE || cat >> $FILE <<EOF
-/* [bloom]
- * bits=200000
- * functions=16
- * tag=newdns
- */
-
-'use strict';
-
-var wiseSource     = require('./wiseSource.js')
-  , util           = require('util')
-  , bloom          = require('bloomfilter')
-  ;
-
-//////////////////////////////////////////////////////////////////////////////////
-function BloomSource (api, section) {
-  BloomSource.super_.call(this, api, section);
-
-  this.bits = api.getConfig(section, "bits");
-  this.fn = api.getConfig(section, "functions");
-  this.tagval = api.getConfig(section, "tag");
-
-  // Check if variables needed are set, if not return
-  if (this.bits === undefined) {
-    return console.log(this.section, "- Bloom filter bits undefined");
-  }
-  if (this.fn === undefined) {
-    return console.log(this.section, "- Bloom filter hash functions undefined");
-  }
-  if (this.tag === undefined) {
-    this.tab == "bloom";
-  }
-
-  this.dns = new bloom.BloomFilter(
-    this.bits, // number of bits to allocate.
-    this.fn    // number of hash functions.
-  );
-
-  this.tagsField = this.api.addField("field:tags");
-
-  // Memory data sources will have this section to load their data
-  this.cacheTimeout = -1;
-  //setImmediate(this.load.bind(this));
-  //setInterval(this.load.bind(this), 5*60*1000);
-
-  // Add the source as available
-  this.api.addSource("bloom", this);
-}
-util.inherits(BloomSource, wiseSource);
-//////////////////////////////////////////////////////////////////////////////////
-BloomSource.prototype.getDomain = function(domain, cb) {
-  if (!this.dns.test(domain)) {
-    this.dns.add(domain);
-    return cb(null, {num: 1, buffer: wiseSource.encode(this.tagsField, this.tagval)});
-  }
-  cb(null, undefined);
-};
-//////////////////////////////////////////////////////////////////////////////////
-exports.initSource = function(api) {
-  var source = new BloomSource(api, "bloom");
-};
-EOF
-
-wget $WGET_PARAMS https://raw.githubusercontent.com/markuskont/moloch/master/wiseService/source.ls19.js -O /data/moloch/wiseService/source.ls19.js
 
 echo "Configuring databases"
 cd /data/moloch/db
@@ -701,15 +971,13 @@ fi
 
 # influx
 echo "Provisioning INFLUXDB"
-if [ $DOCKERIZE = true ]; then
-  docker ps -a | grep influx || docker run -dit --name influx -h influx --network cdmcs --restart unless-stopped -p 8086:8086 --log-driver syslog --log-opt tag="influx" $DOCKER_INFLUXDB
-else
-  cd $PKGDIR
-  [[ -f $INFLUX ]] || wget $WGET_PARAMS https://dl.influxdata.com/influxdb/releases/$INFLUX -O $INFLUX
-  dpkg -s influxdb || dpkg -i $INFLUX > /dev/null 2>&1
-  systemctl stop influxdb.service
-  check_service influxdb
-fi
+docker ps -a | grep influx || docker run -dit \
+  --name influx \
+  -h influx \
+  --network cdmcs \
+  --restart unless-stopped \
+  -p 8086:8086 \
+    $DOCKER_INFLUXDB
 
 # grafana
 echo "Provisioning GRAFANA"
@@ -735,21 +1003,16 @@ providers:
     path: $DASHBOARDS
 EOF
 
-GRAFANA_EXPOSE=$EXPOSE
-if [ $DOCKERIZE = true ]; then
-  GRAFANA_EXPOSE="influx"
-  docker ps -a | grep grafana || docker run -dit --name grafana -h grafana --network cdmcs --restart unless-stopped -p 3000:3000 -v /etc/grafana/provisioning:/etc/grafana/provisioning -v /vagrant:/vagrant --log-driver syslog --log-opt tag="grafana" $DOCKER_GRAFANA
-else
-  cd $PKGDIR
-  [[ -f $GRAFANA ]] || wget $WGET_PARAMS https://s3-us-west-2.amazonaws.com/grafana-releases/release/$GRAFANA -O $GRAFANA
-  apt-get -y install libfontconfig > /dev/null 2>&1
-  dpkg -s grafana || dpkg -i $GRAFANA > /dev/null 2>&1
-
-  sed -i 's/;provisioning = conf\/provisioning/provisioning = \/etc/\/grafana\/provisioning/g' /etc/grafana/grafana.ini 
-  systemctl stop grafana-server.service
-
-  check_service grafana-server
-fi
+docker ps -a | grep grafana || docker run -dit \
+  --name grafana \
+  -h grafana \
+  --network cdmcs \
+  --restart unless-stopped \
+  -p 3000:3000 \
+  -v /etc/grafana/provisioning:/etc/grafana/provisioning \
+  -v /vagrant:/vagrant \
+  --log-driver syslog --log-opt tag="grafana" \
+    $DOCKER_GRAFANA
 
 sleep 10
 echo "configuring grafana data sources"
@@ -757,7 +1020,7 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
     \"name\": \"telegraf\",
     \"type\": \"influxdb\",
     \"access\": \"proxy\",
-    \"url\": \"http://$EXPOSE:8086\",
+    \"url\": \"http://influx:8086\",
     \"database\": \"telegraf\",
     \"isDefault\": true
 }"
@@ -785,7 +1048,7 @@ systemctl stop telegraf.service
 FILE=/etc/telegraf/telegraf.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [global_tags]
-  year = "2019"
+  year = "2020"
 [agent]
   hostname = "CDMCS"
   omit_hostname = false
@@ -843,9 +1106,8 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
   exe = "moloch-capture"
 EOF
 
-if [ $DOCKERIZE = true ]; then
-  FILE=/etc/telegraf/telegraf.d/docker.conf
-  grep "CDMCS" $FILE || cat > $FILE <<EOF
+FILE=/etc/telegraf/telegraf.d/docker.conf
+grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.docker]]
   endpoint = "unix:///var/run/docker.sock"
   gather_services = false
@@ -860,10 +1122,9 @@ if [ $DOCKERIZE = true ]; then
   tag_env = ["JAVA_HOME", "HEAP_SIZE"]
 EOF
 
-  # massive privilege escalation issue
-  echo "Adding telegraf user to Docker group. Massive privilege escalation. Do not do at home!"
-  adduser telegraf docker
-fi
+# massive privilege escalation issue
+echo "Adding telegraf user to Docker group. Massive privilege escalation. Do not do at home!"
+adduser telegraf docker
 
 check_service telegraf
 
@@ -877,6 +1138,44 @@ while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep $(shuf -i 15-6
 
 echo "DONE :: start $start end $(date)"
 
-echo "Sleeping 120 seconds for data to ingest."; sleep 120
+echo "Sleeping 60 seconds for data to ingest."; sleep 60
+
+echo "Checking on moloch"
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
+
+echo "Checking on suricata and elastic"
+curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '{"size": 1, "query": {"term": {"event_type": "alert"}}}' | jq .
+curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '
+{
+  "size": 0,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "range": {
+            "timestamp": {
+              "gte": "now-1h",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "aggs": {
+    "events": {
+      "terms": {
+        "field": "event_type.keyword",
+        "size": 20
+      }
+    },
+    "alertTop10": {
+      "terms": {
+        "field": "alert.signature.keyword",
+        "size": 10
+      }
+    }
+  }
+}
+' | jq .

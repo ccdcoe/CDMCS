@@ -1,8 +1,0 @@
-*.deb
-*.tar.gz
-*.log
-*.pcap
-*.py
-*.zip
-pcaps/
-pkgs/

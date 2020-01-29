@@ -19,7 +19,7 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [Intro](/common/day_intro.md)
    * [what is Suricata](/Suricata/suricata/README.md)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
-   * [singlehost](/Suricata/vagrant/singlehost/)
+   * [singlehost](/singlehost)
  * 15:00 - 16:45
    * [intro to rules](/Suricata/rules/)
 

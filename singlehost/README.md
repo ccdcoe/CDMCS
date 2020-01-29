@@ -80,15 +80,16 @@ If it happens during classroom training, then it's a bug or connectivity issue. 
 
 Yes and no. We need to verify that basic tooling and environment is suitable for classroom, as it is a hands-on course and everything will be done inside Vagrant virtual machines. Thus, working virtualization with proper intra and inter host connectivity is critical. However, day 0 afternoon is dedicated to debugging these issues and on provisioning the singlehost, basically to get everyone on the same level. 
 
-  * Already provisioned everything before the class? 
-  
+### Already provisioned everything before the class? 
+
 Good job. You'll be bored on day0 and real work starts on day1. 
 
-  * You have not provisioned the singlehost but can virtualize with Vagrant? 
+### You have not provisioned the singlehost but can virtualize with Vagrant? 
 
 Perfect. You'll get to poke around singlehost on day0. 
-  * You cannot virtualize with Vagrant at all, or box network connectivity does not work? 
-  
+
+### You cannot virtualize with Vagrant at all, or box network connectivity does not work? 
+
 That sucks. You won't get anything out of this course if we can't hack it to work. Debugging these issues would detract our attention from actual classroom topics, so they should be resolved before we start working.
 
 ## So everything will be done on singlehost VM throuhout the course?

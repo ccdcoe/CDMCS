@@ -17,7 +17,7 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:00 - 17:00 
    * [Intro](/common/day_intro.md)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
-   * [singlehost](/Moloch/singlehost/)
+   * [singlehost](/singlehost/)
 
 ## Day 1 :: Building, Labeling the traffic :: June 2 2020
 
