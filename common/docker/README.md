@@ -91,6 +91,7 @@ Many methods exist to run multiple containers. For example, a web site usually d
 
 ```
 apt-get install docker-compose
+#python3 -m pip install --user --upgrade docker-compose
 vim docker-compose.yml
 ```
 ```

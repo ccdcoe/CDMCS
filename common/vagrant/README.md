@@ -43,7 +43,6 @@ Vagrant.configure(2) do |config|
   config.vm.define 'CDMCS' do |box|
     box.vm.box = "ubuntu/bionic64"
     box.vm.hostname = 'CDMCS'
-    box.vm.network :private_network, ip: "192.168.10.11"
     box.vm.synced_folder ".", "/vagrant", disabled: false
     box.vm.provider :virtualbox do |vb|
       vb.customize ["modifyvm", :id, "--memory", "2048"]

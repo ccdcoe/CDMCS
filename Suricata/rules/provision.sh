@@ -98,5 +98,6 @@ include: /etc/suricata/cdmcs-detect.yaml
 include: /etc/suricata/cdmcs-logging.yaml
 EOF
 
-service suricata stop
+systemctl stop suricata.service
+systemctl disable suricata.service
 apt-get install -y tcpdump tcpreplay jq

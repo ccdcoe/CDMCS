@@ -78,7 +78,7 @@ git branch -a
 ```
 
 ```
-git checkout suricata-4.1.2
+git checkout $VERSION
 ```
 
 HTTP parsing library `libhtp` is maintained in separate repository and must be cloned into main Suricata directory.
@@ -86,7 +86,7 @@ HTTP parsing library `libhtp` is maintained in separate repository and must be c
 ```
 git clone https://github.com/OISF/libhtp -b 0.5.x
 cd libhtp
-git checkout 0.5.29
+git checkout $VERSION
 cd ..
 ```
 
@@ -164,7 +164,7 @@ Grab the source.
 ```
 git clone https://github.com/intel/hyperscan /home/vagrant/hyperscan-build
 cd /home/vagrant/hyperscan-build
-git checkout v5.0.0
+git checkout $VERSION
 ```
 
 Build locally using cmake.
@@ -214,7 +214,7 @@ Configure the software to local build directory.
 
 ```
 cd <repo-clone-dir>
-./configure --prefix=/home/vagrant/suricata/4.1.2-cdmcs
+./configure --prefix=$HOME/meerkat/$VERSION
 ```
 
 Compile using 4 threads.
@@ -227,7 +227,7 @@ Install the software
 
 ```
 make install
-ls -lah /home/vagrant/suricata/4.1.2
+ls -lah $HOME/meerkat/$VERSION
 ```
 
 Install default config file.
@@ -297,6 +297,7 @@ ldconfig
      * unix socket support with suricatasc utility
      * NFS logging and output
      * Rule profiling
+     * MD5 and JA3 hashing
  * Build a second suricata instance with rule profiling disabled.
 
 ### testing and hints
@@ -341,8 +342,8 @@ sed -i -e 's/#.*$//' -e '/^\s*$/d' /etc/suricata/suricata.yaml
  * https://suricata-update.readthedocs.io/en/latest/
 
 ```
-apt-get install python-pip
-pip install --upgrade --user suricata-update
+apt-get install python3-pip
+python3 -m pip install --upgrade --user suricata-update
 ```
 
 Official rule update tool is a python script.
@@ -488,10 +489,12 @@ grep "default-log-dir" suricata.yaml
  
 Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
 
-### Todo list
+### tl; dr
+
+In short, this is your typical to-do list in `suricata.yaml` after fresh install -
 
  * Home nets;
- * Default log direcotry;
+ * Default log directory;
  * eve.json output;
  * af-packet input;
  * rules;
@@ -500,12 +503,15 @@ Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suri
     * rule file;
  * run suricata with `--af-packet` argument;
 
-### Before moving on!
+### Exercises
 
- * Configure suricata with your Vagrant box uplink subnet as home network.
- * Run Suricata in daemon mode with up to date rules
- * Configure `/vagrant/logs` as destination for `eve.json`
- * Read some pcap files with non-daemonized version of suricata from [malware traffic analysis site](http://malware-traffic-analysis.net/)
+ * Configure suricata with your Vagrant box uplink subnet as home network;
+ * Run Suricata in daemon mode with up to date rules;
+ * Configure `/vagrant/logs` as destination for `eve.json`;
+ * Enable SIP protocol logging;
+   * Test using pcaps from this site - https://wiki.wireshark.org/SampleCaptures
+ * Enable ja3 and ja3s hashing support
+ * Read some pcap files with non-daemonized version of suricata from [malware traffic analysis site](http://malware-traffic-analysis.net/);
    * Any pcap file is fine, it's mainly for generating some interesting data for next exercises
    * Look for zip files. Password is usually `INFECTED`
 

@@ -24,7 +24,7 @@ rule writing tools:
 ET open is the default ruleset packaged with suricata. However, it can be downloaded separately.
 
 ```
-wget -4 http://rules.emergingthreats.net/open/suricata-4.1/emerging.rules.tar.gz
+wget -4 http://rules.emergingthreats.net/open/suricata-5.0/emerging.rules.tar.gz
 tar -xzf emerging.rules.tar.gz
 ls -lah rules/
 ```
@@ -95,6 +95,15 @@ Load the pcap into suricata
 ```
 suricata -r /vagrant/capture.pcap -vvv
 ```
+
+Or, you can capture traffic on the wire.
+
+```
+suricata --af-packet=$ETH -l logs/ -vvv
+```
+
+However, note that can be considerably more difficult (or annoying) to reproduce with live traffic.
+
 ## Writing your first rule
 
 > Do not write rules, buy from professionals!
@@ -127,7 +136,9 @@ Checksum errors can also be ignored with `-k` flag. That way we do not have to r
 suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
 ```
 
-Fast is human-readable plaintext format from Snort days. 
+But the proper way to solve this probleb is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the pcap.
+
+Fast log is human-readable plaintext format from Snort days. 
 
 ```
 cat logs/fast.log
@@ -170,9 +181,23 @@ A rule consists of the following:
 
 ## Exercise - write rules that trigger on following conditions
 
+### Basic tasks for introduction
+
 * Facebook certificate
-* DNS zone transfer
 * DNS domain with .su suffix
-* Curl user-agent
+* DNS zone transfer
+* Detection of popular default user-agesnts:
+  * Python;
+  * Nikto;
+  * Dirbuster;
+  * Nmap;
+  * Curl
+
+### More complex tasks once we have covered some config aspects
+
 * TLS connection from HOME_NET to toto.com domain (we need to exclude toto.communism.fr)
 * Alert on JPEG image taken with a NIKON D700 (example: http://home.regit.org/wp-content/uploads/2017/07/20170705_0237.jpg)
+* Set up a simple web server with `python3 -m http.server` and create 5 files with some content in it;
+  * 2 files are *confidential* - you should get an alert whenever someone accesses them via HTTP GET;
+  * You should not get an alert for other files;
+  * Modify this rule, so that alerts are only generated when files are downloaded from **CONFIDENTIAL_SERVER**;
