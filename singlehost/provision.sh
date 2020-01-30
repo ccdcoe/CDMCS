@@ -372,12 +372,14 @@ FILE=/var/lib/suricata/rules/custom.rules
 alert http \$HOME_NET any -> \$EXTERNAL_NET any (msg:"CDMCS: External Windows executable download"; flow:established,to_server; content:"GET "; uricontent:".exe"; nocase; classtype:policy-violation; sid:3000001; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;) 
 alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
 alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
+alert http any any -> any any (msg:"CDMCS: Listed UA seen"; http.user_agent; to_sha256; dataset:isset,ua-seen; classtype:policy-violation; sid:3000004; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
+alert dns any any -> any any (msg:"CDMCS: Listed DNS hash seen"; dns.query; to_sha256; dataset:isset,dns-sha256-seen; classtype:policy-violation; sid:3000005; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 EOF
 
 FILE=/var/lib/suricata/rules/lua.rules
 [[ -f $FILE ]] || cat > $FILE <<EOF
-alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000004; rev:1;)
-alert tls any any -> any any (msg:"Recent certificate"; lua:new-cert.lua; tls.store; sid:3000005; rev:1;)
+alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000051; rev:1;)
+alert tls any any -> any any (msg:"Recent certificate"; lua:new-cert.lua; tls.store; sid:3000052; rev:1;)
 EOF
 
 FILE=/var/lib/suricata/rules/self-signed-cert.lua
@@ -430,6 +432,7 @@ FILE=/etc/suricata/suricata.yaml
 grep "cdmcs" $FILE || cat >> $FILE <<EOF
 include: /etc/suricata/cdmcs-detect.yaml
 include: /etc/suricata/cdmcs-logging.yaml
+include: /etc/suricata/cdmcs-datasets.yaml
 EOF
 
 echo "Adding detects for SURICATA"
@@ -449,6 +452,23 @@ rule-files:
  -  custom.rules
  -  lua.rules
 sensor-name: CDMCS
+EOF
+
+
+echo "Adding datasets for SURICATA"
+FILE=/etc/suricata/cdmcs-datasets.yaml
+
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
+datasets:
+  ua-seen:
+    type: sha256
+    state: /var/lib/suricata/ua-sha256-seen.lst
+  dns-sha256-seen:
+    type: sha256
+    state: /var/lib/suricata/dns-sha256-seen.lst
 EOF
 
 echo "Adding outputs for SURICATA"
@@ -611,6 +631,7 @@ suricata-update list-enabled-sources
 suricata-update
 sleep 10
 suricatasc -c "reload-rules" 
+suricatasc -c "dataset-add ua-seen sha256 53c5f12948a236c0a34e4cb17c51a337ef61524cb4363023f242115f11555d1f"
 
 echo "Provision moloch"
 cd $PKGDIR

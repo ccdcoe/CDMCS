@@ -39,7 +39,7 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch), [multinode](/Moloch/clustering#moloch-workers)
 
 ## Day 3 :: Cross-class cluster, performance tuning :: June 4 2020
-  
+
  * 09:00 - 12:30 
    * [Clustering teamwork, cont](/Moloch/clustering)
    * [Hunting trip, client-side](/Moloch/queries/#hunting-trip)

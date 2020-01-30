@@ -58,13 +58,6 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
-### Homeless topics
- * [IPS]()
- * [Alerta]()
- * [septun/RSS]()
- * [suricata stats to TICK]()
-
-
 ### Before You Come To Class please browse trough ..
 
  * [prereqs](https://github.com/ccdcoe/CDMCS/tree/master/prerequisites)
