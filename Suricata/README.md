@@ -16,11 +16,10 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 0 :: Intro:: Feb 10 2020, *starts at 13:00!*
 
  * 13:00 - 14:45
-   * [Intro](/common/day_intro.md)
-   * [what is Suricata](/Suricata/suricata/README.md)
+   * [Intro](/common/day_intro.md), [singlehost](/singlehost)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
-   * [singlehost](/singlehost)
  * 15:00 - 16:45
+   * [what is Suricata](/Suricata/intro/)
    * [intro to rules](/Suricata/rules/)
 
 ## Day 1 :: Single box, setting up :: Feb 11 2020
@@ -75,11 +74,10 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 0 :: Intro:: Mar 02 2020, *starts at 11:00*
 
  * 11:00 - 12:30
-   * [Intro](/common/day_intro.md)
-   * [what is Suricata](/Suricata/suricata/README.md)
+   * [Intro](/common/day_intro.md), [singlehost](/singlehost)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
-   * [singlehost](/Suricata/vagrant/singlehost/)
  * 14:00 - 15:45
+   * [what is Suricata](/Suricata/intro/)
    * [intro to rules](/Suricata/rules/)
 
 ## Day 1 :: Single box, setting up :: Feb 11 2020
