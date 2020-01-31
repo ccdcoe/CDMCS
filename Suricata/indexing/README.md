@@ -19,10 +19,18 @@ sysctl -w vm.max_map_count=262144
 Then start the container in console. Note that `-d` flag can be used to daemonize it, but running it from dedicated console window has the benefit of exposing the logs. Very useful for initial debug.
 
 ```
-docker run -ti --name my-first-elastic -p 9200:9200 -e "discovery.type=single-node" -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" -e "cluster.name=cdmcs" docker.elastic.co/elasticsearch/elasticsearch-oss:6.5.4
+docker run \
+  -ti \                                                     # Keep terminal open interactively
+  --rm \                                                    # Remove container on docker stop / ctrl+c; you will lose all data unless you mounted a persistent volume
+  --name my-first-elastic \                                 # Explicit container name, otherwise will be randomly chosen
+  -p 9200:9200 \                                            # Forward host port 9200 to container port 9200
+  -e "discovery.type=single-node" \                         # For single-node testing only,  dont use for cluster
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \                     # Minimal amount of Java heap to avoid running out of memory in Vagrant VM
+  -e "cluster.name=cdmcs" \                                 # Cluster name, relevant for multihost clustered setup
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2 # Image source itself with version tag
 ```
 
-Then verify connectivity via `cat` api. Substitute `localhost` with box private IP if checking from host.
+Then verify connectivity via `cat` api. Substitute `localhost` with box private IP if checking from hypervisor host, or Vagrant public IP when checking from remote host.
 
 ```
 curl localhost:9200/_cat/indices
@@ -35,10 +43,10 @@ Note that indices and shards should return empty results, as we have no data yet
 
 ### Documents and mappings
 
-Manually insert a first testing document into index `first` with id `AAAA` and type `doc`.
+Manually insert a first testing document into index `first` with id `AAAA` and type `_doc` (types are irrelevant post elastic 7, but keep using `_doc` to avoid issues).
 
 ```
-curl -XPOST localhost:9200/first/doc/AAAA -H "Content-Type: application/json" -d '{"timestamp":"2019-01-22T11:18:13.156816+0000","flow_id":738588278199041,"in_iface":"enp0s3","event_type":"tls","src_ip":"10.0.2.15","src_port":42756,"dest_ip":"31.13.72.36","dest_port":443,"proto":"TCP","tls":{"subject":"C=US, ST=California, L=Menlo Park, O=Facebook, Inc., CN=*.facebook.com","issuerdn":"C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 High Assurance Server CA","serial":"0B:3C:3B:60:1A:18:F5:9E:E2:B6:BB:05:60:5E:F2:C0","fingerprint":"bd:25:8c:1f:62:a4:a6:d9:cf:7d:98:12:d2:2e:2f:f5:7e:84:fb:36","sni":"www.facebook.com","version":"TLS 1.2","notbefore":"2017-12-15T00:00:00","notafter":"2019-03-22T12:00:00","ja3":{"hash":"1fe4c7a3544eb27afec2adfb3a3dbf60","string":"771,49196-49200-159-52393-52392-52394-49195-49199-158-49188-49192-107-49187-49191-103-49162-49172-57-49161-49171-51-157-156-61-60-53-47-255,0-11-10-13172-16-22-23-13,29-23-25-24,0-1-2"}}}'
+curl -XPOST localhost:9200/first/_doc/AAAA -H "Content-Type: application/json" -d '{"timestamp":"2019-01-22T11:18:13.156816+0000","flow_id":738588278199041,"in_iface":"enp0s3","event_type":"tls","src_ip":"10.0.2.15","src_port":42756,"dest_ip":"31.13.72.36","dest_port":443,"proto":"TCP","tls":{"subject":"C=US, ST=California, L=Menlo Park, O=Facebook, Inc., CN=*.facebook.com","issuerdn":"C=US, O=DigiCert Inc, OU=www.digicert.com, CN=DigiCert SHA2 High Assurance Server CA","serial":"0B:3C:3B:60:1A:18:F5:9E:E2:B6:BB:05:60:5E:F2:C0","fingerprint":"bd:25:8c:1f:62:a4:a6:d9:cf:7d:98:12:d2:2e:2f:f5:7e:84:fb:36","sni":"www.facebook.com","version":"TLS 1.2","notbefore":"2017-12-15T00:00:00","notafter":"2019-03-22T12:00:00","ja3":{"hash":"1fe4c7a3544eb27afec2adfb3a3dbf60","string":"771,49196-49200-159-52393-52392-52394-49195-49199-158-49188-49192-107-49187-49191-103-49162-49172-57-49161-49171-51-157-156-61-60-53-47-255,0-11-10-13172-16-22-23-13,29-23-25-24,0-1-2"}}}'
 ```
 
 Then verify that document exists via HTTP GET.
@@ -105,16 +113,22 @@ Finally, elastic is not meant for document storage or retreival. Keep your golde
 
 ## Playing with python
 
-Make sure that notebook is running. As `vagrant` user in `indexing` box, run the following command.
+Great too for quick **interactive** scripting against Elastic (and other data sources) is to simply use a Jupyter notebook. Setting it up as regular user on modern machine with python3 is quite straightforward.
 
 ```
-jupyter lab --ip=192.168.10.14
+python3 -m pip install --user --upgrade jupyter jupyterlab
 ```
 
-Alternatively, use a regular notebook as `jupyterlab` is quite new and may have issues.
+It is also a good idea to install some additional packages needed for interacting with our data sources.
 
 ```
-jupyter --ip=192.168.10.14
+python3 -m pip install --user elasticsearch redis pandas
+```
+
+Make sure that notebook is running. 
+
+```
+jupyter lab --ip=XXXX
 ```
 
 Note that `ip` is needed if running notebook inside a vagrant VM, and it should correspond to private address of box that is accessible from hypervisor. Then look for the following line in console output:
@@ -123,23 +137,13 @@ Note that `ip` is needed if running notebook inside a vagrant VM, and it should 
     To access the notebook, open this file in a browser:
         file:///run/user/1000/jupyter/nbserver-11679-open.html
     Or copy and paste one of these URLs:
-        http://192.168.10.14:8888/?token=<TOKEN>
+        http://ADDRESS:8888/?token=<TOKEN>
 ```
 
-Then copy the URL into host machine browser. Local notebooks are accessible under `localbox` sync point. Go through attached jupyter notebooks.
+Then copy the URL into host machine browser if running jupyter inside Vagrant VM. Otherwise, if running from classroom laptop, the notebook should try to open the link with default browser.
 
  * [Playing with eve.json](001-load-eve.ipynb)
  * [Getting started with elasticsearch](002-elastic-intro.ipynb)
-
-## Other methods
-
- * https://suricata.readthedocs.io/en/latest/output/index.html
- * [Evebox esimport](evebox.md)
- * [Logstash](logstash.md)
- * [logstash+redis](/common/elastic/logstash-redis-ela.conf)
- * [Ingest node](/common/elastic/elastic.ingest.md)
- * [Rsyslog]()
- * [Rsyslog+kafka]()
 
 # Evebox
 
@@ -160,21 +164,15 @@ But there's nothing like firing up another container to host a simple Go binary.
 
 ```
 docker pull jasonish/evebox
-docker run -it -p 5636:5636 jasonish/evebox -e http://elasticsearch:9200
+docker run -it -p 5636:5636 jasonish/evebox:master -e http://elasticsearch:9200
 ```
 
 [Remember docker networks](/common/docker.md#networking) if experiencing elastic connectivity errors. Or use exposed host port, provided elastic is not limited to localhost.
 
 ```
-docker run -it -p 5636:5636 --network elastic jasonish/evebox -e http://elasticsearch:9200
+docker run -it -p 5636:5636 --network elastic jasonish/evebox:master -e http://elasticsearch:9200
 ```
 
-Or installing a deb package.
-
-```
-wget -4 https://evebox.org/files/release/latest/evebox_0.10.1_amd64.deb
-dpkg -i evebox_0.10.1_amd64.deb
-```
 
 Up to you.
 
@@ -216,7 +214,6 @@ Set up some python2 dependencies and clone the repo. Checkout version is out of 
 apt-get install -y python-pip dbconfig-common sqlite3 python-virtualenv
 git clone https://github.com/StamusNetworks/scirius
 cd scirius
-git checkout tags/scirius-3.1.0
 ```
 
 Then start up virtualenv in local scirius folder. Install local deps into venv.
@@ -233,7 +230,7 @@ pip install gunicorn pyinotify python-daemon
 This is where the real *fun* begins. Let's pull a node version that actually works, set it up locally and freeze all versions. It's the [javascript way](https://en.wikipedia.org/wiki/Electron_(software_framework)).
 
 ```
-NODE_VERSION="v10.15.0"
+NODE_VERSION="v10.18.1"
 wget -4 -q https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
 tar -xJf node-$NODE_VERSION-linux-x64.tar.xz 
 ```
@@ -272,14 +269,28 @@ Generate CSS stuff.
 /home/vagrant/.npm-global/bin/webpack
 ```
 
-Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L636) for pointing scirius to elastic.
+Collect static CSS assets.
+
+```
+python manage.py createsuperuser
+```
+
+Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/2019/Suricata/vagrant/singlehost/provision.sh#L652) for pointing scirius to elastic.
 
 # Kibana
 
 The most well-known frontend for elastic stack. And easiest to set up. Basic config involes just pointing toward elastic proxy. Note that image should be in same private network as elasticsearch cluster if docker is used. Alternatively, kibana can also be pointed toward exposed elastic proxy on host. Default port is `5601`, host port should be forwarded there to enable http access.
 
 ```
-docker run -it --name kibana -h kibana --network cdmcs  -e "SERVER_NAME=kibana" -e "ELASTICSEARCH_URL=http://elastic:9200" -p 5601:5601 docker.elastic.co/kibana/kibana-oss:6.5.4
+docker run \
+  -it \
+  --name kibana \
+  -h kibana \
+  --network cdmcs  \
+  -e "SERVER_NAME=kibana" \
+  -e "ELASTICSEARCH_URL=http://elastic:9200" \ # Deperecated in elastic 7 in favor of ELASTICSEARCH_HOSTS
+  -p 5601:5601 \
+    docker.elastic.co/kibana/kibana-oss:7.5.2
 ```
 
 Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs. But most useful tab by far is `Dev tools` which functions as autocomplete-enabled IDE for elastic API. You can test any previously used curl or python queries in this tab.
