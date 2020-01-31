@@ -2,12 +2,15 @@
 # vi: set ft=ruby :
 
 $provision_script = <<SCRIPT
-apt-get update && apt-get -y install python3 python3-pip graphviz
+apt-get update && apt-get -y install python3 python3-pip lua5.3 luarocks
 
 su vagrant -c "python3 -m pip install --user --upgrade pip"
 su vagrant -c "python3 -m pip install --user --upgrade jupyter"
 su vagrant -c "python3 -m pip install --user --upgrade jupyterlab"
-su vagrant -c "python3 -m pip install --user --upgrade elasticsearch redis graphviz"
+su vagrant -c "python3 -m pip install --user --upgrade ilua"
+su vagrant -c "python3 -m pip install --user --upgrade pandas"
+
+ln -sf /usr/bin/lua5.3 /usr/bin/lua
 SCRIPT
 
 Vagrant.configure(2) do |config|
@@ -22,14 +25,16 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provision "docker", images: [
       "redis",
-      "docker.elastic.co/elasticsearch/elasticsearch-oss:6.6.0",
-      "docker.elastic.co/kibana/kibana-oss:6.6.0",
-      "docker.elastic.co/logstash/logstash-oss:6.6.0",
-      "jasonish/evebox"
+      "docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2",
+      "docker.elastic.co/kibana/kibana-oss:7.5.2",
+      "docker.elastic.co/logstash/logstash-oss:7.5.2",
+      "jasonish/evebox:master"
     ]
     box.vm.provision "shell", path: "provision.sh"
     box.vm.provision "shell", inline: $provision_script
-    box.vm.synced_folder "../vagrant/singlehost", "/singlehost"
+    box.vm.synced_folder "../../singlehost", "/singlehost"
+    box.vm.synced_folder "../setup", "/home/vagrant/buildbox"
+    box.vm.synced_folder "../indexing", "/home/vagrant/indexingbox"
     box.vm.synced_folder "./", "/home/vagrant/localbox"
   end
 end
