@@ -99,8 +99,6 @@ docker ps -a | grep redis || docker run -dit \
 echo "Installing prerequisite packages..."
 apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl >> /vagrant/provision.log 2>&1
 
-echo "Provisioning JAVA"
-
 # elastic
 echo "Provisioning ELASTICSEARCH"
 docker ps -a | grep elastic || docker run -dit \
@@ -197,7 +195,8 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
         "fields": {
           "keyword" : { "type": "keyword", "ignore_above": 256 }
         }
-      }
+      },
+      "payload": { "type": "binary" }
     }
   }
 }
@@ -501,6 +500,51 @@ outputs:
             http-body-printable: yes
             metadata: yes
             tagged-packets: no
+  - eve-log:
+      enabled: 'yes'
+      filetype: regular
+      filename: eve.json
+      redis:
+        server: 127.0.0.1
+        port: 6379
+        async: true
+        mode: list
+        pipelining:
+          enabled: yes
+          batch-size: 10
+      types:
+        - alert:
+            payload: yes
+            payload-buffer-size: 4kb
+            payload-printable: yes
+            packet: yes
+            http-body: yes
+            http-body-printable: yes
+            metadata: no
+            tagged-packets: yes
+        - http:
+            extended: yes
+        - dns:
+            version: 2
+        - tls:
+            extended: yes
+        - files:
+            force-magic: no
+        - drop:
+            alerts: yes
+        - smtp:
+            extended: yes
+        - dnp3
+        - nfs
+        - smb
+        - tftp
+        - ikev2
+        - krb5
+        - dhcp:
+            enabled: yes
+            extended: yes
+        - ssh
+        - flow
   - eve-log:
       enabled: 'yes'
       filetype: syslog
