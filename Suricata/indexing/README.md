@@ -1,6 +1,6 @@
-# Indexing alert log
+# Indexing alerts
 
-Having alert or network log on disk may be nice, but that approach does not really scale. Hunting needs tools that scale and can aggregate vast amounts of data. Because suricata can produce. Nowadays, [elastic stack](https://www.elastic.co/products) is the go-to method for doing that. Most front-end tools simply rely on elastic aggregations.
+This is a vast topic that requires interactive scripting. Therefore, the content is split between this readme and jupyter notebooks. Start a notebook by running `jupyter lab --ip=0.0.0.0` and explore the `.ipynb` files for scripting examples and tasks.
 
 ## Getting started with elastic
 
@@ -111,189 +111,190 @@ curl -XDELETE "localhost:9200/*"
 
 Finally, elastic is not meant for document storage or retreival. Keep your golden storage somewhere else, elastic is for `_search` and [data aggregations](https://github.com/ccdcoe/CDMCS/blob/master/Suricata/vagrant/singlehost/provision.sh#L845)
 
-## Playing with python
+## Clustered elasticsearch
 
-Great too for quick **interactive** scripting against Elastic (and other data sources) is to simply use a Jupyter notebook. Setting it up as regular user on modern machine with python3 is quite straightforward.
-
-```
-python3 -m pip install --user --upgrade jupyter jupyterlab
-```
-
-It is also a good idea to install some additional packages needed for interacting with our data sources.
+Elastic config options are in `elasticsearch.yml`. It should be placed under `/etc/elasticsearch` if installed from deb or bound under `/usr/share/elasticsearch/config/elasticsearch.yml` if running from docker images. Also, make sure that each node is bound to distinct port on host if running from container.
 
 ```
-python3 -m pip install --user elasticsearch redis pandas
+touch $PWD/elasticsearch.yml; docker run \
+  -ti \
+  --rm \
+  -p 9200:9200 \
+  -p 9300:9300 \
+  -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2
 ```
 
-Make sure that notebook is running. 
+Firstly, all nodes should be configured to belong to common cluster.
 
 ```
-jupyter lab --ip=XXXX
+cluster.name: josephine
 ```
 
-Note that `ip` is needed if running notebook inside a vagrant VM, and it should correspond to private address of box that is accessible from hypervisor. Then look for the following line in console output:
-
-```
-    To access the notebook, open this file in a browser:
-        file:///run/user/1000/jupyter/nbserver-11679-open.html
-    Or copy and paste one of these URLs:
-        http://ADDRESS:8888/?token=<TOKEN>
-```
-
-Then copy the URL into host machine browser if running jupyter inside Vagrant VM. Otherwise, if running from classroom laptop, the notebook should try to open the link with default browser.
-
- * [Playing with eve.json](001-load-eve.ipynb)
- * [Getting started with elasticsearch](002-elastic-intro.ipynb)
-
-# Evebox
-
-> Web Based Event Viewer (GUI) for Suricata EVE Events in Elastic Search
-
- * https://evebox.org/
- * https://github.com/jasonish/evebox
-
-## Installing
-
-Evebox is written in golang, so you actually just need to download a binary.
-
-see:
- * https://evebox.org/files/development/
- * https://evebox.org/files/release/latest/
-
-But there's nothing like firing up another container to host a simple Go binary.
-
-```
-docker pull jasonish/evebox
-docker run -it -p 5636:5636 jasonish/evebox:master -e http://elasticsearch:9200
-```
-
-[Remember docker networks](/common/docker.md#networking) if experiencing elastic connectivity errors. Or use exposed host port, provided elastic is not limited to localhost.
-
-```
-docker run -it -p 5636:5636 --network elastic jasonish/evebox:master -e http://elasticsearch:9200
-```
-
-
-Up to you.
-
-## Linking to elasticsearch
-
-See evebox arguments.
-
-```
-evebox -h
-```
-
-**Do not expect an error message if elastic aggregation fails in background**. Just think of debuggin as fun little game. 
-
-If running evebox from console gives no error but inbox/alerts displays no logs while events, then it's likely one of those problems:
- * events lack `.keyword` (es 5+) or `.raw` (es 2) field mappings;
-   * or elasticsearch keyword argument missing;
-   * missing index template;
- * event `@timestamp field missing`;
-
-If events shows no logs while console displays no elastic connectivity errors, then your index pattern is likely wrong.
-
-See `/etc/default/evebox` if installing from deb package.
-
-# Scirius
-
-> Scirius is a web application for Suricata ruleset management.
-
- * https://github.com/StamusNetworks/scirius
- * https://scirius.readthedocs.io/en/latest/installation-ce.html
- * https://www.stamus-networks.com/open-source/
-
-## Setup
-
-Scirius is a web application written on django framework. Nowadays it also includes nodejs, which has had some...issues. Official documentation works, this guide simply serves as helper on some important considerations.
-
-Set up some python2 dependencies and clone the repo. Checkout version is out of date if you are from the future.
-
-```
-apt-get install -y python-pip dbconfig-common sqlite3 python-virtualenv
-git clone https://github.com/StamusNetworks/scirius
-cd scirius
-```
-
-Then start up virtualenv in local scirius folder. Install local deps into venv.
-
-```
-/usr/local/bin/virtualenv ./
-source ./bin/activate
-
-pip install -r requirements.txt
-pip install --upgrade urllib3
-pip install gunicorn pyinotify python-daemon
-```
-
-This is where the real *fun* begins. Let's pull a node version that actually works, set it up locally and freeze all versions. It's the [javascript way](https://en.wikipedia.org/wiki/Electron_(software_framework)).
-
-```
-NODE_VERSION="v10.18.1"
-wget -4 -q https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz
-tar -xJf node-$NODE_VERSION-linux-x64.tar.xz 
-```
-
-Remember those *issues* I mentioned earlier? Well, once upon a time, `npm` as `root` blew up your entire `/etc`. So now, if you try to build node packages as root user, you are going to have a bad time. Because, [nodejs modules written in c++](http://benfarrell.com/2013/01/03/c-and-node-js-an-unholy-combination-but-oh-so-right/) is a thing. So, everything is done as `vagrant` user with explicitly configured node module directory and paths.
-
-```
-mkdir ~/.npm-global
-echo 'export PATH=~/.npm-global/bin:$PATH' > ~/.profile
-echo "export PATH=$PWD/node-$NODE_VERSION-linux-x64/bin:\$PATH" > ~/.profile
-source ~/.profile
-
-npm config set prefix '~/.npm-global'
-```
-
-Now we can proceed with official guidelines.
-
-```
-npm install -g npm@latest webpack@3.11
-npm install
-cd hunt
-npm install
-npm run build
-cd ..
-```
-
-Run database migrations.
-
-```
-python manage.py migrate
-```
-
-Generate CSS stuff.
-
-```
-/home/vagrant/.npm-global/bin/webpack
-```
-
-Collect static CSS assets.
-
-```
-python manage.py createsuperuser
-```
-
-Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/2019/Suricata/vagrant/singlehost/provision.sh#L652) for pointing scirius to elastic.
-
-# Kibana
-
-The most well-known frontend for elastic stack. And easiest to set up. Basic config involes just pointing toward elastic proxy. Note that image should be in same private network as elasticsearch cluster if docker is used. Alternatively, kibana can also be pointed toward exposed elastic proxy on host. Default port is `5601`, host port should be forwarded there to enable http access.
+Alternatively, any supported elastic config option can be passed to the VM via config variable.
 
 ```
 docker run \
-  -it \
-  --name kibana \
-  -h kibana \
-  --network cdmcs  \
-  -e "SERVER_NAME=kibana" \
-  -e "ELASTICSEARCH_URL=http://elastic:9200" \ # Deperecated in elastic 7 in favor of ELASTICSEARCH_HOSTS
-  -p 5601:5601 \
-    docker.elastic.co/kibana/kibana-oss:7.5.2
+  -ti \
+  --rm \
+  -p 9200:9200 \
+  -p 9300:9300 \
+  -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+  -e "cluster.name=josephine" \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2
 ```
 
-Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs. But most useful tab by far is `Dev tools` which functions as autocomplete-enabled IDE for elastic API. You can test any previously used curl or python queries in this tab.
+Each node can be configured for a variety of roles. Single node can fulfill many roles, though specialized workers are common in production.
+ * `master` is responsible for coordinating other cluster nodes, or be in in standby mode in case main master fails;
+ * `data` nodes store data on disk and function as indexing and search workers;
+ * `ingest` nodes run pipeline jobs before indexing the data, and essentially function as logstash integrated into elastic;
+
+```
+node:
+  name: firstnode
+  data: false
+  ingest: false
+  master: false
+```
+
+Note that node name is arbitrary and simply has to be unique. It will be automatically generated if left unconfigured. There is another role that is not classified as such. Elastic uses binary connection for intra-cluster communication and HTTP for talking to the world. A common practice is to create specialized *no-data* or *proxy* nodes that are configured with all roles disabled and http enabled. Role of these nodes is simply to collect JSON bulks and to forward it to worker nodes over binary. Workers usually have http disabled or simply bound to localhost. **Please flush your container or data directory if you change node name. Otherwise artifacts from last run may conflict with new config.**
+
+Binding elastic to specific interfaces can be a good idea if your box has multiple interfaces. Elasic is not terribly intelligent at picking the right interface automatically, and it can cause confusion.
+
+```
+network:
+  host: 0.0.0.0
+```
+
+Docker nodes are located inside a docker private network, thus you need to use either a `--network host` flag when creating a container. This binds continer to host network stack and bypasses docker networking entirely. Do not do in production. Or you can alter the `network.publish_host` parameter from elasticsearch.
+
+```
+network:
+  host: 0.0.0.0
+  publish_host: ACCESSIBLE_IP_OR_ADDRESS
+```
+
+HTTP listener is configured separately.
+
+```
+http:
+  enabled: true
+  host: 0.0.0.0
+```
+
+Older elastic version (before 7) simply required **some master-eligible** nodes to be listied for unicast ping. Nodes would then autonegotiate cluster settings after this ping is successful.
+
+```
+discovery:
+  zen:
+    ping:
+      unicast:
+        hosts:
+        - 192.168.10.120
+        - 192.168.10.82
+        - 192.168.10.122
+```
+
+[Version 7 changed the syntax and added more fine-graining options.](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-hosts-providers.html) New syntax is `discovery.seed_hosts`. Note that port suffix corresponds to **binary transport** port, which defaults to `9300` (but can be changed).
+
+```
+discovery.seed_hosts:
+   - 192.168.10.120:9300
+   - 192.168.10.11 
+```
+
+Furthermore, we now need to define an initial list of **master-eligible nodes** when bootstrapping a new cluster. Otherwise, you will be greeted by an error like this -
+
+```
+"message": "master not discovered yet, this node has not previously joined a bootstrapped (v7+) cluster, and [cluster.initial_master_nodes] is empty on this node
+```
+
+To fix this, you need a list of potential master **node names** (not network addresses) in configuration. In other words, names in this list must correspond to `node.name` value for each listed master node.
+
+```
+cluster.initial_master_nodes:
+  - firstnode
+  - secondnode
+```
+
+Then verify that nodes are listed with proper roles via `_cat` API.
+
+```
+curl PROXY:PORT/_cat/nodes
+```
+
+# Collecting events from Suricata
+
+Suricata supports following outputs:
+ * Flat file;
+ * Syslog;
+ * Unix socket;
+ * Redis;
+
+We will only cover Redis due to time limitations.
+
+## redis
+
+* https://redis.io/topics/quickstart
+
+Redis is in-memory data structure store, commonly used as buffer or memory cache. It can be deployed by building it yourself or just running the docker container.
+
+```
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+apt-get install -y build-essential
+make
+make install
+redis-server --help
+redis-server
+redis-server --bind 0.0.0.0 --daemonize yes
+redis-cli
+netstat -anutp | grep 6379
+```
+
+However, a simple thing to do is simply to run it through docker container.
+
+```
+docker run -it \
+  --name redis \
+    redis
+```
+
+### Suricata config
+
+* make sure redis support is actually compiled in
+
+```
+filetype: redis #regular|syslog|unix_dgram|unix_stream|redis
+redis:
+  server: 127.0.0.1
+  port: 6379
+  async: true ## if redis replies are read asynchronously
+  mode: list ## possible values: list|lpush (default), rpush, channel|publish
+             ## lpush and rpush are using a Redis list. "list" is an alias for lpush
+             ## publish is using a Redis channel. "channel" is an alias for publish
+  key: suricata ## key or channel to use (default to suricata)
+  pipelining:
+    enabled: yes ## set enable to yes to enable query pipelining
+    batch-size: 10 ## number of entry to keep in buffer
+```
+
+### Testing
+
+```
+redis-cli
+127.0.0.1:6379> KEYS *
+1) "suricata"
+```
+
+## Shippers
+
+Bridging suricata and elastic is covered in attached notebooks. 
+
+Many tools exist for shipping logs to elastic. However, we will not cover them due to schedule limitations. [Materials are covered here for archived reference](shippers.md)
 
 ---
 

@@ -33,13 +33,13 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 2 :: Group up, scale out :: Feb 12 2020
 
  * 09:00 - 12:30
+   * [exploring eve.json with basic python](/Suricata/data-exploration)
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
-   * [indexing alert log](/Suricata/indexing#playing-with-python)
 
  * 13:30 - 16:45
-   * [elastic clustering](/Suricata/advanced-indexing#clustered-elasticsearch)
-   * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
-   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch),[data pipelining](/Suricata/indexing/000-pipelines.ipynb)
+   * [redis](/Suricata/indexing#redis),[redis api](/Suricata/indexing/001-redis.ipynb)
+   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
 
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
@@ -47,12 +47,12 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [ebpf and xdp](https://suricata.readthedocs.io/en/latest/capture-hardware/ebpf-xdp.html)
 
  * 13:30 - 16:45
+   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata)
    * [LUA scripting](/Suricata/lua)
 
 ## Day +1 :: Last but not least :: Feb 14 2020, *ends at 12:00*
 
  * 09:00 - 11:00
-   * [load pcap via unix socket](/Suricata/unix-socket)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)

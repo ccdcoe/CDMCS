@@ -14,12 +14,13 @@ ln -sf /usr/bin/lua5.3 /usr/bin/lua
 SCRIPT
 
 Vagrant.configure(2) do |config|
-  config.vm.define 'indexer' do |box|
+  config.vm.define 'clusterbox' do |box|
     box.vm.box = "ubuntu/bionic64"
-    box.vm.hostname = 'indexer'
-    box.vm.network :private_network, ip: "192.168.10.14"
+    box.vm.hostname = 'clusterbox'
+    box.vm.network "public_network"
+    box.vm.network :private_network, ip: "192.168.10.15"
     box.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", "2048"]
+      vb.customize ["modifyvm", :id, "--memory", "4096"]
       vb.customize ["modifyvm", :id, "--cpus", "4"]
     end
     box.vm.provision "docker", images: [
@@ -29,10 +30,11 @@ Vagrant.configure(2) do |config|
       "docker.elastic.co/logstash/logstash-oss:7.5.2",
       "jasonish/evebox:master"
     ]
+    box.vm.provision "shell", path: "provision.sh"
     box.vm.provision "shell", inline: $provision_script
-    box.vm.synced_folder "../setup", "/buildbox"
-    box.vm.synced_folder "../rules", "/rulebox"
     box.vm.synced_folder "../../singlehost", "/singlehost"
+    box.vm.synced_folder "../setup", "/home/vagrant/buildbox"
+    box.vm.synced_folder "../indexing", "/home/vagrant/indexingbox"
     box.vm.synced_folder "./", "/home/vagrant/localbox"
   end
 end
