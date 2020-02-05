@@ -202,6 +202,7 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 }
 ' || exit 1
 
+
 docker ps -a | grep evebox | docker run -tid --rm \
   --network cdmcs \
   -p 5636:5636 \
@@ -1204,6 +1205,9 @@ while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep $(shuf -i 15-6
 echo "DONE :: start $start end $(date)"
 
 echo "Sleeping 60 seconds for data to ingest."; sleep 60
+
+echo "Provisioning KIBANA DASHBOARDS"
+curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/export.ndjson
 
 echo "Checking on moloch"
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
