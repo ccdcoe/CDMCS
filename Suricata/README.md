@@ -44,7 +44,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
  * 09:00 - 12:30
-   * [eBPF and xdp](Suricata/ebpf)
+   * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 16:45
    * [unix socket](/Suricata/unix-socket), [datasets](/Suricata)
@@ -102,7 +102,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
  * 08:00 - 12:00
-   * [eBPF and xdp](Suricata/ebpf)
+   * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 15:45
    * [unix socket](/Suricata/unix-socket), [datasets](/Suricata)
