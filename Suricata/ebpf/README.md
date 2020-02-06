@@ -1,21 +1,24 @@
 # eBPF and XDP
 
 See
-* Documentation: https://github.com/regit/suricata/blob/ebpf-xdp-update-8.2/doc/userguide/capture-hardware/ebpf-xdp.rst
+* Documentation: https://suricata.readthedocs.io/en/latest/capture-hardware/ebpf-xdp.html
 * Talk on Suricata, XDP and eBPF: https://home.regit.org/~regit/suricata-ebpf.pdf
+* BPF cli wrapper: https://github.com/StamusNetworks/bpfctrl.git
+
+**Vagrant env has most libraries and tools in `/data` folder.** Please use `root` user for the duration of this exercise. Many things may otherwise be installed locally for regular user and debugging those issues is not the purpose of this exercise.
+
+**Commands in this README serve illustrative purpose**. Please follow official Suricata documentation for updated reference. 
 
 ## Building a eBPF enable Suricata
 
 Suricata uses libbpf to interact with eBPF. The library is available at https://github.com/libbpf/libbpf
-and is already cloned in the libbpf directory inside the `vagrant` user home directory. Build it from
+and is already cloned in the libbpf directory inside the `/data` directory. Build it from
 the `src` directory with a traditional
 
 ```
 make
 make install
 ```
-
-Switch to `suricata` directory in home directory.
 
 To enable eBPF support you need to pass a series of flags to suricata configure:
 
@@ -31,22 +34,16 @@ make install
 make install-conf
 ```
 
-The 4.15 kernel of Ubuntu 18.04 is too old and the 4.18 kernel of Ubuntu 18.10 is buggy so we need to install
-a custom kernel. To do so download the following packages:
-
-* https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17/linux-modules-4.17.0-041700-generic_4.17.0-041700.201806041953_amd64.deb
-* https://kernel.ubuntu.com/~kernel-ppa/mainline/v4.17/linux-image-unsigned-4.17.0-041700-generic_4.17.0-041700.201806041953_amd64.deb
-
-And install them with `dpkg -i linux*deb`. Once done reboot the box.
-
 ## Setup
 
-
+### System
 To used pinned maps, you first have to mount the `bpf` pseudo filesystem ::
 
 ```
 sudo mount -t bpf none /sys/fs/bpf
 ```
+
+### Suricata
 
 Suricata configuration file section on af-packet needs to be updated to have the eBPF filter
 setup and pinned maps activated:
@@ -58,17 +55,20 @@ af-packet:
     pinned-maps: true
 ```
 
-By pointing directly to the eBPF filter in the source tree we will be able to update it
-easily later.
+By pointing directly to the eBPF filter in the source tree we will be able to update it easily later.
+
+### CLI tooling
+
+See [bfpctrl git page](https://github.com/StamusNetworks/bpfctrl.git) for setup instructions. However, do not clone entire linux source repository as instructed in readme. It is big. An unpacked kernel tarball is already prepared in `/data`.
 
 ## Usage
 
 ### Setting things up 
 
-Find an IP address you can communicate with on `enp0s8` and add it to the block list
-with `scbpf`.
+Find an IP address you can communicate with on primary vagrant box interface and add it to the block list
+with `bpfctrl`.
 
-The syntax is `scbpf -F /sys/fs/bpf/suricata-enp0s8-ipv4_drop -A -k 1.2.3.4` where `1.2.3.4` is the IP to add.
+The syntax is `bpfctrl -m /sys/fs/bpf/suricata-wlp4s0-ipv4_drop ipv4 --add 1.2.3.4=1` where `1.2.3.4` is the IP to add and `bpfctrl -m /sys/fs/bpf/suricata-wlp4s0-ipv4_drop ipv4 --remove 1.2.3.4` to remove.
 
 Once done, verify no traffic is seen anymore with this IP address.
 
