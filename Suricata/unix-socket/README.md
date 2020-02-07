@@ -65,8 +65,7 @@ pcap-file:
   checksum-checks: no
 ```
 
-
-## For loop is easy
+## Looping over values in bash
 
 ```
 for pcap in `find /pcapdir -type f -name '*.pcap'` ; do

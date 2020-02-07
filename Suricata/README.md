@@ -47,13 +47,13 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 16:45
-   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata)
+   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata/datasets)
    * [LUA scripting](/Suricata/lua)
 
 ## Day +1 :: Last but not least :: Feb 14 2020, *ends at 12:00*
 
  * 09:00 - 11:00
-   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+   * [open for requests](/Suricata)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
@@ -105,15 +105,14 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 15:45
-   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata)
+   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata/datasets)
    * [LUA scripting](/Suricata/lua)
 
 ## Day +1 :: Last but not least :: Feb 14 2020, *ends at 12:00*
 
- * 08:00 - 11:00
-   * [load pcap via unix socket](/Suricata/unix-socket)
-   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
- * 11:00 - 12:00
+ * 08:00 - 10:00
+   * [open for requests](/Suricata)
+ * 10:00 - 11:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ### Homeless topics

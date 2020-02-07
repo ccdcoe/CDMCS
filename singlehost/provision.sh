@@ -202,7 +202,6 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 }
 ' || exit 1
 
-
 docker ps -a | grep evebox | docker run -tid --rm \
   --network cdmcs \
   -p 5636:5636 \
@@ -453,7 +452,6 @@ rule-files:
  -  lua.rules
 sensor-name: CDMCS
 EOF
-
 
 echo "Adding datasets for SURICATA"
 FILE=/etc/suricata/cdmcs-datasets.yaml
