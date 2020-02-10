@@ -46,6 +46,8 @@ suricata --help
 ethtool -K $ETH tx off sg off gro off gso off lro off tso off
 ```
 
+This task is done automatically when starting recent Suricata.
+
 ### Simply running from cli
 
 ```
@@ -54,5 +56,5 @@ mkdir /tmp/log
 ```
 
 ```
-suricata --af-packet=$ETH -l /tmp -s /tmp/all.rules  -vvv
+suricata --af-packet=$ETH -l /tmp -S /tmp/all.rules  -vvv
 ```
