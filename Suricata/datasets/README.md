@@ -33,7 +33,7 @@ Note that rule starts with `isset` to verify existence of list element. You coul
 
 Use pcap files provided specified by the instructors. Vagrant VM traffic is too boring.
 
-* Create a `string` list of all unique **dns queries**, **http user-agents**, **http.uri, **ja3 fingerprints** and **TLS certificate issuers**;
+* Create a `string` list of all unique **dns queries**, **http user-agents**, **http.uri**, **ja3 fingerprints** and **TLS certificate issuers**;
   * lists should be generated **without getting any alerts**;
   * Enhance the prior solution to only add items to a list if certain criteria is met (instructors will provide this criteria in classroom);
   * Verify each list element with `base64 -d`;
