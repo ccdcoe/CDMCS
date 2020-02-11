@@ -165,6 +165,10 @@ Generate CSS stuff.
 Collect static CSS assets.
 
 ```
+python manage.py collectstatic
+```
+
+```
 python manage.py createsuperuser
 ```
 
