@@ -168,6 +168,8 @@ Collect static CSS assets.
 python manage.py collectstatic
 ```
 
+Create an admin user.
+
 ```
 python manage.py createsuperuser
 ```
