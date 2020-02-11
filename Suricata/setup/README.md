@@ -242,6 +242,13 @@ Alternatively, `make install-full` will combine `make install`, `make install-co
 <prefix>/bin/suricata -V
 ```
 
+If you have already generated different binaries in different prefix directories, you might have forgot the specific configuration options of a previous build. You can check that from the binary.
+
+```
+<prefix>/bin/suricata --build-info
+```
+
+
 You may experience library errors of you built dependencies by hand. For example, if you followed last section, you will now see this:
 
 ```
