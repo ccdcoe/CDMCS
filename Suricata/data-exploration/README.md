@@ -168,7 +168,29 @@ Collect static CSS assets.
 python manage.py createsuperuser
 ```
 
-Then see [local cofiguration](https://github.com/ccdcoe/CDMCS/blob/2019/Suricata/vagrant/singlehost/provision.sh#L652) for pointing scirius to elastic.
+Then we need to create `local_settings.py` file in `scirius` directory.
+
+```python
+#!/usr/bin/env python
+import os
+
+ELASTICSEARCH_LOGSTASH_INDEX = "suricata-"
+ELASTICSEARCH_LOGSTASH_ALERT_INDEX = "suricata-"
+ELASTICSEARCH_VERSION = os.environ["ELASTICSEARCH_VERSION"] if "ELASTICSEARCH_VERSION" in os.environ else 7
+ELASTICSEARCH_KEYWORD = "keyword"
+ELASTICSEARCH_LOGSTASH_TIMESTAMPING = os.environ['ELASTICSEARCH_LOGSTASH_TIMESTAMPING'] if "ELASTICSEARCH_LOGSTASH_TIMESTAMPING" in os.environ else "daily"
+ELASTICSEARCH_ADDRESS = os.environ['ELASTICSEARCH_ADDRESS'] if "ELASTICSEARCH_ADDRESS" in os.environ else "elasticsearch:9200"
+
+ALLOWED_HOSTS = os.environ['ALLOWED_HOSTS'].split(",") if "ALLOWED_HOSTS" in os.environ else ["localhost"]
+SURICATA_NAME_IS_HOSTNAME = True
+SURICATA_UNIX_SOCKET = os.environ['SURICATA_UNIX_SOCKET'] if "SURICATA_UNIX_SOCKET" in os.environ and os.environ["SURICATA_UNIX_SOCKET"] != "" else None
+
+#USE_KIBANA = True
+#KIBANA_URL = "http://kibana:5601"
+#KIBANA_INDEX = ".kibana"
+#USE_EVEBOX = True
+#EVEBOX_ADDRESS = "evebox:5636"
+```
 
 ## Kibana
 
