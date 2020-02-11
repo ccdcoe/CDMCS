@@ -242,7 +242,14 @@ Alternatively, `make install-full` will combine `make install`, `make install-co
 <prefix>/bin/suricata -V
 ```
 
-You may experience library errors of you built dependencies by hand. For example, if you followed last section, you will now see this:
+If you have already generated different binaries in different prefix directories, you might have forgot the specific configuration options of a previous build. You can check that from the binary.
+
+```
+<prefix>/bin/suricata --build-info
+```
+
+
+You may experience library errors if you built dependencies by hand. For example, if you followed last section, you will now see this:
 
 ```
 ./bin/suricata: error while loading shared libraries: libhs.so.5: cannot open shared object file: No such file or directory
