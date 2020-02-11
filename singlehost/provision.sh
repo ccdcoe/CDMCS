@@ -895,7 +895,6 @@ EOF
 
 FILE=/etc/systemd/system/moloch-capture.service
 grep "moloch-capture" $FILE || cat > $FILE <<EOF
-PIDFILE=/var/run/capture.pid
 [Unit]
 Description=Moloch Capture
 After=network.target moloch-wise.service moloch-viewer.service
@@ -909,6 +908,7 @@ WorkingDirectory=/data/moloch
 LimitCORE=infinity
 LimitMEMLOCK=infinity
 SyslogIdentifier=moloch-capture
+PIDFILE=/var/run/capture.pid
 
 [Install]
 WantedBy=multi-user.target
