@@ -249,7 +249,7 @@ If you have already generated different binaries in different prefix directories
 ```
 
 
-You may experience library errors of you built dependencies by hand. For example, if you followed last section, you will now see this:
+You may experience library errors if you built dependencies by hand. For example, if you followed last section, you will now see this:
 
 ```
 ./bin/suricata: error while loading shared libraries: libhs.so.5: cannot open shared object file: No such file or directory
