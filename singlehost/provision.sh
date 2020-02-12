@@ -908,7 +908,7 @@ WorkingDirectory=/data/moloch
 LimitCORE=infinity
 LimitMEMLOCK=infinity
 SyslogIdentifier=moloch-capture
-PIDFILE=/var/run/capture.pid
+PIDFile=/var/run/capture.pid
 
 [Install]
 WantedBy=multi-user.target
