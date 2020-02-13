@@ -39,11 +39,11 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:30 - 16:45
    * [elastic clustering](/Suricata/indexing#clustered-elasticsearch),[data pipelining](/Suricata/indexing/000-pipelines.ipynb)
    * [redis](/Suricata/indexing#redis),[redis api](/Suricata/indexing/001-redis.ipynb)
-   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
 
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
  * 09:00 - 12:30
+   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
    * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 16:45
