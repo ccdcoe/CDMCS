@@ -211,7 +211,7 @@ docker run \
   -e "SERVER_NAME=kibana" \
   -e "ELASTICSEARCH_URL=http://elastic:9200" \ # Deperecated in elastic 7 in favor of ELASTICSEARCH_HOSTS
   -p 5601:5601 \
-    docker.elastic.co/kibana/kibana-oss:7.5.2
+    docker.elastic.co/kibana/kibana-oss:7.6.0
 ```
 
 Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs. But most useful tab by far is `Dev tools` which functions as autocomplete-enabled IDE for elastic API. You can test any previously used curl or python queries in this tab.

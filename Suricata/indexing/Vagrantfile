@@ -25,9 +25,9 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provision "docker", images: [
       "redis",
-      "docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2",
-      "docker.elastic.co/kibana/kibana-oss:7.5.2",
-      "docker.elastic.co/logstash/logstash-oss:7.5.2",
+      "docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0",
+      "docker.elastic.co/kibana/kibana-oss:7.6.0",
+      "docker.elastic.co/logstash/logstash-oss:7.6.0",
       "jasonish/evebox:master"
     ]
     box.vm.provision "shell", path: "provision.sh"

@@ -27,7 +27,7 @@ docker run \
   -e "discovery.type=single-node" \                         # For single-node testing only,  dont use for cluster
   -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \                     # Minimal amount of Java heap to avoid running out of memory in Vagrant VM
   -e "cluster.name=cdmcs" \                                 # Cluster name, relevant for multihost clustered setup
-    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2 # Image source itself with version tag
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0 # Image source itself with version tag
 ```
 
 Then verify connectivity via `cat` api. Substitute `localhost` with box private IP if checking from hypervisor host, or Vagrant public IP when checking from remote host.
@@ -123,7 +123,7 @@ touch $PWD/elasticsearch.yml; docker run \
   -p 9300:9300 \
   -v $PWD/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
   -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
-    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0
 ```
 
 Firstly, all nodes should be configured to belong to common cluster.
@@ -142,7 +142,7 @@ docker run \
   -p 9300:9300 \
   -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
   -e "cluster.name=josephine" \
-    docker.elastic.co/elasticsearch/elasticsearch-oss:7.5.2
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0
 ```
 
 Each node can be configured for a variety of roles. Single node can fulfill many roles, though specialized workers are common in production.

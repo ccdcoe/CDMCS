@@ -22,7 +22,7 @@ grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
 USER="vagrant"
 
 # versions
-ELASTIC_VERSION="7.5.2"
+ELASTIC_VERSION="7.6.0"
 INFLUX_VERSION="1.7.9"
 GRAFANA_VERSION="6.6.0"
 TELEGRAF_VERSION="1.13.2"
@@ -373,6 +373,8 @@ alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"fa
 alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
 alert http any any -> any any (msg:"CDMCS: Listed UA seen"; http.user_agent; to_sha256; dataset:isset,ua-seen; classtype:policy-violation; sid:3000004; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 alert dns any any -> any any (msg:"CDMCS: Listed DNS hash seen"; dns.query; to_sha256; dataset:isset,dns-sha256-seen; classtype:policy-violation; sid:3000005; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
+alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Bypass content delivery"; http.host; dataset:isset,http-content-delivery, type string, state /var/lib/suricata/content-deliver.lst; bypass; sid:3000006; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
+alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Collect unique user-agents"; http.user_agent; dataset:set,http-user-agents, type string, state /var/lib/suricata/http-user-agents.lst; bypass; sid:3000007; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
 EOF
 
 FILE=/var/lib/suricata/rules/lua.rules
@@ -675,6 +677,8 @@ suricata-update
 sleep 10
 suricatasc -c "reload-rules" 
 suricatasc -c "dataset-add ua-seen sha256 53c5f12948a236c0a34e4cb17c51a337ef61524cb4363023f242115f11555d1f"
+suricatasc -c "dataset-add http-content-delivery string $(echo -n download.windowsupdate.com | base64)"
+suricatasc -c "dataset-add http-content-delivery string $(echo -n security.debian.com | base64)"
 
 echo "Provision moloch"
 cd $PKGDIR
