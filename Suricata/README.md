@@ -91,17 +91,17 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Day 2 :: Group up, scale out :: Feb 12 2020
 
  * 08:00 - 12:00
+   * [exploring eve.json with basic python](/Suricata/data-exploration)
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
-   * [indexing alert log](/Suricata/indexing#playing-with-python)
 
  * 13:30 - 15:45
-   * [elastic clustering](/Suricata/advanced-indexing#clustered-elasticsearch)
-   * [redis](/Suricata/advanced-indexing#redis),[redis api](/Suricata/advanced-indexing/001-redis.ipynb),[data pipelining](/Suricata/advanced-indexing/000-pipelines.ipynb)
-   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch),[data pipelining](/Suricata/indexing/000-pipelines.ipynb)
+   * [redis](/Suricata/indexing#redis),[redis api](/Suricata/indexing/001-redis.ipynb)
 
 ## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
 
  * 08:00 - 12:00
+   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
    * [eBPF and xdp](/Suricata/ebpf)
 
  * 13:30 - 15:45
