@@ -21,7 +21,7 @@ add-apt-repository -y "deb [arch=amd64] https://download.docker.com/linux/ubuntu
 
 apt-get update -q
 echo "wireshark-common wireshark-common/install-setuid boolean true" | debconf-set-selections # Avoid the wireshark install prompt
-apt-get install -q -y docker-ce docker-ce-cli containerd.io python3 python3-pip git htop jq iftop iproute2 net-tools dnsutils strace dstat vim nano tmux screen curl mlocate tcpdump bash-completion tree telnet man-db pcregrep dwdiff aptitude wireshark tshark ethtool chromium-browser firefox zerofree sudo snapd $VIRTUALBOX
+apt-get install -q -y docker-ce docker-ce-cli containerd.io python3 python3-pip git htop jq iftop iproute2 net-tools dnsutils strace dstat vim nano tmux screen curl mlocate tcpdump bash-completion tree telnet man-db pcregrep dwdiff aptitude wireshark tshark ethtool chromium-browser firefox sudo snapd $VIRTUALBOX
 snap install yq # If snapd was just installed, the user might need to log out and back in before installing, but missing yq is a minor problem, so I am not going to bother here
 pip3 install --upgrade pip
 apt-get -q -y autoremove
@@ -44,8 +44,7 @@ adduser student docker
 adduser student vboxusers
 echo 'student ALL=(ALL) ALL' > /etc/sudoers.d/student
 
-cd /home/student
-git clone https://github.com/ccdcoe/CDMCS.git
+su -l student -c 'cd /home/student; git clone https://github.com/ccdcoe/CDMCS.git'
 
 # Pre-download vagrant boxes
 su -l student -c 'vagrant box add --provider virtualbox --force --clean ubuntu/bionic64'
