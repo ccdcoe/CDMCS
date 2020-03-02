@@ -18,13 +18,13 @@ datasets:
 ```
 
 ```
-alert http any any -> any any (msg:"HTTP user-agent list"; http.user-agent; to_sha256; dataset:isset,ua-sha256; sid:123; rev:1;)
+alert http any any -> any any (msg:"HTTP user-agent list"; http.user_agent; to_sha256; dataset:isset,ua-sha256; sid:123; rev:1;)
 ```
 
 Alternatively, the rule could be rewritten to contain all needed params. Modifying `suricata.yaml` would not be needed in that case.
 
 ```
-alert http any any -> any any (msg:"HTTP user-agent list"; http.user-agent; to_sha256; dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst; sid:123; rev:1;)
+alert http any any -> any any (msg:"HTTP user-agent list"; http.user_agent; to_sha256; dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst; sid:123; rev:1;)
 ```
 
 Note that rule starts with `isset` to verify existence of list element. You could also use `isnotset` to check for element to be absent and `set` to add a missing element to the list. Items can be added to the set manually via `dataset-add` unix socket command.
