@@ -224,6 +224,28 @@ Then verify that nodes are listed with proper roles via `_cat` API.
 curl PROXY:PORT/_cat/nodes
 ```
 
+## Shard allocation and cluster API
+
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/shard-allocation-filtering.html
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/disk-allocator.html
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html
+* https://www.elastic.co/guide/en/elasticsearch/reference/current/shards-allocation.html
+* https://gist.github.com/markuskont/734a9ec946bf40801494f14b368a0668
+
+Suppose our elastic cluster is distributed across multiple racks or datacenters. We can define custom attributes for each node. For example, we could configure `node.attr.datacenter: $NAME` or `node.attr.rack_id: $NAME`. Note that both `datacenter` and `rack_id` are totally custom attributes added by us. We could also create attribute `purpose` with values `hot`, `cold`, `archive`, and configure all new indices to be created on `hot` nodes.
+
+Then we can make our cluster aware of those settings (**only needs to be done once per cluster**).
+
+```
+curl -XPUT -ss -H'Content-Type: application/json' "localhost:9200/_cluster/settings" -d '{
+  "transient" : {
+      "cluster.routing.allocation.awareness.attributes": "datacenter"
+  }
+}'
+```
+
+Once done, our replicas should then be distributed over datacenters.
+
 # Collecting events from Suricata
 
 Suricata supports following outputs:
