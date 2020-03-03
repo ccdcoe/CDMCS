@@ -265,7 +265,7 @@ A rule consists of the following:
 * Facebook certificate
 * DNS domain with .su suffix
 * DNS zone transfer
-* Detection of popular default user-agesnts:
+* Detection of popular default user-agents:
   * Python;
   * Nikto;
   * Dirbuster;
