@@ -63,7 +63,7 @@ suricata --af-packet=$ETH -l /tmp -S /tmp/all.rules  -vvv
 
 ### Docker install
 
-Note that Suricata fowrks just fine when set up using docker. [There is an official image for that](https://github.com/jasonish/docker-suricata#usage). Thought building one for yourself is not too difficult.
+Note that Suricata works just fine when set up using docker. [There is an official image for that](https://github.com/jasonish/docker-suricata#usage). Thought building one for yourself is not too difficult.
 
 ```
 docker run --rm -ti jasonish/suricata --help
