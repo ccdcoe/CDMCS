@@ -522,14 +522,18 @@ In short, this is your typical to-do list in `suricata.yaml` after fresh install
 ### Exercises
 
  * Configure suricata with your Vagrant box uplink subnet as home network;
- * Run Suricata in daemon mode with up to date rules;
+  * Do not neglect IPv6!!!
+ * Listen on all Vagrant box interfaces with af-packet;
+  * Make sure to use zero-copy mode;
+ * Run Suricata in daemon mode with two different rule files;
  * Configure `/vagrant/logs` as destination for `eve.json`;
+ * Configure suricata to ignore encrypted traffic;
  * Enable SIP protocol logging;
    * Test using pcaps from this site - https://wiki.wireshark.org/SampleCaptures
  * Enable ja3 and ja3s hashing support
  * Read some pcap files with non-daemonized version of suricata from [malware traffic analysis site](http://malware-traffic-analysis.net/);
-   * Any pcap file is fine, it's mainly for generating some interesting data for next exercises
    * Look for zip files. Password is usually `INFECTED`
+   * Configure a separate log files for HTTP and TLS eve types;
 
 ---
 
