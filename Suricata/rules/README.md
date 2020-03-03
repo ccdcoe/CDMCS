@@ -274,7 +274,6 @@ A rule consists of the following:
 
 ### More complex tasks once we have covered configuration
 
-* TLS connection from HOME_NET to toto.com domain (we need to exclude toto.communism.fr)
 * Alert on JPEG image taken with a NIKON D700 (example: http://home.regit.org/wp-content/uploads/2017/07/20170705_0237.jpg)
   * Hint - you need to configure Suricata to give you this information;
 * Set up a simple web server with `python3 -m http.server` and create 5 files with some content in it;
