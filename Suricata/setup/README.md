@@ -328,20 +328,12 @@ If a configuration option is not specified in  the configuration file, Suricata 
 suricata -T -vvv
 ```
 
-Show active config parameters
+`suricata.yaml` is like a documentation in itself. See the file without comments. Show active config parameters
 
 ```
 suricata --dump-config
 ```
 
-See only active configuration. `suricata.yaml` is like a documentation in itself. See the file without comments.
-
-```
-grep -v -E '^\s*#' /etc/suricata/suricata.yaml
-# remove empty lines as well
-grep -v -E '^\s*#' /etc/suricata/suricata.yaml | grep -v '^$'
-sed -i -e 's/#.*$//' -e '/^\s*$/d' /etc/suricata/suricata.yaml
-```
 
 ## Managing rules
 
