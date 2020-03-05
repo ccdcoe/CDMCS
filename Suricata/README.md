@@ -80,7 +80,7 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [what is Suricata](/Suricata/rules#intro)
    * [intro to rules](/Suricata/rules#rules)
 
-## Day 1 :: Single box, setting up :: Feb 11 2020
+## Day 1 :: Single box, setting up :: Mar 03 2020
 
  * 08:00 - 11:00
    * [build from source](/Suricata/setup/#Build)
@@ -88,27 +88,25 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [config](/Suricata/setup/#Config)
    * [rules, cont.](/Suricata/rules)
 
-## Day 2 :: Group up, scale out :: Feb 12 2020
+## Day 2 :: Group up, scale out :: Mar 04 2020
 
  * 08:00 - 11:00
-   * [exploring eve.json with basic python](/Suricata/data-exploration)
    * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
+   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch)
 
  * 12:30 - 15:45
-   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch),[data pipelining](/Suricata/indexing/000-pipelines.ipynb)
-   * [redis](/Suricata/indexing#redis),[redis api](/Suricata/indexing/001-redis.ipynb)
+   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
 
-## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
+## Day 3 :: Advanced stuff, hipster tech :: Mar 05 2020
 
  * 08:00 - 11:00
-   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
    * [eBPF and xdp](/Suricata/ebpf)
 
  * 12:30 - 15:45
    * [unix socket](/Suricata/unix-socket), [datasets](/Suricata/datasets)
    * [LUA scripting](/Suricata/lua)
 
-## Day +1 :: Last but not least :: Feb 14 2020, *ends at 11:00*
+## Day +1 :: Last but not least :: Mar 06 2020, *ends at 11:00*
 
  * 08:00 - 10:00
    * [open for requests](/Suricata)

@@ -216,6 +216,40 @@ docker run \
 
 Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs. But most useful tab by far is `Dev tools` which functions as autocomplete-enabled IDE for elastic API. You can test any previously used curl or python queries in this tab.
 
+### Tasks
+
+#### Visualizations
+
+Create visualizations for the following conditions and types
+
+* Date histograms:
+  * Term aggregations: 
+    * `event_type`
+    * `alert.signature`
+    * `alert.category`
+  * Unique count of:
+    * `src_ip`
+    * `dest_ip`
+    * `signature_id`
+    * dns domain names
+    * http user agents
+    * http host and URI
+  * Try both logarithmic and linear scaling
+* Data tables:
+  * Categories
+  * Signatures
+  * Alert severity
+* Word clouds:
+  * Signatures
+  * Categories
+  * DNS domains
+
+#### Queries
+
+Filter out events for following conditions
+* `alert.severity == 1`
+* `event_type == alert`
+
 ## Alerta
 
 Alerting tends to turn whatever tool is used into a log server. E-mail is especially bad for this. But you need to know what the situation is right now, how the alert levels have elevated or dropped, how the alerts correspond to your assets, how the alerts are correlated, etc. Alerta is the tool for doing that.
