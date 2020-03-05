@@ -217,6 +217,7 @@ You should be able to observe new alerts in fast.log and eve.json.
  * Write a simple lua rule that implements a JA3 signature blacklist;
     * Modify that rule to function as a whilelist, i.e. you should get an alert when unapproved TLS client communicates on the network;
  * Write a rule that detects a self-signed certificate;
+    * https://badssl.com/dashboard/
  * Write a simple that checks when an observed TLS certificate was generated;
     * Alert when certificate is very recent, e.g. newer than 3 hours;
     * Add the calculated age of certificate to alert as flow variable;
