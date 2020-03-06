@@ -26,7 +26,6 @@ Vagrant.configure(2) do |config|
     end
     box.vm.provision "shell", path: "provision.sh"
     box.vm.provision "shell", inline: $provision_script
-    box.vm.synced_folder "../vagrant/singlehost", "/singlehost"
     box.vm.synced_folder "./", "/home/vagrant/localbox"
   end
 end
