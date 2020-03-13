@@ -24,7 +24,7 @@ See:
 
  * [Suricata :: Feb 10-14 2020](/Suricata/)
  * [Suricata mobile :: Mar 02-06 2020](/Suricata#suricata-mobile-course---march-02-06-2020)
- * [Moloch :: Jun 01-05 2020](/Moloch/)
+ * ~~[Moloch :: Jun 01-05 2020](/Moloch/)~~ **Canceled**
 
 # Older Classes
 
