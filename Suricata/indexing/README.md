@@ -175,11 +175,10 @@ network:
   publish_host: ACCESSIBLE_IP_OR_ADDRESS
 ```
 
-HTTP listener is configured separately.
+HTTP listener can be configured separately.
 
 ```
 http:
-  enabled: true
   host: 0.0.0.0
 ```
 

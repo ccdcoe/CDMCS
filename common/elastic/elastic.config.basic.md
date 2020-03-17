@@ -60,7 +60,6 @@ path.logs: /var/log/elasticsearch
  * all roles should be enabled on single node
 
 ```
-http.enabled: true
 http.host: 127.0.0.1
 
 node.data: true
