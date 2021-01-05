@@ -294,15 +294,16 @@ output {
 }
 EOF
 
-# Not enough memory on small course vm
-#docker ps -a | grep logstash || docker run -dit \
-#  --name logstash \
-#  -h logstash \
-#  --network cdmcs \
-#  -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ \
-#  -e "ES_JAVA_OPTS=-Xms${LOGSTASH_MEM}m -Xmx${LOGSTASH_MEM}m" \
-#  --restart unless-stopped \
-#    $DOCKER_LOGSTASH
+docker ps -a | grep logstash || docker run -dit \
+  --name logstash \
+  -h logstash \
+  --network cdmcs \
+  -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ \
+  -e "ES_JAVA_OPTS=-Xms${LOGSTASH_MEM}m -Xmx${LOGSTASH_MEM}m" \
+  --restart unless-stopped \
+    $DOCKER_LOGSTASH
+
+docker stop logstash
 
 FILE=/var/lib/suricata/scripts/alert2alerta.py
 [[ -f $FILE ]] || cat > $FILE <<EOF
