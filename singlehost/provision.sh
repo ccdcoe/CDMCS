@@ -1,3 +1,16 @@
+if [[ -n $(ip link show | grep eth0) ]]; then
+  IFACE_EXT="eth0"
+  IFACE_INT="eth1"
+  IFACE_PATTERN="eth"
+else
+  IFACE_EXT="enp0s3"
+  IFACE_INT="enp0s8"
+  IFACE_PATTERN="enp"
+fi
+USER="vagrant"
+PKGDIR=/vagrant/pkgs
+HOME=/home/vagrant
+
 check_service(){
   systemctl daemon-reload
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
@@ -8,18 +21,14 @@ check_service(){
 # params
 DEBUG=true
 EXPOSE=127.0.0.1
-PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 
-HOME=/home/vagrant
 GOPATH=$HOME/go/
 GOROOT=$HOME/.local/go
 PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin:$HOME/.local/go
 
 grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
 grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
-
-USER="vagrant"
 
 # versions
 ELASTIC_VERSION="7.6.0"
@@ -48,16 +57,6 @@ MOLOCH="moloch_${MOLOCH_VERSION}-1_amd64.deb"
 
 ELASTSIC_MEM=512
 LOGSTASH_MEM=512
-
-if [[ -n $(ip link show | grep eth0) ]]; then
-  IFACE_EXT="eth0"
-  IFACE_INT="eth1"
-  IFACE_PATTERN="eth"
-else
-  IFACE_EXT="enp0s3"
-  IFACE_INT="enp0s8"
-  IFACE_PATTERN="enp"
-fi
 
 mkdir -p $PKGDIR
 
