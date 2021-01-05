@@ -13,21 +13,21 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Week 1
 
-### Session 1
+### Session 1 - 26 Jan 11:00 EET / 09:00 UTC
  * [Intro](/common/day_intro.md)
  * [singlehost, vagrant](/singlehost)
  * [what is Suricata](/Suricata/rules#intro)
  <!-- * [tooling intro - docker / jupyter]() -->
  * [first rule, suricata -R ...]()
 
-### Session 2
+### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
  * [EVE log, jq magics, bash sorting]()
  * [EVE log tasks, MTA pcap]()
      * extract N fields
  * [tcpreplay / live capture]()
  * [second rule]()
 
-### Session 3
+### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
  * [Rulesets dataframe/notebook show and tell]()
  * [MTA data exploration, EVE JSON explore]()
      * [task - building a timeline of attacks / write simple report]()
@@ -35,16 +35,16 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ## Week 2
 
-### Session 4
+### Session 4 - 2 Feb 11:00 EET / 09:00 UTC
  * [building suricata]()
     * [profiling ruleset]()
  * [suricata.yaml]()
 
-### Session 5
+### Session 5 - 3 Feb 11:00 EET / 09:00 UTC
  * [datasets]()
  * [lua (talk)]()
 
-### Session 6
+### Session 6 - 4 Feb 11:00 EET / 09:00 UTC
  * [docker run elasticsearch?]()
  * [shipper notebook / what is bulk api / logstash config and filebeat config]()
  * [evebox, kibana]()
