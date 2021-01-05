@@ -9,121 +9,42 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 > Suricata is a free and open source, mature, fast and robust network threat detection engine. The Suricata engine is capable of real time intrusion detection (IDS), inline intrusion prevention (IPS), network security monitoring (NSM) and offline pcap processing.
 
-# Suricata in-house course (CDMCS M1) - February 10-14, 2020
+# Suricata Remote
 
-Provided timeline is preliminary and will develop according to the actual progress of the class.
+## Week 1
 
-## Day 0 :: Intro:: Feb 10 2020, *starts at 13:00!*
+### Session 1
+ * [Intro](/common/day_intro.md)
+ * [singlehost, vagrant](/singlehost)
+ * [what is Suricata](/Suricata/rules#intro)
+ <!-- * [tooling intro - docker / jupyter]() -->
+ * [first rule, suricata -R ...]()
 
- * 13:00 - 14:45
-   * [Intro](/common/day_intro.md), [singlehost](/singlehost)
-   * [vagrant](/common/vagrant/), [docker](/common/docker)
- * 15:00 - 16:45
-   * [what is Suricata](/Suricata/rules#intro)
-   * [intro to rules](/Suricata/rules#rules)
+### Session 2
+ * [EVE log, jq magics, bash sorting]()
+ * [EVE log tasks, MTA pcap]()
+     * extract N fields
+ * [tcpreplay / live capture]()
+ * [second rule]()
 
-## Day 1 :: Single box, setting up :: Feb 11 2020
+### Session 3
+ * [Rulesets dataframe/notebook show and tell]()
+ * [MTA data exploration, EVE JSON explore]()
+     * [task - building a timeline of attacks / write simple report]()
+ * [suricata-update]()
 
- * 09:00 - 12:30
-   * [build from source](/Suricata/setup/#Build)
- * 13:30 - 16:45
-   * [config](/Suricata/setup/#Config)
-   * [rules, cont.](/Suricata/rules)
+## Week 2
 
-## Day 2 :: Group up, scale out :: Feb 12 2020
+### Session 4
+ * [building suricata]()
+    * [profiling ruleset]()
+ * [suricata.yaml]()
 
- * 09:00 - 12:30
-   * [exploring eve.json with basic python](/Suricata/data-exploration)
-   * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
+### Session 5
+ * [datasets]()
+ * [lua (talk)]()
 
- * 13:30 - 16:45
-   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch),[data pipelining](/Suricata/indexing/000-pipelines.ipynb)
-   * [redis](/Suricata/indexing#redis),[redis api](/Suricata/indexing/001-redis.ipynb)
-
-## Day 3 :: Advanced stuff, hipster tech :: Feb 13 2020
-
- * 09:00 - 12:30
-   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
-   * [eBPF and xdp](/Suricata/ebpf)
-
- * 13:30 - 16:45
-   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata/datasets)
-   * [LUA scripting](/Suricata/lua)
-
-## Day +1 :: Last but not least :: Feb 14 2020, *ends at 12:00*
-
- * 09:00 - 11:00
-   * [open for requests](/Suricata)
- * 11:00 - 12:00
-   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
-
-### Before You Come To Class please browse trough ..
-
- * [prereqs](https://github.com/ccdcoe/CDMCS/tree/master/prerequisites)
- * [singlehost](https://github.com/ccdcoe/CDMCS/tree/master/Suricata/vagrant/singlehost)
- * [suricata](https://suricata.readthedocs.io/en/latest/)
- * [vagrant](https://github.com/ccdcoe/CDMCS/tree/master/common/vagrant)
-
-
-----
-
-# Suricata mobile course - March 02-06, 2020
-
-Provided timeline is preliminary and will develop according to the actual progress of the class.
-
-## Day 0 :: Intro:: Mar 02 2020, *starts at 11:00*
-
- * 11:00 - 12:30
-   * [Intro](/common/day_intro.md), [singlehost](/singlehost)
-   * [vagrant](/common/vagrant/), [docker](/common/docker)
- * 14:00 - 15:45
-   * [what is Suricata](/Suricata/rules#intro)
-   * [intro to rules](/Suricata/rules#rules)
-
-## Day 1 :: Single box, setting up :: Mar 03 2020
-
- * 08:00 - 11:00
-   * [build from source](/Suricata/setup/#Build)
- * 12:30 - 15:45
-   * [config](/Suricata/setup/#Config)
-   * [rules, cont.](/Suricata/rules)
-
-## Day 2 :: Group up, scale out :: Mar 04 2020
-
- * 08:00 - 11:00
-   * [elasticsearch, intro](/Suricata/indexing#getting-started-with-elastic)
-   * [elastic clustering](/Suricata/indexing#clustered-elasticsearch)
-
- * 12:30 - 15:45
-   * [evebox](/Suricata/data-exploration#evebox), [scirius](/Suricata/data-exploration#scirius), [kibana](/Suricata/data-exploration#kibana)
-
-## Day 3 :: Advanced stuff, hipster tech :: Mar 05 2020
-
- * 08:00 - 11:00
-   * [eBPF and xdp](/Suricata/ebpf)
-
- * 12:30 - 15:45
-   * [unix socket](/Suricata/unix-socket), [datasets](/Suricata/datasets)
-   * [LUA scripting](/Suricata/lua)
-
-## Day +1 :: Last but not least :: Mar 06 2020, *ends at 11:00*
-
- * 08:00 - 10:00
-   * [open for requests](/Suricata)
- * 10:00 - 11:00
-   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
-
-### Homeless topics
- * [IPS]()
- * [Alerta]()
- * [septun/RSS]()
- * [suricata stats to TICK]()
-
-
-### Before You Come To Class please browse trough ..
-
- * [prereqs](https://github.com/ccdcoe/CDMCS/tree/master/prerequisites)
- * [singlehost](https://github.com/ccdcoe/CDMCS/tree/master/Suricata/vagrant/singlehost)
- * [suricata](https://suricata.readthedocs.io/en/latest/)
- * [vagrant](https://github.com/ccdcoe/CDMCS/tree/master/common/vagrant)
-
+### Session 6
+ * [docker run elasticsearch?]()
+ * [shipper notebook / what is bulk api / logstash config and filebeat config]()
+ * [evebox, kibana]()
