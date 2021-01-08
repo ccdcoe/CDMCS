@@ -25,18 +25,18 @@ WGET_PARAMS="-4 -q"
 
 GOPATH=$HOME/go/
 GOROOT=$HOME/.local/go
-PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin:$HOME/.local/go
+PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin
 
-grep PATH $HOME/.bashrc || echo "export PATH=$PATH" >> $HOME/.bashrc
-grep PATH /root/.bashrc || echo "export PATH=$PATH" >> /root/.bashrc
+grep PATH /etc/environment || echo "export PATH=$PATH" >> /etc/environment
 
 # versions
-ELASTIC_VERSION="7.6.0"
-INFLUX_VERSION="1.7.9"
-GRAFANA_VERSION="6.6.0"
-TELEGRAF_VERSION="1.13.2"
-GOLANG_VERSION="1.13.6"
-MOLOCH_VERSION="2.2.1"
+UBUNTU_VERSION="20.04"
+ELASTIC_VERSION="7.10.1"
+INFLUX_VERSION="1.8.3"
+GRAFANA_VERSION="7.3.6"
+TELEGRAF_VERSION="1.16.2"
+GOLANG_VERSION="1.15.6"
+MOLOCH_VERSION="2.7.1"
 
 ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
 KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
@@ -53,7 +53,8 @@ DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:${ELASTIC_VERSION}"
 DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
 DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
-MOLOCH="moloch_${MOLOCH_VERSION}-1_amd64.deb"
+MOLOCH_FILE="moloch_${MOLOCH_VERSION}-1_amd64.deb"
+MOLOCH_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${MOLOCH_FILE}"
 
 ELASTSIC_MEM=512
 LOGSTASH_MEM=512
@@ -96,7 +97,7 @@ docker ps -a | grep redis || docker run -dit \
     redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install jq wget curl pcregrep python-minimal python-pip python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl pcregrep >> /vagrant/provision.log 2>&1
+apt-get update && apt-get -y install jq wget curl pcregrep python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl pcregrep >> /vagrant/provision.log || exit 1
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -204,10 +205,9 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 docker ps -a | grep evebox | docker run -tid --rm \
   --network cdmcs \
   -p 5636:5636 \
-    jasonish/evebox:master  \
+    jasonish/evebox:latest  \
       -e http://elastic:9200 \
       --index suricata \
-      --elasticsearch-keyword keyword \
       --host 0.0.0.0 \
 
 echo "Provisioning RSYSLOG"
@@ -682,15 +682,17 @@ suricatasc -c "dataset-add http-content-delivery string $(echo -n security.debia
 
 echo "Provision moloch"
 cd $PKGDIR
-[[ -f $MOLOCH ]] || wget $WGET_PARAMS https://files.molo.ch/builds/ubuntu-18.04/$MOLOCH
-dpkg -s moloch || dpkg -i $MOLOCH
+[[ -f $MOLOCH_FILE ]] || wget $WGET_PARAMS $MOLOCH_LINK
+
+dpkg -s moloch || dpkg -i $MOLOCH_FILE
+apt-get -f -y install
 
 echo "Configuring moloch"
 delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
 FILE=/data/moloch/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
-sed -i "s/MOLOCH_ELASTICSEARCH/localhost:9200/g"  config.ini
+sed -i "s/MOLOCH_ELASTICSEARCH/http:\/\/localhost:9200/g"  config.ini
 sed -i "s/MOLOCH_INTERFACE/$ifaces/g"             config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
 sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini

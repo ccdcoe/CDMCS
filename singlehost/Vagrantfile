@@ -1,11 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$script = <<-SCRIPT
-systemctl stop systemd-resolved.service
-echo "nameserver 1.1.1.1" > /etc/resolv.conf
-SCRIPT
-
 $docker = <<-SCRIPT
 export DEBIAN_FRONTEND=noninteractive
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
@@ -32,7 +27,7 @@ MEM=4096
 
 Vagrant.configure(2) do |config|
   config.vm.define NAME do |box|
-    box.vm.box = "ubuntu/bionic64"
+    box.vm.box = "generic/ubuntu2004"
     box.vm.hostname = NAME
     box.vm.network :private_network, ip: "192.168.10.11"
     box.vm.provider :virtualbox do |vb|
@@ -42,19 +37,17 @@ Vagrant.configure(2) do |config|
     box.vm.provider "libvirt" do |v, override|
       v.cpus = CPU
       v.memory = MEM
-      override.vm.box = "generic/ubuntu1804"
+      override.vm.box = "generic/ubuntu2004"
     end
     box.vm.provider :hyperv do |hv, override|
       hv.cpus = CPU
       hv.maxmemory = MEM
-      override.vm.box = "generic/ubuntu1804"
-      #override.vm.provision "shell", inline: $script
+      override.vm.box = "generic/ubuntu2004"
     end
     box.vm.provider :vmware_desktop do |v, override|
       v.vmx["numvcpus"] = CPU
       v.vmx["memsize"] = MEM
-      override.vm.box = "generic/ubuntu1804"
-      #override.vm.provision "shell", inline: $script
+      override.vm.box = "generic/ubuntu2004"
     end
     box.vm.provision "shell", inline: $docker
     box.vm.provision "shell", path: "provision.sh"
