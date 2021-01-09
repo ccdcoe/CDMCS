@@ -43,6 +43,7 @@ Vagrant.configure(2) do |config|
       hv.cpus = CPU
       hv.maxmemory = MEM
       override.vm.box = "generic/ubuntu2004"
+      override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
     box.vm.provider :vmware_desktop do |v, override|
       v.vmx["numvcpus"] = CPU
