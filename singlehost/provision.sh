@@ -1,3 +1,10 @@
+#!/bin/bash
+
+USER="vagrant"
+PKGDIR=/vagrant/pkgs
+HOME=/home/vagrant
+PCAP_REPLAY=/srv/replay
+
 if [[ -n $(ip link show | grep eth0) ]]; then
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
@@ -7,15 +14,17 @@ else
   IFACE_INT="enp0s8"
   IFACE_PATTERN="enp"
 fi
-USER="vagrant"
-PKGDIR=/vagrant/pkgs
-HOME=/home/vagrant
 
 check_service(){
   systemctl daemon-reload
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
   systemctl status $1.service | egrep  "inactive|failed" && systemctl start $1.service
   systemctl status $1.service
+}
+
+check_service_noverify(){
+  systemctl daemon-reload
+  systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
 }
 
 # params
@@ -55,6 +64,9 @@ DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
 MOLOCH_FILE="moloch_${MOLOCH_VERSION}-1_amd64.deb"
 MOLOCH_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${MOLOCH_FILE}"
+
+GOPHER_VERSION="0.1.0"
+GOPHER_FILE="https://github.com/StamusNetworks/gophercap/releases/download/v${GOPHER_VERSION}/gopherCap-ubuntu-2004-${GOPHER_VERSION}.gz"
 
 ELASTSIC_MEM=512
 LOGSTASH_MEM=512
@@ -97,7 +109,39 @@ docker ps -a | grep redis || docker run -dit \
     redis
 
 echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install jq wget curl pcregrep python3-pip python-yaml libpcre3-dev libyaml-dev uuid-dev libmagic-dev pkg-config g++ flex bison zlib1g-dev libffi-dev gettext libgeoip-dev make libjson-perl libbz2-dev libwww-perl libpng-dev xz-utils libffi-dev libsnappy-dev numactl pcregrep >> /vagrant/provision.log || exit 1
+apt-get update && apt-get -y install \
+  jq \
+  wget \
+  curl \
+  tmux \
+  unzip \
+  pcregrep \
+  python3-pip \
+  python3-yaml \
+  python-yaml \
+  libpcre3-dev \
+  libyaml-dev \
+  uuid-dev \
+  libmagic-dev \
+  pkg-config \
+  g++ \
+  flex \
+  bison \
+  zlib1g-dev \
+  libffi-dev \
+  gettext \
+  libgeoip-dev \
+  make \
+  libjson-perl \
+  libbz2-dev \
+  libwww-perl \
+  libpng-dev \
+  xz-utils \
+  libffi-dev \
+  libsnappy-dev \
+  numactl \
+  pcregrep \
+  tcpreplay || exit 1
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -205,7 +249,7 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 docker ps -a | grep evebox | docker run -tid --rm \
   --network cdmcs \
   -p 5636:5636 \
-    jasonish/evebox:latest  \
+    jasonish/evebox:master  \
       -e http://elastic:9200 \
       --index suricata \
       --host 0.0.0.0 \
@@ -345,11 +389,45 @@ EOF
 sleep 5
 
 echo "Configuring interfaces"
+
+FILE=/usr/sbin/replay_iface
+[[ -f $FILE ]] || cat > $FILE <<EOF
+#!/bin/sh
+ip link add capture0 type veth peer name replay0
+ip link set dev capture0 mtu 9000
+ip link set dev replay0 mtu 9000
+ip link set capture0 up
+ip link set replay0 up
+EOF
+chmod 755 $FILE
+
+FILE=/etc/systemd/system/virtIface.service
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[Unit]
+Description=capture interface
+After=network.target
+
+[Service]
+User=root
+Group=root
+WorkingDirectory=/var/run/
+ExecStart=/usr/sbin/replay_iface
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+check_service virtIface
+
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp|capture'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+
 for iface in ${ifaces//;/ }; do
   echo "Setting capture params for $iface"
   for i in rx tx tso gso gro tx nocache copy sg rxvlan; do ethtool -K $iface $i off > /dev/null 2>&1; done
 done
 
+echo "Provisioning SURICATA"
 # suricata
 install_suricata_from_ppa(){
   add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
@@ -357,7 +435,6 @@ install_suricata_from_ppa(){
   && apt-get install -y suricata > /dev/null
 }
 
-echo "Provisioning SURICATA"
 suricata -V || install_suricata_from_ppa
 pip3 install --upgrade suricata-update
 
@@ -443,8 +520,12 @@ grep "CDMCS" $FILE || cat >> $FILE <<EOF
 ---
 # CDMCS
 af-packet:
-  - interface: $IFACE_EXT
+  - interface: ${IFACE_EXT}
     cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: capture0
+    cluster-id: 97
     cluster-type: cluster_flow
     defrag: yes
 default-rule-path: /var/lib/suricata/rules
@@ -688,7 +769,6 @@ dpkg -s moloch || dpkg -i $MOLOCH_FILE
 apt-get -f -y install
 
 echo "Configuring moloch"
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 cd /data/moloch/etc
 FILE=/data/moloch/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
@@ -1197,6 +1277,70 @@ echo "Adding telegraf user to Docker group. Massive privilege escalation. Do not
 adduser telegraf docker
 
 check_service telegraf
+
+echo "pulling some replay PCAPs"
+
+mkdir -p $PCAP_REPLAY
+cd $PCAP_REPLAY
+[[ -f 2021-01-06-Remcos-RAT-infection.pcap.zip ]] || wget $WGET_PARAMS  https://malware-traffic-analysis.net/2021/01/06/2021-01-06-Remcos-RAT-infection.pcap.zip
+[[ -f 2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/05/2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip
+[[ -f 2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/04/2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip
+
+for pcap in $(find $PCAP_REPLAY/ -type f -name '*.pcap.zip') ; do
+  echo unpacking $pcap
+  unzip -P infected ${pcap}
+done
+
+FILE=$PCAP_REPLAY/gopher.yml
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+# CDMCS
+global:
+  dump:
+    json: ${PCAP_REPLAY}/gopher.json
+  file:
+    regexp: "2021"
+map:
+  dir:
+    src: ${PCAP_REPLAY}
+  file:
+    suffix: pcap
+    workers: 2
+replay:
+  disable_wait: true
+  loop:
+    count: 1
+    infinite: true
+  out:
+    bpf: ""
+    interface: replay0
+  time:
+    from: ""
+    modifier: "1"
+    scale:
+      duration: 1h0m0s
+      enabled: true
+    to: ""
+tarball:
+  dryrun: false
+  in:
+    file: ""
+  out:
+    dir: ""
+    gzip: false
+EOF
+
+[[ -f $MOLOCH_FILE ]] || wget $WGET_PARAMS $GOPHER_FILE
+gunzip gopherCap-ubuntu-2004-$GOPHER_VERSION.gz
+mv gopherCap-ubuntu-2004-$GOPHER_VERSION gopherCap
+chmod 755 ./gopherCap
+./gopherCap --config example.yml exampleConfig
+./gopherCap --config gopher.yml map
+pgrep gopherCap || ./gopherCap --config gopher.yml replay 2>/dev/null &
+
+#for pcap in $(find $PCAP_REPLAY/ -type f -name '*.pcap') ; do
+#  echo replaying $pcap
+#  tcpreplay --pps=100 --loop=100000 -i replay0 ${pcap} &
+#done
 
 echo "making some noise"
 while : ; do curl -s https://www.facebook.com/ > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
