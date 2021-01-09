@@ -58,6 +58,7 @@ GOLANG="go${GOLANG_VERSION}.linux-amd64.tar.gz"
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:${ELASTIC_VERSION}"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:${ELASTIC_VERSION}"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:${ELASTIC_VERSION}"
+DOCKER_FILEBEAT="docker.elastic.co/beats/filebeat-oss:${ELASTIC_VERSION}"
 
 DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
 DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
@@ -347,46 +348,60 @@ docker ps -a | grep logstash || docker run -dit \
     $DOCKER_LOGSTASH
 
 docker stop logstash
+sleep 5
 
-FILE=/var/lib/suricata/scripts/alert2alerta.py
-[[ -f $FILE ]] || cat > $FILE <<EOF
-#!/usr/bin/env python3
+echo "Provisioning Filebeat"
 
-import json
-import requests
-import sys
+FILE=/etc/filebeat.yml
+grep "CDMCS" $FILE || cat > $FILE <<EOF
+# CDMCS
+filebeat.inputs:
+- type: log
+  paths:
+    - "/var/log/suricata/eve.json"
+  json.keys_under_root: true
+  json.add_error_key: true
 
-line = sys.stdin.readline()
-data = json.loads(line)
+processors:
+- timestamp:
+    field: timestamp
+    layouts:
+      - '2006-01-02T15:04:05Z'
+      - '2006-01-02T15:04:05.999Z'
+    test:
+      - '2019-06-22T16:33:51Z'
+      - '2019-11-18T04:59:51.123Z'
 
-assets = { "192.168.10.11": "singlehost" }
+output.elasticsearch:
+  hosts: ["elastic:9200"]
+  index: "filebeat-%{+yyyy.MM.dd}"
+  bulk_max_size: 10000
 
-if data["src_ip"] in assets:
-    resource = data["src_ip"]
-elif data["dest_ip"] in assets:
-    resource = data["dest_ip"]
-else:
-    resource = data["dest_ip"]
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
 
-headers = { "Content-Type": "application/json" }
-alert = {
-        "environment": "Production",
-        "event": data["alert"]["signature"],
-        "resource": resource,
-        "text": "Alert from {} to {} for {}".format(data["src_ip"], data["dest_ip"], data["alert"]["signature"]),
-        "service": [resource],
-        "severity": "major",
-        "value": data["alert"]["severity"],
-        "timeout": 60,
-        }
+setup.template:
+  name: 'filebeat'
+  pattern: 'filebeat-*'
+  enabled: false
 
-url = "http://192.168.10.11:8080/api/alert"
-
-resp = requests.post(url, data=json.dumps(alert), headers=headers)
-print(resp.json())
+setup.ilm.enabled: false
 EOF
 
-sleep 5
+docker ps -a | grep filebeat || docker run -dit \
+  --name filebeat \
+  -h filebeat \
+  --network cdmcs \
+  -v /var/log/suricata:/var/log/suricata:ro \
+  -v /var/log/filebeat:/var/log/filebeat:rw \
+  -v /etc/filebeat.yml:/etc/filebeat.yml \
+  --restart unless-stopped \
+    $DOCKER_FILEBEAT run -c /etc/filebeat.yml
 
 echo "Configuring interfaces"
 
