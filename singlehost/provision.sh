@@ -38,6 +38,41 @@ PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin
 
 grep PATH /etc/environment || echo "export PATH=$PATH" >> /etc/environment
 
+echo "Installing prerequisite packages..."
+apt-get update && apt-get -y install \
+  jq \
+  wget \
+  curl \
+  tmux \
+  unzip \
+  pcregrep \
+  python3-pip \
+  python3-yaml \
+  python-yaml \
+  libpcre3-dev \
+  libyaml-dev \
+  uuid-dev \
+  libmagic-dev \
+  pkg-config \
+  g++ \
+  flex \
+  bison \
+  zlib1g-dev \
+  libffi-dev \
+  gettext \
+  libgeoip-dev \
+  make \
+  libjson-perl \
+  libbz2-dev \
+  libwww-perl \
+  libpng-dev \
+  xz-utils \
+  libffi-dev \
+  libsnappy-dev \
+  numactl \
+  pcregrep \
+  tcpreplay || exit 1
+
 # versions
 UBUNTU_VERSION="20.04"
 ELASTIC_VERSION="7.10.1"
@@ -66,8 +101,7 @@ DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 MOLOCH_FILE="moloch_${MOLOCH_VERSION}-1_amd64.deb"
 MOLOCH_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${MOLOCH_FILE}"
 
-GOPHER_VERSION="0.1.0"
-GOPHER_FILE="https://github.com/StamusNetworks/gophercap/releases/download/v${GOPHER_VERSION}/gopherCap-ubuntu-2004-${GOPHER_VERSION}.gz"
+GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name|startswith("gopherCap-ubuntu-2004-")) | .browser_download_url')
 
 ELASTSIC_MEM=512
 LOGSTASH_MEM=512
@@ -108,41 +142,6 @@ docker ps -a | grep redis || docker run -dit \
   -p 6379:6379 \
   --log-driver syslog --log-opt tag="redis" \
     redis
-
-echo "Installing prerequisite packages..."
-apt-get update && apt-get -y install \
-  jq \
-  wget \
-  curl \
-  tmux \
-  unzip \
-  pcregrep \
-  python3-pip \
-  python3-yaml \
-  python-yaml \
-  libpcre3-dev \
-  libyaml-dev \
-  uuid-dev \
-  libmagic-dev \
-  pkg-config \
-  g++ \
-  flex \
-  bison \
-  zlib1g-dev \
-  libffi-dev \
-  gettext \
-  libgeoip-dev \
-  make \
-  libjson-perl \
-  libbz2-dev \
-  libwww-perl \
-  libpng-dev \
-  xz-utils \
-  libffi-dev \
-  libsnappy-dev \
-  numactl \
-  pcregrep \
-  tcpreplay || exit 1
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -1344,9 +1343,9 @@ tarball:
     gzip: false
 EOF
 
-[[ -f $MOLOCH_FILE ]] || wget $WGET_PARAMS $GOPHER_FILE
-gunzip gopherCap-ubuntu-2004-$GOPHER_VERSION.gz
-mv gopherCap-ubuntu-2004-$GOPHER_VERSION gopherCap
+FILE=$PCAP_REPLAY/gopherCap.gz
+[[ -f $FILE ]] || wget $WGET_PARAMS -O $FILE $GOPHER_URL
+gunzip $FILE
 chmod 755 ./gopherCap
 ./gopherCap --config example.yml exampleConfig
 ./gopherCap --config gopher.yml map
