@@ -20,7 +20,7 @@ This is material for any intermediate-level dev-ops who has some experience with
  * Troubleshooting any issues
 
 ### Session 1 - 26 Jan 11:00 EET / 09:00 UTC
- * [Intro](/common/day_intro.md)
+ * [Intro](/Suricata/intro.md)
  * [singlehost, vagrant](/singlehost)
  * [what is Suricata](/Suricata/rules#intro)
  <!-- * [tooling intro - docker / jupyter]() -->
