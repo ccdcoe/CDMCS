@@ -22,9 +22,8 @@ See:
 
 # Current Classes
 
- * [Suricata :: Feb 10-14 2020](/Suricata/)
- * [Suricata mobile :: Mar 02-06 2020](/Suricata#suricata-mobile-course---march-02-06-2020)
- * ~~[Moloch :: Jun 01-05 2020](/Moloch/)~~ **Canceled**
+ * [Suricata :: Jan 25 - Feb 04 2021](/Suricata/) **Online**
+ * [Moloch :: May 31 - Jun 4 2021](/Moloch/) **Tentative** - On-site only, so depends on the COVID-19 situation.
 
 # Older Classes
 

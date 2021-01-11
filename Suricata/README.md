@@ -3,7 +3,7 @@ This material has been designed to be taught in a [classroom](https://ccdcoe.org
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
-This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Suricata. We believe these classes are perfect for anyone who wants a jump start in learning Suricata or who wants a more thorough understanding of it internals.
+This is material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Suricata. We believe these classes are perfect for anyone who wants a jump start in learning Suricata or who wants a more thorough understanding of it internals.
 
 ### Suricata is intrusion detection and prevention system
 
@@ -12,6 +12,12 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 # Suricata Remote
 
 ## Week 1
+
+### Technical verification - 25 Jan 15:00 EET / 13:00 UTC
+ * Virtual environment connectivity test
+ * Audio-video test
+ * Chat test
+ * Troubleshooting any issues
 
 ### Session 1 - 26 Jan 11:00 EET / 09:00 UTC
  * [Intro](/common/day_intro.md)

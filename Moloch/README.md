@@ -8,18 +8,18 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 ### Moloch is a large scale, open source, full packet capturing, indexing, and database system.
 > Moloch is not meant to replace Intrusion Detection Systems (IDS). Moloch augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-# LS20 PCAP workshop ~~June 01-05, 2020~~ **CANCELED**
-
 Provided timeline is preliminary and will develop according to the actual progress of the class.
 
-## Day 0 :: Intro, single box :: ~~June 1 2020, *starts at 13:00!*~~
+* NB! The schedule is tentative and subject to change. On-site participation only, so the course depends entirely on the COVID-19 situation at the time. *
+
+## Day 0 :: Intro, single box :: May 31  2021, *starts at 13:00!*
 
  * 13:00 - 17:00 
    * [Intro](/common/day_intro.md)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
    * [singlehost](/singlehost/)
 
-## Day 1 :: Building, Labeling the traffic :: ~~June 2 2020~~
+## Day 1 :: Building, Labeling the traffic :: June 1 2021
 
  * 09:00 - 12:30
    * [build from source](/Moloch/setup/#Build), [basic config](/Moloch/setup/#Config)
@@ -30,7 +30,7 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [Hunting trip, web](/Moloch/queries/#hunting-trip)
    * [WISE - basic usage](/Moloch/wise#using-simple-plugins)
 
-## Day 2 :: Group up, scale out :: ~~June 3 2020~~
+## Day 2 :: Group up, scale out :: June 2 2021
 
  * 09:00 - 12:30 
    * [WISE - Plugins](/Moloch/wise#writing-a-wise-plugin)
@@ -38,7 +38,7 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:30 - 17:00 
    * [Clustered elastic](/Moloch/clustering#clustered-elasticsearch), [multinode](/Moloch/clustering#moloch-workers)
 
-## Day 3 :: Cross-class cluster, performance tuning :: ~~June 4 2020~~
+## Day 3 :: Cross-class cluster, performance tuning :: June 3 2021
 
  * 09:00 - 12:30 
    * [Clustering teamwork, cont](/Moloch/clustering)
@@ -46,7 +46,7 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:30 - 16:45 
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
-## Day +1 :: Last but not least :: ~~June 5 2020, *ends at 12:00*~~
+## Day +1 :: Last but not least :: June 4 2021, *ends at 12:00*
 
  * 09:00 - 11:00
    * [Hunting trip, network](/Moloch/queries/#hunting-trip)
