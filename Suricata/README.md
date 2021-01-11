@@ -22,9 +22,8 @@ This is material for any intermediate-level dev-ops who has some experience with
 ### Session 1 - 26 Jan 11:00 EET / 09:00 UTC
  * [Intro](/Suricata/intro.md)
  * [singlehost, vagrant](/singlehost)
- * [what is Suricata](/Suricata/rules#intro)
- <!-- * [tooling intro - docker / jupyter]() -->
- * [first rule, suricata -R ...]()
+ * [what is Suricata](/Suricata/intro)
+ * [Suricata on CLI](/Suricata/intro)
 
 ### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
  * [EVE log, jq magics, bash sorting]()
