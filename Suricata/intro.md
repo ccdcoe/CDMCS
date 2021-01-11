@@ -38,3 +38,11 @@
 * https://github.com/markuskont
 * https://github.com/mpihelgas
 * https://github.com/regit
+
+## Tooling
+
+* github
+* Vagrant **
+* command line
+* jupyter notebooks
+* docker
