@@ -1,7 +1,5 @@
 # Suricata
 
-## Intro 
-
 see:
  * http://suricata-ids.org/
  * http://planet.suricata-ids.org/
@@ -19,11 +17,11 @@ see:
 > Suricata will automatically detect protocols such as HTTP on any port and apply the proper detection and logging logic. Suricata can log HTTP requests, log and store TLS certificates, extract files from flows and store them to disk.
 
 
-### Basic usage
+## Basic usage
 
 This is just a bare minimum needed to run suricata from CLI on debian or ubuntu machine. Not much useful stuff we can do yet.
 
-#### Install on Debian and Ubuntu
+### Install on Debian and Ubuntu
 
 > **[OISF](http://oisf.net)** maintains a **PPA suricata-stable** that always contains the latest stable release.
 
@@ -77,65 +75,24 @@ docker run --rm -ti jasonish/suricata suricata-update --help
 
 Finally, do note that container usage and arguments depend on how the image was built. There is not single way to do these things. You simply need to [read the Dockerfile](https://github.com/jasonish/docker-suricata/blob/master/Dockerfile) and [entrypoint script](https://github.com/jasonish/docker-suricata/blob/master/docker-entrypoint.sh).
 
-# Rules
+## Rules
 
-> Suricata alerting is rule-based. Commonly, rulesets are externally developed.
-> There are multiple rule sources, some free some commertial
-> You need to manage and update your rules every day!
+* Suricata alerting is rule-based. Commonly, rulesets are externally developed.
+* There are multiple rule sources, some free some commertial
+* You need to manage and update your rules every day!
 
 This is a simple getting started page for writing your first rule. Please refer to [official documentation](https://suricata.readthedocs.io/en/latest/rules/) for more information.
 
-Possible sources:
+### Possible sources:
+
 * https://rules.emergingthreats.net/open/
 * https://github.com/ptresearch/AttackDetection#suricata-pt-open-ruleset
 * https://github.com/OISF/suricata-trafficid
 * https://raw.githubusercontent.com/travisbgreen/hunting-rules/master/hunting.rules
 
-rule managers:
-* [suricata-update](https://github.com/OISF/suricata-update)
-* [scirius](/Suricata/scirius/README.md)
+## PCAP
 
-rule writing tools:
-* [dalton + flowsynth](https://github.com/secureworks/dalton)
-
-## Getting the emerging threats ruleset 
-
-ET open is the default ruleset packaged with suricata. However, it can be downloaded separately.
-
-```
-wget -4 http://rules.emergingthreats.net/open/suricata-5.0/emerging.rules.tar.gz
-tar -xzf emerging.rules.tar.gz
-ls -lah rules/
-```
-
-Please keep an eye out for ruleset version. Newer version of suricata supports keywords that are missing from prior releases. Furthermore, compatibility with snort rules format is no longer a priority for core team, as Suricata has evolved.
-
-```
-suricata --list-keywords
-suricata -V
-```
-
-## Explore the rules directory
-
-Display all enabled rules.
-```
-grep -h -v '^ *#' *.rules
-```
-
-What actions?
-```
-grep -h -v '^ *#' *.rules | cut -s -d' ' -f1 | sort | uniq -c
-```
-
-What protocols?
-```
-grep -h -v '^ *#' *.rules | cut -s -d' ' -f2 | sort | uniq -c
-grep -h -v '^ *#' *.rules | cut -s -d' ' -f2 | sort | uniq -c | sort -n
-```
-
-Note that `-h` key will disable filename display for grep while `-v` enables inverse search.
-
-## Generating packets for testing
+### Generating packets for testing
 
  * https://www.sans.org/security-resources/tcpip.pdf
  * https://www.tcpdump.org/tcpdump_man.html
@@ -185,8 +142,7 @@ However, note that can be considerably more difficult (or annoying) to reproduce
 
 ## Writing your first rule
 
-> Do not write rules, buy from professionals!
-
+ * Do not write rules, buy from professionals!
  * https://suricata.readthedocs.io/en/latest/rules/intro.html
 
 ### basic rule template
@@ -258,13 +214,32 @@ A rule consists of the following:
 * meta data
 * threshold configuration
 
+#### Buffers
+
+* Suricata matches on entire packet payload by default;
+* Suricata also parses protocol fields;
+  * http user-agent;
+  * http URI;
+  * tls SNI;
+  * SSL certificate;
+  * DNS query;
+  * ...
+* Can drill down using *content modifiers* or *sticky buffers*
+* content modifier uses underscores and comes after *content*
+  * tls_sni
+  * http_user_agent
+* sticky buffer uses dots and comes before *content*
+  * tls.sni
+  * http.user-agent
+* *content modifiers* are going the way of the Dodo
+
 ## Exercise - write rules that trigger on following conditions
 
 ### Basic tasks for introduction
 
 * Facebook certificate
 * DNS domain with .su suffix
-* DNS zone transfer
+* DNS zone transfer (tricky, use wireshark for help)
 * Detection of popular default user-agents:
   * Python;
   * Nikto;
