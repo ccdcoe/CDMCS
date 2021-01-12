@@ -67,3 +67,10 @@ Then start Suricata listener
 sudo suricata --af-packet=capture0 -l logs/
 tail -f logs/eve.json
 ```
+
+## Tasks
+
+* Select 3 malware PCAP samples
+* Create a virtual NIC pair for each pcap
+* Start a replay for each PCAP from different Suricata instance
+  * Each replay instance should log to different folder
