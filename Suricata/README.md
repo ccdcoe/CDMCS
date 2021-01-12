@@ -28,8 +28,7 @@ This is material for any intermediate-level dev-ops who has some experience with
 
 ### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
  * [EVE log basics](/Suricata/eve)
- * [EVE log tasks, MTA pcap]()
-     * extract N fields
+ * [EVE basic tasks](/Suricata/eve#tasks)
  * [tcpreplay / live capture]()
  * [second rule]()
 
