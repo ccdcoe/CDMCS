@@ -27,7 +27,7 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
 ### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
- * [EVE log, jq magics, bash sorting]()
+ * [EVE log basics](/Suricata/eve)
  * [EVE log tasks, MTA pcap]()
      * extract N fields
  * [tcpreplay / live capture]()
