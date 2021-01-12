@@ -29,7 +29,7 @@ This is material for any intermediate-level dev-ops who has some experience with
 ### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
  * [EVE log basics](/Suricata/eve)
  * [EVE basic tasks](/Suricata/eve#tasks)
- * [tcpreplay / live capture]()
+ * [live capture and replay](/Suricata/live)
  * [second rule]()
 
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
