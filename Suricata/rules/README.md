@@ -1,0 +1,109 @@
+# Rule writing
+
+* https://suricata.readthedocs.io/en/latest/rules/index.html
+
+Let's reiterate.
+* Rules are organized per *rule files*, usually they have suffix `.rules`
+* Suricata can load many rule files from *rule directory*
+* Easiest way to test is still to create a single rule file and load that exclusively with `-S` flag
+* `-S` (uppercase) does exclusive load of a single rule file
+* `-s` (lowercase) appends rule file to others in configuration, in other words, not exclusive
+* Rule is comprised of `actions`, `header` and `rule-options`
+* action is mostly `alert`, unless running Suricata as inline IPS
+* header is a 5-tuple with direction indicator (6-tuple really): (`protocol` `src_ip` `src_port` `direction` `dest_ip` `dest_port`)
+    * direction could be `>` (forward), `<` (backward) or `<>` (bilateral)
+    * never really used in practice, mostly the 5-tuple network elements is just flipped
+    * meaning rules can trigger in either direction!
+* rule-options is where the real match logic lies
+* **Each rule must have unique `sid` option**
+
+## Test cases
+
+Firstly, you need PCAP files with positive and negative test cases. You can use `tcpdump` to generate both of them. But sites like [Malware Traffic Analysis](https://www.malware-traffic-analysis.net/) are also a great resource.
+
+## Boilerplate
+
+Following boilerplate is bare minimum to get a working rule that will alert on every TCP session. Put it into a rule file, like `custom.rules` (name is up to you, just sync it).
+
+```
+alert tcp any any -> any any (msg:"BOILERPLATE"; sid:1000000000; rev:1;)
+```
+
+Don't debug in runtime. Do it offline with proper tools! Suricata provides `-T` flag to run in testing mode. That way it will parse rule file and exit, reporting any errors along the way.
+
+```
+./bin/suricata -S custom.rules -T
+```
+
+If all goes well, you should just see a exit message. To see more information about internals, for example how many rules were loaded, then use `-v`, `-vv` or `-vvv` to raise logging verbosity. Following command should be enough to see how many rules were loaded into the engine.
+
+```
+./bin/suricata -S custom.rules -T -v
+```
+
+Then use Suricata to parse a sample PCAP.
+
+```
+mkdir logs-boilerplate
+suricata -r $PCAP -S custom.rules -l ./logs-boilerplate/
+```
+
+And look into alerts.
+
+```
+cat logs-boilerplate/eve.json | jq 'select(.event_type=="alert")'
+```
+
+You should have alert for every TCP session, how much very useful.
+
+## Using keywords
+
+As mentioned, Suricata supports a lot of keywords. Those are documented [here](https://suricata.readthedocs.io/en/latest/rules/index.html). But you can also ask Suricata.
+
+```
+suricata --list-keywords
+```
+
+For example, suppose I need a quick list of all HTTP keywords.
+
+```
+suricata --list-keywords | grep http
+```
+
+Now suppose I noticed a this `http.url` that clearly indicates a malware download. Courtesy of MTA dataset.
+
+```
+/wp-content/plugins/ultimate-tinymce/includes/artifact209.exe
+```
+
+We can easily modify our boilerplate with `content` to match on malicious exe file.
+
+```
+alert tcp any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; content: "artifact209.exe")
+```
+
+But this is a very bad rule. As it matches on entire TCP payload. So it could trigger on any protocol provided that string is preset. Seen some powershell rules trigger because a textual log containing `powershell` string was backed up via SMB. But not only is it **prone to false positives**, it also **kills performance**. How to improve it?
+
+* Firstly, change protocol from `tcp` to `http`. That's where we see the IOC;
+* Secondly, looking into parsed `http` events gives us access to HTTP sticky buffers, so we can direct our lookup explicitly to `http.uri` buffer;
+* Finally, IOC file name is at the very end of the URL, so why not look for it there;
+
+```
+alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri; content: "artifact209.exe"; endswith;)
+```
+
+This lookup would be done on every single `http.uri`. But `content` can be called multiple times. Suricata evaluates buffers sequentially, so it's always a good idea to put lighter matches first. For example, this rule should only be fully evaluated on `GET` requests. `http.method` buffer is a great help here. And, we can try to avoid any weird edge cases by also verifying that flow is properly established, and that it's a request directed toward server. Not only does it make the rule stronger, **it also makes it much faster as nonapplicable sessions are discarded as soon as possible**.
+
+```
+alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe";)
+```
+
+## Flowbits
+
+TODO
+
+## Tasks
+
+* Select a pcap from MTA set and explore `http`, `tls` and `dns` fields as you did for basic EVE exploration;
+* Write rules that trigger on suspicious values;
+* Make sure that the match is as strong as possible. In other words, rule written for requests should not trigger on responses, etc;

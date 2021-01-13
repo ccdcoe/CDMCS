@@ -30,7 +30,7 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [EVE log basics](/Suricata/eve)
  * [EVE basic tasks](/Suricata/eve#tasks)
  * [live capture and replay](/Suricata/live)
- * [second rule]()
+ * [rule writing, cont](Suricata/rules)
 
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
  * [Rulesets dataframe/notebook show and tell]()
