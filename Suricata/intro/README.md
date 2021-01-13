@@ -171,7 +171,7 @@ Checksum errors can also be ignored with `-k` flag. That way we do not have to r
 suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
 ```
 
-But the proper way to solve this probleb is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the pcap.
+But the proper way to solve this problem is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the pcap.
 
 Fast log is human-readable plaintext format from Snort days. 
 
