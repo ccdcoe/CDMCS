@@ -95,6 +95,12 @@ Lists can be unpacked with `.[]`.
 cat logs/eve.json| jq 'select(.event_type=="dns") | .dns.answers' | grep -v null | jq '.[]'
 ```
 
+Multiple fields can be extracted by separating them with comma.
+
+```
+cat logs/eve.json| jq 'select(.event_type=="http") | .timestamp , .http.hostname , .http.url'
+```
+
 ## Tasks
 
 Select malware traffic analysis PCAP and:
