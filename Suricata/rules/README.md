@@ -141,7 +141,7 @@ alert http any any -> any any (msg: "SET - 3"; sid: 103; http.uri; content: "BFA
 Having defined our IOC pattern rules for HTTP request, we can then proceed with writing a rule that checks for `malware.IOC` flag with `isset` keyword.
 
 ```
-alert http any any -> any any (msg: "CHECK - 0"; sid: 100; flow: established,to_server; http.method; content: "GET"; flowbits: isset,malware.IOC;)
+alert http any any -> any any (msg: "CHECK - 0"; sid: 100; http.method; content: "GET"; flowbits: isset,malware.IOC;)
 ```
 
 Then run Suricata and check for alerts in `eve.json`, you should see only alerts from signature `100`. And each EVE record alert should also show `malware.IOC` tag.
