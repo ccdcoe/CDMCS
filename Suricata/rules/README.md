@@ -106,10 +106,54 @@ alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:
 
 ## Flowbits
 
-TODO
+* https://suricata.readthedocs.io/en/latest/rules/flow-keywords.html#flowbits
+
+Suppose we have following malware IOC-s in `http.url`.
+
+```
+"/BB732D8A.moe"
+"/6730A78E.moe"
+"/BFA5A83F.moe"
+```
+
+What if we want to write rules that checks for **download** of these IOC-s. So, that not only was URL requested, but it also a positive response that triggered download. We could try this:
+
+```
+alert http any any -> any any (msg: "IOC match"; sid: 99; http.method; content: "GET"; http.stat_code; content: "200"; http.uri; content: "BFA5A83F.moe";)
+```
+
+But it's not going to work.
+
+```
+14/1/2021 -- 15:46:03 - <Error> - [ERRCODE: SC_ERR_INVALID_SIGNATURE(39)] - rule 99 mixes keywords with conflicting directions
+```
+
+That's because `GET` method is part of HTTP request and status code `200` is part of response. So, they are part of different packets. That's a problem.
+
+Solution is to use **flowbits**. As the name implies, Suricata is able to set specific bits per flow, which is useful for simple event correlation. That solves our problem, as one rule set a bit value whenever a IOC is seen in request. Flowbit `set` command is used to mark the flow with `malware.IOC` flag. Note that we don't want this side to generate a alert yet, so `noalert` flowbit keyword is also used.
+
+```
+alert http any any -> any any (msg: "SET - 1"; sid: 101; http.uri; content: "BB732D8A.moe"; endswith; flowbits: set,malware.IOC; flowbits: noalert;)
+alert http any any -> any any (msg: "SET - 2"; sid: 102; http.uri; content: "6730A78E.moe"; endswith; flowbits: set,malware.IOC; flowbits: noalert;)
+alert http any any -> any any (msg: "SET - 3"; sid: 103; http.uri; content: "BFA5A83F.moe"; endswith; flowbits: set,malware.IOC; flowbits: noalert;)
+```
+
+Having defined our IOC pattern rules for HTTP request, we can then proceed with writing a rule that checks for `malware.IOC` flag with `isset` keyword.
+
+```
+alert http any any -> any any (msg: "CHECK - 0"; sid: 100; flow: established,to_server; http.method; content: "GET"; flowbits: isset,malware.IOC;)
+```
+
+Then run Suricata and check for alerts in `eve.json`, you should see only alerts from signature `100`. And each EVE record alert should also show `malware.IOC` tag.
 
 ## Tasks
 
 * Select a pcap from MTA set and explore `http`, `tls` and `dns` fields as you did for basic EVE exploration;
 * Write rules that trigger on suspicious values;
 * Make sure that the match is as strong as possible. In other words, rule written for requests should not trigger on responses, etc;
+* Write rules detecting default user-agents, but only if response code from server was 200 (OK) or 302 (redirected):
+  * Python;
+  * Nikto;
+  * Dirbuster;
+  * Nmap;
+  * Curl
