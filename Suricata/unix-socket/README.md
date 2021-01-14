@@ -1,9 +1,19 @@
 # Suricata Unix Socket
 
-> Restarting suricata is a no no. If you have a lot of rules, this will take a long time
-> You would not want to miss anything, would you?
+This section **does not** assume any knowledge about Suricata YAML configuration. Some references to it will be made. But student should be able to repeat all examples without touching the configuration file.
 
-### Suricata can listen to a unix socket and accept commands from the user. 
+However, the student should be familiar with:
+* Using Suricata with CLI flags (`-S`, `-l`, `-r`, `--af-packet=$IFACE`);
+* Parsing offline PCAP files / simple traffic replay;
+* Rule file, loading that rule file with `-S`;
+* Exploring `eve.json` using `jq`;
+
+## Background
+
+* Restarting suricata is a no no. If you have a lot of rules, this will take a long time
+* You would not want to miss anything, would you?
+
+## Suricata can listen to a unix socket and accept commands from the user. 
 
 see:
 * https://suricata.readthedocs.io/en/latest/unix-socket.html
@@ -11,72 +21,43 @@ see:
 * https://home.regit.org/2012/09/a-new-unix-command-mode-in-suricata/
 * https://github.com/inliniac/suricata/blob/89ba5816dc303d54741bdfd0a3896c7c1ce50d91/src/unix-manager.c#L922
 
-samples: 
-* https://github.com/hillar/vagrant_suricata_influxdb_grafana/blob/master/suri-influxdb.py
-* https://gist.github.com/hillar/309e93d5b555095d07b9
-
-# load pcaps
-see
-
- * https://suricata.readthedocs.io/en/latest/command-line-options.html?highlight=pcap#cmdoption-r
- * https://suricata.readthedocs.io/en/latest/unix-socket.html?highlight=unix%20socket#pcap-processing-mode
-
-get some pcaps:
-
-* https://suricata.readthedocs.io/en/latest/public-data-sets.html
-* http://www.malware-traffic-analysis.net/training-exercises.html
-
-## Configuration
+Unix socket can be enabled in YAML cofnig. Note that this should be enabled by default, so current section does not require user to set it up.
 
 ```
-grep 'unix-command' -B6 -A2 /etc/suricata/suricata.yaml
-suricata --help | grep unix
+unix-command:
+  enabled: auto
+  #filename: custom.socket
 ```
 
+## Using unix-socket mode
 
-## Using existing tool to interact with socket
+Suricata has many runmodes. Student should already be familiar with `pcap reader` and `af-packet`. However, former will exit as soon as PCAP read is done and latter requires higher privileges with traffic generation to live interface. Both would need to *heat up* the ruleset first. Which is not ideal if you want to process a lot of PCAPs, debug large rulesets, etc.
 
-Run Suricata in unix-socket mode
-
-```
-/usr/bin/suricata --unix-socket
-```
+Solution is to launch suricata in unix socket mode.
 
 ```
-suricatasc --help
+suricata --unix-socket
+suricatasc
+```
+
+Note that Suricata would create unix socket regardless of runmode. However, explicit unix socket mode has a few benefits.Many were already mentioned in last paragraph, but this runmode will also enable commands that are unavailable in other runmodes.
+
+Most importantly, you will be able to feed PCAPs along with respective output folders directly to Suricata process running in userspace. Great for network forensics
+
+```
 suricatasc -c capture-mode
-suricatasc -c "pcap-file /tmp/mycapture.pcap /tmp/capturelogs"
-suricatasc -c "pcap-file /tmp/pcapdir /tmp/capturelogs"
-```
-
-## Checksum errors
-
-Checksums in pcap files are often simply placeholders that do not correspond to actual packet hash values. This can cause troubles for all packet capture tools. tcprewrite (from the tcpreplay package) can be used to hack around this issue.
-
-```
-apt-get install tcpreplay
-tcprewrite -C -i /tmp/infile.pcap -o /tmp/outfile.pcap
-```
-
-Alternatively you can disable checksum checks for PCAPs loaded via unix socket by changing the following in the suricata.yaml
-
-```
-pcap-file:
-  checksum-checks: no
+suricatasc -c "pcap-file $PCAP $LOG_DIR"
 ```
 
 ## Looping over values in bash
 
 ```
-for pcap in `find /pcapdir -type f -name '*.pcap'` ; do
-	echo "I am doing stuff with $pcap"
+for pcap in `find /$PCAP_DIR -type f -name '*.pcap'` ; do
+  suricatasc -c "pcap-file $pcap $LOG_DIR/$PCAP"
 done
 ```
 
-
 ## Tasks
- * Start suricata in unix-socket runmode
- * Run suricatasc and find commands for loading in PCAPs
- * Load multiple PCAPs using suricatasc
- * Check results in suricata output/logs
 
+* Start suricata in unix-socket runmode
+* Parse all MTA PCAPs!

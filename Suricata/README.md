@@ -33,7 +33,8 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [rule writing, cont](/Suricata/rules)
 
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
- * [Rulesets dataframe/notebook show and tell]()
+ * [Unix socket mode](/Suricata/unix-socket)
+ * [Introducing rulesets](/Suricata/rulesets)
  * [MTA data exploration, EVE JSON explore]()
      * [task - building a timeline of attacks / write simple report]()
  * [suricata-update]()
