@@ -13,7 +13,11 @@ However, the student should be familiar with:
 * https://raw.githubusercontent.com/OISF/suricata-intel-index/master/index.yaml
 
 ```
-curl -ss https://raw.githubusercontent.com/OISF/suricata-intel-index/master/index.yaml | yq '.sources | .[] | .url'
+python3 -m pip install --user yq
+```
+
+```
+curl -ss https://raw.githubusercontent.com/OISF/suricata-intel-index/master/index.yaml | ~/.local/bin/yq '.sources | .[] | .url'
 ```
 
 ## Downloading rule files
