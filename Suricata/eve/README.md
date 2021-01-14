@@ -2,6 +2,11 @@
 
 * https://suricata.readthedocs.io/en/latest/quickstart.html#eve-json
 
+This section **does not** assume any knowledge about Suricata YAML configuration. However, the student should be familiar with:
+* Using Suricata with CLI flags (`-S`, `-l`, `-r`, `--af-packet=$IFACE`);
+* Parsing offline PCAP files;
+* Rule file, loading that rule file with `-S`;
+
 ## Parse a PCAP file offline
 
 Suricata has `-r` for pcap read mode. Likewise, logging directory can be overridden with `-l`. Nite that `--disable-detection` is used to avoid Suricata complaining about missing rulesets. Don't worry, that topic will be covered later. For now, we just want to explore protocol logs.

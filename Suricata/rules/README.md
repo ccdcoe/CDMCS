@@ -2,6 +2,12 @@
 
 * https://suricata.readthedocs.io/en/latest/rules/index.html
 
+This section **does not** assume any knowledge about Suricata YAML configuration. However, the student should be familiar with:
+* Using Suricata with CLI flags (`-S`, `-l`, `-r`, `--af-packet=$IFACE`);
+* Parsing offline PCAP files / simple traffic replay;
+* Rule file, loading that rule file with `-S`;
+* Exploring `eve.json` using `jq`;
+
 Let's reiterate.
 * Rules are organized per *rule files*, usually they have suffix `.rules`
 * Suricata can load many rule files from *rule directory*
