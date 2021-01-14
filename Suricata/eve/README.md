@@ -43,9 +43,9 @@ cat $LOG_DIR/eve.json | jq .event_type
 * pipe to `sort` again to sort by count
 
 ```
-cat logs/eve.json| jq .event_type | .tls.sni'  |sort -h | uniq -c | sort -h
-cat logs/eve.json| jq .src_ip | .tls.sni'  |sort -h | uniq -c | sort -h
-cat logs/eve.json| jq .dest_ip | .tls.sni'  |sort -h | uniq -c | sort -h
+cat logs/eve.json| jq .event_type | sort -h | uniq -c | sort -h
+cat logs/eve.json| jq .src_ip  | sort -h | uniq -c | sort -h
+cat logs/eve.json| jq .dest_ip | sort -h | uniq -c | sort -h
 ```
 
 What is *interesting field*? You need to discover this for yourself. But always start with `event_type`. Each distinct `event_type` has it's own structure (which depends on config, more on that alter).
