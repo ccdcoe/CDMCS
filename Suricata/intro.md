@@ -6,14 +6,15 @@
 * *from techies for techies*
 * Historically very free-flowing
 * No slides, only markdown, Vagrantfiles and instructors in classroom
-* Taking it remote
+* Tentative timeline, *grab coffee when you need it*, rearranging topics
 
-## Layout
+## Taking it remote
 
 * 6x3h sessions
 * spread out over 3 weeks
 * to avoid burnout
 * shortened format
+* timeline is still tentative
 
 ## TODO
 
