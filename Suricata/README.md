@@ -35,9 +35,9 @@ This is material for any intermediate-level dev-ops who has some experience with
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
  * [Unix socket mode](/Suricata/unix-socket)
  * [Introducing rulesets](/Suricata/rulesets)
- * [MTA data exploration, EVE JSON explore]()
-     * [task - building a timeline of attacks / write simple report]()
- * [suricata-update]()
+ * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
+ * [Building basic attack timeline with alets and EVE](/Suricata/rulesets)
+ * [suricata-update](/Suricata/suricata-update)
 
 ## Week 2
 
