@@ -7,6 +7,8 @@
 * Historically very free-flowing
 * No slides, only markdown, Vagrantfiles and instructors in classroom
 * Tentative timeline, *grab coffee when you need it*, rearranging topics
+* Make students go through painful troubleshooting on purpose!
+    * You don't store this knowledge from listening to lectures or copy-pasting commands
 
 ## Taking it remote
 
@@ -27,12 +29,14 @@
   * building, config, datasets, lua, elastic
 * Rules, rulesets, JSON logs, replay
 
-## Goal
+## Goal / Important notes
 
 * Passing on our knowledge
+    * But we are not full-time teachers
 * Everyone takes something home
 * Open materials, repeatable environments
-* No powerpoint, only markdown and git
+* No Powerpoint, only markdown and git
+* Materials are in ArchLinux Wiki style!
 
 ## Instructors
 
