@@ -1,5 +1,14 @@
 # suricata-update
 
+This section **does not** assume any knowledge about Suricata YAML configuration. Some references to it will be made. But student should be able to repeat all examples without touching the configuration file.
+
+However, the student should be familiar with:
+* Using Suricata with CLI flags (`-S`, `-l`, `-r`, `--af-packet=$IFACE`);
+* Parsing offline PCAP files / simple traffic replay;
+* Rule file, loading that rule file with `-S`;
+* Exploring `eve.json` using `jq`;
+* Suricata rulesets, downloading them manually, rule file layout, loading ruleset with `-S`;
+
  * https://suricata.readthedocs.io/en/latest/rule-management/suricata-update.html
  * https://suricata-update.readthedocs.io/en/latest/
 
