@@ -33,7 +33,7 @@ $HOME/.local/bin/suricata-update enable-source tgreen/hunting
 Update rules
 
 ```
-$HOME/.local/bin/suricata-update -D /vagrant
+$HOME/.local/bin/suricata-update -D $WORKING_DIR
 ```
 
 Rule directory is usually defined in `suricata.yaml`. But again, you can just use `-S` to point Suricata directly to it.
