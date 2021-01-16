@@ -23,9 +23,9 @@ However, the student should be familiar with:
   * Disable and modify rules according to your use cases
   * Ensure that next rule update does not overwrite yesterdays modifications!
 * No modern lightweight tools existed
-  
+
 ## Enter suricata-update
-  
+
 Now there's a modern tool directly from Suricata dev team. It's called `suricata-update`. It's very easy to install with `pip`.
 
 ```
