@@ -6,10 +6,17 @@ HOME=/home/vagrant
 PCAP_REPLAY=/srv/replay
 
 if [[ -n $(ip link show | grep eth0) ]]; then
+  # legacy naming
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
   IFACE_PATTERN="eth"
+elif [[ -n $(ip link show | grep ens1) ]]; then
+  # vmware
+  IFACE_EXT="ens192"
+  IFACE_INT="ens192"
+  IFACE_PATTERN="ens"
 else
+  # vbox
   IFACE_EXT="enp0s3"
   IFACE_INT="enp0s8"
   IFACE_PATTERN="enp"
