@@ -558,12 +558,17 @@ grep "CDMCS" $FILE || cat >> $FILE <<EOF
 ---
 # CDMCS
 datasets:
+  defaults:
+    memcap: 10mb
+    hashsize: 1024
   ua-seen:
     type: sha256
     state: /var/lib/suricata/ua-sha256-seen.lst
   dns-sha256-seen:
     type: sha256
     state: /var/lib/suricata/dns-sha256-seen.lst
+    memcap: 100mb
+    hashsize: 4096
 EOF
 
 echo "Adding outputs for SURICATA"
@@ -771,6 +776,7 @@ suricata-update list-enabled-sources
 suricata-update
 sleep 10
 suricatasc -c "reload-rules" 
+
 suricatasc -c "dataset-add ua-seen sha256 53c5f12948a236c0a34e4cb17c51a337ef61524cb4363023f242115f11555d1f"
 suricatasc -c "dataset-add http-content-delivery string $(echo -n download.windowsupdate.com | base64)"
 suricatasc -c "dataset-add http-content-delivery string $(echo -n security.debian.com | base64)"
