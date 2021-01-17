@@ -1,44 +1,68 @@
-# Build
+# Building Suricata
+
+This section assumes that user is already familiar with using prebuilt Suricata on CLI, parsing PCAP files and loading rulesets. It **does not assume** knowledge about `suricata.yaml`, other than it's existence in filesystem.
+
+Also, this section is **not** a step-by-step. But all needed information is here.
 
 See
 * http://suricata.readthedocs.io/en/latest/install.html#source
 
 ## General build concepts
 
-Searching for packages
+Building Suricata is no different from than 99% other software written in C. You have you dependency hunt, configure scripts, compiling, installing, etc.
+
+If a dependency is missing, search for it using whatever package manager your system has.
 
 ```
 sudo apt-cache search pcre
 ```
 
-Building packages requires development headers which are packaged separate from main libraries on Ubuntu/Debian systems.
+Building packages requires development headers which are packaged separate from main libraries on Ubuntu/Debian systems. For example, if `configure` fails due to missing pcre3 dependency then it will likely tell you correct package name. You can inspect and install that package with following command.
 
 ```
 sudo apt-cache policy libpcre3-dev
+sudo apt-get install libpcre3-dev
 ```
 
-If configure scripts are missing, then they may need to be generated.
+Configure script itself is not written. It's generated with `automake` toolbox. So you will not find `configure` when cloning Suricata repo. Following command needs to be run first.
 
 ```
 ./autogen.sh
 ```
 
-Configure script sets up build parameters before compiling. 
+Configure script sets up build parameters before compiling. **It has a lot of options.** Use `--help` to see them.
 
 ```
 ./configure --help
 ```
 
-A good practice is to prefix build root with custom directory to keep the system clean. This is arbitrary but your user must have write access to this folder. Use `sudo` when needed.
+That help can easily be grepped if you want to make sure you enable specific features.
 
 ```
-./configure --prefix=/home/vagrant/software
+./configure --help | grep -i redis
+```
+
+A good practice is to prefix build root with custom directory to keep the system clean. **That directory is entirely up to you**. Keep in mind that you **don't need superuser privileges at all for configuring and compiling**. And **you only need superuser privileges for `make install` if using a system folder**.
+
+**Tip** - use multiple clean folders to test different deploy configs.
+
+```
+./configure --prefix=$INSTALL_DIR
 ```
 
 Then compile and install the software. `make` will work locally while `make install` will place compiled binaries to `--prefix` value in prior step. If prefix was not defined, then please refer to `configure` output to see the destination folders.
 
 ```
-make && make install
+make
+```
+```
+make install
+```
+
+`-j` flag can be used to make compilation faster by using more CPU threads. Following command would use 4 threads.
+
+```
+make -j 4
 ```
 
 It is normal to mess up while building. Libraries may be missing, configure flags omitted, wrong versions in the system, etc.  First, remove any files from `make install` step.
@@ -86,8 +110,6 @@ HTTP parsing library `libhtp` is maintained in separate repository and must be c
 ```
 git clone https://github.com/OISF/libhtp -b 0.5.x
 cd libhtp
-git checkout $VERSION
-cd ..
 ```
 
 ## Basic tools and build dependencies
@@ -210,7 +232,11 @@ Note that suricata may not start up with this config, as system runtime is unawa
 
 ## Build suricata
 
-Configure the software to local build directory.
+```
+./autogen.sh
+```
+
+Configure the software to local build directory. `--prefix` is the **install directory**, **DO NOT USE THE SAME FOLDER WHERE YOU CLONED THE CODE!**.
 
 ```
 cd <repo-clone-dir>
@@ -230,13 +256,13 @@ make install
 ls -lah $HOME/meerkat/$VERSION
 ```
 
-Install default config file.
+Install default configuraiton file.
 
 ```
 make install-conf
 ```
 
-Alternatively, `make install-full` will combine `make install`, `make install-conf` and will download latest et/open ruleset. However, this is not needed for this exercise as we will manage rules separately.
+Alternatively, `make install-full` will combine `make install`, `make install-conf` and will download latest et/open ruleset. However, student should already familiar with working with bare Suricata and managing rulesets for themselves. So monolithic deploy is not needed.
 
 ```
 <prefix>/bin/suricata -V
@@ -248,14 +274,13 @@ If you have already generated different binaries in different prefix directories
 <prefix>/bin/suricata --build-info
 ```
 
-
-You may experience library errors if you built dependencies by hand. For example, if you followed last section, you will now see this:
+You may experience library errors if you built dependencies by hand. For example, if compiling with hyperscan support with custom-built hyperscan package, the you might run into this.
 
 ```
 ./bin/suricata: error while loading shared libraries: libhs.so.5: cannot open shared object file: No such file or directory
 ```
 
-Use `ldd` command to debug this issue.
+Use `ldd` command to debug this issue. It lists out all shared dependencies along with where exactly the Suricata is searching for the libs.
 
 ```
 vagrant@buildSuricata:~/suricata/4.1.2-cdmcs$ ldd ./bin/suricata
@@ -294,166 +319,5 @@ ldconfig
 
 ## Exercises
 
- * Build your own suricata with features needed for subsequent tasks
-   * set a custom installation root of your own choosing
-     * configuration directory should be placed under /vagrant/config
-   * it must support the following features:
-     * EVE log in JSON format
-     * redis output with async support
-     * lua scripting with just-in-time compiler
-     * unix socket support with suricatasc utility
-     * NFS logging and output
-     * Rule profiling
-     * MD5 and JA3 hashing
- * Build a second suricata instance with rule profiling disabled.
-
-### testing and hints
-
- * https://wiki.wireshark.org/SampleCaptures#NFS_Protocol_Family
- * https://www.malware-traffic-analysis.net/2018/index.html
- * `curl testmyids.com`
- * https://github.com/OISF/suricata/blob/d05355db3d6e2752ae0582a7ea8c1a0f08bde91c/src/output-json-alert.c
-
-# Config
-
- * https://suricata.readthedocs.io/en/latest/configuration/suricata-yaml.html#
-
-```
-suricata -c <config-dir>/suricata.yaml
-```
-
-If a configuration option is not specified in  the configuration file, Suricata uses its internal default configuration. Test configuration with `-T` flag.
-
-```
-suricata -T -vvv
-```
-
-`suricata.yaml` is like a documentation in itself. See the file without comments. Show active config parameters
-
-```
-suricata --dump-config
-```
-
-## Packet acquisition
-
-Modern method for getting packets from kernel space to suricata is `af-packet`. Interface can be defined as command line flag.
-
-```
-suricata --af-packet=enp0s3 -S /vagrant/var/rules/suricata.rules  -l /home/vagrant/logs -D -vvv
-```
-
-A proper way would be to define interfaces in `suricata.yaml`. Note that `cluster-id` values should be unique.
-
-```
-af-packet:
-  - interface: enp0s3
-    cluster-id: 98
-    cluster-type: cluster_flow
-    defrag: yes
-  - interface: enp0s8
-    cluster-id: 97
-    cluster-type: cluster_flow
-    defrag: yes
-```
-
-Then run suricata with empty `--af-packet` flag.
-
-```
-suricata --af-packet -S /vagrant/var/rules/suricata.rules  -l /home/vagrant/logs -D -vvv
-```
-
-## Home networks
-
-Edit `suricata.yaml` with proper network information. You should see the following in the head of the file. **Do not forget IPv6**.
-
-```
-vars:
-  # more specific is better for alert accuracy and performance
-  address-groups:
-    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
-    #HOME_NET: "[192.168.0.0/16]"
-    #HOME_NET: "[10.0.0.0/8]"
-    #HOME_NET: "[172.16.0.0/12]"
-    #HOME_NET: "any"
-
-    EXTERNAL_NET: "!$HOME_NET"
-    #EXTERNAL_NET: "any"
-
-    HTTP_SERVERS: "$HOME_NET"
-    SMTP_SERVERS: "$HOME_NET"
-    SQL_SERVERS: "$HOME_NET"
-    DNS_SERVERS: "$HOME_NET"
-    TELNET_SERVERS: "$HOME_NET"
-    AIM_SERVERS: "$EXTERNAL_NET"
-    DC_SERVERS: "$HOME_NET"
-    DNP3_SERVER: "$HOME_NET"
-    DNP3_CLIENT: "$HOME_NET"
-    MODBUS_CLIENT: "$HOME_NET"
-    MODBUS_SERVER: "$HOME_NET"
-    ENIP_CLIENT: "$HOME_NET"
-    ENIP_SERVER: "$HOME_NET"
-
-  port-groups:
-    HTTP_PORTS: "80"
-    SHELLCODE_PORTS: "!80"
-    ORACLE_PORTS: 1521
-    SSH_PORTS: 22
-    DNP3_PORTS: 20000
-    MODBUS_PORTS: 502
-    FILE_DATA_PORTS: "[$HTTP_PORTS,110,143]"
-    FTP_PORTS: 21
-```
-
-These variables are used in rules to indicate perimeter directionality.
-
-```
-#alert tcp $EXTERNAL_NET any -> $HOME_NET 143 (msg:"GPL IMAP login literal buffer overflow attempt"; flow:established,to_server; content:"LOGIN"; nocase; pcre:"/\sLOGIN\s[^\n]*?\s\{/smi"; byte_test:5,>,256,0,string,dec,relative; reference:bugtraq,6298; classtype:misc-attack; sid:2101993; rev:5; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
-```
-
-## Logging and EVE JSON
-
- * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-output.html
- * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-format.html
- * https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html
-
-When built with json support, `eve.json` should be in `default-log-dir`.
-
-```
-grep "default-log-dir" suricata.yaml
-```
- 
-Use [jq](https://stedolan.github.io/jq/) to [verify correct output](https://suricata.readthedocs.io/en/latest/output/eve/eve-json-examplesjq.html).
-
-### tl; dr
-
-In short, this is your typical to-do list in `suricata.yaml` after fresh install -
-
- * Home nets;
- * Default log directory;
- * eve.json output;
- * af-packet input;
- * rules;
-    * update;
-    * Rule directory;
-    * rule file;
- * run suricata with `--af-packet` argument;
-
-### Exercises
-
- * Configure suricata with your Vagrant box uplink subnet as home network;
-  * Do not neglect IPv6!!!
- * Listen on all Vagrant box interfaces with af-packet;
-  * Make sure to use zero-copy mode;
- * Run Suricata in daemon mode with two different rule files;
- * Configure `/vagrant/logs` as destination for `eve.json`;
- * Configure suricata to ignore encrypted traffic;
- * Enable SIP protocol logging;
-   * Test using pcaps from this site - https://wiki.wireshark.org/SampleCaptures
- * Enable ja3 and ja3s hashing support
- * Read some pcap files with non-daemonized version of suricata from [malware traffic analysis site](http://malware-traffic-analysis.net/);
-   * Look for zip files. Password is usually `INFECTED`
-   * Configure a separate log files for HTTP and TLS eve types;
-
----
-
-[back](/Suricata)
+ * Build your own suricata!
+ * Build suricata with ruleset profiling enabled

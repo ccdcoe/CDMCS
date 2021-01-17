@@ -42,13 +42,12 @@ This is material for any intermediate-level dev-ops who has some experience with
 ## Week 2
 
 ### Session 4 - 2 Feb 11:00 EET / 09:00 UTC
- * [building suricata]()
-    * [profiling ruleset]()
- * [suricata.yaml]()
+ * [building suricata](/Suricata/build)
+ * [configuring suricata](/Suricata/config)
 
 ### Session 5 - 3 Feb 11:00 EET / 09:00 UTC
- * [datasets]()
- * [lua (talk)]()
+ * [datasets](/Suricata/datasets)
+ * [lua scipting](/Suricata/lua)
 
 ### Session 6 - 4 Feb 11:00 EET / 09:00 UTC
  * [docker run elasticsearch?]()
