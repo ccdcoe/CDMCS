@@ -462,10 +462,7 @@ FILE=/var/lib/suricata/rules/custom.rules
 alert http \$HOME_NET any -> \$EXTERNAL_NET any (msg:"CDMCS: External Windows executable download"; flow:established,to_server; content:"GET "; uricontent:".exe"; nocase; classtype:policy-violation; sid:3000001; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;) 
 alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
 alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
-alert http any any -> any any (msg:"CDMCS: Listed UA seen"; http.user_agent; to_sha256; dataset:isset,ua-seen; classtype:policy-violation; sid:3000004; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
-alert dns any any -> any any (msg:"CDMCS: Listed DNS hash seen"; dns.query; to_sha256; dataset:isset,dns-sha256-seen; classtype:policy-violation; sid:3000005; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Bypass content delivery"; http.host; dataset:isset,http-content-delivery, type string, state /var/lib/suricata/content-deliver.lst; bypass; sid:3000006; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
-alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Collect unique user-agents"; http.user_agent; dataset:set,http-user-agents, type string, state /var/lib/suricata/http-user-agents.lst; bypass; sid:3000007; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
 EOF
 
 FILE=/var/lib/suricata/rules/lua.rules
@@ -517,14 +514,32 @@ if $DEBUG ; then ip addr show; fi
 systemctl stop suricata
 pgrep Suricata || [[ -f /var/run/suricata.pid ]] && rm /var/run/suricata.pid
 
-echo "Configuring SURICATA"
+echo "Adding datasets for SURICATA"
+FILE=/etc/suricata/cdmcs-datasets.yaml
 
-echo "Adding includes for SURICATA"
-FILE=/etc/suricata/suricata.yaml
-grep "cdmcs" $FILE || cat >> $FILE <<EOF
-include: /etc/suricata/cdmcs-detect.yaml
-include: /etc/suricata/cdmcs-logging.yaml
-include: /etc/suricata/cdmcs-datasets.yaml
+grep "CDMCS" $FILE || cat >> $FILE <<EOF
+%YAML 1.1
+---
+# CDMCS
+datasets:
+  defaults:
+    memcap: 10mb
+    hashsize: 1024
+  ua-seen:
+    type: sha256
+    state: /var/lib/suricata/ua-sha256-seen.lst
+  dns-sha256-seen:
+    type: sha256
+    state: /var/lib/suricata/dns-sha256-seen.lst
+    memcap: 100mb
+    hashsize: 4096
+EOF
+
+FILE=/var/lib/suricata/rules/datasets.rules
+[[ -f $FILE ]] || cat > $FILE <<EOF
+alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Collect unique user-agents"; http.user_agent; dataset:set,http-user-agents, type string, state /var/lib/suricata/http-user-agents.lst; bypass; sid:3000007; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
+alert http any any -> any any (msg:"CDMCS: Listed UA seen"; http.user_agent; to_sha256; dataset:isset,ua-seen; classtype:policy-violation; sid:3000004; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
+alert dns any any -> any any (msg:"CDMCS: Listed DNS hash seen"; dns.query; to_sha256; dataset:isset,dns-sha256-seen; classtype:policy-violation; sid:3000005; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 EOF
 
 echo "Adding detects for SURICATA"
@@ -547,28 +562,8 @@ rule-files:
  -  suricata.rules
  -  custom.rules
  -  lua.rules
+ -  datasets.rules
 sensor-name: CDMCS
-EOF
-
-echo "Adding datasets for SURICATA"
-FILE=/etc/suricata/cdmcs-datasets.yaml
-
-grep "CDMCS" $FILE || cat >> $FILE <<EOF
-%YAML 1.1
----
-# CDMCS
-datasets:
-  defaults:
-    memcap: 10mb
-    hashsize: 1024
-  ua-seen:
-    type: sha256
-    state: /var/lib/suricata/ua-sha256-seen.lst
-  dns-sha256-seen:
-    type: sha256
-    state: /var/lib/suricata/dns-sha256-seen.lst
-    memcap: 100mb
-    hashsize: 4096
 EOF
 
 echo "Adding outputs for SURICATA"
@@ -744,6 +739,14 @@ outputs:
             extended: yes
         - ssh
         - flow
+EOF
+
+echo "Adding includes for SURICATA"
+FILE=/etc/suricata/suricata.yaml
+grep "cdmcs" $FILE || cat >> $FILE <<EOF
+include: /etc/suricata/cdmcs-detect.yaml
+include: /etc/suricata/cdmcs-logging.yaml
+include: /etc/suricata/cdmcs-datasets.yaml
 EOF
 
 #if $DEBUG ; then suricata -T -vvv; fi
