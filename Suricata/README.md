@@ -33,10 +33,9 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [rule writing, cont](/Suricata/rules)
 
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
+ * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
  * [Unix socket mode](/Suricata/unix-socket)
  * [Introducing rulesets](/Suricata/rulesets)
- * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
- * [Building basic attack timeline with alets and EVE](/Suricata/rulesets)
  * [suricata-update](/Suricata/suricata-update)
 
 ## Week 2
@@ -50,6 +49,6 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [lua scipting](/Suricata/lua)
 
 ### Session 6 - 4 Feb 11:00 EET / 09:00 UTC
- * [docker run elasticsearch?]()
- * [shipper notebook / what is bulk api / logstash config and filebeat config]()
- * [evebox, kibana]()
+ * [simple elastic setup and log shipping]()
+ * [using frontends]()
+ * [hunting exercise]()
