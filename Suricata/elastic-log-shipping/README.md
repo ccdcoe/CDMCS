@@ -16,6 +16,9 @@ This section assumes that student can produce EVE JSON messages with Suricata an
 
 ## Bulk API
 
+* [basics](/Suricata/elastic-log-shipping/000-bulk-intro.ipynb)
+* [shipping EVE](/Suricata/elastic-log-shipping/000-bulk-eve.ipynb)
+
 ## Filebeat
 
 ```
