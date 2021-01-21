@@ -49,6 +49,6 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [lua scipting](/Suricata/lua)
 
 ### Session 6 - 4 Feb 11:00 EET / 09:00 UTC
- * [simple elastic setup and log shipping]()
- * [using frontends]()
- * [hunting exercise]()
+ * [Elastic intro](/Suricata/elastic), [Bulk API intro]()
+ * [Kibana and Evebox]()
+ * [Hunting exercise]()
