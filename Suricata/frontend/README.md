@@ -55,3 +55,5 @@ cd kibana-7.10.2-linux-x86_64/
 ```
 ./bin/kibana --allow-root --elasticsearch http://localhost:9200 --host 0.0.0.0
 ```
+
+Then visit exposed port in web browser. Create a new index pattern under `management` > `Index Patterns`. This will allow you to use `Discover` and `Visuzalize` tabs.
