@@ -39,3 +39,19 @@ Alternatively, you can also use `curl -XDELETE` to drop all Suricata indices. Ma
 If all IP addrs, signatures, etc are present, then **ignore this section**.
 
 ## Kibana
+
+Kibana is part of Elastic stack and a swiss army knife for exploring Elastic data. Unlike EveBox that was written for once specific purpose. Easiest way to get up and running is by downloading the package. Not a single binary like EveBox, but bundles everything needed.
+
+**Important!** Kibana is part of Elastic stack. All connected elements must be the same version. Also applies to minor versions. Make sure that kibana package version is same as Elasticsearch. Otherwise, it is liable to simply error when connecting with elastic.
+
+```
+wget https://artifacts.elastic.co/downloads/kibana/kibana-oss-7.10.2-linux-x86_64.tar.gz
+tar -xzf kibana-oss-7.10.2-linux-x86_64.tar.gz
+cd kibana-7.10.2-linux-x86_64/
+```
+
+**`--allow-root`** is for sure a bad idea. It only exists because this is a course setup very far removed from anything resembling production. Anyway, these are settings you would otherwise see in `kibana.yml`. But spinning it up on CLI is actually as easy as with EveBox.
+
+```
+./bin/kibana --allow-root --elasticsearch http://localhost:9200 --host 0.0.0.0
+```
