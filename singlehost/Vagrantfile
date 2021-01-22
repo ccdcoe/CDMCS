@@ -37,18 +37,15 @@ Vagrant.configure(2) do |config|
     box.vm.provider "libvirt" do |v, override|
       v.cpus = CPU
       v.memory = MEM
-      override.vm.box = "generic/ubuntu2004"
     end
     box.vm.provider :hyperv do |hv, override|
       hv.cpus = CPU
       hv.maxmemory = MEM
-      override.vm.box = "generic/ubuntu2004"
       override.vm.synced_folder ".", "/vagrant", type: "smb"
     end
     box.vm.provider :vmware_desktop do |v, override|
       v.vmx["numvcpus"] = CPU
       v.vmx["memsize"] = MEM
-      override.vm.box = "generic/ubuntu2004"
     end
     box.vm.provision "shell", inline: $docker
     box.vm.provision "shell", path: "provision.sh"
