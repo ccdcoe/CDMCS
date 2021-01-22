@@ -130,7 +130,7 @@ curl localhost:9200/filebeat-*/_search
 
 Elastic Common Schema tries to address a simple issue - Elastic has no schema. This makes it great for *"let's collect everything and figure out what we need later"* role, but leads to way too many fields that are inconsistent across data sources, too many fields types to manage, mapping collisions, key inconsistencies while doing lookups, and too much JSON verbosity.
 
-ECS is a taxonomy that tackles those problems by...making more fields, totally dismantling original message according to it's own logic, and inserting a ton of fairly useless metadata from its own engine. Filebeat has Suricata plugin for doing that, but this is not maintained by Suricata developers. **EVE has over 1000 possible JSON fields depending on version and configuration, and it evolves at rapid pace**. So, most tools from OISF or Suricata community focus on supporting core EVE, and not ECS. Thus, **we don't use it during our course.**
+ECS is a taxonomy that tackles those problems by...making more fields, totally dismantling original message according to it's own logic, and inserting a ton of fairly useless metadata from its own engine. Filebeat has Suricata plugin for doing that, but this is not maintained by Suricata developers. **EVE has over 1000 possible JSON fields depending on version and configuration, and it evolves at rapid pace**. So, most tools from OISF or Suricata community focus on supporting core EVE, and not ECS (though some effort is being done for evebox). Thus, **we don't use it during our course.**
 
 ### Docker setup
 
