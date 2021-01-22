@@ -75,7 +75,7 @@ Filebeat must be configured to:
 * output stream should be pointed **toward your elastic instance**;
 * choose the index you want to store the data;
 
-Other options are simply nice improvements and demonstration. For example, redefining template patterns, disabling it if you want, customizing elastic index pattern, helpful filebeat logging, etc.
+Other options are simply nice improvements and demonstration. For example, redefining template patterns, disabling it if you want, customizing elastic index pattern, helpful filebeat logging, etc. 
 
 ```
 filebeat.inputs:
@@ -111,7 +111,16 @@ logging.files:
 setup.template:
   name: 'filebeat'
   pattern: 'filebeat-*'
-  enabled: true
+  enabled: false
+```
+
+**Note that this configuration also disables template management.** It assumes ECS patterns (more on that later) which we are not using. It does not configure dual-mapping that is assumed by many front-end tools, and thus breaks them. Alas, many frontend tools are accustomed to Logstash default configurations and have adopted them as requirements.
+
+This mapping is in `fields.yml` file that could be customized, or reconfigured. But it's easier to set the template manually. Following command will set a template that is derived from logstash default dual-mapping setup.
+
+```
+curl -XPUT localhost:9200/_template/logstash -H 'Content-Type: application/json' -d '{"order": 0, "version": 0, "index_patterns": ["logstash-*", "events-*", "suricata-*", "filebeat-*"], "settings": {"index": {"number_of_shards": 3, "number_of_replicas": 0, "refresh_interval": "5s"}}, "mappings": {"dynamic_templates": [{"message_field": {"path_match": "message", "mapping": {"norms": false, "type": "text"}, "match_mapping_type": "string"}}, {"string_fields": {"mapping": {"norms": false, "type": "text", "fields": {"keyword": {"type": "keyword"}}}, "match_mapping_type": "string", "match": "*"}}], "properties": {"@timestamp": {"type": "date", "format": "strict_date_optional_time||epoch_millis||date_time"}, "@version": {"type": "keyword"}, "ip": {"type": "ip"}}}, "aliases": {}}'
+'
 ```
 
 Assuming you have this config **customized to your environment** in `config.yml`, use the `run` command.
