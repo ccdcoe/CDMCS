@@ -467,9 +467,8 @@ mkdir -p /var/lib/suricata/rules
 FILE=/var/lib/suricata/rules/custom.rules
 [[ -f $FILE ]] || cat > $FILE <<EOF
 alert http \$HOME_NET any -> \$EXTERNAL_NET any (msg:"CDMCS: External Windows executable download"; flow:established,to_server; content:"GET "; uricontent:".exe"; nocase; classtype:policy-violation; sid:3000001; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;) 
-alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
-alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.subject:"facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
-alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Bypass content delivery"; http.host; dataset:isset,http-content-delivery, type string, state /var/lib/suricata/content-deliver.lst; bypass; sid:3000006; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
+alert dns any any -> any any (msg:"CDMCS: DNS request for Facebook"; dns.query; content:"facebook"; classtype:policy-violation; sid:3000002; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
+alert tls any any -> any any (msg:"CDMCS: Facebook certificate detected"; tls.sni; content: "facebook"; classtype:policy-violation; sid:3000003; rev:1; metadata:created_at 2018_01_19, updated_at 2018_01_19;)
 EOF
 
 FILE=/var/lib/suricata/rules/lua.rules
