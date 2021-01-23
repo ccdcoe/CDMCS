@@ -162,6 +162,83 @@ outputs:
         - flow
 ```
 
+## Application layer setup
+
+Depending on your netwotrk you may have to configure the application layers.
+
+```
+app-layer:
+  protocols:
+    rfb:
+      enabled: yes
+      detection-ports:
+       dp: 5900, 5901, 5902, 5903, 5904, 5905, 5906, 5907, 5908, 5909
+```
+
+Detection ports can be setup in the configuration file, if ever some services
+are running. This is used as fallback if automatic detection did fail.
+
+```
+    # MQTT, disabled by default.
+    mqtt:
+      # enabled: no
+      # max-msg-length: 1mb
+```
+
+Some application layers need to be activated from the configuration file.
+
+```
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: 443
+
+      # Generate JA3 fingerprint from client hello. If not specified it
+      # will be disabled by default, but enabled if rules require it.
+      #ja3-fingerprints: auto
+
+      # What to do when the encrypted communications start:
+      # - default: keep tracking TLS session, check for protocol anomalies,
+      #            inspect tls_* keywords. Disables inspection of unmodified
+      #            'content' signatures.
+      # - bypass:  stop processing this flow as much as possible. No further
+      #            TLS parsing and inspection. Offload flow bypass to kernel
+      #            or hardware if possible.
+      # - full:    keep tracking and inspection as normal. Unmodified content
+      #            keyword signatures are inspected as well.
+      #
+      # For best performance, select 'bypass'.
+      #
+      #encryption-handling: default
+```
+
+Some side features (here bypass) are relative to some application layers characteristics and need
+to be tune there.
+
+```
+    ...
+    http:
+      memcap: 1Gb
+      enabled: yes
+      libhtp:
+         default-config:
+           personality: IDS
+
+           # Can be specified in kb, mb, gb.  Just a number indicates
+           # it's in bytes.
+           request-body-limit: 100kb
+           response-body-limit: 100kb
+
+           # inspection limits
+           request-body-minimal-inspect-size: 32kb
+           request-body-inspect-window: 4kb
+           response-body-minimal-inspect-size: 40kb
+           response-body-inspect-window: 16kb
+```
+
+HTTP parameters are complex and include things such as a memory cap and inspection sizes.
+
+
 ### tl; dr
 
 In short, this is your typical to-do list in `suricata.yaml` after fresh install -
