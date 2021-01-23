@@ -21,7 +21,7 @@ see:
 * https://home.regit.org/2012/09/a-new-unix-command-mode-in-suricata/
 * https://github.com/inliniac/suricata/blob/89ba5816dc303d54741bdfd0a3896c7c1ce50d91/src/unix-manager.c#L922
 
-Unix socket can be enabled in YAML cofnig. Note that this should be enabled by default, so current section does not require user to set it up.
+Unix socket can be enabled in YAML config. Note that this should be enabled by default, so current section does not require user to set it up.
 
 ```
 unix-command:
@@ -40,7 +40,7 @@ suricata --unix-socket
 suricatasc
 ```
 
-Note that Suricata would create unix socket regardless of runmode. However, explicit unix socket mode has a few benefits.Many were already mentioned in last paragraph, but this runmode will also enable commands that are unavailable in other runmodes.
+Note that Suricata would create unix socket regardless of runmode. However, explicit unix socket mode has a few benefits. Many were already mentioned in last paragraph, but this runmode will also enable commands that are unavailable in other runmodes.
 
 Most importantly, you will be able to feed PCAPs along with respective output folders directly to Suricata process running in userspace. Great for network forensics
 
