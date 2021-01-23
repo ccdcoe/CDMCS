@@ -10,7 +10,7 @@ This section **does not** assume any knowledge about Suricata YAML configuration
 
 Let's reiterate.
 * Rules are organized per *rule files*, usually they have suffix `.rules`
-* Suricata can load many rule files from *rule directory*
+* Suricata can load many rule files from *rules directory*
 * Easiest way to test is still to create a single rule file and load that exclusively with `-S` flag
 * `-S` (uppercase) does exclusive load of a single rule file
 * `-s` (lowercase) appends rule file to others in configuration, in other words, not exclusive
@@ -94,6 +94,18 @@ But this is a very bad rule. As it matches on entire TCP payload. So it could tr
 * Secondly, looking into parsed `http` events gives us access to HTTP sticky buffers, so we can direct our lookup explicitly to `http.uri` buffer;
 * Finally, IOC file name is at the very end of the URL, so why not look for it there;
 
+To get information about the  `http.uri` keyword we can use the following command (or just search in the doc):
+
+```
+$ suricata --list-keywords=http.uri
+= http.uri =
+Description: sticky buffer to match specifically and only on the normalized HTTP URI buffer
+Features: No option,sticky buffer
+Documentation: https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-uri-and-http-uri-raw
+```
+
+So ` http.uri` is as expected a sticky buffer and we can build our alert as follow:
+
 ```
 alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri; content: "artifact209.exe"; endswith;)
 ```
@@ -101,7 +113,7 @@ alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri
 This lookup would be done on every single `http.uri`. But `content` can be called multiple times. Suricata evaluates buffers sequentially, so it's always a good idea to put lighter matches first. For example, this rule should only be fully evaluated on `GET` requests. `http.method` buffer is a great help here. And, we can try to avoid any weird edge cases by also verifying that flow is properly established, and that it's a request directed toward server. Not only does it make the rule stronger, **it also makes it much faster as nonapplicable sessions are discarded as soon as possible**.
 
 ```
-alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe";)
+alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe"; endswith;)
 ```
 
 ## Flowbits

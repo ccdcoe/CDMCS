@@ -67,7 +67,7 @@ cat logs/eve.json| jq .src_ip  | sort -h | uniq -c | sort -h
 cat logs/eve.json| jq .dest_ip | sort -h | uniq -c | sort -h
 ```
 
-What is *interesting field*? You need to discover this for yourself. But always start with `event_type`. Each distinct `event_type` has it's own structure (which depends on config, more on that alter).
+What is *interesting field*? You need to discover this for yourself. But always start with `event_type`. Each distinct `event_type` has it's own structure (which depends on config, more on that after).
 
 `jq` has `select` clause to filter by value. For example, suppose you want to extract all `tls` events.
 
@@ -127,7 +127,7 @@ cat logs/eve.json| jq 'select(.event_type=="http") | .timestamp , .http.hostname
 
 ## Tasks
 
-Select malware traffic analysis PCAP and:
+Select a malware traffic analysis PCAP and:
 * Parse it with suricata to generate `eve.json`
 * Extract all unique 
   * event types
