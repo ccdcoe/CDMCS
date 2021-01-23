@@ -26,7 +26,8 @@ However, the student should be familiar with:
 
 ## Enter suricata-update
 
-Now there's a modern tool directly from Suricata dev team. It's called `suricata-update`. It's very easy to install with `pip`.
+Now there's a modern tool directly from Suricata dev team. It's called `suricata-update`. It's provided with suricata
+sources and it is also very easy to install with `pip`
 
 ```
 apt-get install python3-pip
@@ -47,7 +48,7 @@ Predefined sources can be listed with `list-sources` subcommand.
 $HOME/.local/bin/suricata-update list-sources
 ```
 
-By default, only `et/open` is enabled. Other rule sources can be enabled wiht `enable-source` subcommand, with source name (that you found via `list-sources`) following that command.
+By default, only `et/open` is enabled. Other rule sources can be enabled with `enable-source` subcommand, with source name (that you found via `list-sources`) following that command.
 
 ```
 $HOME/.local/bin/suricata-update enable-source tgreen/hunting
@@ -75,6 +76,7 @@ default-rule-path: $WORKING_DIR/rules
 rule-files:
  -  suricata.rules
 ```
+
 ```
 suricata -S $WORKING_DIR/rules/suricata.rules $OPTS
 ```
