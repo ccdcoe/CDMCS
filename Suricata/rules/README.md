@@ -116,6 +116,36 @@ This lookup would be done on every single `http.uri`. But `content` can be calle
 alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe"; endswith;)
 ```
 
+To check if our rule is not badly written, we can use suricata engine analysis:
+
+```
+suricata --engine-analysis -S ~/tmp/basic.rules -l /tmp/
+```
+
+In `/tmp/rules_analysis.txt` we have the following text:
+
+```
+-------------------------------------------------------------------
+Date: 23/1/2021 -- 21:07:53
+-------------------------------------------------------------------
+== Sid: 10000000 ==
+alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe"; endswith;)
+    Rule matches on http uri buffer.
+    Rule matches on http method buffer.
+    App layer protocol is http.
+    Rule contains 0 content options, 2 http content options, 0 pcre options, and 0 pcre options with http modifiers.
+    Fast Pattern "artifact209.exe" on "http request uri (http_uri)" buffer.
+    No warnings for this rule.
+```
+
+Signature seems valid as text ends up with `No warnings`. If we lookk at the other options, we can see a really interesting line:
+
+```
+    Fast Pattern "artifact209.exe" on "http request uri (http_uri)" buffer.
+```
+
+Which means that multi pattern matching is done on the `http.uri` buffer.
+
 ## Flowbits
 
 * https://suricata.readthedocs.io/en/latest/rules/flow-keywords.html#flowbits
