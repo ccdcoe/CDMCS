@@ -205,7 +205,11 @@ Then run Suricata and check for alerts in `eve.json`, you should see only alerts
     * mind flow direction;
     * set up prefilter;
     * match on malicious file name;
+    * this is highest priority match;
+* Generalize the rule to match on .exe file seen in http;
+    * Variation that only locks down on specific user-agent;
 * Enhance the rule to only trigger if response was HTTP 301 or 200;
 * Identify stage 2 download domain and write a IOC rule;
-    * likewise, make sure that metch is as specific as possible;
+    * highest priority alert;
+    * mark the IOC in alert metadata;
 * Where is the CnC server?
