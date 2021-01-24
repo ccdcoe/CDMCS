@@ -4,7 +4,7 @@ see:
  * http://suricata-ids.org/
  * http://planet.suricata-ids.org/
  * http://www.openinfosecfoundation.org/
- * https://github.com/inliniac/suricata
+ * https://github.com/OISF/suricata
  * http://suricata.readthedocs.io/en/latest/
 
 ![logo](https://idsips.files.wordpress.com/2012/09/suricata.png)
@@ -78,17 +78,24 @@ Finally, do note that container usage and arguments depend on how the image was 
 ## Rules
 
 * Suricata alerting is rule-based. Commonly, rulesets are externally developed.
-* There are multiple rule sources, some free some commertial
+* There are multiple rule sources: some free, some commercial
 * You need to manage and update your rules every day!
 
 This is a simple getting started page for writing your first rule. Please refer to [official documentation](https://suricata.readthedocs.io/en/latest/rules/) for more information.
 
 ### Possible sources:
 
+Free sources:
+
 * https://rules.emergingthreats.net/open/
 * https://github.com/ptresearch/AttackDetection#suricata-pt-open-ruleset
 * https://github.com/OISF/suricata-trafficid
 * https://raw.githubusercontent.com/travisbgreen/hunting-rules/master/hunting.rules
+
+Paid sources:
+
+* ETProo
+* SecureWorks
 
 ## PCAP
 
@@ -173,7 +180,7 @@ suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
 
 But the proper way to solve this problem is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the pcap.
 
-Fast log is human-readable plaintext format from Snort days. 
+Fast log is human-readable plaintext format inspired from Snort days. 
 
 ```
 cat logs/fast.log
@@ -206,7 +213,7 @@ A rule consists of the following:
 #### Header
 
 * First keyword: protocol with protocol recognition
-* Second part: IP params includin variable
+* Second part: IP params including variable
 
 #### Rule options
 

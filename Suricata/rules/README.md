@@ -10,7 +10,7 @@ This section **does not** assume any knowledge about Suricata YAML configuration
 
 Let's reiterate.
 * Rules are organized per *rule files*, usually they have suffix `.rules`
-* Suricata can load many rule files from *rule directory*
+* Suricata can load many rule files from *rules directory*
 * Easiest way to test is still to create a single rule file and load that exclusively with `-S` flag
 * `-S` (uppercase) does exclusive load of a single rule file
 * `-s` (lowercase) appends rule file to others in configuration, in other words, not exclusive
@@ -94,6 +94,18 @@ But this is a very bad rule. As it matches on entire TCP payload. So it could tr
 * Secondly, looking into parsed `http` events gives us access to HTTP sticky buffers, so we can direct our lookup explicitly to `http.uri` buffer;
 * Finally, IOC file name is at the very end of the URL, so why not look for it there;
 
+To get information about the  `http.uri` keyword we can use the following command (or just search in the doc):
+
+```
+$ suricata --list-keywords=http.uri
+= http.uri =
+Description: sticky buffer to match specifically and only on the normalized HTTP URI buffer
+Features: No option,sticky buffer
+Documentation: https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-uri-and-http-uri-raw
+```
+
+So ` http.uri` is as expected a sticky buffer and we can build our alert as follow:
+
 ```
 alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri; content: "artifact209.exe"; endswith;)
 ```
@@ -101,8 +113,38 @@ alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri
 This lookup would be done on every single `http.uri`. But `content` can be called multiple times. Suricata evaluates buffers sequentially, so it's always a good idea to put lighter matches first. For example, this rule should only be fully evaluated on `GET` requests. `http.method` buffer is a great help here. And, we can try to avoid any weird edge cases by also verifying that flow is properly established, and that it's a request directed toward server. Not only does it make the rule stronger, **it also makes it much faster as nonapplicable sessions are discarded as soon as possible**.
 
 ```
-alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe";)
+alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe"; endswith;)
 ```
+
+To check if our rule is not badly written, we can use suricata engine analysis:
+
+```
+suricata --engine-analysis -S ~/tmp/basic.rules -l /tmp/
+```
+
+In `/tmp/rules_analysis.txt` we have the following text:
+
+```
+-------------------------------------------------------------------
+Date: 23/1/2021 -- 21:07:53
+-------------------------------------------------------------------
+== Sid: 10000000 ==
+alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:to_server,established; http.method; content: "GET"; http.uri; content: "artifact209.exe"; endswith;)
+    Rule matches on http uri buffer.
+    Rule matches on http method buffer.
+    App layer protocol is http.
+    Rule contains 0 content options, 2 http content options, 0 pcre options, and 0 pcre options with http modifiers.
+    Fast Pattern "artifact209.exe" on "http request uri (http_uri)" buffer.
+    No warnings for this rule.
+```
+
+Signature seems valid as text ends up with `No warnings`. If we lookk at the other options, we can see a really interesting line:
+
+```
+    Fast Pattern "artifact209.exe" on "http request uri (http_uri)" buffer.
+```
+
+Which means that multi pattern matching is done on the `http.uri` buffer.
 
 ## Flowbits
 
