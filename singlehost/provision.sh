@@ -162,6 +162,8 @@ docker ps -a | grep elastic || docker run -dit \
   -p 9200:9200 \
     $DOCKER_ELA 
 
+sleep 15 # With pre-pulled docker images the next steps run before elastic has spun up.
+
 # kibana
 echo "Provisioning KIBANA"
 docker ps -a | grep kibana || docker run -dit \
