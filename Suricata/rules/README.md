@@ -202,6 +202,10 @@ Then run Suricata and check for alerts in `eve.json`, you should see only alerts
     * Generate eve.json and inspect events;
     * Find the malicious file download;
 * Write a rule that triggers when that file is downloaded;
+    * mind flow direction;
+    * set up prefilter;
+    * match on malicious file name;
 * Enhance the rule to only trigger if response was HTTP 301 or 200;
 * Identify stage 2 download domain and write a IOC rule;
+    * likewise, make sure that metch is as specific as possible;
 * Where is the CnC server?
