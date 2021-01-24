@@ -262,7 +262,7 @@ docker ps -a | grep evebox | docker run -tid --rm \
       --host 0.0.0.0 \
 
 echo "Provisioning RSYSLOG"
-add-apt-repository ppa:adiscon/v8-stable
+add-apt-repository -y ppa:adiscon/v8-stable
 apt-get update
 apt-get install rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch -y
 FILE=/etc/rsyslog.d/75-elastic.conf
@@ -451,7 +451,7 @@ done
 echo "Provisioning SURICATA"
 # suricata
 install_suricata_from_ppa(){
-  add-apt-repository ppa:oisf/suricata-stable > /dev/null 2>&1 \
+  add-apt-repository -y ppa:oisf/suricata-stable > /dev/null 2>&1 \
   && apt-get update > /dev/null \
   && apt-get install -y suricata > /dev/null
 }
