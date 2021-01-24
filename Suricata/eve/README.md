@@ -7,6 +7,25 @@ This section **does not** assume any knowledge about Suricata YAML configuration
 * Parsing offline PCAP files;
 * Rule file, loading that rule file with `-S`;
 
+## Background
+
+* Suricata is not just for signatures
+* At least, not any more
+* Parsing entire payload is expensive
+* Better to nail down specific fields
+* Solution - per protocol parsers
+  * HTTP
+  * TLS
+  * SMTP
+  * ... and the list goes on
+* Side effect - why not log extracted fields?
+ 
+## EVE
+ 
+* JavaScript Object Notation (JSON)
+* key-value pairs
+* enriched metadata
+
 ## Parse a PCAP file offline
 
 Suricata has `-r` for pcap read mode. Likewise, logging directory can be overridden with `-l`. Nite that `--disable-detection` is used to avoid Suricata complaining about missing rulesets. Don't worry, that topic will be covered later. For now, we just want to explore protocol logs.

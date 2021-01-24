@@ -233,25 +233,18 @@ A rule consists of the following:
   * http.user-agent
 * *content modifiers* are going the way of the Dodo
 
-## Exercise - write rules that trigger on following conditions
+## Tasks
 
-### Basic tasks for introduction
-
+Write rules for:
+* Facebook dns request
 * Facebook certificate
 * DNS domain with .su suffix
-* DNS zone transfer (tricky, use wireshark for help)
-* Detection of popular default user-agents:
+* DNS zone transfer
+  * hint - no keyword will help here, you need to hunt raw bytes with wireshark
+  * hint - mind the protocol
+* Detection of popular default user-agents (use `curl -A`):
   * Python;
   * Nikto;
   * Dirbuster;
   * Nmap;
   * Curl
-
-### More complex tasks once we have covered configuration
-
-* Alert on JPEG image taken with a NIKON D700 (example: http://home.regit.org/wp-content/uploads/2017/07/20170705_0237.jpg)
-  * Hint - you need to configure Suricata to give you this information;
-* Set up a simple web server with `python3 -m http.server` and create 5 files with some content in it;
-  * 2 files are *confidential* - you should get an alert whenever someone accesses them via HTTP GET;
-  * You should not get an alert for other files;
-  * Modify this rule, so that alerts are only generated when files are downloaded from **CONFIDENTIAL_SERVER**;

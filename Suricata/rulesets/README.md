@@ -64,6 +64,8 @@ Then add update command with reload to periodic cron task.
 
 ## Show and tell
 
+* [See the attached notebook](/Suricata/rulesets/000-explore-rulesets.ipynb)
+
 Demo session for exploring rulesets with a Jupyter notebook. For showing how rulesets are structured, how many rules there are, how rules are usually written by professionals. Not meant to be a hands-on session for students.
 
 ```

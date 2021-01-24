@@ -108,6 +108,8 @@ alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:
 
 * https://suricata.readthedocs.io/en/latest/rules/flow-keywords.html#flowbits
 
+Consider following [case](https://malware-traffic-analysis.net/2021/01/05/index.html)
+
 Suppose we have following malware IOC-s in `http.url`.
 
 ```
@@ -148,12 +150,12 @@ Then run Suricata and check for alerts in `eve.json`, you should see only alerts
 
 ## Tasks
 
-* Select a pcap from MTA set and explore `http`, `tls` and `dns` fields as you did for basic EVE exploration;
-* Write rules that trigger on suspicious values;
-* Make sure that the match is as strong as possible. In other words, rule written for requests should not trigger on responses, etc;
-* Write rules detecting default user-agents, but only if response code from server was 200 (OK) or 302 (redirected):
-  * Python;
-  * Nikto;
-  * Dirbuster;
-  * Nmap;
-  * Curl
+* Write rules detecting default user-agents, but only if response code from server was 200 (OK);
+    * Python;
+    * Nikto;
+    * Dirbuster;
+    * Nmap;
+    * Curl
+* Select a PCAP from MTA set and explore `http`, `tls` and `dns` fields as you did for basic EVE exploration;
+    * Write rules that trigger on suspicious values;
+    * Make sure that the match is as strong as possible. In other words, rule written for requests should not trigger on responses, etc;
