@@ -46,22 +46,57 @@ suricata --help
 ethtool -K $ETH tx off sg off gro off gso off lro off tso off
 ```
 
-This task is done automatically when starting recent Suricata.
+This task is done automatically when starting recent Suricata. However, everyone that does packet capture needs to know about this!
+
+### Runmodes (major ones)
+
+* Offline PCAP read;
+  * useful for testing and forensics;
+  * `-r $PCAP_FILE`;
+  * pointing to directory will continue sessions (assumes sequential PCAPs);
+* Online AF-PACKET mode 
+  * low overhead;
+  * interfaces with Linux kernel;
+  * de-facto standard for live capture (Linux);
+    * netmap does the same on BSD;
+  * no need to pull packet to userspace;
+  * zero-copy goodness;
+  * `--af-packet=$IFACE`;
+* Unix-socket mode;
+  * [separate topic](/Suricata/unix-socket);
+  * think of this as online version of PCAP read mode;
+  * offline forensics;
+  * timesaver and quality of life improvement (no engine restart);
+  * tradeoff, config testing needs engine restarts anyway and not a big deal with small rule files;
 
 ### Simply running from cli
 
-```
-cat /etc/suricata/rules/*.rules >> /tmp/all.rules
-mkdir /tmp/log
-```
+* `-l` log directory;
+* `-r` for reading PCAP file, or `--af-packet=$IFACE` with `$IFACE` reflecting a network interface on your system;
+* `-S` to exclusively load a rule file (don't worry, that rule file can be empty), or `--disable-detection` to disable rule engine;
+* `-v`, `-vv` or `-vvv` to increase Suricata logging verbosity;
+
+Read offline PCAP file.
 
 ```
-suricata --af-packet=$ETH -l /tmp -S /tmp/all.rules  -vvv
+suricata -r $PCAP_FILE -l $LOG_DIR -S $EXCLUSIVE_RULE_FILE
+```
+
+Read online AF-PACKET interface. **Needs elevated privileges.**
+
+```
+suricata --af-packet=$IFACE -l $LOG_DIR -S $EXCLUSIVE_RULE_FILE
+```
+
+Use suricata without signature engine to only generate protocol logs.
+
+```
+suricata --af-packet=$IFACE -l $LOG_DIR --disable-detection
 ```
 
 ### Docker install
 
-Note that Suricata works just fine when set up using docker. [There is an official image for that](https://github.com/jasonish/docker-suricata#usage). Thought building one for yourself is not too difficult.
+Note that Suricata works just fine when set up using docker. [There is an official image for that](https://github.com/jasonish/docker-suricata#usage). Though building one for yourself is not too difficult. **Official image is very minimal, many features are missing.**
 
 ```
 docker run --rm -ti jasonish/suricata --help
@@ -73,13 +108,14 @@ Note that docker images usually have a default command or entrypoint. That means
 docker run --rm -ti jasonish/suricata suricata-update --help
 ```
 
-Finally, do note that container usage and arguments depend on how the image was built. There is not single way to do these things. You simply need to [read the Dockerfile](https://github.com/jasonish/docker-suricata/blob/master/Dockerfile) and [entrypoint script](https://github.com/jasonish/docker-suricata/blob/master/docker-entrypoint.sh).
+Do note that container usage and arguments depend on how the image was built. There is not single way to do these things. You simply need to [read the Dockerfile](https://github.com/jasonish/docker-suricata/blob/master/Dockerfile) and [entrypoint script](https://github.com/jasonish/docker-suricata/blob/master/docker-entrypoint.sh).
 
 ## Rules
 
-* Suricata alerting is rule-based. Commonly, rulesets are externally developed.
-* There are multiple rule sources: some free, some commercial
-* You need to manage and update your rules every day!
+* Suricata alerting is rule-based; 
+* Commonly, rulesets are externally developed;
+* There are multiple rule sources: some free, some commercial;
+* You need to manage and update your rules every day!;
 
 This is a simple getting started page for writing your first rule. Please refer to [official documentation](https://suricata.readthedocs.io/en/latest/rules/) for more information.
 
@@ -94,7 +130,7 @@ Free sources:
 
 Paid sources:
 
-* ETProo
+* ETPro
 * SecureWorks
 
 ## PCAP
@@ -136,16 +172,16 @@ curl -v https://www.facebook.com -sL -H 'Connection: close'
 Load the pcap into suricata
 
 ```
-suricata -r /vagrant/capture.pcap -vvv
+suricata -r /vagrant/capture.pcap -l logs/ -S custom.rules -vvv
 ```
 
 Or, you can capture traffic on the wire.
 
 ```
-suricata --af-packet=$ETH -l logs/ -vvv
+suricata --af-packet=$ETH -l logs/ -S custom.rules -vvv
 ```
 
-However, note that can be considerably more difficult (or annoying) to reproduce with live traffic.
+Do note that replicating test cases can become much more difficult with live traffic.
 
 ## Writing your first rule
 
@@ -160,25 +196,25 @@ Create a new file for custom rules.
 vim rules/custom.rules
 ```
 
-Then enter this skeleton.
+Then enter this skeleton. It will alert on every TCP session, regardless of direction.
 
 ```
-alert tcp any any -> any any (msg:"testing"; classtype:bad-unknown; sid:990001; rev:1;)
+alert tcp any any -> any any (msg:"testing"; sid:990001; rev:1;)
 ```
 
-Finally, run suricata from command line against the pcap file from prior step while exclusively loading your rule file. Note that we also redefine our default logging directory, so we are able to see the output.
+And run Suricata from command line against the pcap file from prior step while exclusively loading your rule file. Logging goes to custom directory.
 
 ```
-suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv
+suricata -S rules/custom.rules -r /vagrant/my.pcap -l logs/ -vvv
 ```
 
-Checksum errors can also be ignored with `-k` flag. That way we do not have to rewrite our pcap file nor disable checksum offloading.
+Checksum errors can also be ignored with `-k` flag. That way we do not have to rewrite our PCAP file nor disable checksum offloading.
 
 ```
-suricata -S /vagrant/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
+suricata -S rules/custom.rules -r /vagrant/my.pcap -l logs/ -vvv -k none
 ```
 
-But the proper way to solve this problem is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the pcap.
+But the proper way to solve this problem is by [disabling NIC offloading fucntions](/Suricata/intro#disable-nic-offloading) and then regenerating the PCAP.
 
 Fast log is human-readable plaintext format inspired from Snort days. 
 
@@ -231,16 +267,28 @@ A rule consists of the following:
   * SSL certificate;
   * DNS query;
   * ...
-* Can drill down using *content modifiers* or *sticky buffers*
-* content modifier uses underscores and comes after *content*
-  * tls_sni
-  * http_user_agent
-* sticky buffer uses dots and comes before *content*
-  * tls.sni
-  * http.user-agent
-* *content modifiers* are going the way of the Dodo
+* Can drill down using *content modifiers* or *sticky buffers*;
+* content modifier uses underscores and comes **after** *content*;
+  * tls_sni;
+  * http_user_agent;
+* sticky buffer uses dots and comes **before *content*;
+  * tls.sni;
+  * http.user-agent;
+* *content modifiers* are going the way of the Dodo;
 
 ## Tasks
+
+Helpers:
+* Generate HTTP / TLS traffic:
+  * `curl https://www.facebook.com`;
+  * `curl testmyids.com`;
+* Generate DNS queries;
+  * `dig A www.google.com @1.1.1.1`;
+  * `dig AAAA www.google.com @1.1.1.1`;
+  * `dig NS google.com @1.1.1.1`;
+  * `dig MX google.com @1.1.1.1`;
+* Generate DNS zone transfer;
+  * `dig AXFR berylia.org @1.1.1.1`;
 
 Write rules for:
 * Facebook dns request
