@@ -25,11 +25,11 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [what is Suricata](/Suricata/intro)
  * [Suricata on CLI](/Suricata/intro)
  * [writing your first rule](/Suricata/intro#writing-your-first-rule)
+ * [live capture and replay](/Suricata/live)
 
 ### Session 2 - 27 Jan 11:00 EET / 09:00 UTC
  * [EVE log basics](/Suricata/eve)
  * [EVE basic tasks](/Suricata/eve#tasks)
- * [live capture and replay](/Suricata/live)
  * [rule writing, cont](/Suricata/rules)
 
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
