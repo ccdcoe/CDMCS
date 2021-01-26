@@ -127,7 +127,9 @@ cat logs/eve.json| jq 'select(.event_type=="http") | .timestamp , .http.hostname
 
 ## Tasks
 
-Select a malware traffic analysis PCAP and:
+This is a freeform exploration exercise. **There are not right or wrong answers.** In fact, there are no prepared solutions for the task either. Going through the process is the real goal.
+
+Select a **subset** of malware traffic analysis PCAPs and:
 * Parse it with suricata to generate `eve.json`
 * Extract all unique 
   * event types
@@ -138,3 +140,17 @@ Select a malware traffic analysis PCAP and:
   * build a top list of all unique queries
   * does anything pop out?
   * if it does, what are associated IP responses and has that IP done anything else?
+* Other fields to keep an eye out:
+  * HTTP user agents;
+  * HTTP URI;
+  * HTTP hostname;
+  * HTTP redirects;
+  * TLS Server Name Identifier;
+  * TLS certificate content (common name, issuer, etc);
+  * SMB filenames;
+  * SMB commands;
+  * Fileinfo fields;
+* **Advanced** - write a script that 
+  * parses all MTA PCAPs into separate directories;
+  * generates a `report.txt` file per PCAP of unique event types with sorted count;
+  * if you are at this point, well, you can really generate a report of any field you're interested in;
