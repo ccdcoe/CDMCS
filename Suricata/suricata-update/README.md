@@ -134,3 +134,4 @@ $HOME/.local/bin/suricata-update -D $WORKING_DIR  --disable-conf disable.conf
   * Outbound Curl user-agent;
   * apt and yum package management;
   * Unix and BSD ping;
+* Generate a report of alerts per MTA PCAP;
