@@ -125,13 +125,17 @@ $HOME/.local/bin/suricata-update -D $WORKING_DIR  --disable-conf disable.conf
 
 # Exercise
 
-* Set up periodic rule update. Rules should be located in `/vagrant/var`. Following rulesets should be activated:
+* Set up periodic rule update. 
+* Select your own folder where the rules should be located. 
+* Following rulesets should be activated:
   * `et/open`
   * `oisf/trafficid`
   * `ptresearch/attackdetection`
   * `tgreen/hunting`
+* Generate a report of alerts per MTA PCAP;
 * Disable following rules:
   * Outbound Curl user-agent;
   * apt and yum package management;
   * Unix and BSD ping;
-* Generate a report of alerts per MTA PCAP;
+  * Suricata STREAM rules;
+* Write a crontab script that updates your ruleset and invokes suricata rule reload **without restarting it**;
