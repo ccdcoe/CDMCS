@@ -82,7 +82,7 @@ apt-get update && apt-get -y install \
 
 # versions
 UBUNTU_VERSION="20.04"
-ELASTIC_VERSION="7.10.1"
+ELASTIC_VERSION="7.10.2"
 INFLUX_VERSION="1.8.3"
 GRAFANA_VERSION="7.3.6"
 TELEGRAF_VERSION="1.16.2"

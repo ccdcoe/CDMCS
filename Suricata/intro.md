@@ -13,7 +13,7 @@
 ## Taking it remote
 
 * 6x3h sessions
-* spread out over 3 weeks
+* spread out over 2 weeks
 * to avoid burnout
 * shortened format
 * timeline is still tentative
