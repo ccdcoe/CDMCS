@@ -70,7 +70,6 @@ tail -f logs/eve.json
 
 ## Tasks
 
-* Select 3 malware PCAP samples
-* Create a virtual NIC pair for each pcap
-* Start a replay for each PCAP from different Suricata instance
-  * Each replay instance should log to different folder
+* Select 3 malware PCAP samples;
+* Create a virtual NIC pair for each pcap;
+* Start a separate suricata capture process for each PCAP replay;

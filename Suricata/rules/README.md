@@ -104,7 +104,7 @@ Features: No option,sticky buffer
 Documentation: https://suricata.readthedocs.io/en/latest/rules/http-keywords.html#http-uri-and-http-uri-raw
 ```
 
-So ` http.uri` is as expected a sticky buffer and we can build our alert as follow:
+So `http.uri` is as expected a sticky buffer and we can build our alert as follow:
 
 ```
 alert http any any -> any any (sid:10000001; msg: "CDMCS: Malware IOC"; http.uri; content: "artifact209.exe"; endswith;)
@@ -138,7 +138,7 @@ alert http any any -> any any (sid:10000000; msg: "This is a simple rule"; flow:
     No warnings for this rule.
 ```
 
-Signature seems valid as text ends up with `No warnings`. If we lookk at the other options, we can see a really interesting line:
+Signature seems valid as text ends up with `No warnings`. If we look at the other options, we can see a really interesting line:
 
 ```
     Fast Pattern "artifact209.exe" on "http request uri (http_uri)" buffer.
@@ -198,6 +198,18 @@ Then run Suricata and check for alerts in `eve.json`, you should see only alerts
     * Dirbuster;
     * Nmap;
     * Curl
-* Select a PCAP from MTA set and explore `http`, `tls` and `dns` fields as you did for basic EVE exploration;
-    * Write rules that trigger on suspicious values;
-    * Make sure that the match is as strong as possible. In other words, rule written for requests should not trigger on responses, etc;
+* Inspect MTA case `2020-03-12-infection-traffic.pcap`;
+    * Generate eve.json and inspect events;
+    * Find the malicious file download;
+* Write a rule that triggers when that file is downloaded;
+    * mind flow direction;
+    * set up prefilter;
+    * match on malicious file name;
+    * this is highest priority match;
+* Generalize the rule to match on .exe file seen in http;
+    * Variation that only locks down on specific user-agent;
+* Enhance the rule to only trigger if response was HTTP 301 or 200;
+* Identify stage 2 download domain and write a IOC rule;
+    * highest priority alert;
+    * mark the IOC in alert metadata;
+* Where is the CnC server?
