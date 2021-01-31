@@ -262,6 +262,7 @@ ldconfig
 ## Exercises
 
  * Build your own suricata with following features:
+  * custom install directory that does NOT requires root privileges;
   * async redis;
   * hyperscan;
   * LuaJIT;
