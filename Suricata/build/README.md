@@ -214,6 +214,8 @@ If you have already generated different binaries in different prefix directories
 <prefix>/bin/suricata --build-info
 ```
 
+## Debugging missing libraries
+
 You may experience library errors if you built dependencies by hand. For example, if compiling with hyperscan support with custom-built hyperscan package, the you might run into this.
 
 ```
@@ -258,6 +260,8 @@ ldconfig
 ```
 
 ## Exercises
+
+Note, these builds should go into **separate install directories**!
 
  * Build your own suricata!
  * Build suricata with ruleset profiling enabled
