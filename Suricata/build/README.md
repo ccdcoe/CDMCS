@@ -261,7 +261,8 @@ ldconfig
 
 ## Exercises
 
-Note, these builds should go into **separate install directories**!
-
- * Build your own suricata!
- * Build suricata with ruleset profiling enabled
+ * Build your own suricata with following features:
+  * async redis;
+  * hyperscan;
+  * LuaJIT;
+ * Build suricata **to another install directory** with ruleset profiling enabled
