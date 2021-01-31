@@ -125,7 +125,6 @@ $HOME/.local/bin/suricata-update -D $WORKING_DIR  --disable-conf disable.conf
 
 # Exercise
 
-* Set up periodic rule update. 
 * Select your own folder where the rules should be located. 
 * Following rulesets should be activated:
   * `et/open`
