@@ -168,6 +168,12 @@ Then make sure that rust binaries are in your `PATH`. Run the following command 
 export PATH="$HOME/.cargo/bin:$PATH"
 ```
 
+A quick way to get it to work is to just load environment file packaged with cargo. **This config will be cone as soon as you switch terminals or reboot!**
+
+```
+source .cargo/env
+```
+
 Most important, Suricata needs **cbindgen** package for interfacing C code with Rust. It can be installed with `cargo` or with package manager.
 
 ## Build suricata
