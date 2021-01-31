@@ -34,7 +34,6 @@ This is material for any intermediate-level dev-ops who has some experience with
 ### Session 3 - 28 Jan 11:00 EET / 09:00 UTC
  * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
  * [Unix socket mode](/Suricata/unix-socket)
- * [live capture and replay](/Suricata/live)
  * [Introducing rulesets](/Suricata/rulesets)
  * [suricata-update](/Suricata/suricata-update)
 
@@ -43,6 +42,7 @@ This is material for any intermediate-level dev-ops who has some experience with
 ### Session 4 - 2 Feb 11:00 EET / 09:00 UTC
  * [building suricata](/Suricata/build)
  * [configuring suricata](/Suricata/config)
+ * [live capture and replay](/Suricata/live)
 
 ### Session 5 - 3 Feb 11:00 EET / 09:00 UTC
  * [datasets](/Suricata/datasets)
