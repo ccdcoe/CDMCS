@@ -22,6 +22,12 @@ suricata -c <config-dir>/suricata.yaml -T -vvv
 suricata --dump-config
 ```
 
+Or use `--set` to set a specific configuration option. This has been explored in previous sections. However, this is a hack to override YAML values.
+
+```
+suricata --set default-log-dir=/tmp
+```
+
 Them move on to important steps.
 
 ## Packet acquisition
@@ -60,14 +66,9 @@ Edit `suricata.yaml` with proper network information. You should see the followi
 vars:
   # more specific is better for alert accuracy and performance
   address-groups:
-    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
-    #HOME_NET: "[192.168.0.0/16]"
-    #HOME_NET: "[10.0.0.0/8]"
-    #HOME_NET: "[172.16.0.0/12]"
-    #HOME_NET: "any"
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12,fe80::10]"
 
     EXTERNAL_NET: "!$HOME_NET"
-    #EXTERNAL_NET: "any"
 
     HTTP_SERVERS: "$HOME_NET"
     SMTP_SERVERS: "$HOME_NET"
@@ -162,9 +163,29 @@ outputs:
         - flow
 ```
 
+## Signatures
+
+Having pointed Suricata to a exclusive rule file, the following config should be fairly easy to understand.
+
+```
+default-rule-path: /var/lib/suricata/rules
+rule-files:
+- suricata.rules
+```
+
+Naturally, we can use multiple rule files. Note that all rule files should exist. Empty file is enough.
+
+```
+- suricata.rules
+- trafficid.rules
+- custom.rules
+- dataset.rules
+- lua.rules
+```
+
 ## Application layer setup
 
-Depending on your netwotrk you may have to configure the application layers.
+Depending on your network you may have to configure the application layers.
 
 ```
 app-layer:
@@ -238,8 +259,7 @@ to be tune there.
 
 HTTP parameters are complex and include things such as a memory cap and inspection sizes.
 
-
-### tl; dr
+## tl; dr
 
 In short, this is your typical to-do list in `suricata.yaml` after fresh install -
 
@@ -253,7 +273,7 @@ In short, this is your typical to-do list in `suricata.yaml` after fresh install
     * rule file;
  * run suricata with `--af-packet` argument;
 
-### Exercises
+## Exercises
 
 * Build suricata with VM uplink (+IPv6) as HOME_NET
 * Set up [virtual replay](/Suricata/live) and configure it as second capture interface;
