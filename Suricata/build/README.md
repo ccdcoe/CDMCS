@@ -176,6 +176,10 @@ source .cargo/env
 
 Most important, Suricata needs **cbindgen** package for interfacing C code with Rust. It can be installed with `cargo` or with package manager.
 
+```
+cargo install --force cbindgen
+```
+
 ## Build suricata
 
 ```
