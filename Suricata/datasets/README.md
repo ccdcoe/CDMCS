@@ -12,6 +12,9 @@ IDS rules have historically been rather static and self-contained entities. Thre
 
 ```
 datasets:
+  defaults:
+    memcap: 10mb
+    hashsize: 1024
   ua-sha256:
     type: sha256
     state: /var/lib/suricata/useragents-sha256.lst
@@ -25,6 +28,12 @@ Alternatively, the rule could be rewritten to contain all needed parameters. Mod
 
 ```
 alert http any any -> any any (msg:"HTTP user-agent list"; http.user_agent; to_sha256; dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst; sid:123; rev:1;)
+```
+
+Here is the important section.
+
+```
+dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst
 ```
 
 Note that rule starts with `isset` to verify existence of list element. You could also use `isnotset` to check for element to be absent and `set` to add a missing element to the list. Items can be added to the set manually via `dataset-add` unix socket command.
@@ -45,10 +54,16 @@ Note that:
 
 ## Adding elements
 
-Adding a element, such as `mail.militaryrelocator.com` to this list requires us to base64 encode it.
+Adding a element, such as `mail.militaryrelocator.com` to this list requires us to base64 encode it when using `string` datatype.
 
 ```
 echo -n mail.militaryrelocator.com | base64
+```
+
+Using `sha256` datatype requires hashing the added value instead.
+
+```
+echo -n mail.militaryrelocator.com | sha256sum
 ```
 
 Note that calling `echo` would implicitly add a newline symbol to the string. While barely visible to human eye, it's nothing more than extra char to computer. No different from any other letter. And that would affect the base64 value of the string. Suricata does not add this newline, so base64 would differ. We use `echo -n` to avoid this issue.
@@ -83,6 +98,12 @@ alert dns any any -> any any (msg:"New mailserver query seen"; dns.query; conten
 
 Use PCAP files specified by the instructors.
 
+* Write rules detecting default user-agents (exact matches on lowercase strings are fine);
+    * Python;
+    * Nikto;
+    * Dirbuster;
+    * Nmap;
+    * Curl
 * Create a `string` list of all unique **dns queries**, **http user-agents**, **http.uri**, **ja3 fingerprints** and **TLS certificate issuers**;
   * lists should be generated **without getting any alerts**;
   * Verify each list element with `base64 -d`;
