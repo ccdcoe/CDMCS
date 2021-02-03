@@ -41,10 +41,11 @@ This is material for any intermediate-level dev-ops who has some experience with
 
 ### Session 4 - 2 Feb 11:00 EET / 09:00 UTC
  * [building suricata](/Suricata/build)
- * [configuring suricata](/Suricata/config)
  * [live capture and replay](/Suricata/live)
+ * [configuring suricata](/Suricata/config)
 
 ### Session 5 - 3 Feb 11:00 EET / 09:00 UTC
+ * [configuring suricata](/Suricata/config)
  * [datasets](/Suricata/datasets)
  * [lua scipting](/Suricata/lua)
 
@@ -52,4 +53,3 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [Elastic intro](/Suricata/elastic), 
  * [Bulk API intro](/Suricata/elastic-log-shipping)
  * [Kibana and Evebox](/Suricata/frontend)
- * [Hunting exercise]()
