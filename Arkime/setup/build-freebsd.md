@@ -151,4 +151,4 @@ curl -ss -XGET 127.0.0.1:9200/sessions-*/_search?pretty -d '{"size":1}'
 * data retention
 
 ---
-[next : Advanced Configuration](/Moloch/config.md)
+[next : Advanced Configuration](/Arkime/config.md)

@@ -13,7 +13,7 @@ There are multiple ways to do this, for example:
 
 # API
 
-  * [See API reference](/Moloch/queries#api)
+  * [See API reference](/Arkime/queries#api)
 
 # Rules
 

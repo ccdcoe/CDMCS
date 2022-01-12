@@ -268,6 +268,6 @@ Then visit port `8005` in browser for your VM private network. Run `curl` comman
 
 ## Advanced
 
-  * Refer to example configs in moloch `etc` folder and the [singlehost](/Moloch/vagrant/singlehost) provisioning script, create persistent systemd services for both capture and viewer;
+  * Refer to example configs in moloch `etc` folder and the [singlehost](/Arkime/vagrant/singlehost) provisioning script, create persistent systemd services for both capture and viewer;
     * Enable the services, so they are automatically started during start-up
     * Ensure that moloch services are started after the `docker` service running your elasticsearch;

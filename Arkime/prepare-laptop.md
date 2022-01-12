@@ -23,9 +23,9 @@
 
 ### Suricata and Moloch
 
-* Singlehost setup **[environment](/Moloch/vagrant/singlehost)** - full vagrant environment that includes moloch capture, viewer, backend document storage, threat intelligence and IDS tagging
-* Old WISE plugin **[source.suricata.js](/Moloch/vagrant/singlehost/old/source.suricata.js)** *"connects"* Moloch session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
-* New tagger script **[tagger.py](/Moloch/vagrant/singlehost/tagger.py)** *"queries"* Moloch for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
+* Singlehost setup **[environment](/Arkime/vagrant/singlehost)** - full vagrant environment that includes moloch capture, viewer, backend document storage, threat intelligence and IDS tagging
+* Old WISE plugin **[source.suricata.js](/Arkime/vagrant/singlehost/old/source.suricata.js)** *"connects"* Moloch session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
+* New tagger script **[tagger.py](/Arkime/vagrant/singlehost/tagger.py)** *"queries"* Moloch for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
 
 # Instructions
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
@@ -41,14 +41,14 @@ To create and provision a new empty virtual machine:
     mkdir something
     cd something
     vagrant box add ubuntu/bionic64
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/Vagrantfile
-    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/vagrant/singlehost/provision.sh
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Arkime/vagrant/singlehost/Vagrantfile
+    wget https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Arkime/vagrant/singlehost/provision.sh
     vagrant up
 
 Running `vagrant up` for the first time will run provisioning, which will:
 - Download the [Ubuntu 18.04 base image](https://app.vagrantup.com/ubuntu/boxes/bionic64)<sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
-- Run the provisioning script ([provision.sh](/Moloch/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
+- Run the provisioning script ([provision.sh](/Arkime/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
 The Vagrant box will automatically start after provisioning. It can be started in future with `vagrant up` from the *dirnameyoujustcreated* directory.
 

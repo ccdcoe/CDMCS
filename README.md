@@ -14,8 +14,8 @@ Our goal is to make our students understand fundamental concepts that can be bro
 
 Please visit:
 
- * http://suricata-ids.org/
- * http://molo.ch/
+ * https://suricata.io/
+ * https://arkime.com/
 
 See:
   * [Prerequisites](prerequisites/)
@@ -23,11 +23,11 @@ See:
 # Current Classes
 
  * [Suricata :: Jan 25 - Feb 04 2021](/Suricata/) **Online**
- * [Moloch :: May 31 - Jun 4 2021](/Moloch/) **Tentative** - On-site only, so depends on the COVID-19 situation.
+ * ~~[Arkime :: May 31 - Jun 4 2021](/Arkime/)~~ **Was canceled** - On-site only, so depends on the COVID-19 situation.
 
 # Older Classes
 
- * Prior iterations are preserved under respectively numbered branches. Please refer to them if you are interested in prior content.
+ * Prior iterations are preserved under respectively numbered annual branches. Please refer to them if you are interested in prior content.
 
 ## Teachers
 

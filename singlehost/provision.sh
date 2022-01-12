@@ -1166,7 +1166,7 @@ mkdir -p /etc/grafana/provisioning/dashboards/
 
 DASHBOARDS=/vagrant/grafana-provision
 if [ ! -d $DASHBOARDS ]; then
-  DASHBOARDS=/home/vagrant/cdmcs/Moloch/vagrant/singlehost/grafana-provision
+  DASHBOARDS=/home/vagrant/cdmcs/Arkime/vagrant/singlehost/grafana-provision
   git clone https://github.com/ccdcoe/cdmcs.git /home/vagrant/cdmcs
 fi
 FILE=/etc/grafana/provisioning/dashboards/cdmcs.yml

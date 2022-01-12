@@ -36,7 +36,7 @@ Clone this repository and enter this directory:
 
 ```
 git clone https://github.com/ccdcoe/CDMCS.git
-cd CDMCS/Moloch/singlehost
+cd CDMCS/Arkime/singlehost
 ```
 
 Verify that your environment is correct.

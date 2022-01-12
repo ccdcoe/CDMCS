@@ -45,7 +45,7 @@ SCRIPT
 $check_notebooks = <<-SCRIPT
 if [ ! -d /home/vagrant/notebooks ]; then
   mkdir -p /home/vagrant/notebooks && cd /home/vagrant/notebooks
-  wget -4 -q https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Moloch/queries/001-moloch-api.ipynb -O /home/vagrant/notebooks/001-moloch-api.ipynb
+  wget -4 -q https://raw.githubusercontent.com/ccdcoe/CDMCS/master/Arkime/queries/001-moloch-api.ipynb -O /home/vagrant/notebooks/001-moloch-api.ipynb
 fi
 SCRIPT
 
