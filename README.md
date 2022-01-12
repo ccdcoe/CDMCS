@@ -18,12 +18,14 @@ Please visit:
  * https://arkime.com/
 
 See:
-  * [Prerequisites](prerequisites/)
+ * [Prerequisites](prerequisites/)
 
 # Current Classes
 
- * [Suricata :: Jan 25 - Feb 04 2021](/Suricata/) **Online**
- * ~~[Arkime :: May 31 - Jun 4 2021](/Arkime/)~~ **Was canceled** - On-site only, so depends on the COVID-19 situation.
+ * [Suricata - Rule-based Threat Detection :: 3 - 7 October 2022](/Suricata/) **Online OR On-site**
+   * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
+ * [Arkime - Large Scale Packet Capture Analysis :: 13 - 17 June 2022](/Arkime/) **Tentative** - On-site only, so depends on the COVID-19 situation.
+   * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis/
 
 # Older Classes
 

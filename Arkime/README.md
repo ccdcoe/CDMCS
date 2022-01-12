@@ -6,21 +6,23 @@ This material has been designed to be taught in a [classroom](https://ccdcoe.org
 This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Arkime. We believe these classes are perfect for anyone who wants a jump start in learning Arkime or who wants a more thorough understanding of it internals.
 
 ### Arkime is a large scale, open source, full packet capturing, indexing, and database system.
+
 > Arkime was formerly named **Moloch**, so the materials on this site may still refer to it as Moloch in various ways or forms. Same holds true for the Arkime backend code, etc.
+
 > Arkime is not meant to replace Intrusion Detection Systems (IDS). Arkime augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
 Provided timeline is preliminary and will develop according to the actual progress of the class.
 
 * NB! The schedule is tentative and subject to change. On-site participation only, so the course depends entirely on the COVID-19 situation at the time. *
 
-## Day 0 :: Intro, single box :: May 31  2021, *starts at 13:00!*
+## Day 0 :: Intro, single box :: Jun 13 2022, *starts at 13:00!*
 
  * 13:00 - 17:00 
    * [Intro](/common/day_intro.md)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
    * [singlehost](/singlehost/)
 
-## Day 1 :: Building, Labeling the traffic :: June 1 2021
+## Day 1 :: Building, Labeling the traffic :: June 14 2022
 
  * 09:00 - 12:30
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
@@ -31,7 +33,7 @@ Provided timeline is preliminary and will develop according to the actual progre
    * [Hunting trip, web](/Arkime/queries/#hunting-trip)
    * [WISE - basic usage](/Arkime/wise#using-simple-plugins)
 
-## Day 2 :: Group up, scale out :: June 2 2021
+## Day 2 :: Group up, scale out :: June 15 2022
 
  * 09:00 - 12:30 
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
@@ -39,7 +41,7 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:30 - 17:00 
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
 
-## Day 3 :: Cross-class cluster, performance tuning :: June 3 2021
+## Day 3 :: Cross-class cluster, performance tuning :: June 16 2022
 
  * 09:00 - 12:30 
    * [Clustering teamwork, cont](/Arkime/clustering)
@@ -47,7 +49,7 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 13:30 - 16:45 
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
-## Day +1 :: Last but not least :: June 4 2021, *ends at 12:00*
+## Day +1 :: Last but not least :: June 17 2022, *ends at 12:00*
 
  * 09:00 - 11:00
    * [Hunting trip, network](/Arkime/queries/#hunting-trip)
