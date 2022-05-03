@@ -24,7 +24,7 @@ See:
 
  * [Suricata - Rule-based Threat Detection :: 3 - 7 October 2022](/Suricata/) **Online OR On-site**
    * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
- * [Arkime - Large Scale Packet Capture Analysis :: 13 - 17 June 2022](/Arkime/) **Tentative** - On-site only, so depends on the COVID-19 situation.
+ * [Arkime - Large Scale Packet Capture Analysis :: 13 - 17 June 2022](/Arkime/) **On-site**
    * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis/
 
 # Older Classes

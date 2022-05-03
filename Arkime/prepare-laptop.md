@@ -1,4 +1,4 @@
-# Before you come to class, you need to get moloch running on YOUR laptop
+# Before you come to class, you need to get Arkime running on YOUR laptop
 
 * Yes, you need to bring your own laptop!
 * Yes, you need to get it up and running in your laptop!
@@ -8,14 +8,15 @@
 * Host OS: Linux or MacOS preferred, with Windows you are responsible for making vagrant and SSH work;
 * RAM: 16GB or more system memory;
 * Disk: Minimum 50GB of free disk space, 100GB or more recommended. SSD preferred;
-* Network: Ethernet port (RJ-45).
+* Network: Ethernet port (RJ-45);
+* Privileges: Root or Administrator privileges on the host OS.
 
-# Arkime (& Suricata (&& EEK)) in single box
+# Arkime (& Suricata (&& others)) in single box
 
-* **[Arkime](http://molo.ch/)** is full packet capturing, indexing, and database system.
+* **[Arkime](http://molo.ch/)** is full packet capturing, indexing, and searching system.
   * Arkime is not an IDS
 * Some other software is necessary:
-  * **[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)** is part of Arkime. Wise is helper service to check external knowledge before saving session index data.
+  * **[WISE](https://arkime.com/wise)** is part of Arkime. Wise is helper service to check external knowledge before saving session index data.
   * **[ElasticSearch](/commoni/elastic/)** is a search engine based on Lucene.
 * We will also have:
   * **[Suricata](https://suricata-ids.org/)** is a network threat detection engine.
@@ -23,12 +24,16 @@
 
 ### Suricata and Arkime
 
-* Singlehost setup **[environment](/Arkime/vagrant/singlehost)** - full vagrant environment that includes moloch capture, viewer, backend document storage, threat intelligence and IDS tagging
+* Singlehost setup **[environment](/Arkime/vagrant/singlehost)** - full vagrant environment that includes Arkime capture, viewer, backend document storage, threat intelligence and IDS tagging
 * Old WISE plugin **[source.suricata.js](/Arkime/vagrant/singlehost/old/source.suricata.js)** *"connects"* Arkime session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
 * New tagger script **[tagger.py](/Arkime/vagrant/singlehost/tagger.py)** *"queries"* Arkime for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
 
 # Instructions
+**NB! With the recent release of Ubuntu 22.04 LTS version, the instructions will be modified and (re-)tested with Ubuntu 22.04 ASAP. However, you can still test out the older Ubuntu 20.04 LTS installation below.**
+
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
+
+*NB! Vagrant v2.2.19 repository installation has a known issue with Ubuntu 22.04 LTS. Meanwhile, you can just use the fixed Linux binary download (also version v2.2.19) at the bottom of the [Vagrant Downloads page](https://www.vagrantup.com/downloads).*
 
 Install the latest versions of Vagrant and VirtualBox for your operating systems, and then run:
 
@@ -40,7 +45,9 @@ Starting from VirtualBox v6.1.28 it is only allowed to provision VMs belonging t
 
     * 0.0.0.0/0 ::/0
 
-To create and provision a new empty virtual machine:
+You should be able to run these following commands as a regular (non-root) user.
+
+To create and provision a the `singlehost` virtual machine:
 
     mkdir something
     cd something
@@ -50,9 +57,9 @@ To create and provision a new empty virtual machine:
     vagrant up
 
 Running `vagrant up` for the first time will run provisioning, which will:
-- Download the [Ubuntu 22.04 base image](https://app.vagrantup.com/ubuntu/boxes/jammy64)<sup>[(1)](#mybox)</sup>, if there is not a copy on your machine already.
+- Download the Ubuntu LTS base image if there is not a copy on your machine already.
 - Create a new VirtualBox virtual machine from that image
-- Run the provisioning script ([provision.sh](/Arkime/vagrant/singlehost/provision.sh)) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
+- Run the provisioning script [provision.sh](https://raw.githubusercontent.com/ccdcoe/CDMCS/master/singlehost/provision.sh) <sup>[(2)](#readitbeforeyouexecuteit)</sup>
 
 The Vagrant box will automatically start after provisioning. It can be started in future with `vagrant up` from the *dirnameyoujustcreated* directory.
 
@@ -60,18 +67,22 @@ Once the Ubuntu virtual machine has booted, it will start Arkime (and Suricata a
 
 To connect to the server via SSH, simply run `vagrant ssh`. If you are running Windows (without ssh on your PATH), this might not work. Please fix it or find alternative means of connecting to your box via SSH.
 
-To stop the server, simply run `vagrant halt`.
+To stop the server VM, simply run `vagrant halt`.
+To delete/destroy the server VM, simply run `vagrant destroy`.
 
 Should you need to access the virtual machine (for example, to manually fix something without restarting the box), run `vagrant ssh` from the *dirnameyoujustcreated* folder. You will now be logged in as the `ubuntu` user.
 
+## Troubleshooting
 If your instance or Vagrant box are really not behaving, you can re-run the provisioning process. Stop the box with `vagrant halt`, and then run `vagrant destroy` - this will delete the virtual machine. You may then run `vagrant up` to create a new box, and re-run provisioning.
+
+Remember, managing specific Vagrant VMs is couple to the directory of the `Vagrantfile`. So the current working directory (CWD) of your terminal should be 
 
 
 ## Support/help
 
-* If you are confused, or having any issues with the above, join the Arkime Slack server (https://slackinvite.molo.ch/) or Suricata IRC channel (irc.freenode.net #suricata).
+* If you are confused, or having any issues with the above, join the Arkime Slack server (https://slackinvite.arkime.com/) or Suricata IRC channel (irc.freenode.net #suricata).
 
-* If you can not get it running properly, do not worry, day 0 is for helping you out.
+* If you can not get it running properly, do not worry, **day 0** is for helping you out.
 
 * If you can not get it running at all, do not worry, Tallinn is nice medieval city and has a good number of [tourist attractions](https://www.visittallinn.ee/eng/visitor/see-do/sightseeing) ;)
 
