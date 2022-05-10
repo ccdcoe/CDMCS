@@ -24,7 +24,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 ## Day 1 :: Building, Labeling the traffic :: June 14 2022
 
- * 09:00 - 12:30
+ * 09:30 - 12:30
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
    * [build + config, cont](/Arkime/setup), [Basic digging](/Arkime/queries/#using-the-viewer)
    * [Arkime API intro](/Arkime/queries/#api)
@@ -35,7 +35,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 ## Day 2 :: Group up, scale out :: June 15 2022
 
- * 09:00 - 12:30 
+ * 09:30 - 12:30 
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
 
  * 13:30 - 17:00 
@@ -43,7 +43,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 ## Day 3 :: Cross-class cluster, performance tuning :: June 16 2022
 
- * 09:00 - 12:30 
+ * 09:30 - 12:30 
    * [Clustering teamwork, cont](/Arkime/clustering)
    * [Hunting trip, client-side](/Arkime/queries/#hunting-trip)
  * 13:30 - 16:45 
@@ -51,7 +51,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 ## Day +1 :: Last but not least :: June 17 2022, *ends at 12:00*
 
- * 09:00 - 11:00
+ * 09:30 - 11:00
    * [Hunting trip, network](/Arkime/queries/#hunting-trip)
    * [load pcap via unix socket](/Suricata/unix-socket)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
