@@ -15,48 +15,56 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 * NB! The schedule is tentative and subject to change. On-site participation only, so the course depends entirely on the COVID-19 situation at the time. *
 
-## Day 0 :: Intro, single box :: Jun 13 2022, *starts at 13:00!*
+## Day 0 :: Intro, singlebox, basic Viewer :: Jun 13 2022, *starts at 13:00!*
 
- * 13:00 - 17:00 
+ * 13:00 - 17:00
    * [Intro](/common/day_intro.md)
-   * [vagrant](/common/vagrant/), [docker](/common/docker)
+   * LS22 overview and intro
    * [singlehost](/singlehost/)
+   * [Basic digging](/Arkime/queries/#using-the-viewer)
 
-## Day 1 :: Building, Labeling the traffic :: June 14 2022
+## Day 1 :: Config, API, basic tags :: June 14 2022
 
  * 09:30 - 12:30
-   * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
-   * [build + config, cont](/Arkime/setup), [Basic digging](/Arkime/queries/#using-the-viewer)
+   * [basic config](/Arkime)
    * [Arkime API intro](/Arkime/queries/#api)
-
- * 13:30 - 17:00 
-   * [Hunting trip, web](/Arkime/queries/#hunting-trip)
    * [WISE - basic usage](/Arkime/wise#using-simple-plugins)
 
-## Day 2 :: Group up, scale out :: June 15 2022
+ * 13:30 - 17:00
+   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
 
- * 09:30 - 12:30 
+## Day 2 :: Labelling the traffic, data enrichment :: June 15 2022
+
+ * 09:30 - 12:30
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
+   * [Pikksilm](https://github.com/markuskont/pikksilm)
 
- * 13:30 - 17:00 
-   * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
+ * 13:30 - 17:00
+   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+    
 
 ## Day 3 :: Cross-class cluster, performance tuning :: June 16 2022
 
- * 09:30 - 12:30 
-   * [Clustering teamwork, cont](/Arkime/clustering)
-   * [Hunting trip, client-side](/Arkime/queries/#hunting-trip)
- * 13:30 - 16:45 
-   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+ * 09:30 - 12:30
+   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+ 
+ * 13:30 - 17:00
+   * Advanced topics - propose topics you would like to hear about
 
 ## Day +1 :: Last but not least :: June 17 2022, *ends at 12:00*
 
  * 09:30 - 11:00
-   * [Hunting trip, network](/Arkime/queries/#hunting-trip)
-   * [load pcap via unix socket](/Suricata/unix-socket)
-   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+
+## Orphan topics
+   * [vagrant](/common/vagrant/), [docker](/common/docker)
+   * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
+   * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
+   * [Clustering teamwork, cont](/Arkime/clustering)
+   * [load pcap via unix socket](/Suricata/unix-socket)
+   * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
 
 ----
 
@@ -64,7 +72,8 @@ Provided timeline is preliminary and will develop according to the actual progre
 
   * [Prepare your laptop](/Arkime/prepare-laptop.md)
   * browse trough ...
-  * [molo.ch](http://molo.ch/)
-  * [moloch FAQ](https://github.com/aol/moloch/wiki/FAQ)
-  * [moloch wiki](https://github.com/aol/moloch/wiki)
+  * [Arkime](https://arkime.com/)
+  * [Arkime in GitHub](https://github.com/arkime/arkime)
+  * [Arkime FAQ](https://arkime.com/faq)
+  * [Arkime learn](https://arkime.com/learn)
   * [InfoSec matters - Arkime FPC](http://blog.infosecmatters.net/2017/05/moloch-fpc.html)
