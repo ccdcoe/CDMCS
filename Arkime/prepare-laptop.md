@@ -1,35 +1,34 @@
-# Before you come to class, you need to get Arkime running on YOUR laptop
+# Test your laptop before coming to class.
 
 * Yes, you need to bring your own laptop!
-* Yes, you need to get it up and running in your laptop!
+* Yes, you need to be able to run Arkime in your laptop!
 * See instructions below
 
 ## System requirements for the classroom training
 * Host OS: Linux or MacOS preferred, with Windows you are responsible for making vagrant and SSH work;
 * RAM: 16GB or more system memory;
 * Disk: Minimum 50GB of free disk space, 100GB or more recommended. SSD preferred;
-* Network: Ethernet port (RJ-45);
+* Network: Ethernet port (RJ-45) or applicable adapter;
 * Privileges: Root or Administrator privileges on the host OS.
 
-# Arkime (& Suricata (&& others)) in single box
 
-* **[Arkime](http://molo.ch/)** is full packet capturing, indexing, and searching system.
+
+# As a preparation, try to run Arkime (& Suricata (&& others)) in a single box
+
+* Singlehost setup - full vagrant environment that includes Arkime capture, viewer, backend document storage, threat intelligence and IDS tagging
+
+* **[Arkime](https://arkime.com/)** is full packet capturing, indexing, and searching system.
   * Arkime is not an IDS
 * Some other software is necessary:
   * **[WISE](https://arkime.com/wise)** is part of Arkime. Wise is helper service to check external knowledge before saving session index data.
-  * **[ElasticSearch](/commoni/elastic/)** is a search engine based on Lucene.
+  * **[ElasticSearch](/common/elastic/)** is a search engine based on Lucene.
 * We will also have:
-  * **[Suricata](https://suricata-ids.org/)** is a network threat detection engine.
+  * **[Suricata](https://suricata.io/)** is a network threat detection engine.
   * **[Redis](https://redis.io/)** is a in-memory data structure storage and message broker. Good for sharing data between multiple applications.
 
-### Suricata and Arkime
 
-* Singlehost setup **[environment](/Arkime/vagrant/singlehost)** - full vagrant environment that includes Arkime capture, viewer, backend document storage, threat intelligence and IDS tagging
-* Old WISE plugin **[source.suricata.js](/Arkime/vagrant/singlehost/old/source.suricata.js)** *"connects"* Arkime session to Suricata alert. Consider as proof-of-concept only as this method does not handle production load
-* New tagger script **[tagger.py](/Arkime/vagrant/singlehost/tagger.py)** *"queries"* Arkime for sessions that match suricata alert tuple (common source and destination). Assigns tags upon match.
-
-# Instructions
-**NB! With the recent release of Ubuntu 22.04 LTS version, the instructions will be modified and (re-)tested with Ubuntu 22.04 ASAP. However, you can still test out the older Ubuntu 20.04 LTS installation below.**
+### Instructions
+**NB! With the recent release of Ubuntu 22.04 LTS version, the instructions will be modified and (re-)tested with Ubuntu 22.04 ASAP. However, meanwhile you can still test out the older Ubuntu 20.04 LTS installation below.**
 
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
