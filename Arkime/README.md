@@ -58,7 +58,8 @@ Provided timeline is preliminary and will develop according to the actual progre
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
-## Orphan topics
+
+## Orphan topics, topics from previous iterations that we might or might not cover.
    * [vagrant](/common/vagrant/), [docker](/common/docker)
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
