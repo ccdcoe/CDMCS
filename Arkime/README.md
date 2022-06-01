@@ -15,46 +15,50 @@ Provided timeline is preliminary and will develop according to the actual progre
 
 * NB! The schedule is tentative and subject to change. On-site participation only, so the course depends entirely on the COVID-19 situation at the time. *
 
-## Day 0 :: Intro, singlebox, basic Viewer :: Jun 13 2022, *starts at 13:00!*
+## Day 0 :: Intro, singlehost, basic Viewer :: June 13 2022, *starts at 13:00!*
+
+ * 12:30 Registration open
 
  * 13:00 - 17:00
    * [Intro](/common/day_intro.md)
    * LS22 overview and intro
-   * [singlehost](/singlehost/)
-   * [Basic digging](/Arkime/queries/#using-the-viewer)
+   * [Singlehost](/singlehost/)
+   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
 
-## Day 1 :: Config, API, basic tags :: June 14 2022
+## Day 1 :: Install, config, basic enrichment :: June 14 2022
 
  * 09:30 - 12:30
-   * [basic config](/Arkime)
-   * [Arkime API intro](/Arkime/queries/#api)
+   * Installation
+   * Basic config
    * [WISE - basic usage](/Arkime/wise#using-simple-plugins)
+   * [Arkime API intro](/Arkime/queries/#api)
 
  * 13:30 - 17:00
-   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+   * [Hunting - RT (WEB)](/Arkime/queries/#hunting-trip)
 
-## Day 2 :: Labelling the traffic, data enrichment :: June 15 2022
+## Day 2 :: Monitoring encrypted traffic, SSL/TLS proxy :: June 15 2022
 
  * 09:30 - 12:30
-   * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
-   * [Pikksilm](https://github.com/markuskont/pikksilm)
+   * [Polarproxy](https://www.netresec.com/?page=Blog&month=2020-12&post=Capturing-Decrypted-TLS-Traffic-with-Arkime)
 
  * 13:30 - 17:00
-   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+   * [Hunting - RT (TBD)](/Arkime/queries/#hunting-trip)
     
 
-## Day 3 :: Cross-class cluster, performance tuning :: June 16 2022
+## Day 3 :: Advanced enrichment, detecting beacons :: June 16 2022
 
  * 09:30 - 12:30
-   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+   * [Winlogbeat](https://www.elastic.co/beats/winlogbeat)
+   * [Pikksilm](https://github.com/markuskont/pikksilm)
  
  * 13:30 - 17:00
-   * Advanced topics - propose topics you would like to hear about
+   * [Hunting - RT (5G)](/Arkime/queries/#hunting-trip)
 
 ## Day +1 :: Last but not least :: June 17 2022, *ends at 12:00*
 
  * 09:30 - 11:00
-   * [Hunting trip - RT](/Arkime/queries/#hunting-trip)
+   * Free topics - propose topics you would like to hear about
+   * [Hunting - RT (TBD)](/Arkime/queries/#hunting-trip)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
@@ -62,6 +66,7 @@ Provided timeline is preliminary and will develop according to the actual progre
 ## Orphan topics, topics from previous iterations that we might or might not cover.
    * [vagrant](/common/vagrant/), [docker](/common/docker)
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
+   * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
    * [Clustering teamwork, cont](/Arkime/clustering)
    * [load pcap via unix socket](/Suricata/unix-socket)
