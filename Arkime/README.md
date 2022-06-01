@@ -7,13 +7,11 @@ This is **0.5 + 3 + 0.5 days** of material for any intermediate-level dev-ops wh
 
 ### Arkime is a large scale, open source, full packet capturing, indexing, and database system.
 
-> Arkime was formerly named **Moloch**, so the materials on this site may still refer to it as Moloch in various ways or forms. Same holds true for the Arkime backend code, etc.
+> Arkime was formerly named **Moloch**, so the materials on this site may still refer to it as Moloch in various ways or forms. Same holds true for the Arkime codebase.
 
 > Arkime is not meant to replace Intrusion Detection Systems (IDS). Arkime augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-Provided timeline is preliminary and will develop according to the actual progress of the class.
-
-* NB! The schedule is tentative and subject to change. On-site participation only, so the course depends entirely on the COVID-19 situation at the time. *
+NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only, on-site regulations depend on the COVID-19 situation at the time.
 
 ## Day 0 :: Intro, singlehost, basic Viewer :: June 13 2022, *starts at 13:00!*
 
