@@ -41,7 +41,7 @@ WGET_PARAMS="-4 -q"
 
 GOPATH=$HOME/go/
 GOROOT=$HOME/.local/go
-PATH=$PATH:/data/moloch/bin:$GOROOT/bin:$GOPATH/bin
+PATH=$PATH:/opt/arkime/bin:$GOROOT/bin:$GOPATH/bin
 
 grep PATH /etc/environment || echo "export PATH=$PATH" >> /etc/environment
 
@@ -82,12 +82,12 @@ apt-get update && apt-get -y install \
 
 # versions
 UBUNTU_VERSION="20.04"
-ELASTIC_VERSION="7.10.2"
+ELASTIC_VERSION="7.17.4"
 INFLUX_VERSION="1.8.3"
 GRAFANA_VERSION="7.3.6"
 TELEGRAF_VERSION="1.16.2"
 GOLANG_VERSION="1.15.6"
-MOLOCH_VERSION="2.7.1"
+ARKIME_VERSION="3.4.2"
 
 ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
 KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
@@ -97,16 +97,16 @@ GRAFANA="grafana_${GRAFANA_VERSION}_amd64.deb"
 TELEGRAF="telegraf_${TELEGRAF_VERSION}-1_amd64.deb"
 GOLANG="go${GOLANG_VERSION}.linux-amd64.tar.gz"
 
-DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch-oss:${ELASTIC_VERSION}"
-DOCKER_KIBANA="docker.elastic.co/kibana/kibana-oss:${ELASTIC_VERSION}"
-DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash-oss:${ELASTIC_VERSION}"
-DOCKER_FILEBEAT="docker.elastic.co/beats/filebeat-oss:${ELASTIC_VERSION}"
+DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
+DOCKER_KIBANA="docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
+DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
+DOCKER_FILEBEAT="docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}"
 
 DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
 DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
-MOLOCH_FILE="moloch_${MOLOCH_VERSION}-1_amd64.deb"
-MOLOCH_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${MOLOCH_FILE}"
+ARKIME_FILE="arkime_${ARKIME_VERSION}-1_amd64.deb"
+ARKIME_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${ARKIME_FILE}"
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name|startswith("gopherCap-ubuntu-2004-")) | .browser_download_url')
 
@@ -792,25 +792,25 @@ suricatasc -c "dataset-add ua-seen sha256 53c5f12948a236c0a34e4cb17c51a337ef6152
 suricatasc -c "dataset-add http-content-delivery string $(echo -n download.windowsupdate.com | base64)"
 suricatasc -c "dataset-add http-content-delivery string $(echo -n security.debian.com | base64)"
 
-echo "Provision moloch"
+echo "Provision arkime"
 cd $PKGDIR
-[[ -f $MOLOCH_FILE ]] || wget $WGET_PARAMS $MOLOCH_LINK
+[[ -f $ARKIME_FILE ]] || wget $WGET_PARAMS $ARKIME_LINK
 
-dpkg -s moloch || dpkg -i $MOLOCH_FILE
+dpkg -s arkime || dpkg -i $ARKIME_FILE
 apt-get -f -y install
 
-echo "Configuring moloch"
-cd /data/moloch/etc
-FILE=/data/moloch/etc/config.ini
+echo "Configuring arkime"
+cd /opt/arkime/etc
+FILE=/opt/arkime/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
-sed -i "s/MOLOCH_ELASTICSEARCH/http:\/\/localhost:9200/g"  config.ini
-sed -i "s/MOLOCH_INTERFACE/$ifaces/g"             config.ini
-sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
-sed -i "s/MOLOCH_INSTALL_DIR/\/data\/moloch/g"    config.ini
-sed -i "s/MOLOCH_PASSWORD/test123/g"              config.ini
+sed -i "s/ARKIME_ELASTICSEARCH/http:\/\/localhost:9200/g"  config.ini
+sed -i "s/ARKIME_INTERFACE/$ifaces/g"             config.ini
+sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"    config.ini
+sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"    config.ini
+sed -i "s/ARKIME_PASSWORD/test123/g"              config.ini
 
-echo "configuring moloch rules"
-RULE_FILE="/data/moloch/etc/rules.conf"
+echo "configuring arkime rules"
+RULE_FILE="/opt/arkime/etc/rules.conf"
 grep "rules" $RULE_FILE || cat >> $RULE_FILE <<EOF
 ---
 version: 1
@@ -867,11 +867,6 @@ grep "custom-views" $FILE || cat >> $FILE <<EOF
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
 EOF
 
-grep "wise-types" $FILE || cat >> $FILE <<EOF
-[wise-types]
-mac=db:srcMac;db:dstMac
-EOF
-
 grep "multi-viewer" $FILE || cat >> $FILE <<EOF
 [multi-viewer]
 elasticsearch=127.0.0.1:8200
@@ -883,7 +878,7 @@ multiESNodes = ${EXPOSE}:9200
 EOF
 
 echo "Configuring wise"
-TAGGER_FILE="/data/moloch/etc/tagger.txt"
+TAGGER_FILE="/opt/arkime/etc/tagger.txt"
 [[ -f $TAGGER_FILE ]] || cat > $TAGGER_FILE <<EOF
 #field:cdmcs.name;shortcut:0
 #field:cdmcs.type;shortcut:1
@@ -911,120 +906,88 @@ field=asset
 [cache]
 type=redis
 url=redis://127.0.0.1:6379/1
+redisURL=redis://127.0.0.1:6379/1
 
 [file:ip]
-file=$TAGGER_FILE
+file=${TAGGER_FILE}
 tags=ipwise
 type=ip
 format=tagger
 
 [redis:ip]
 url=redis://127.0.0.1:6379/0
+redisURL=redis://127.0.0.1:6379/0
 tags=redis
 type=ip
 format=tagger
 EOF
 
 echo "Configuring databases"
-cd /data/moloch/db
+cd /opt/arkime/db
 if [[ `./db.pl localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
   echo "INIT" | ./db.pl localhost:9200 init
 fi
 
-cd /data/moloch/bin
-./moloch_update_geo.sh > /dev/null 2>&1
-chown nobody:daemon /data/moloch/raw
+cd /opt/arkime/bin
+./arkime_update_geo.sh > /dev/null 2>&1
+chown nobody:daemon /data/arkime/raw
 
 echo "Configuring system limits"
 ulimit -l unlimited
 grep memlock /etc/security/limits.conf || echo "nofile 128000 - memlock unlimited" >> /etc/security/limits.conf
-mkdir /data/moloch/raw && chown nobody:daemon /data/moloch/raw
+mkdir /opt/arkime/raw && chown nobody:daemon /opt/arkime/raw
 
 echo "Configuring systemd services"
 
-FILE=/etc/systemd/system/moloch-wise.service
-grep "moloch-wise" $FILE || cat > $FILE <<EOF
+FILE=/etc/systemd/system/arkime-wise.service
+grep "arkime-wise" $FILE || cat > $FILE <<EOF
 [Unit]
-Description=Moloch WISE
+Description=arkime WISE
 After=network.target
 
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=/data/moloch/bin/node wiseService.js -c /data/moloch/etc/wiseService.ini
-WorkingDirectory=/data/moloch/wiseService
-SyslogIdentifier=moloch-wise
+ExecStart=/opt/arkime/bin/node wiseService.js -c /opt/arkime/etc/wiseService.ini
+WorkingDirectory=/opt/arkime/wiseService
+SyslogIdentifier=arkime-wise
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-FILE=/etc/systemd/system/moloch-viewer.service
-grep "moloch-viewer" $FILE || cat > $FILE <<EOF
+FILE=/etc/systemd/system/arkime-viewer.service
+grep "arkime-viewer" $FILE || cat > $FILE <<EOF
 [Unit]
-Description=Moloch Viewer
-After=network.target moloch-wise.service
+Description=arkime Viewer
+After=network.target arkime-wise.service
 
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=/data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini
-WorkingDirectory=/data/moloch/viewer
-SyslogIdentifier=moloch-viewer
+ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini
+WorkingDirectory=/opt/arkime/viewer
+SyslogIdentifier=arkime-viewer
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-FILE=/etc/systemd/system/moloch-multies.service
-grep "moloch-multies" $FILE || cat > $FILE <<EOF
+FILE=/etc/systemd/system/arkime-capture.service
+grep "arkime-capture" $FILE || cat > $FILE <<EOF
 [Unit]
-Description=Moloch ES proxy for multi-viewer
-After=network.target moloch-wise.service
+Description=arkime Capture
+After=network.target arkime-wise.service arkime-viewer.service
 
 [Service]
 Type=simple
 Restart=on-failure
-ExecStart=/data/moloch/bin/node multies.js -c /data/moloch/etc/config.ini -n multi-viewer
-WorkingDirectory=/data/moloch/viewer
-SyslogIdentifier=moloch-multies
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-FILE=/etc/systemd/system/moloch-multi-viewer.service
-grep "moloch-multi-viewer" $FILE || cat > $FILE <<EOF
-[Unit]
-Description=Moloch Viewer for proxying multiple clusters
-After=network.target moloch-wise.service moloch-multies.service
-
-[Service]
-Type=simple
-Restart=on-failure
-ExecStart=/data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini -n multi-viewer
-WorkingDirectory=/data/moloch/viewer
-SyslogIdentifier=moloch-multi-viewer
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-FILE=/etc/systemd/system/moloch-capture.service
-grep "moloch-capture" $FILE || cat > $FILE <<EOF
-[Unit]
-Description=Moloch Capture
-After=network.target moloch-wise.service moloch-viewer.service
-
-[Service]
-Type=simple
-Restart=on-failure
-#ExecStartPre=-/data/moloch/bin/start-capture-interfaces.sh
-ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /data/moloch/bin/moloch-capture -c /data/moloch/etc/config.ini --host $(hostname)
-WorkingDirectory=/data/moloch
+#ExecStartPre=-/opt/arkime/bin/start-capture-interfaces.sh
+ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname)
+WorkingDirectory=/opt/arkime
 LimitCORE=infinity
 LimitMEMLOCK=infinity
-SyslogIdentifier=moloch-capture
+SyslogIdentifier=arkime-capture
 PIDFile=/var/run/capture.pid
 
 [Install]
@@ -1032,14 +995,16 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-for service in wise viewer multies multi-viewer capture ; do
-  systemctl enable moloch-$service.service
-  systemctl start moloch-$service.service
-  systemctl status moloch-$service.service
+for service in wise viewer capture ; do
+  echo starting $service
+  systemctl enable arkime-$service.service
+  systemctl start arkime-$service.service
+  systemctl status arkime-$service.service
+  sleep 3
 done
 
 sleep 2
-pgrep moloch-capture || exit 1
+pgrep capture || exit 1
 
 mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
 su - vagrant -c "pip3 install --user --upgrade psutil"
@@ -1054,14 +1019,14 @@ import re
 import sys
 import os.path
 
-def get_moloch_capture_parent():
+def get_arkime_capture_parent():
     procs = {p.pid: p.info for p in psutil.process_iter(attrs=['pid', 'name', 'username'])}
-    parent = {k: v for k, v in procs.items() if "moloch-capture" in v["name"]}
+    parent = {k: v for k, v in procs.items() if "arkime-capture" in v["name"]}
     parent = list(parent.values())[0]["pid"]
     parent = psutil.Process(pid=parent)
     return parent
 
-def get_moloch_workers(parent):
+def get_arkime_workers(parent):
     workers = parent.threads()
     workers = [w.id for w in workers]
     workers = [psutil.Process(pid=p) for p in workers]
@@ -1087,17 +1052,17 @@ if __name__ == "__main__":
     cap_thread = numa[1]
     worker_threads = numa[2:]
 
-    cap_pattern = re.compile("^moloch-(?:capture|simple|af\d+-\d+)$")
-    pkt_pattern = re.compile("^moloch-pkt\d+$")
+    cap_pattern = re.compile("^arkime-(?:capture|simple|af\d+-\d+)$")
+    pkt_pattern = re.compile("^arkime-pkt\d+$")
 
-    parent = get_moloch_capture_parent()
-    workers = get_moloch_workers(parent)
+    parent = get_arkime_capture_parent()
+    workers = get_arkime_workers(parent)
 
     cap_threads = [t for t in workers if cap_pattern.match(t["name"])]
     pkt_threads = [t for t in workers if pkt_pattern.match(t["name"])]
 
     if len(pkt_threads) > len(worker_threads):
-        print("Too many moloch workers for {} cpu threads".format(len(worker_threads)))
+        print("Too many arkime workers for {} cpu threads".format(len(worker_threads)))
         sys.exit(1)
 
     for thread in cap_threads:
@@ -1121,10 +1086,10 @@ if __name__ == "__main__":
 EOF
 chown vagrant $FILE
 chmod u+x $FILE
-su - vagrant -c "python3 $FILE"
+# su - vagrant -c "python3 $FILE"
 
 echo "Adding viewer user"
-cd /data/moloch/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
+cd /opt/arkime/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
 sleep 3
 
 # parliament
@@ -1134,9 +1099,9 @@ if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
      echo "parliament: already in use ${EXPOSE}:8008"
    else
       echo "parliament: preparing ..."  
-      cd /data/moloch/parliament
+      cd /opt/arkime/parliament
       [ -f parliament.json ] && mv parliament.json parliament.json.$(date +%s)
-      /data/moloch/bin/node parliament.js > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > /var/run/parliament.pid  
+      /opt/arkime/bin/node parliament.js > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > /var/run/parliament.pid  
 
       token=$(curl -s -XPUT  ${EXPOSE}:8008/parliament/api/auth/update -d newPassword=${PARLIAMENTPASSWORD} | jq .token | sed 's/"//g')
       H="Content-Type: application/json;charset=UTF-8"
@@ -1280,11 +1245,11 @@ grep "CDMCS" $FILE || cat > $FILE <<EOF
   data_format = "influx"
 EOF
 
-FILE=/etc/telegraf/telegraf.d/moloch.conf
+FILE=/etc/telegraf/telegraf.d/arkime.conf
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 [[inputs.procstat]]
   pid_finder = "pgrep"
-  exe = "moloch-capture"
+  exe = "arkime-capture"
 EOF
 
 FILE=/etc/telegraf/telegraf.d/docker.conf
@@ -1388,7 +1353,7 @@ echo "Sleeping 60 seconds for data to ingest."; sleep 60
 echo "Provisioning KIBANA DASHBOARDS"
 curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/export.ndjson
 
-echo "Checking on moloch"
+echo "Checking on arkime"
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
 curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
 
