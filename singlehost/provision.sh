@@ -803,11 +803,11 @@ echo "Configuring arkime"
 cd /opt/arkime/etc
 FILE=/opt/arkime/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
-sed -i "s/ARKIME_ELASTICSEARCH/http:\/\/localhost:9200/g"  config.ini
-sed -i "s/ARKIME_INTERFACE/$ifaces/g"             config.ini
-sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"    config.ini
-sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"    config.ini
-sed -i "s/ARKIME_PASSWORD/test123/g"              config.ini
+sed -i "s/ARKIME_ELASTICSEARCH/http:\/\/localhost:9200/g"   $FILE
+sed -i "s/ARKIME_INTERFACE/$ifaces/g"                       $FILE
+sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
+sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
+sed -i "s/ARKIME_PASSWORD/test123/g"                        $FILE
 
 echo "configuring arkime rules"
 RULE_FILE="/opt/arkime/etc/rules.conf"
@@ -846,8 +846,9 @@ rules:
 EOF
 
 echo "Configuring capture plugins"
-sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/alert.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' config.ini
-sed -i "/\[default\]/arulesFiles=$RULE_FILE" config.ini
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/alert.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' $FILE
+sed -i "/\[default\]/arulesFiles=$RULE_FILE" $FILE
+sed -i "/\[default\]/asnapLen=65536" $FILE
 
 echo "Configuring custom stuff"
 grep "custom-fields" $FILE || cat >> $FILE <<EOF
@@ -865,16 +866,6 @@ EOF
 grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
-EOF
-
-grep "multi-viewer" $FILE || cat >> $FILE <<EOF
-[multi-viewer]
-elasticsearch=127.0.0.1:8200
-viewPort = 8009
-multiES = true
-multiESPort = 8200
-multiESHost = localhost
-multiESNodes = ${EXPOSE}:9200
 EOF
 
 echo "Configuring wise"
@@ -983,12 +974,11 @@ After=network.target arkime-wise.service arkime-viewer.service
 Type=simple
 Restart=on-failure
 #ExecStartPre=-/opt/arkime/bin/start-capture-interfaces.sh
-ExecStart=/usr/bin/numactl --cpunodebind=0 --membind=0 /opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname)
+ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname)
 WorkingDirectory=/opt/arkime
 LimitCORE=infinity
 LimitMEMLOCK=infinity
 SyslogIdentifier=arkime-capture
-PIDFile=/var/run/capture.pid
 
 [Install]
 WantedBy=multi-user.target
@@ -1392,3 +1382,5 @@ curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/j
   }
 }
 ' | jq .
+
+journalctl -u arkime-capture.service --output cat -n 10
