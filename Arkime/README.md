@@ -26,10 +26,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 ## Day 1 :: Install, config, basic enrichment :: June 14 2022
 
  * 09:30 - 12:30
-   * Installation
-   * Basic config
-   * [WISE - basic usage](/Arkime/wise#using-simple-plugins)
-   * [Arkime API intro](/Arkime/queries/#api)
+   * [Arkime setup](/Arkime/package_setup/)
 
  * 13:30 - 17:00
    * [Hunting - RT (WEB)](/Arkime/queries/#hunting-trip)
