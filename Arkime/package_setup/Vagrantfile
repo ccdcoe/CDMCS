@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+$arkime = <<-SCRIPT
+wget https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-20.04/arkime_3.4.2-1_amd64.deb
+pwd
+SCRIPT
+
+NAME="setup"
+CPU=4
+MEM=4096
+
+Vagrant.configure(2) do |config|
+  config.vm.define NAME do |box|
+    box.vm.box = "generic/ubuntu2004"
+    box.vm.hostname = NAME
+    box.vm.network :private_network, ip: "192.168.10.12"
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", MEM]
+      vb.customize ["modifyvm", :id, "--cpus", CPU]
+    end
+    box.vm.provider "libvirt" do |v, override|
+      v.cpus = CPU
+      v.memory = MEM
+    end
+    box.vm.provider :hyperv do |hv, override|
+      hv.cpus = CPU
+      hv.maxmemory = MEM
+      override.vm.synced_folder ".", "/vagrant", type: "smb"
+    end
+    box.vm.provider :vmware_desktop do |v, override|
+      v.vmx["numvcpus"] = CPU
+      v.vmx["memsize"] = MEM
+    end
+    box.vm.provision "docker", images: [
+      "docker.elastic.co/elasticsearch/elasticsearch:7.17.4",
+      "redis"
+    ]
+    box.vm.provision "shell", inline: $arkime
+  end
+end
