@@ -37,7 +37,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
    * [Polarproxy](https://www.netresec.com/?page=Blog&month=2020-12&post=Capturing-Decrypted-TLS-Traffic-with-Arkime)
 
  * 13:30 - 17:00
-   * [Hunting - RT (TBD)](/Arkime/queries/#hunting-trip)
+   * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
     
 
 ## Day 3 :: Advanced enrichment, detecting beacons :: June 16 2022
