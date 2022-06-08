@@ -1,5 +1,5 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-module-1/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work 
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work 
 
 **The material is missing some of the contextual concepts and ideas that will be covered in class.**
 
