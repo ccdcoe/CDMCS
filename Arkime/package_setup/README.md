@@ -377,7 +377,7 @@ LimitMEMLOCK=infinity
 SyslogIdentifier=arkime-capture
 
 [Install]
-WantedBy=multi-user.targe
+WantedBy=multi-user.target
 ```
 
 Check the service when set up. Just mirror the WISE section for service setup.
