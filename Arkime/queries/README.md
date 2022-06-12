@@ -53,7 +53,7 @@ User administration tab. Various user account limitations can be can be configur
 
 ## Tasks
 
-** On exercise Arkime data. **
+**On exercise Arkime data.**
 
  * Find plaintext http on port 443;
  * Filter for traffic that contains data;
