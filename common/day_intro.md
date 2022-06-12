@@ -1,6 +1,6 @@
 # Intro
 
-* CCD COE
+* CCD COE & CR14
 * Building
 * Admin remarks
 * Smoking
