@@ -28,11 +28,10 @@
 
 
 ### Instructions
-**NB! With the recent release of Ubuntu 22.04 LTS version, the instructions will be modified and (re-)tested with Ubuntu 22.04 ASAP. However, meanwhile you can still test out the older Ubuntu 20.04 LTS installation below.**
 
 A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
-*NB! Vagrant v2.2.19 repository installation has a known issue with Ubuntu 22.04 LTS. Meanwhile, you can just use the fixed Linux binary download (also version v2.2.19) at the bottom of the [Vagrant Downloads page](https://www.vagrantup.com/downloads).*
+*NB! Vagrant v2.2.19 repository installation has a known issue with Ubuntu 22.04 LTS host system. Meanwhile, you can just use the fixed Linux binary download (also version v2.2.19) at the bottom of the [Vagrant Downloads page](https://www.vagrantup.com/downloads).*
 
 Install the latest versions of Vagrant and VirtualBox for your operating systems, and then run:
 
