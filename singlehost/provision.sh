@@ -147,7 +147,6 @@ docker ps -a | grep redis || docker run -dit \
   --network cdmcs \
   --restart unless-stopped \
   -p 6379:6379 \
-  --log-driver syslog --log-opt tag="redis" \
     redis
 
 # elastic
@@ -1147,7 +1146,6 @@ docker ps -a | grep grafana || docker run -dit \
   -p 3000:3000 \
   -v /etc/grafana/provisioning:/etc/grafana/provisioning \
   -v /vagrant:/vagrant \
-  --log-driver syslog --log-opt tag="grafana" \
     $DOCKER_GRAFANA
 
 sleep 10
