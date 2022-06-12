@@ -8,15 +8,15 @@
     * Ethernet port (RJ-45);
     * Ability to create a bridged public network for virtual machines;
 
-# Moloch (& Suricata (&& EEK)) in single box
+# Arkime (& Suricata (&& EEK)) in single box
 
-  * **[Moloch](http://molo.ch/)** is full packet capturing, indexing, and database system.
-    * Moloch is not an IDS
+  * **[Arkime](https://arkime.com/)** is full packet capturing, indexing, and database system.
+    * Arkime is not an IDS
   * Some other software is necessary:
-    * **[WISE](https://github.com/aol/moloch/wiki/WISE#WISE__With_Intelligence_See_Everything)** is part of Moloch. Wise is helper service to check external knowledge before saving session index data.
-    * **[ElasticSearch](https://www.elastic.co/guide/index.html)** is a search engine based on Lucene.
+    * **[WISE](https://arkime.com/wise)** is part of Arkime. Wise is helper service to check external knowledge before saving session index data.
+    * **[Elasticsearch](https://www.elastic.co/elasticsearch/)** is a search engine based on Lucene.
   * We will also have:
-    * **[Suricata](https://suricata-ids.org/)** is a network threat detection engine.
+    * **[Suricata](https://suricata.io/)** is a network threat detection engine.
     * **[Redis](https://redis.io/)** is a in-memory data structure storage and message broker. Good for sharing data between multiple applications.
 
 # Instructions
@@ -59,6 +59,13 @@ Then start the provisioning process.
 vagrant up --provider virtualbox
 ```
 
+Starting from VirtualBox v6.1.28 it is only allowed to provision VMs belonging to the 192.168.56.0/24 network range. To disable network range control (for both IPv4 and IPv6), add the following line to `/etc/vbox/networks.conf`. You have to create the file and directory if it does not exist yet.:
+
+```
+* 0.0.0.0/0 ::/0
+```
+
+
 Note the `--provider` key. Virtualbox will be the default when omitted. You need to specify another provider if you are not using virtualbox, such as `--provider hyperv`. Virtualbox and hyper-v are mutually exclusive. However, first read the `Vagrantfile` source to see if your hypervisor is supported.
 
 Once the provisioning process finishes, make sure that you are able to access the VM via ssh.
@@ -69,6 +76,8 @@ uname -a
 ```
 
 Make sure that you have private network connectivity to VM. On **host**, ping the private address `192.168.10.11`. Vagrant network config is not supported on hyper-v. Check the address manually.
+
+
 
 # FAQ
 
