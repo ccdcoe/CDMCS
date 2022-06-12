@@ -908,6 +908,12 @@ EOF
 grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
+sysmon=title:Sysmon correlation;require:sysmon;fields:sysmon.parentprocessname,sysmon.parentprocesspid,sysmon.processname,sysmon.processpid,sysmon.username,sysmon.hostname,sysmon.hostip,sysmon.hostmac
+EOF
+
+grep "wise-types" $FILE || cat >> $FILE <<EOF
+[wise-types]
+communityid=communityId
 EOF
 
 echo "Configuring wise"
@@ -953,6 +959,34 @@ redisURL=redis://127.0.0.1:6379/0
 tags=redis
 type=ip
 format=tagger
+EOF
+
+grep correlation wiseService.ini || cat >> wiseService.ini <<EOF
+[redis:sysmon_proc]
+url=redis://:password@127.0.0.1:6379/1
+redisURL=redis://:password@127.0.0.1:6379/1
+tags=correlation
+type=communityid
+format=json
+template=1:%key%
+keyPath=network.community_id
+fields=field:sysmon.processname;db:sysmon.processname;kind:termfield;friendly:Process Name;shortcut:process.name\nfield:sysmon.username;db:sysmon.username;kind:termfield;friendly:User;shortcut:user.name\nfield:sysmon.hostname;db:sysmon.hostname;kind:termfield;friendly:Host Name;shortcut:host.name\nfield:sysmon.processpid;db:sysmon.processpid;kind:integer;friendly:Process PID;shortcut:process.pid\nfield:sysmon.hostip;db:sysmon.hostip;kind:ip;friendly:Host IP-s;shortcut:host.ip\nfield:sysmon.hostmac;db:sysmon.hostmac;kind:termfield;friendly:Host MAC;shortcut:host.mac
+redisMethod=lpop
+
+EOF
+
+grep connection wiseService.ini || cat >> wiseService.ini <<EOF
+[redis:sysmonevent1]
+url=redis://:password@127.0.0.1:6379/2
+redisURL=redis://:password@127.0.0.1:6379/2
+tags=connection
+type=communityid
+format=json
+template=1:%key%
+keyPath=network.community_id
+fields=field:sysmon.parentprocessname;db:sysmon.parentprocessname;kind:termfield;friendly:Parent Process Name;shortcut:process.parent.name\nfield:sysmon.parentprocesspid;db:sysmon.parentprocesspid;kind:termfield;friendly:Parent Process PID;shortcut:process.parent.pid\nfield:sysmon.processmd5;db:sysmon.processmd5;kind:termfield;friendly:Process MD5;shortcut:hash.md5\nfield:sysmon.processargs;db:sysmon.processargs;kind:textfield;friendly:Process Arguments;shortcut:process.command_line\nfield:sysmon.processintlevel;db:sysmon.processintlevel;kind:termfield;friendly:Process Integrity Level;shortcut:winlog.event_data.IntegrityLevel\n
+redisMethod=lpop
+
 EOF
 
 echo "Configuring databases"
