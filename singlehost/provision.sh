@@ -88,6 +88,7 @@ GRAFANA_VERSION="7.3.6"
 TELEGRAF_VERSION="1.16.2"
 GOLANG_VERSION="1.15.6"
 ARKIME_VERSION="3.4.2"
+PIKKSILM_VERSION="0.5.1"
 
 ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
 KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
@@ -109,6 +110,7 @@ ARKIME_FILE="arkime_${ARKIME_VERSION}-1_amd64.deb"
 ARKIME_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${ARKIME_FILE}"
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name|startswith("gopherCap-ubuntu-2004-")) | .browser_download_url')
+PIKKSILM_URL=$(curl -ss -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/markuskont/pikksilm/releases | jq -r ".[] | select(.tag_name==\"v${PIKKSILM_VERSION}\") | .assets | .[] | select(.name==\"pikksilm_${PIKKSILM_VERSION}_linux_amd64.tar.gz\") | .browser_download_url")
 
 ELASTSIC_MEM=512
 LOGSTASH_MEM=512
@@ -790,6 +792,47 @@ suricatasc -c "reload-rules"
 suricatasc -c "dataset-add ua-seen sha256 53c5f12948a236c0a34e4cb17c51a337ef61524cb4363023f242115f11555d1f"
 suricatasc -c "dataset-add http-content-delivery string $(echo -n download.windowsupdate.com | base64)"
 suricatasc -c "dataset-add http-content-delivery string $(echo -n security.debian.com | base64)"
+
+echo "Provisioning Pikksilm"
+
+mkdir -p /var/lib/pikksilm
+grep pikksilm /etc/passwd || useradd --system -d /var/lib/pikksilm pikksilm
+chown pikksilm /var/lib/pikksilm
+
+cd $PKGDIR
+echo "Downloading pikksilm from ${PIKKSILM_URL}"
+wget -O pikksilm.tar.gz $PIKKSILM_URL
+tar -xzf pikksilm.tar.gz -C /usr/local/bin
+
+which pikksilm || exit 1
+pikksilm --config /etc/pikksilm.toml config
+
+FILE=/etc/systemd/system/pikksilm.service
+grep "pikksilm" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Pikksilm EDR to NDR correlator and enrichment
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+EnvironmentFile=-/etc/pikksilm.env
+ExecStart=/usr/local/bin/pikksilm --config /etc/pikksilm.yaml run
+WorkingDirectory=/
+User=pikksilm
+Group=daemon
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable pikksilm.service
+systemctl start pikksilm.service
+
+sleep 3
+
+journalctl -u pikksilm.service --output cat -n 10
 
 echo "Provision arkime"
 cd $PKGDIR
