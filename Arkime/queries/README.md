@@ -53,17 +53,14 @@ User administration tab. Various user account limitations can be can be configur
 
 ## Tasks
 
-On exercise data.
+** On exercise Arkime data. **
 
- * Find all sessions that are tagged by Suricata alert;
-  * Filter only alerts with highest severity;
-  * Split the view per signature, choose some that seem interesting and investigate the source and destination addresses;
  * Find plaintext http on port 443;
-  * Filter for traffic that contains data;
+ * Filter for traffic that contains data;
  * Investigate time-series data per gamenet host;
-  * Drill down to specific protocols;
+ * Drill down to specific protocols;
  * Investigate traffic between workstations;
-  * Filter only traffic for your team;
+ * Filter only traffic for your team;
 
 # API
 
