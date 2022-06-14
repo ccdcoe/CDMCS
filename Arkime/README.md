@@ -34,7 +34,8 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 ## Day 2 :: Monitoring encrypted traffic, SSL/TLS proxy :: June 15 2022
 
  * 09:30 - 12:30
-   * [Polarproxy](https://www.netresec.com/?page=Blog&month=2020-12&post=Capturing-Decrypted-TLS-Traffic-with-Arkime)
+   * [Arkime setup, adding new fields](/Arkime/package_setup/)
+   * [Polarproxy](/Arkime/polarproxy)
 
  * 13:30 - 17:00
    * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
