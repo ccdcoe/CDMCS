@@ -1,6 +1,9 @@
 # Polarproxy
 
+* https://www.netresec.com/?page=PolarProxy
 * https://www.netresec.com/?page=Blog&month=2020-12&post=Capturing-Decrypted-TLS-Traffic-with-Arkime
+
+## Systemd service
 
 ```
 [Unit]
@@ -18,4 +21,12 @@ FinalKillSignal=SIGTERM
 
 [Install]
 WantedBy=multi-user.target
+```
+
+## Adding a trusted certificate
+
+* https://docs.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate
+
+```
+MMC -> Add / remove stap-in -> certificates -> local computer -> Import
 ```
