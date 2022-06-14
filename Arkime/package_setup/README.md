@@ -306,7 +306,7 @@ sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g" /opt/arkime/etc/config.ini
 
 Point arkime to elasticsearch.
 
-`elasticsearch=http://localhost:920`
+`elasticsearch=http://localhost:9200`
 
 Set a **random** passphrase. This is a secret value used to encrypt user passwords in database. So just roll your hands over the keyboard.
 
