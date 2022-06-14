@@ -485,3 +485,28 @@ New fields are better when visible for related sessions. Again, this can be done
 [custom-views]
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
 ```
+
+Arkime can define rules.
+
+* https://arkime.com/rulesformat
+* https://arkime.com/rules
+
+In `config.ini` -
+
+```
+rulesFiles=/opt/arkime/etc/rules.conf
+```
+
+Then individual rules files look like this.
+
+```
+version: 1
+rules:
+  - name: "Drop tls"
+    when: "fieldSet"
+    fields:
+      protocols:
+      - tls
+    ops:
+      _maxPacketsToSave: 12
+```
