@@ -464,6 +464,8 @@ Arkime is not limited to fields defined by its creators. You can add your own!
 
 You can override fields in `config.ini` using the `[override-ips]` section. This works per subnet. Note that country is limited only to 2 chars. This is a really useful trick in exercises where networks are simulated anyway.
 
+* https://arkime.com/taggerformat
+
 ```
 [override-ips]
 192.168.10.0/24=tag:private-net;country:BY;rir:SINET;asn:AS0000 This is neat
@@ -471,6 +473,8 @@ You can override fields in `config.ini` using the `[override-ips]` section. This
 ```
 
 You can define new fields in `config.ini`. Note that this can also be done in WISE plugin setup but is much cleaner in main config file. Very useful for instant asset documentation. If you have a API to pull asset data from, generate some WISE data!
+
+* https://arkime.com/settings#custom-fields
 
 ```
 [custom-fields]
@@ -480,6 +484,8 @@ cdmcs.type=kind:lotermfield;count:true;friendly:Type;db:cdmcs.type;help:Traffic 
 ```
 
 New fields are better when visible for related sessions. Again, this can be done with other (more painful) methods, but this is the cleanest.
+
+* https://arkime.com/settings#custom-views
 
 ```
 [custom-views]
