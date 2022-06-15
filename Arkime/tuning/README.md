@@ -8,7 +8,7 @@ Note that each network card has different capabilities. A lot of notes here simp
 
 ## **MUST-HAVE** - disable NIC offloading
 
-Modern NIC-s can offload a lot of stuff to hadrware. For example, packet checksumming. This is really good for hosting serices and routing. We don't care! We want the full packet! Otherwise, how can we properly reconstruct the session!
+Modern NIC-s can offload a lot of stuff to hadrware. For example, packet checksumming. This is really good for hosting services and routing. We don't care! We want the full packet! Otherwise, how can we properly reconstruct the session!
 
 ```
 for iface in enp130s0f1 enp130s0f0 ; do
@@ -18,7 +18,9 @@ for iface in enp130s0f1 enp130s0f0 ; do
 done
 ```
 
-Note, moloch has likely already complained about this before. Sometimes it even exists during live mode when partial traffic is detected.
+Note, Arkime has likely already complained about this before. Sometimes it even exists during live mode when partial traffic is detected.
+
+Also, mind the correct interface names.
 
 ## The RSS thing
 
@@ -38,7 +40,7 @@ There are a few options:
   * use a NIC that supports symmetric flow hasing AND patch your NIC driver and ethtool;
   * use the [low entropy hash trick](http://www.ndsl.kaist.edu/~kyoungsoo/papers/TR-symRSS.pdf);
   * buy an expensive capture card that does packet reordering in hardware;
-  * hipster tech that moloch does not currently support (looking at you ebpf and XDP);
+  * hipster tech that Arkime does not currently support (looking at you ebpf and XDP);
 
 ### Using a single NIC queue
 
@@ -221,9 +223,9 @@ GRUB_CMDLINE_LINUX_DEFAULT="processor.max_cstate=3 intel_idle.max_cstate=3 appar
 ## Tasks
 
  * Isolate 2 cores from your vagrant box;
-  * Start moloch capture with 2 packet threads;
+  * Start Arkime capture with 2 packet threads;
   * Pin each worker to an isolated CPU thread;
-  * write a python script that identifies the moloch worker thread process ID-s;
- * Fix the moloch-capture service, so it would always be bound to same NUMA node as your capture NIC (yes, I know, there is only 0 in a VM);
+  * write a python script that identifies the Arkime worker thread process ID-s;
+ * Fix the arkime-capture service, so it would always be bound to same NUMA node as your capture NIC (yes, I know, there is only 0 in a VM);
  * Make sure that viewer and WISE do not steal CPU time from those workers;
- * Make sure that your elasticsearch instance does not steal CPU time from Moloch workers (hint - grep in docker cli options);
+ * Make sure that your elasticsearch instance does not steal CPU time from Arkime workers (hint - grep in docker cli options);
