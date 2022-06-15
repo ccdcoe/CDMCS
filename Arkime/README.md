@@ -33,12 +33,13 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
 ## Day 2 :: Monitoring encrypted traffic, SSL/TLS proxy :: June 15 2022
 
- * 09:30 - 12:30
+ * 09:30 - 10:30
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
-   * [Polarproxy](/Arkime/polarproxy)
+ * 11:00 - 12:30
+   * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
 
  * 13:30 - 17:00
-   * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
+   * [Polarproxy](/Arkime/polarproxy)
     
 
 ## Day 3 :: Advanced enrichment, detecting beacons :: June 16 2022
