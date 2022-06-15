@@ -50,7 +50,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
    * [Pikksilm](/Arkime/pikksilm)
  
  * 13:30 - 17:00
-   * [Hunting - RT (5G)](/Arkime/queries/#hunting-trip)
+   * [Hunting - RT (5G + CS)](/Arkime/queries/#hunting-trip)
 
 ## Day +1 :: Last but not least :: June 17 2022, *ends at 12:00*
 
