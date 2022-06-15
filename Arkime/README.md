@@ -38,7 +38,9 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 11:00 - 12:30
    * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
 
- * 13:30 - 17:00
+ * 13:30 - 15:00
+   * [Hunting - RT (NET)](/Arkime/queries/#hunting-trip)
+ * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
 
