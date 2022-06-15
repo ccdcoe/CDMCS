@@ -47,8 +47,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 ## Day 3 :: Advanced enrichment, detecting beacons :: June 16 2022
 
  * 09:30 - 12:30
-   * [Winlogbeat](https://www.elastic.co/beats/winlogbeat)
-   * [Pikksilm](https://github.com/markuskont/pikksilm)
+   * [Pikksilm](/Arkime/pikksilm)
  
  * 13:30 - 17:00
    * [Hunting - RT (5G)](/Arkime/queries/#hunting-trip)
