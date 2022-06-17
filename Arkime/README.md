@@ -56,7 +56,8 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
  * 09:30 - 11:00
    * Free topics - propose topics you would like to hear about
-   * [Hunting - RT (TBD)](/Arkime/queries/#hunting-trip)
+   * Suricata integration
+   * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
  * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
