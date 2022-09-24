@@ -14,12 +14,12 @@ This is material for any intermediate-level dev-ops who has some experience with
 ## Day 0: Intro - Oct 17, * starts at 11:00*
 
  * 11:00 - 13:00
-  * [Intro](/Suricata/intro.md)
-  * [singlehost, vagrant](/singlehost)
-  * [what is Suricata](/Suricata/intro)
+   * [Intro](/Suricata/intro.md)
+   * [singlehost, vagrant](/singlehost)
+   * [what is Suricata](/Suricata/intro)
  * 14:00 - 16:45
-  * [Suricata on CLI](/Suricata/intro)
-  * [writing your first rule](/Suricata/intro#writing-your-first-rule)
+   * [Suricata on CLI](/Suricata/intro)
+   * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
 ## Day 1: Configuration - Oct 18, 09:00
  * 09:00 - 13:00
@@ -35,9 +35,9 @@ This is material for any intermediate-level dev-ops who has some experience with
 
 ## Day +1: Last but not least - Oct 21, 09:00
  * 09:00 - 10:30
-  * [open for requests](/Suricata)
+   * [open for requests](/Suricata)
  * 11:00 - 12:00
-  * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
+   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ### Before You Come To Class please browse trough ..
 
