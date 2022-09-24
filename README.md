@@ -23,7 +23,7 @@ See:
 # Current Classes
 
  * [Suricata - Rule-based Threat Detection :: 17 - 21 October 2022](/Suricata/) **Full, no availability**
-   * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
+   * Information ~~and registration~~: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
  * [Arkime - Large Scale Packet Capture Analysis :: 13 - 17 June 2022](/Arkime/) **On-site**
    * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis/
 
