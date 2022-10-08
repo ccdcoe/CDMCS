@@ -70,3 +70,13 @@ Usage: ./scripts/readpcap.sh [-c|--(no-)cleanup] [-a|--(no-)autofp] [-s|--set-ru
 
 Usage: readpcap.sh [OPTIONS] <path>
 ```
+
+To read a single PCAP file in Suricata `autofp` mode, use following command. Note the `-c` flag which also cleans up any previously existing data.
+
+```
+sudo ./scripts/readpcap.sh -ac /data/2021-01-06-Remcos-RAT-infection.pcap
+```
+
+By navigating to **hunt** section and selecting **all** from **time picker**, you should see something like this.
+
+![Hunt view](hunt-pcap-read.png)
