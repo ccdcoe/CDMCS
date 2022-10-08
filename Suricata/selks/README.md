@@ -51,3 +51,22 @@ sudo docker-compose logs --follow
 ```
 
 Once done, navigate to `https://192.168.10.20/` if using embedded vagrant env. Otherwise visit port 443 on whatever box was used. Default credentials are `selks-user:selks-user`.
+
+## Reading PCAPs
+
+`SELKS/docker/scripts` folder has a helper for reading PCAP files.
+
+```
+./scripts/readpcap.sh -h
+Pcap reading script through Suricata
+Usage: ./scripts/readpcap.sh [-c|--(no-)cleanup] [-a|--(no-)autofp] [-s|--set-rulefile <arg>] [-S|--set-rulefile-exclusive <arg>] [-h|--help] [--] <path>
+        <path>: Path to the pcap file to read. If <path> specifies a directory, all files in that directory
+                will be processed in order of modified time maintaining flow state between files.
+        -c, --cleanup, --no-cleanup: Remove all previous data from elasticsearch and suricata. (off by default)
+        -a, --autofp, --no-autofp: Run in autofp mode instead of single mode. (off by default)
+        -s, --set-rulefile: Set a file with signatures, which will be loaded together with the rules set in the yaml. (no default)
+        -S, --set-rulefile-exclusive: Set a file with signatures, which will be loaded exclusively, regardless of the rules set in the yaml. (no default)
+        -h, --help: Prints help
+
+Usage: readpcap.sh [OPTIONS] <path>
+```
