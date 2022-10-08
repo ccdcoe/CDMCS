@@ -17,8 +17,10 @@ cd SELKS/docker
 Use `easy-setup.sh` script to prepare docker environment. It will prompt with a number of questions, including. Install what is needed.
 
 ```
-./easy-setup.sh
+sudo ./easy-setup.sh --es-memory 1G --ls-memory 1G
 ```
+
+Note that this command limits Elasticsearch and Logstash memory to 1GB RAM.
 
 At the end of this run you will have:
 * docker installation;
@@ -31,7 +33,7 @@ At the end of this run you will have:
 Alternatively, script can also be executed non-interactively with most options passed via command line. Make sure that interface `-i` matches something that exists on your system.
 
 ```
-./easy-setup.sh  --non-interactive -i tppdummy0 --iA --es-memory 1G --ls-memory 1G
+sudo ./easy-setup.sh  --non-interactive -i tppdummy0 --iA --es-memory 1G --ls-memory 1G
 ```
 
 Refer to live capture section on for how to set up a virtuan NIC for replays.
@@ -39,14 +41,13 @@ Refer to live capture section on for how to set up a virtuan NIC for replays.
 Once setup is done, spin up containers with docker-compose.
 
 ```
-docker-compose up -d
+sudo docker-compose up -d
 ```
 
 To see the logs either omit the `-d` to call it in foreground or see the backend logs.
 
 ```
-docker-compose logs --follow
+sudo docker-compose logs --follow
 ```
 
 Once done, navigate to `https://192.168.10.20/` if using embedded vagrant env. Otherwise visit port 443 on whatever box was used. Default credentials are `selks-user:selks-user`.
-
