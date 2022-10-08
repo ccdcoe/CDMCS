@@ -80,3 +80,17 @@ sudo ./scripts/readpcap.sh -ac /data/2021-01-06-Remcos-RAT-infection.pcap
 By navigating to **hunt** section and selecting **all** from **time picker**, you should see something like this.
 
 ![Hunt view](hunt-pcap-read.png)
+
+## Tasks
+
+* get SELKS up and running
+* import `2021-01-06-Remcos-RAT-infection`
+  * what is the malicious domain used for stage1?
+  * find the malicious EXE
+  * what is the IP used to serve it?
+* import `2021-01-05-PurpleFox-EK-and-post-infection-traffic`
+  * what is the IoC for malicious host?
+  * look into `flow` records, does anything seem strange?
+* import `2022-01-01-thru-03-server-activity-with-log4j-attempts`
+  * find encoded log4j script injection
+  * decode it
