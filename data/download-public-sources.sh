@@ -12,9 +12,7 @@ ROOT=$(dirname "$0")
 
 for pcap in $(cat ${ROOT}/source-mta-pcap.txt) ; do
   echo pulling $pcap
-  year=$(printf $pcap | cut -d "-" -f1)
-  month=$(printf $pcap | cut -d "-" -f2)
-  day=$(printf $pcap | cut -d "-" -f3)
-  [[ -f ${pcap}.pcap.zip ]] || wget -O $ROOT/${pcap}.pcap.zip $WGET_PARAMS https://malware-traffic-analysis.net/${year}/${month}/${day}/${pcap}.pcap.zip
-  unzip -n -P infected -d ${ROOT} ${ROOT}/${pcap}.pcap.zip
+  file=$(printf $pcap | cut -d "/" -f7)
+  [[ -f $ROOT/${file} ]] || wget -O $ROOT/${file} $WGET_PARAMS ${pcap}
+  unzip -n -P infected -d ${ROOT} ${ROOT}/${file}
 done
