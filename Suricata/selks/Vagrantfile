@@ -7,7 +7,7 @@ MEM=4096
 
 $script = <<-SCRIPT
 apt-get update
-apt-get install -y curl git unzip
+apt-get install -y curl git unzip neovim
 ip link add tppdummy0 type dummy && ip link set tppdummy0 up && ip link set dev tppdummy0 mtu 9000
 
 cd /opt
