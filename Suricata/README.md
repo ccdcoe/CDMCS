@@ -13,48 +13,48 @@ This is material for any intermediate-level dev-ops who has some experience with
 
 ## Day 0: Intro - Mon, Oct 17, *starts at 11:00*
 
- * 11:00 - 13:00
+ * 11:00 - 12:30
    * [Intro](/Suricata/intro.md)
    * [singlehost, vagrant](/singlehost)
    * [what is Suricata](/Suricata/intro)
- * 14:00 - 16:45
+ * 13:30 - 16:30
    * [Suricata on CLI](/Suricata/intro)
    * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
-## Day 1 - Tue, Oct 18, 09:00
- * 09:00 - 13:00
+## Day 1 - Tue, Oct 18, 08:30
+ * 08:30 - 12:30
    * [EVE log basics](/Suricata/eve)
    * [EVE basic tasks](/Suricata/eve#tasks)
    * [rule writing, cont](/Suricata/rules)
- * 14:00 - 16:45
+ * 13:30 - 16:30
    * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
    * [Unix socket mode](/Suricata/unix-socket)
    * [Introducing rulesets](/Suricata/rulesets)
    * [suricata-update](/Suricata/suricata-update)
 
-## Day 2 - Wed, Oct 19, 09:00
- * 09:00 - 13:00
+## Day 2 - Wed, Oct 19, 08:30
+ * 08:30 - 12:30
    * [building suricata](/Suricata/build)
    * [live capture and replay](/Suricata/live)
    * [configuring suricata](/Suricata/config)
- * 14:00 - 16:45
+ * 13:30 - 16:30
    * [configuring suricata](/Suricata/config)
    * [datasets](/Suricata/datasets)
    * [lua scipting](/Suricata/lua)
 
-## Day 3 - Thu, Oct 20, 09:00
- * 09:00 - 13:00
+## Day 3 - Thu, Oct 20, 08:30
+ * 08:30 - 12:30
    * [Elastic intro](/Suricata/elastic), 
    * [Log shipping](/Suricata/elastic-log-shipping)
    * [Kibana and Evebox](/Suricata/frontend)
- * 14:00 - 16:45
+ * 13:30 - 16:30
    * [SELKS]()
    * [Hunting notebooks]()
 
-## Day +1: Last but not least - Fri, Oct 21, 09:00
- * 09:00 - 10:30
+## Day +1: Last but not least - Fri, Oct 21, 08:30
+ * 08:30 - 10:00
    * [open for requests](/Suricata)
- * 11:00 - 12:00
+ * 10:30 - 11:30
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ### Before You Come To Class please browse trough ..
