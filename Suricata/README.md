@@ -48,8 +48,8 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [Log shipping](/Suricata/elastic-log-shipping)
    * [Kibana and Evebox](/Suricata/frontend)
  * 13:30 - 16:30
-   * [SELKS]()
-   * [Hunting notebooks]()
+   * [SELKS](/Suricata/selks)
+   * [Hunting notebooks](/Suricata/selks)
 
 ## Day +1: Last but not least - Fri, Oct 21, 08:30
  * 08:30 - 10:00

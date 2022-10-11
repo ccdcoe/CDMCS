@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+NAME="selks"
+CPU=4
+MEM=4096
+
+$script = <<-SCRIPT
+apt-get update
+apt-get install -y curl git unzip neovim
+ip link add tppdummy0 type dummy && ip link set tppdummy0 up && ip link set dev tppdummy0 mtu 9000
+
+git clone https://github.com/StamusNetworks/SELKS.git && chown -R vagrant:vagrant SELKS
+git clone https://github.com/StamusNetworks/suricata-analytics.git && chown -R vagrant:vagrant suricata-analytics
+
+# Note that this will not work currently, easy-setup.sh script is not meant for non-interactive usage
+# use only as reference for exercises
+
+# cd SELKS/docker
+# time ./easy-setup.sh  --non-interactive -i tppdummy0 --iA --es-memory 1G --ls-memory 1G
+# time docker-compose up -d
+# cd -
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.define NAME do |box|
+    box.vm.box = "generic/ubuntu2004"
+    box.vm.hostname = NAME
+    box.vm.network :private_network, ip: "192.168.10.20"
+    box.vm.synced_folder ".", "/vagrant"
+    box.vm.synced_folder "../../", "/cdmcs"
+    box.vm.synced_folder "../../data/", "/data"
+    box.vm.provider :virtualbox do |vb|
+      vb.customize ["modifyvm", :id, "--memory", MEM]
+      vb.customize ["modifyvm", :id, "--cpus", CPU]
+    end
+    box.vm.provider "libvirt" do |v, override|
+      v.cpus = CPU
+      v.memory = MEM
+    end
+    box.vm.provision "shell", inline: $script
+  end
+end
+
+

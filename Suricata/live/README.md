@@ -68,6 +68,16 @@ sudo suricata --af-packet=capture0 -l logs/
 tail -f logs/eve.json
 ```
 
+### Dummy NIC
+
+Same can be achieved with a single dummy NIC.
+
+```
+ip link add tppdummy0 type dummy
+ip link set tppdummy0 up
+ip link set dev tppdummy0 mtu 9000
+```
+
 ## Tasks
 
 * Select 3 malware PCAP samples;
