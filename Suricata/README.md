@@ -13,30 +13,30 @@ This is material for any intermediate-level dev-ops who has some experience with
 
 ## Day 0: Intro - Mon, Oct 17, *starts at 11:00*
 
- * 11:00 - 13:00
+ * 11:00 - 12:30
    * [Intro](/Suricata/intro.md)
    * [singlehost, vagrant](/singlehost)
    * [what is Suricata](/Suricata/intro)
- * 14:00 - 16:45
+ * 13:30 - 16:30
    * [Suricata on CLI](/Suricata/intro)
    * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
-## Day 1: Configuration - Tue, Oct 18, 09:00
- * 09:00 - 13:00
- * 14:00 - 16:45
+## Day 1: Configuration - Tue, Oct 18, 08:30
+ * 08:30 - 12:30
+ * 13:30 - 16:30
 
-## Day 2: Creativity required - Wed, Oct 19, 09:00
- * 09:00 - 13:00
- * 14:00 - 16:45
+## Day 2: Creativity required - Wed, Oct 19, 08:30
+ * 08:30 - 12:30
+ * 13:30 - 16:30
 
-## Day 3: Advanced hipster stuff - Thu, Oct 20, 09:00
- * 09:00 - 13:00
- * 14:00 - 16:45
+## Day 3: Advanced hipster stuff - Thu, Oct 20, 08:30
+ * 08:30 - 12:30
+ * 13:30 - 16:30
 
-## Day +1: Last but not least - Fri, Oct 21, 09:00
- * 09:00 - 10:30
+## Day +1: Last but not least - Fri, Oct 21, 08:30
+ * 08:30 - 10:00
    * [open for requests](/Suricata)
- * 11:00 - 12:00
+ * 10:30 - 11:30
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
 
 ### Before You Come To Class please browse trough ..
