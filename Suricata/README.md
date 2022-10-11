@@ -21,17 +21,35 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [Suricata on CLI](/Suricata/intro)
    * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
-## Day 1: Configuration - Tue, Oct 18, 08:30
+## Day 1 - Tue, Oct 18, 08:30
  * 08:30 - 12:30
+   * [EVE log basics](/Suricata/eve)
+   * [EVE basic tasks](/Suricata/eve#tasks)
+   * [rule writing, cont](/Suricata/rules)
  * 13:30 - 16:30
+   * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
+   * [Unix socket mode](/Suricata/unix-socket)
+   * [Introducing rulesets](/Suricata/rulesets)
+   * [suricata-update](/Suricata/suricata-update)
 
-## Day 2: Creativity required - Wed, Oct 19, 08:30
+## Day 2 - Wed, Oct 19, 08:30
  * 08:30 - 12:30
+   * [building suricata](/Suricata/build)
+   * [live capture and replay](/Suricata/live)
+   * [configuring suricata](/Suricata/config)
  * 13:30 - 16:30
+   * [configuring suricata](/Suricata/config)
+   * [datasets](/Suricata/datasets)
+   * [lua scipting](/Suricata/lua)
 
-## Day 3: Advanced hipster stuff - Thu, Oct 20, 08:30
+## Day 3 - Thu, Oct 20, 08:30
  * 08:30 - 12:30
+   * [Elastic intro](/Suricata/elastic), 
+   * [Log shipping](/Suricata/elastic-log-shipping)
+   * [Kibana and Evebox](/Suricata/frontend)
  * 13:30 - 16:30
+   * [SELKS]()
+   * [Hunting notebooks]()
 
 ## Day +1: Last but not least - Fri, Oct 21, 08:30
  * 08:30 - 10:00
@@ -45,32 +63,3 @@ This is material for any intermediate-level dev-ops who has some experience with
  * [singlehost](https://github.com/ccdcoe/CDMCS/tree/master/singlehost)
  * [suricata](https://suricata.readthedocs.io/en/latest/)
  * [vagrant](https://github.com/ccdcoe/CDMCS/tree/master/common/vagrant)
-
-
-# Potential Topic Groups
-
-## 1
-  * [EVE log basics](/Suricata/eve)
-  * [EVE basic tasks](/Suricata/eve#tasks)
-  * [rule writing, cont](/Suricata/rules)
-
-## 2
-  * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
-  * [Unix socket mode](/Suricata/unix-socket)
-  * [Introducing rulesets](/Suricata/rulesets)
-  * [suricata-update](/Suricata/suricata-update)
-
-## 3
-  * [building suricata](/Suricata/build)
-  * [live capture and replay](/Suricata/live)
-  * [configuring suricata](/Suricata/config)
-
-## 4
-  * [configuring suricata](/Suricata/config)
-  * [datasets](/Suricata/datasets)
-  * [lua scipting](/Suricata/lua)
-
-## 5
-  * [Elastic intro](/Suricata/elastic), 
-  * [Bulk API intro](/Suricata/elastic-log-shipping)
-  * [Kibana and Evebox](/Suricata/frontend)
