@@ -68,7 +68,7 @@ delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'
 delim=";"; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp'`; do ethtool -K $item tx off sg off gro off gso off lro off tso off ; done
 cd /data/moloch/etc
 cp config.ini.sample config.ini
-sed -i "s,MOLOCH_ELASTICSEARCH,192.168.10.XXX:9200,g"   config.ini
+sed -i "s,MOLOCH_ELASTICSEARCH,192.168.56.XXX:9200,g"   config.ini
 sed -i "s,MOLOCH_INTERFACE,$ifaces,g"                   config.ini
 sed -i "s,MOLOCH_INSTALL_DIR,/data/moloch,g"            config.ini
 sed -i "s,MOLOCH_PASSWORD,test123,g"                    config.ini
@@ -106,7 +106,7 @@ Vagrant.configure(2) do |config|
 
     start = 15 + count
     name = ['moloch-cluster', NAME, 'box', count.to_s].join("-")
-    ip = ['192.168.10', start.to_s].join(".")
+    ip = ['192.168.56', start.to_s].join(".")
 
     config.vm.define name do |box|
       box.vm.box = "ubuntu/bionic64"
@@ -133,7 +133,7 @@ Vagrant.configure(2) do |config|
 
     id = 15 + BOXES + 20
     name = ['moloch-cluster', NAME, "ela"].join("-")
-    ip = ['192.168.10', id.to_s].join(".")
+    ip = ['192.168.56', id.to_s].join(".")
 
     config.vm.define name do |box|
       box.vm.box = "ubuntu/bionic64"

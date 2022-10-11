@@ -7,7 +7,7 @@ check_service(){
 
 # params
 DEBUG=true
-EXPOSE=192.168.10.11
+EXPOSE=192.168.56.11
 PKGDIR=/vagrant/pkgs
 WGET_PARAMS="-4 -q"
 APT_PARAMS="-q -y"
@@ -59,7 +59,7 @@ java -version || install_oracle_java
 #apt-get install $APT_PARAMS openjdk-8-jre-headless
 
 # kafka + zookeeper needs name resolution
-grep SDM /etc/hosts || echo "192.168.10.11  SDM" >> /etc/hosts
+grep SDM /etc/hosts || echo "192.168.56.11  SDM" >> /etc/hosts
 
 echo "Provisioning Zookeeper"
 cd $PKGDIR

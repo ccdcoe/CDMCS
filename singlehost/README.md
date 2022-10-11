@@ -75,7 +75,7 @@ vagrant ssh
 uname -a
 ```
 
-Make sure that you have private network connectivity to VM. On **host**, ping the private address `192.168.10.11`. Vagrant network config is not supported on hyper-v. Check the address manually.
+Make sure that you have private network connectivity to VM. On **host**, ping the private address `192.168.56.11`. Vagrant network config is not supported on hyper-v. Check the address manually.
 
 
 

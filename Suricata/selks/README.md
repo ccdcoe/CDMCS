@@ -50,7 +50,7 @@ To see the logs either omit the `-d` to call it in foreground or see the backend
 sudo docker-compose logs --follow
 ```
 
-Once done, navigate to `https://192.168.10.20/` if using embedded vagrant env. Otherwise visit port 443 on whatever box was used. Default credentials are `selks-user:selks-user`.
+Once done, navigate to `https://192.168.56.20/` if using embedded vagrant env. Otherwise visit port 443 on whatever box was used. Default credentials are `selks-user:selks-user`.
 
 ## Reading PCAPs
 

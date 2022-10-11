@@ -3,7 +3,7 @@
 Arkime viewer already includes comprehensive documentation under `/help` url, aka *the owl logo*. This section only serves to provide some context and examples. **Please refer to official docs for up-to-date reference for field types, supported expressions, etc**.
 
 See your `singlehost` VM Arkime installation for `/help`
- * http://192.168.10.11:8005/help
+ * http://192.168.56.11:8005/help
 
 ## Viewer tabs
 

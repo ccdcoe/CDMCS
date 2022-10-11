@@ -110,7 +110,7 @@ Then write a `hello_redis.lua` script.
 
 ```
 local redis = require 'redis'
-local client = redis.connect('192.168.10.16', 6379)
+local client = redis.connect('192.168.56.16', 6379)
 local response = client:ping()
 
 if response == false then

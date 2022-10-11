@@ -184,7 +184,7 @@ Then create the corresponding file `/opt/arkime/etc/ip-data.txt`. Note the initi
 ```
 #field:cdmcs.name;shortcut:0
 #field:cdmcs.type;shortcut:1
-192.168.10.11;0=local
+192.168.56.11;0=local
 10.0.2.15;0=local
 8.8.8.8;0=google;1=dns
 8.8.4.4;0=google;1=dns
@@ -468,7 +468,7 @@ You can override fields in `config.ini` using the `[override-ips]` section. This
 
 ```
 [override-ips]
-192.168.10.0/24=tag:private-net;country:BY;rir:SINET;asn:AS0000 This is neat
+192.168.56.0/24=tag:private-net;country:BY;rir:SINET;asn:AS0000 This is neat
 10.0.2.0/24=tag:private-net;country:CR;rir:SINET;asn:AS0000 This is neat
 ```
 

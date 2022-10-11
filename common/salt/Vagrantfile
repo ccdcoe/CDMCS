@@ -1,6 +1,6 @@
 # vi: set ft=ruby :
 
-MASTER_IP = '192.168.10.13'
+MASTER_IP = '192.168.56.13'
 # NOTE - building from git can take a lot of time and contain bugs
 SALT = 'stable' # stable|git|daily|testing
 
@@ -9,7 +9,7 @@ boxes = [
     :name       => "minion-1",
     :mem        => "2048",
     :cpu        => "2",
-    :ip         => "192.168.10.14",
+    :ip         => "192.168.56.14",
     :image      => 'ubuntu/xenial64',
     :saltmaster => false,
     :provision     => []
@@ -18,7 +18,7 @@ boxes = [
     :name       => "minion-2",
     :mem        => "2048",
     :cpu        => "2",
-    :ip         => "192.168.10.15",
+    :ip         => "192.168.56.15",
     :image      => 'ubuntu/xenial64',
     :saltmaster => false,
     :provision     => []
@@ -27,7 +27,7 @@ boxes = [
     :name       => "minion-3",
     :mem        => "2048",
     :cpu        => "2",
-    :ip         => "192.168.10.15",
+    :ip         => "192.168.56.15",
     :image      => 'ubuntu/xenial64',
     :saltmaster => false,
     :provision     => []

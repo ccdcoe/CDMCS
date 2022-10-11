@@ -143,13 +143,13 @@ first 0 r UNASSIGNED
 This can be fixed by altering index settings.
 
 ```
-curl -XGET 192.168.10.14:9200/first/_settings
+curl -XGET 192.168.56.14:9200/first/_settings
 ```
 ```
 {"first":{"settings":{"index":{"creation_date":"1548158688125","number_of_shards":"5","number_of_replicas":"1","uuid":"dKmyapUCTSWaGunmnybU9A","version":{"created":"6050499"},"provided_name":"first"}}}}
 ```
 ```
-curl -XPUT 192.168.10.14:9200/first/_settings -H 'Content-Type: application/json' -d '{"settings":{"index":{"number_of_replicas":"0"}}}'
+curl -XPUT 192.168.56.14:9200/first/_settings -H 'Content-Type: application/json' -d '{"settings":{"index":{"number_of_replicas":"0"}}}'
 ```
 
 Number of shards cannot be changed once index is already created. Nor can individual [field mappings](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html) be changed after creation. However, number of replicas can be changed whenever needed. Just keep in mind it would invoke full cluster rebalance.
@@ -157,7 +157,7 @@ Number of shards cannot be changed once index is already created. Nor can indivi
 Mappings for individual fields can be observed per index via `_mappings` API.
 
 ```
-curl "192.168.10.14:9200/first/_mappings" | jq .
+curl "192.168.56.14:9200/first/_mappings" | jq .
 ```
 
 Mapping persistence can be achieved using *templates*. But this is out of scope for now.

@@ -895,7 +895,7 @@ sed -i "/\[default\]/asnapLen=65536" $FILE
 echo "Configuring custom stuff"
 grep "custom-fields" $FILE || cat >> $FILE <<EOF
 [override-ips]
-192.168.10.0/24=tag:private-net;country:PRIVATE;asn:AS0000 This is neat
+192.168.56.0/24=tag:private-net;country:PRIVATE;asn:AS0000 This is neat
 10.0.2.0/24=tag:private-net;country:VIRTUALBOX;asn:AS0000 This is neat
 EOF
 
@@ -921,7 +921,7 @@ TAGGER_FILE="/opt/arkime/etc/tagger.txt"
 [[ -f $TAGGER_FILE ]] || cat > $TAGGER_FILE <<EOF
 #field:cdmcs.name;shortcut:0
 #field:cdmcs.type;shortcut:1
-192.168.10.11;0=local
+192.168.56.11;0=local
 10.0.2.15;0=local
 8.8.8.8;0=google;1=dns
 8.8.4.4;0=google;1=dns

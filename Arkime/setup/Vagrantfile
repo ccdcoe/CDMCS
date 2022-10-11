@@ -41,7 +41,7 @@ Vagrant.configure(2) do |config|
   config.vm.define 'moloch-build' do |box|
     box.vm.box = "ubuntu/bionic64"
     box.vm.hostname = 'moloch-build'
-    box.vm.network :private_network, ip: "192.168.10.12"
+    box.vm.network :private_network, ip: "192.168.56.12"
     box.vm.provider :hyperv do |hv, override|
       hv.cpus = 4
       hv.maxmemory = 4096
