@@ -53,7 +53,7 @@ Vagrant.configure(2) do |config|
 end
 ```
 
-This example configures a single Ubuntu 18.04 virtual machine with 2GB ram, 2 CPU cores and sandboxed static network address `192.168.10.11`. Inline script will automatically install whatever packages the user needs.
+This example configures a single Ubuntu 18.04 virtual machine with 2GB ram, 2 CPU cores and sandboxed static network address `192.168.56.11`. Inline script will automatically install whatever packages the user needs.
 
 ## init first vm
 

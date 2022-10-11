@@ -31,9 +31,9 @@ discovery:
     ping:
       unicast:
         hosts:
-        - 192.168.10.120
-        - 192.168.10.82
-        - 192.168.10.122
+        - 192.168.56.120
+        - 192.168.56.82
+        - 192.168.56.122
 ```
 
 Each node can be configured for a variety of roles. Single node can fulfill many roles, though specialized workers are common in production.
@@ -80,13 +80,13 @@ Since we are doing pretty much everything in docker, it may be better to just mo
 Configuring moloch capture and viewer to use a remote elasticsearch (cluster) is quite straightforward, simply point them to correct ip-port combination.
 
 ```
-elasticsearch=192.168.10.14:9200
+elasticsearch=192.168.56.14:9200
 ```
 
 Suppose we have multiple elastic proxies. Those can be delimited via semicolon. Just make sure they all belong to the same cluster.
 
 ```
-elasticsearch=192.168.10.14:9200,192.168.10.36:9200
+elasticsearch=192.168.56.14:9200,192.168.56.36:9200
 ```
 
 ## moloch workers
@@ -106,7 +106,7 @@ Error talking to node 'some-host-123' using host 'some-host-123:8005' check view
 That is due to name resolution. Simply hack it with local resolver to get it working. We should add this to `/etc/hosts` of all viewer boxes.
 
 ```
-192.168.10.14   some-host-123
+192.168.56.14   some-host-123
 ```
 
 Local node may also need this.
@@ -211,7 +211,7 @@ singlehost=url:http://singlehost:8005;passwordSecret:test123;name:Single host ea
 As always, we also need to know where the remote viewer is.
 
 ```
-192.168.10.11   singlehost
+192.168.56.11   singlehost
 ```
 
 ## Parliament

@@ -78,17 +78,17 @@ discovery:
     ping:
       unicast:
         hosts:
-        - 192.168.10.120
-        - 192.168.10.82
-        - 192.168.10.122
+        - 192.168.56.120
+        - 192.168.56.82
+        - 192.168.56.122
 ```
 
 [Version 7 changed the syntax and added more fine-graining options.](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery-hosts-providers.html) New syntax is `discovery.seed_hosts`. Note that port suffix corresponds to **binary transport** port, which defaults to `9300` (but can be changed).
 
 ```
 discovery.seed_hosts:
-   - 192.168.10.120:9300
-   - 192.168.10.11 
+   - 192.168.56.120:9300
+   - 192.168.56.11 
 ```
 
 Furthermore, we now need to define an initial list of **master-eligible nodes** when bootstrapping a new cluster. Otherwise, you will be greeted by an error like this -

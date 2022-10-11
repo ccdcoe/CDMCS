@@ -277,7 +277,7 @@ Speaking of *CORS*, we should update `/etc/alertad.conf` (or local version if yo
 
 ```
 CORS_ORIGINS = [
-    'http://192.168.10.15:8000'
+    'http://192.168.56.15:8000'
 ]
 ```
 
@@ -293,7 +293,7 @@ python3 -m http.server 8000
 Make sure to edit `config.json` in `app` directory to point to correct endpoint.
 
 ```
-{"endpoint": "http://192.168.10.15:8080"}
+{"endpoint": "http://192.168.56.15:8080"}
 ```
 
 Due to *CORS*, this endpoint should be exposed to the user. So, localhost is not going to be good if you are serving it remotely.

@@ -1,6 +1,6 @@
 # Threat intelligence / encriching the data
 
-Suppose we have following information - `8.8.8.8` and `1.1.1.1` are both popular public DNS servers. Former belongs to Google and second to Cloudflare. `8.8.4.4` is also a DNS server and belongs to Google. `192.168.10.11`, `192.168.10.12`, `192.168.10.13` and `192.168.10.14` are used by us and correspond to singlehost, buildbox, api box, and current wise box. None of them are DNS servers but we might add some resolvers into this subnet in the future.
+Suppose we have following information - `8.8.8.8` and `1.1.1.1` are both popular public DNS servers. Former belongs to Google and second to Cloudflare. `8.8.4.4` is also a DNS server and belongs to Google. `192.168.56.11`, `192.168.56.12`, `192.168.56.13` and `192.168.56.14` are used by us and correspond to singlehost, buildbox, api box, and current wise box. None of them are DNS servers but we might add some resolvers into this subnet in the future.
 
 Now, suppose we have a bunch of annoying analysts who want to see traffic for DNS servers OR particular organizations, but don't care much for IP addresses and don't want to write compound queries. Maybe they even want to use SPI graph on timeseries aggregations and don't want to write their own aggregators agains elasticsearch. Suppose you want to see traffic between exercise workstations and don't want to write a 1000+ element query that lists all workstation IP addresses with logical OR separator (which would result in quite an inefficient query anyway).
 
@@ -122,10 +122,10 @@ Coming back to initial problem with nameservers and owners. We can create a file
 8.8.8.8;asset=dns
 8.8.4.4;asset=dns
 1.1.1.1;asset=dns
-192.168.10.11;asset=singlehost
-192.168.10.12;asset=build
-192.168.10.13;asset=api
-192.168.10.14;asset=wise
+192.168.56.11;asset=singlehost
+192.168.56.12;asset=build
+192.168.56.13;asset=api
+192.168.56.14;asset=wise
 ```
 
 Let's create `/tmp/assets.txt` and add this to `wise.ini`
@@ -155,7 +155,7 @@ Custom fields can be prepended to file plugin source file as comments.
 #field:custom.type;kind:lotermfield;count:true;friendly:Type;db:custom.type;help:Traffic type
 8.8.8.8;custom.owner=google;custom.type=dns
 1.1.1.1;custom.owner=cloudflare;custom.type=dns
-192.168.10.14;custom.owner=us;custom.type=vagrant
+192.168.56.14;custom.owner=us;custom.type=vagrant
 ```
 
 ### WISE plugin config option
@@ -445,7 +445,7 @@ Now we have a useless skeleton of a wise plugin. Suppose we want to create a sim
     "type": "dns"
   },
   {
-    "ip": "192.168.10.14",
+    "ip": "192.168.56.14",
     "owner": "me",
     "type": "vagrant"
   }
@@ -515,7 +515,7 @@ SomewhatUsefulSource.prototype.load = function() {
       type: "dns"
     },
     {
-      ip: "192.168.10.14",
+      ip: "192.168.56.14",
       owner: "me",
       type: "vagrant"
     }
