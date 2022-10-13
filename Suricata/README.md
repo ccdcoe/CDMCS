@@ -15,7 +15,8 @@ This is material for any intermediate-level dev-ops who has some experience with
 
  * 11:00 - 12:30
    * [Intro](/Suricata/intro.md)
-   * [singlehost, vagrant](/singlehost)
+   * [singlehost](/singlehost)
+   * [vagrant](/Suricata/vagrant)
    * [what is Suricata](/Suricata/intro)
  * 13:30 - 16:30
    * [Suricata on CLI](/Suricata/intro)
