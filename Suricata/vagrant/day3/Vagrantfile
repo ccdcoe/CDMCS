@@ -1,0 +1,55 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+NAME = 'day3'.freeze
+MEM = 4096
+CPU = 4
+
+boxes = [
+  {
+    name: 'selks',
+    ip: '192.168.56.13',
+    docker_images: []
+  },
+  {
+    name: 'clean',
+    ip: '192.168.56.14',
+    docker_images: []
+  }
+]
+
+script = <<~SCRIPT
+  apt-get update
+  apt-get install -y curl git unzip neovim
+
+  ip link add tppdummy0 type dummy && ip link set tppdummy0 up && ip link set dev tppdummy0 mtu 9000
+
+  git clone https://github.com/StamusNetworks/SELKS.git && chown -R vagrant:vagrant SELKS
+  git clone https://github.com/StamusNetworks/suricata-analytics.git && chown -R vagrant:vagrant suricata-analytics
+
+  # Note that this will not work currently, easy-setup.sh script is not meant for non-interactive usage
+  # use only as reference for exercises
+  # cd SELKS/docker
+  # time ./easy-setup.sh  --non-interactive -i tppdummy0 --iA --es-memory 1G --ls-memory 1G
+  # time docker-compose up -d
+  # cd -
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  boxes.each do |opts|
+    config.vm.define NAME + '-' + opts[:name] do |box_config|
+      box_config.vm.box = 'generic/ubuntu2004'
+      box_config.vm.hostname = NAME + '-' + opts[:name]
+      box_config.vm.synced_folder '..', '/vagrant'
+      box_config.vm.synced_folder '../../', '/cdmcs-suricata'
+      box_config.vm.synced_folder '../../../data/', '/data'
+      box_config.vm.network :private_network, ip: opts[:ip]
+      box_config.vm.provider :virtualbox do |vb|
+        vb.customize ['modifyvm', :id, '--memory', MEM]
+        vb.customize ['modifyvm', :id, '--cpus', CPU]
+      end
+      box_config.vm.provision 'shell', inline: script
+      box_config.vm.provision 'docker', images: []
+    end
+  end
+end
