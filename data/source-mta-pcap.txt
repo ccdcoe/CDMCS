@@ -3,3 +3,8 @@ https://malware-traffic-analysis.net/2021/01/05/2021-01-05-PurpleFox-EK-and-post
 https://malware-traffic-analysis.net/2021/01/04/2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip
 https://malware-traffic-analysis.net/2022/01/03/2022-01-01-thru-03-server-activity-with-log4j-attempts.pcap.zip
 https://malware-traffic-analysis.net/2020/03/12/2020-03-12-infection-traffic.pcap.zip
+https://malware-traffic-analysis.net/2022/07/06/2022-07-06-TA578-Contact-Forms-IcedID-with-DarkVNC-and-Cobalt-Strike.pcap.zip
+https://malware-traffic-analysis.net/2022/10/06/2022-10-06-IcedID-with-Cobalt-Strike-santized-and-carved.pcap.zip
+https://malware-traffic-analysis.net/2020/03/04/2020-03-04-Trickbot-spreads-from-client-to-DC.pcap.zip
+https://malware-traffic-analysis.net/2021/08/05/2021-08-05-AZORult-infection.pcap.zip
+https://malware-traffic-analysis.net/2022/03/24/2022-03-24-Emotet-E4-with-Cobalt-Strike-carved.pcap.zip
