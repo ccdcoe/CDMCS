@@ -125,6 +125,30 @@ Multiple fields can be extracted by separating them with comma.
 cat logs/eve.json| jq 'select(.event_type=="http") | .timestamp , .http.hostname , .http.url'
 ```
 
+To see what keys can be used.
+
+```
+cat logs/eve.json| jq 'keys'
+```
+
+Or for nested elements.
+
+```
+cat logs/eve.json| jq '.http | keys'
+```
+
+You can also do partial matches.
+
+```
+cat logs/eve.json | jq 'select(.alert.signature | contains("malware"))'
+```
+
+Lists can easily be unpacked.
+
+```
+cat logs/eve.json | jq 'select(.event_type=="alert") | .alert.metadata.attack_target | .[]'
+```
+
 ## Tasks
 
 This is a freeform exploration exercise. **There are not right or wrong answers.** In fact, there are no prepared solutions for the task either. Going through the process is the real goal.
