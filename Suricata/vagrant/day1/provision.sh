@@ -100,4 +100,6 @@ EOF
 
 systemctl stop suricata.service
 systemctl disable suricata.service
-apt-get install -y tcpdump tcpreplay jq
+apt-get install -y tcpdump tcpreplay jq python3-venv python3-pip
+
+su - vagrant -c "python3 -m venv .venv && source .venv/bin/activate && pip install jupyter jupyterlab pandas ipywidgets requests"
