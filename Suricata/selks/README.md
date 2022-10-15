@@ -94,3 +94,66 @@ By navigating to **hunt** section and selecting **all** from **time picker**, yo
 * import `2022-01-01-thru-03-server-activity-with-log4j-attempts`
   * find encoded log4j script injection
   * decode it
+
+# Suricata Analytics
+
+Suricata Analytics is a project by Stamus Networks to develop Jupyter notebooks for EVE data exploration and threat hunting. Project can be cloned from public github repo:
+
+```
+git clone https://github.com/StamusNetworks/suricata-analytics
+```
+
+Within the confines of this training, we recommend setting up a python virtual environment for `docker-compose`.
+
+```
+cd suricata-analytics
+python3 -m venv .venv
+source .venv/bin/activate
+pip install docker-compose
+```
+
+Then build the container locally.
+
+```
+docker-compose build
+```
+
+Before starting the stack, make sure to set up `.env` file. Simply copy the packaged reference.
+
+```
+cp .env.example .env
+```
+
+Then edit the file. 
+* `SCIRIUS_TOKEN` can be found (or generated) in SELKS UI. Click on your username on top-right corner, go to `account settings`, then click `Edit Token` on left-hand menu under `User Settings` box. If the token is empty, simply click `Regenerate`. Then copy and paste the value into env file.
+* `SCIRIUS_HOST` will be the IP hosting SELKS instance. If using Vagrant, it will be the day3-selks box on `192.168.56.13`
+* `SCIRIUS_TLS_VERIFY` must be `no` since training setup uses default self-signed certificate
+
+```
+SCIRIUS_TOKEN=<TOKEN>
+SCIRIUS_HOST=192.168.56.13
+SCIRIUS_TLS_VERIFY=no
+```
+
+Once this is done, start the docker env.
+
+```
+docker-compose up -d
+```
+
+You need API authentication token from jupyter logs. Search for the following lines:
+
+```
+(.venv) vagrant@day3-clean:~/suricata-analytics$ docker-compose logs
+...
+stamus_jupyter | [I 2022-10-14 14:47:54.615 ServerApp] Use Control-C to stop this server and shut down all kernels (twice to skip confirmation).
+stamus_jupyter | [C 2022-10-14 14:47:54.617 ServerApp]
+stamus_jupyter |
+stamus_jupyter |     To access the server, open this file in a browser:
+stamus_jupyter |         file:///home/jovyan/.local/share/jupyter/runtime/jpserver-6-open.html
+stamus_jupyter |     Or copy and paste one of these URLs:
+stamus_jupyter |         http://8ed1eee366bf:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678
+stamus_jupyter |      or http://127.0.0.1:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678
+```
+
+Note that you must modify the IP to reflect your server. Meaning that `http://127.0.0.1:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678` becomes `http://192.168.56.13:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678` (if using vagrant env).

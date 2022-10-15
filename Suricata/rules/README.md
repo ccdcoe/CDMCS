@@ -190,6 +190,41 @@ alert http any any -> any any (msg: "CHECK - 0"; sid: 100; http.stat_code; conte
 
 Then run Suricata and check for alerts in `eve.json`, you should see only alerts from signature `100`. And each EVE record alert should also show `malware.IOC` tag.
 
+Flowbits you set in rules will be visible in `metadata` and `alert.metadata` sections.
+
+```
+  "dest_port": 80,
+  "http": {
+    "accept": "*/*",
+    "connection": "keep-alive",
+    "content_type": "application/vnd.ms-cab-compressed",
+    "date": "Sun, 05 Dec 2021 17:02:47 GMT",
+    "hostname": "ctldl.windowsupdate.com",
+    "http_content_type": "application/vnd.ms-cab-compressed",
+    "http_method": "GET",
+    "http_user_agent": "Microsoft-CryptoAPI/10.0",
+    "last_modified": "Tue, 16 Mar 2021 07:33:42 GMT",
+    "length": 0,
+    "protocol": "HTTP/1.1",
+    "status": 304,
+    "url": "/msdownload/update/v3/static/trustedr/en/disallowedcertstl.cab?397fc8a49fa082eb",
+    "user_agent": {
+      "build": "",
+      "device": "Other",
+      "major": "10",
+      "minor": "0",
+      "name": "Microsoft-CryptoAPI",
+      "os": "Other",
+      "os_name": "Other"
+    }
+  },
+  "metadata": {
+    "flowbits": [
+      "ET.INFO.WindowsUpdate"
+    ]
+  },
+```
+
 ## Tasks
 
 * Write rules detecting default user-agents, but only if response code from server was 200 (OK);
