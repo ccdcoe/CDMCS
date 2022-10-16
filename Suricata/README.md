@@ -14,7 +14,7 @@ This is material for any intermediate-level dev-ops who has some experience with
 ## Day 0: Intro - Mon, Oct 17, *starts at 11:00*
 
  * 11:00 - 12:30
-   * [Intro](/Suricata/intro.md)
+   * [Intro](/common/day_intro.md)
    * [singlehost](/singlehost)
    * [vagrant](/Suricata/vagrant)
    * [what is Suricata](/Suricata/intro)
