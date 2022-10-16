@@ -1,6 +1,6 @@
 # Intro
 
-* CCDCOE
+* [CCDCOE](https://www.youtube.com/watch?v=afu7r7G2res&ab_channel=natoccdcoe)
 * Course
   * Designed as hands-on classroom course
   * *from techies for techies*
@@ -20,8 +20,9 @@
 
 ## Tooling
 
-* github
-* Vagrant **
-* command line
-* jupyter notebooks
-* docker
+* GitHub
+* Vagrant
+* Linux
+* Command line
+* Jupyter notebooks
+* Docker
