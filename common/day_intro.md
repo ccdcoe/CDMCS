@@ -1,6 +1,6 @@
 # Intro
 
-* [CCDCOE](https://www.youtube.com/watch?v=afu7r7G2res&ab_channel=natoccdcoe)
+* [CCDCOE](https://www.youtube.com/watch?v=afu7r7G2res)
 * Course
   * Designed as hands-on classroom course
   * *from techies for techies*
