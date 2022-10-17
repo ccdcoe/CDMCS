@@ -1339,18 +1339,18 @@ adduser telegraf docker
 
 check_service telegraf
 
-echo "pulling some replay PCAPs"
+# echo "pulling some replay PCAPs"
 
-mkdir -p $PCAP_REPLAY
-cd $PCAP_REPLAY
-[[ -f 2021-01-06-Remcos-RAT-infection.pcap.zip ]] || wget $WGET_PARAMS  https://malware-traffic-analysis.net/2021/01/06/2021-01-06-Remcos-RAT-infection.pcap.zip
-[[ -f 2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/05/2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip
-[[ -f 2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/04/2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip
+# mkdir -p $PCAP_REPLAY
+# cd $PCAP_REPLAY
+# [[ -f 2021-01-06-Remcos-RAT-infection.pcap.zip ]] || wget $WGET_PARAMS  https://malware-traffic-analysis.net/2021/01/06/2021-01-06-Remcos-RAT-infection.pcap.zip
+# [[ -f 2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/05/2021-01-05-PurpleFox-EK-and-post-infection-traffic.pcap.zip
+# [[ -f 2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip ]] || wget $WGET_PARAMS https://malware-traffic-analysis.net/2021/01/04/2021-01-04-Emotet-infection-with-Trickbot-traffic.pcap.zip
 
-for pcap in $(find $PCAP_REPLAY/ -type f -name '*.pcap.zip') ; do
-  echo unpacking $pcap
-  unzip -P infected ${pcap}
-done
+# for pcap in $(find $PCAP_REPLAY/ -type f -name '*.pcap.zip') ; do
+#   echo unpacking $pcap
+#   unzip -P infected ${pcap}
+# done
 
 FILE=$PCAP_REPLAY/gopher.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
@@ -1390,13 +1390,13 @@ tarball:
     gzip: false
 EOF
 
-FILE=$PCAP_REPLAY/gopherCap.gz
-[[ -f $FILE ]] || wget $WGET_PARAMS -O $FILE $GOPHER_URL
-gunzip $FILE
-chmod 755 ./gopherCap
-./gopherCap --config example.yml exampleConfig
-./gopherCap --config gopher.yml map
-pgrep gopherCap || ./gopherCap --config gopher.yml replay 2>/dev/null &
+# FILE=$PCAP_REPLAY/gopherCap.gz
+# [[ -f $FILE ]] || wget $WGET_PARAMS -O $FILE $GOPHER_URL
+# gunzip $FILE
+# chmod 755 ./gopherCap
+# ./gopherCap --config example.yml exampleConfig
+# ./gopherCap --config gopher.yml map
+# pgrep gopherCap || ./gopherCap --config gopher.yml replay 2>/dev/null &
 
 #for pcap in $(find $PCAP_REPLAY/ -type f -name '*.pcap') ; do
 #  echo replaying $pcap
