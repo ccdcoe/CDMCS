@@ -20,6 +20,7 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [what is Suricata](/Suricata/intro)
  * 13:30 - 16:30
    * [Suricata on CLI](/Suricata/intro)
+   * [Suricata language server](https://www.stamus-networks.com/blog/suricata-language-server)
    * [writing your first rule](/Suricata/intro#writing-your-first-rule)
 
 ## Day 1 - Tue, Oct 18, 08:30
