@@ -6,7 +6,7 @@ IDS rules have historically been rather static and self-contained entities. Thre
 
 `Datasets` is a new (ish) feature for eliminating this limitation. Any sticky buffer can be hooked to a list of base64 strings, md5, or sha256 hashes. `Datarep` is the same thing, but each entry can also be assigned a score. You can then define a threshold inside a rule, so it would trigger if reputation is above or below a numeric value.
 
-## Basic usage
+## Basic usage with Suricata 5.0.x
 
 `Dataset` can be created in `suricata.yaml` and then invoked in a rule.
 
@@ -29,6 +29,16 @@ Alternatively, the rule could be rewritten to contain all needed parameters. Mod
 ```
 alert http any any -> any any (msg:"HTTP user-agent list"; http.user_agent; to_sha256; dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst; sid:123; rev:1;)
 ```
+
+## Basic usage with Suricata 6.0.x
+
+All parameters can be set in the signature
+
+```
+alert http any any -> any any (msg:"HTTP user-agent list"; http.user_agent; to_sha256; dataset:isset,ua-sha256,type sha256, state /vagrant/seen-dns.lst, memcap 10mb, hashsize 1024; sid:123; rev:1;)
+```
+
+## Live update
 
 Here is the important section.
 
