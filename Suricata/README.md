@@ -29,20 +29,20 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [EVE basic tasks](/Suricata/eve#tasks)
    * [rule writing, cont](/Suricata/rules)
  * 13:30 - 16:30
+   * [Unix socket mode](/Suricata/unix-socket)
    * [datasets](/Suricata/datasets)
    * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
-   * [Unix socket mode](/Suricata/unix-socket)
-   * [Introducing rulesets](/Suricata/rulesets)
-   * [suricata-update](/Suricata/suricata-update)
 
 ## Day 2 - Wed, Oct 19, 08:30
  * 08:30 - 12:30
    * [building suricata](/Suricata/build)
-   * [live capture and replay](/Suricata/live)
    * [configuring suricata](/Suricata/config)
  * 13:30 - 16:30
+   * [Introducing rulesets](/Suricata/rulesets)
+   * [suricata-update](/Suricata/suricata-update)
    * [configuring suricata](/Suricata/config)
    * [lua scipting](/Suricata/lua)
+   * [live capture and replay](/Suricata/live)
 
 ## Day 3 - Thu, Oct 20, 08:30
  * 08:30 - 12:30
