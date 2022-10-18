@@ -29,6 +29,7 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [EVE basic tasks](/Suricata/eve#tasks)
    * [rule writing, cont](/Suricata/rules)
  * 13:30 - 16:30
+   * [datasets](/Suricata/datasets)
    * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
    * [Unix socket mode](/Suricata/unix-socket)
    * [Introducing rulesets](/Suricata/rulesets)
@@ -41,7 +42,6 @@ This is material for any intermediate-level dev-ops who has some experience with
    * [configuring suricata](/Suricata/config)
  * 13:30 - 16:30
    * [configuring suricata](/Suricata/config)
-   * [datasets](/Suricata/datasets)
    * [lua scipting](/Suricata/lua)
 
 ## Day 3 - Thu, Oct 20, 08:30
