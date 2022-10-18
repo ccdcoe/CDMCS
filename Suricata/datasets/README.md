@@ -108,7 +108,7 @@ alert dns any any -> any any (msg:"New mailserver query seen"; dns.query; conten
 
 Use PCAP files specified by the instructors.
 
-* Write rules detecting default user-agents (exact matches on lowercase strings are fine);
+* Write one single rule detecting default user-agents (exact matches on lowercase strings are fine);
     * Python;
     * Nikto;
     * Dirbuster;
