@@ -281,3 +281,4 @@ In short, this is your typical to-do list in `suricata.yaml` after fresh install
 * Make sure that af-packet uses zero-copy mode
 * Configure ruleset profiling (it needs to be compiled into Suricata)
   * Profile `et/open` ruleset on that replay traffic
+* Set up filestore to save all reassembled files
