@@ -275,7 +275,7 @@ In short, this is your typical to-do list in `suricata.yaml` after fresh install
 
 ## Exercises
 
-* Build suricata with VM uplink (+IPv6) as HOME_NET
+* Configure HOME_NET to match your VM uplink. Do not forget IPv6. (`ip addr show`)
 * Set up [virtual replay](/Suricata/live) and configure it as second capture interface;
   * Use MTA data to verify it works!
 * Make sure that af-packet uses zero-copy mode
