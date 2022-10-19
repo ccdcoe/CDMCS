@@ -94,14 +94,19 @@ git clone https://github.com/OISF/suricata suricata-build
 cd suricata-build
 ```
 
-Optionally check out a concrete version. Latest dev build may have issues (though, it may also fix them). See all tags and branches.
+It is possible to check out a concrete Suricata release/version. Latest dev build may have issues (though, it may also fix them). See all tags and branches.
 
 ```
 git tag
 git branch -a
 ```
 
+**Optionally**, you can check out a specific suricata release/version. 
+
+Mind some of the example commands below that illustrate build versioning using the`$VERSION` variable! Always refer to your own filesystem paths and prefixes.
+
 ```
+#export VERSION=PUT_DESIRED_VERSION_HERE
 git checkout $VERSION
 ```
 
