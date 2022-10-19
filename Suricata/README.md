@@ -31,16 +31,16 @@ This is material for any intermediate-level dev-ops who has some experience with
  * 13:30 - 16:30
    * [Unix socket mode](/Suricata/unix-socket)
    * [datasets](/Suricata/datasets)
-   * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
 
 ## Day 2 - Wed, Oct 19, 08:30
  * 08:30 - 12:30
+   * [datasets, cont](/Suricata/datasets)
    * [building suricata](/Suricata/build)
    * [configuring suricata](/Suricata/config)
  * 13:30 - 16:30
    * [Introducing rulesets](/Suricata/rulesets)
    * [suricata-update](/Suricata/suricata-update)
-   * [configuring suricata](/Suricata/config)
+   * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
    * [lua scipting](/Suricata/lua)
    * [live capture and replay](/Suricata/live)
 
