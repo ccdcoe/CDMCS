@@ -36,19 +36,14 @@ This is material for any intermediate-level dev-ops who has some experience with
  * 08:30 - 12:30
    * [datasets, cont](/Suricata/datasets)
    * [building suricata](/Suricata/build)
-   * [configuring suricata](/Suricata/config)
  * 13:30 - 16:30
-   * [Introducing rulesets](/Suricata/rulesets)
-   * [suricata-update](/Suricata/suricata-update)
-   * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
-   * [lua scipting](/Suricata/lua)
-   * [live capture and replay](/Suricata/live)
+   * [configuring suricata](/Suricata/config)
 
 ## Day 3 - Thu, Oct 20, 08:30
  * 08:30 - 12:30
-   * [Elastic intro](/Suricata/elastic), 
-   * [Log shipping](/Suricata/elastic-log-shipping)
-   * [Kibana and Evebox](/Suricata/frontend)
+   * [Introducing rulesets](/Suricata/rulesets)
+   * [Ruleset exploration show and tell](/Suricata/rulesets#show-and-tell)
+   * [suricata-update](/Suricata/suricata-update)
  * 13:30 - 16:30
    * [SELKS](/Suricata/selks)
    * [Hunting notebooks](/Suricata/selks#suricata-analytics)
