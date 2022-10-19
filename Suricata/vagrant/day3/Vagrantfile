@@ -38,7 +38,8 @@ SCRIPT
 Vagrant.configure(2) do |config|
   boxes.each do |opts|
     config.vm.define NAME + '-' + opts[:name] do |box_config|
-      box_config.vm.box = 'generic/ubuntu2004'
+      box_config.vm.box = 'cdmcs-selks'
+      box_config.vm.box_url = 'http://course-webserver/vagrant/cdmcs-selks.box'
       box_config.vm.hostname = NAME + '-' + opts[:name]
       box_config.vm.synced_folder '..', '/vagrant'
       box_config.vm.synced_folder '../../', '/cdmcs-suricata'
