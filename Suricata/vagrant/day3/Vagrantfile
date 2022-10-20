@@ -24,8 +24,8 @@ script = <<~SCRIPT
 
   ip link add tppdummy0 type dummy && ip link set tppdummy0 up && ip link set dev tppdummy0 mtu 9000
 
-  git clone https://github.com/StamusNetworks/SELKS.git && chown -R vagrant:vagrant SELKS
-  git clone https://github.com/StamusNetworks/suricata-analytics.git && chown -R vagrant:vagrant suricata-analytics
+  #git clone https://github.com/StamusNetworks/SELKS.git && chown -R vagrant:vagrant SELKS
+  #git clone https://github.com/StamusNetworks/suricata-analytics.git && chown -R vagrant:vagrant suricata-analytics
 
   # Note that this will not work currently, easy-setup.sh script is not meant for non-interactive usage
   # use only as reference for exercises
