@@ -137,4 +137,4 @@ $HOME/.local/bin/suricata-update -D $WORKING_DIR  --disable-conf disable.conf
   * Unix and BSD ping;
   * Suricata STREAM rules;
 * Write a crontab script that updates your ruleset and invokes suricata rule reload **without restarting it**;
-* Generate a report of alerts per MTA PCAP;
+* Generate a simple report of unique alerts with counts per MTA PCAP;
