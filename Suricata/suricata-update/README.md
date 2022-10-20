@@ -131,10 +131,10 @@ $HOME/.local/bin/suricata-update -D $WORKING_DIR  --disable-conf disable.conf
   * `oisf/trafficid`
   * `ptresearch/attackdetection`
   * `tgreen/hunting`
-* Generate a report of alerts per MTA PCAP;
 * Disable following rules:
   * Outbound Curl user-agent;
   * apt and yum package management;
   * Unix and BSD ping;
   * Suricata STREAM rules;
 * Write a crontab script that updates your ruleset and invokes suricata rule reload **without restarting it**;
+* Generate a report of alerts per MTA PCAP;
