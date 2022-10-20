@@ -81,20 +81,6 @@ By navigating to **hunt** section and selecting **all** from **time picker**, yo
 
 ![Hunt view](hunt-pcap-read.png)
 
-## Tasks
-
-* get SELKS up and running
-* import `2021-01-06-Remcos-RAT-infection`
-  * what is the malicious domain used for stage1?
-  * find the malicious EXE
-  * what is the IP used to serve it?
-* import `2021-01-05-PurpleFox-EK-and-post-infection-traffic`
-  * what is the IoC for malicious host?
-  * look into `flow` records, does anything seem strange?
-* import `2022-01-01-thru-03-server-activity-with-log4j-attempts`
-  * find encoded log4j script injection
-  * decode it
-
 # Suricata Analytics
 
 Suricata Analytics is a project by Stamus Networks to develop Jupyter notebooks for EVE data exploration and threat hunting. Project can be cloned from public github repo:
@@ -157,3 +143,21 @@ stamus_jupyter |      or http://127.0.0.1:8888/lab?token=0c7c34ada0ad6243decb1dc
 ```
 
 Note that you must modify the IP to reflect your server. Meaning that `http://127.0.0.1:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678` becomes `http://192.168.56.13:8888/lab?token=0c7c34ada0ad6243decb1dcbb3654c1b9de2b423a10d2678` (if using vagrant env).
+
+# Tasks
+
+* get SELKS up and running
+* set up rule server with `python3 -m http.server`
+  * set up a rule source in scirius and attach it to suricata
+* enable `tgreen/hunting` ruleset
+* import `2021-01-06-Remcos-RAT-infection`
+  * what is the malicious domain used for stage1?
+  * find the malicious EXE
+  * what is the IP used to serve it?
+* import `2021-01-05-PurpleFox-EK-and-post-infection-traffic`
+  * what is the IoC for malicious host?
+  * look into `flow` records, does anything seem strange?
+* import `2022-01-01-thru-03-server-activity-with-log4j-attempts`
+  * find encoded log4j script injection
+  * decode it
+
