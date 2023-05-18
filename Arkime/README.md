@@ -27,16 +27,19 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
 ## Day 2 :: Install, config, basic enrichment :: June 13 2023
 
- * 09:30 - 12:30
+ * 09:30 - 10:30
    * [Arkime setup](/Arkime/package_setup/)
+ * 11:00 - 12:30
+   * [Arkime setup, adding new fields](/Arkime/package_setup/)
 
  * 13:30 - 17:00
    * [Hunting - RT guest appearance](/Arkime/queries/#hunting-trip)
+ * 15:30 - 17:00
+   * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
 
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 14 2023
 
  * 09:30 - 10:30
-   * [Arkime setup, adding new fields](/Arkime/package_setup/)
    * Suricata integration
  * 11:00 - 12:30
    * [Hunting - RT guest appearance](/Arkime/queries/#hunting-trip)
@@ -50,7 +53,6 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
  * 09:30 - 12:30
    * Free topics - propose topics you would like to hear about!
-   * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
 
