@@ -33,8 +33,8 @@ See:
 
 ## Teachers
 
- * [mpihelgas](https://github.com/mpihelgas)
  * [markuskont](https://github.com/markuskont)
+ * [mpihelgas](https://github.com/mpihelgas)
  * [regit](https://github.com/regit)
  * [hillar](https://github.com/hillar)
  * ...
