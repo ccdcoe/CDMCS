@@ -13,28 +13,28 @@ This is **3.5 days** of material for any intermediate-level dev-ops who has some
 
 NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.
 
-## Day 1 :: Intro, singlehost, basic Viewer :: June 12 2023, *starts at 11:00!*
+## Day 1 :: Intro, singlehost, basic Viewer usage :: June 12 2023, *starts at 11:00!*
 
  * 10:30 Registration open, coffee
 
- * 11:00 - 12:30
+ * 11:00 - 12:00
    * [Intro](/common/day_intro.md)
    * LS23 overview and intro to LS data capture
 
- * 13:30 - 15:00
+ * 13:00 - 15:00
    * [Singlehost](/singlehost/)
  * 15:30 - 17:00
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
 
-## Day 2 :: Install, config, basic enrichment :: June 13 2023
+## Day 2 :: Install, configuration, basic enrichment :: June 13 2023
 
  * 09:30 - 10:30
    * [Arkime setup](/Arkime/package_setup/)
- * 11:00 - 12:30
+ * 11:00 - 12:00
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
 
- * 13:30 - 15:00
-   * [Hunting - RT guest appearance](/Arkime/queries/#hunting-trip)
+ * 13:00 - 15:00
+   * [Hunting - LS RT WEB](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
    * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
 
@@ -42,11 +42,11 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
  * 09:30 - 10:30
    * Suricata integration
- * 11:00 - 12:30
-   * [Hunting - RT guest appearance](/Arkime/queries/#hunting-trip)
+ * 11:00 - 12:00
+   * [Hunting - LS RT NET](/Arkime/queries/#hunting-trip)
 
- * 13:30 - 15:00
-   * [Hunting - RT guest appearance](/Arkime/queries/#hunting-trip)
+ * 13:00 - 15:00
+   * [Hunting - LS RT NET continued](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
@@ -55,13 +55,14 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 09:30 - 10:30
    * Free topics - NB! propose topics you would like to hear about!
    * Discussion of topics not covered in previous days
- * 11:00 - 12:30
+ * 11:00 - 12:00
    * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
 
 ## Orphan topics, topics from previous iterations that we might or might not cover.
    * [Pikksilm](/Arkime/pikksilm)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
+     * [Prepare your laptop](/Arkime/prepare-laptop.md)
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
@@ -72,7 +73,6 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
 # Before You Come To Class
 
-  * [Prepare your laptop](/Arkime/prepare-laptop.md)
   * browse trough ...
   * [Arkime](https://arkime.com/)
   * [Arkime in GitHub](https://github.com/arkime/arkime)
