@@ -55,7 +55,7 @@ apt-get update && apt-get -y install \
   pcregrep \
   python3-pip \
   python3-yaml \
-  python-yaml \
+  #python-yaml \
   libpcre3-dev \
   libyaml-dev \
   uuid-dev \
