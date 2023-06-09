@@ -5,16 +5,25 @@ PKGDIR=/vagrant/pkgs
 HOME=/home/vagrant
 PCAP_REPLAY=/srv/replay
 
+# This script is meant to be run on vagrant box images, but let's compensate
+[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR
+
+# Determine "Predictable Network Interface Names"
 if [[ -n $(ip link show | grep eth0) ]]; then
   # legacy naming
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
   IFACE_PATTERN="eth"
 elif [[ -n $(ip link show | grep ens1) ]]; then
-  # vmware
+  # vmware (older Ubuntu and Debian?)
   IFACE_EXT="ens192"
   IFACE_INT="ens192"
   IFACE_PATTERN="ens"
+elif [[ -n $(ip link show | grep enp11) ]]; then
+  # vmware (Ubuntu 22.04)
+  IFACE_EXT="enp11s0"
+  IFACE_INT="enp11s0"
+  IFACE_PATTERN="enp"
 else
   # vbox
   IFACE_EXT="enp0s3"
