@@ -158,6 +158,7 @@ docker ps -a | grep elastic || docker run -dit \
   --network cdmcs \
   -e "ES_JAVA_OPTS=-Xms${ELASTSIC_MEM}m -Xmx${ELASTSIC_MEM}m" \
   -e "discovery.type=single-node" \
+  -e "xpack.security.enabled=false" \
   --restart unless-stopped \
   -p 9200:9200 \
     $DOCKER_ELA 
