@@ -55,7 +55,6 @@ apt-get update && apt-get -y install \
   pcregrep \
   python3-pip \
   python3-yaml \
-  #python-yaml \
   libpcre3-dev \
   libyaml-dev \
   uuid-dev \
@@ -81,14 +80,14 @@ apt-get update && apt-get -y install \
   tcpreplay || exit 1
 
 # versions
-UBUNTU_VERSION="20.04"
-ELASTIC_VERSION="7.17.4"
-INFLUX_VERSION="1.8.3"
-GRAFANA_VERSION="7.3.6"
-TELEGRAF_VERSION="1.16.2"
-GOLANG_VERSION="1.15.6"
-ARKIME_VERSION="3.4.2"
-PIKKSILM_VERSION="0.5.1"
+UBUNTU_VERSION="22.04"
+ELASTIC_VERSION="8.8.1"
+INFLUX_VERSION="2.7.1"
+GRAFANA_VERSION="9.5.3"
+TELEGRAF_VERSION="1.26.3"
+GOLANG_VERSION="1.20.5"
+ARKIME_VERSION="4.3.1"
+PIKKSILM_VERSION="0.6.0"
 
 ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
 KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
