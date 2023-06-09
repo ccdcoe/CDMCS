@@ -6,7 +6,7 @@ HOME=/home/vagrant
 PCAP_REPLAY=/srv/replay
 
 # This script is meant to be run on vagrant box images, but let's compensate
-[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR
+[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR
 
 # Determine "Predictable Network Interface Names"
 if [[ -n $(ip link show | grep eth0) ]]; then
