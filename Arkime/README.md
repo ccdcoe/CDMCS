@@ -19,9 +19,10 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 
  * 11:00 - 12:00
    * [Intro](/common/day_intro.md)
-   * LS23 overview and intro to LS data capture
+   * LS23 overview
 
  * 13:00 - 15:00
+   * Intro to LS23 data capture
    * [Singlehost](/singlehost/)
  * 15:30 - 17:00
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
