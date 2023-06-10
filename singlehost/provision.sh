@@ -265,7 +265,7 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 }
 ' || exit 1
 
-docker ps -a | grep evebox | docker run -tid --rm \
+docker ps -a | grep evebox | docker run -tid \
   --network cdmcs \
   -p 5636:5636 \
     jasonish/evebox:master  \
