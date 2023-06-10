@@ -267,6 +267,8 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 
 docker ps -a | grep evebox | docker run -tid \
   --network cdmcs \
+  --name evebox \
+  --restart unless-stopped \
   -p 5636:5636 \
     jasonish/evebox:master  \
       -e http://elastic:9200 \
@@ -1022,7 +1024,8 @@ After=network.target containerd.service docker.service
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15 # Elastic is slow to start up
+# Elastic is slow to start up
+RestartSec=15
 ExecStart=/opt/arkime/bin/node wiseService.js -c /opt/arkime/etc/wiseService.ini
 WorkingDirectory=/opt/arkime/wiseService
 SyslogIdentifier=arkime-wise
@@ -1040,7 +1043,8 @@ After=network.target arkime-wise.service
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15 # Elastic is slow to start up
+# Elastic is slow to start up
+RestartSec=15
 ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini
 WorkingDirectory=/opt/arkime/viewer
 SyslogIdentifier=arkime-viewer
@@ -1058,7 +1062,8 @@ After=network.target arkime-wise.service arkime-viewer.service
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15 # Elastic is slow to start up
+# Elastic is slow to start up
+RestartSec=15
 #ExecStartPre=-/opt/arkime/bin/start-capture-interfaces.sh
 ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname)
 WorkingDirectory=/opt/arkime
@@ -1079,7 +1084,8 @@ After=network.target arkime-wise.service arkime-viewer.service arkime-capture.se
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15 # Elastic is slow to start up
+# Elastic is slow to start up
+RestartSec=15
 ExecStart=/opt/arkime/bin/node parliament.js
 WorkingDirectory=/opt/arkime/parliament
 PIDFile=/var/run/parliament.pid
@@ -1090,6 +1096,11 @@ SyslogIdentifier=arkime-parliament
 [Install]
 WantedBy=multi-user.target
 EOF
+
+for service in wise viewer capture parliament; do
+  # delete the default service file
+  rm /etc/systemd/system/arkime$service.service # delete the default service file
+done
 
 systemctl daemon-reload
 for service in wise viewer capture ; do
