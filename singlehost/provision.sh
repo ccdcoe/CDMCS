@@ -1019,11 +1019,13 @@ FILE=/etc/systemd/system/arkime-wise.service
 grep "arkime-wise" $FILE || cat > $FILE <<EOF
 [Unit]
 Description=arkime WISE
-After=network.target
+# To survive a reboot, we need docker stuff to be up before running WISE
+After=network.target containerd.service docker.service
 
 [Service]
 Type=simple
 Restart=on-failure
+RestartSec=15
 ExecStart=/opt/arkime/bin/node wiseService.js -c /opt/arkime/etc/wiseService.ini
 WorkingDirectory=/opt/arkime/wiseService
 SyslogIdentifier=arkime-wise
@@ -1041,6 +1043,7 @@ After=network.target arkime-wise.service
 [Service]
 Type=simple
 Restart=on-failure
+RestartSec=15
 ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini
 WorkingDirectory=/opt/arkime/viewer
 SyslogIdentifier=arkime-viewer
