@@ -453,7 +453,7 @@ EOF
 
 check_service virtIface
 
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp|capture'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp|capture|monitoring'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
 
 for iface in ${ifaces//;/ }; do
   echo "Setting capture params for $iface"
@@ -884,7 +884,7 @@ rules:
         - self-signed.badssl.com
     ops:
       "tags": "IDStest"
-  - name: "Set custom protocol when obsering programming language package downloads"
+  - name: "Set custom protocol when observing programming language package downloads"
     when: "fieldSet"
     fields:
       protocols:
