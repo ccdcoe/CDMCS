@@ -1070,6 +1070,27 @@ SyslogIdentifier=arkime-capture
 WantedBy=multi-user.target
 EOF
 
+FILE=/etc/systemd/system/arkime-parliament.service
+grep "arkime-parliament" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Parliament
+After=network.target arkime-wise.service arkime-viewer.service arkime-capture.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15 # Elastic is slow to start up
+ExecStart=/opt/arkime/bin/node parliament.js
+WorkingDirectory=/opt/arkime/parliament
+PIDFile=/var/run/parliament.pid
+LimitCORE=infinity
+LimitMEMLOCK=infinity
+SyslogIdentifier=arkime-parliament
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 systemctl daemon-reload
 for service in wise viewer capture ; do
   echo starting $service
@@ -1175,7 +1196,8 @@ if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
       echo "parliament: preparing ..."  
       cd /opt/arkime/parliament
       [ -f parliament.json ] && mv parliament.json parliament.json.$(date +%s)
-      /opt/arkime/bin/node parliament.js > >(logger -p daemon.info -t capture) 2> >(logger -p daemon.err -t capture) & sleep 1 ; echo $! > /var/run/parliament.pid  
+      check_service arkime-parliament
+      sleep 3
 
       token=$(curl -s -XPUT  ${EXPOSE}:8008/parliament/api/auth/update -d newPassword=${PARLIAMENTPASSWORD} | jq .token | sed 's/"//g')
       H="Content-Type: application/json;charset=UTF-8"
