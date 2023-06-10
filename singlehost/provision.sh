@@ -6,7 +6,7 @@ HOME=/home/vagrant
 PCAP_REPLAY=/srv/replay
 
 # This script is meant to be run on vagrant box images, but let's compensate
-[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR
+[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR && chown -R $USER: /vagrant
 
 # Determine "Predictable Network Interface Names"
 if [[ -n $(ip link show | grep eth0) ]]; then
@@ -1221,6 +1221,33 @@ if curl ${EXPOSE}:8005/eshealth.json > /dev/null 2>&1 ; then
 else  
   echo "parliament: can not get eshealth from ${EXPOSE}:8005"
 fi
+
+# Jupyterlab
+echo "Provisioning Jupyterlab"
+pip3 install jupyterlab jedi-language-server
+
+FILE=/etc/systemd/system/jupyterlab.service
+grep "jupyterlab" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=jupyterlab
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+Group=$USER
+ExecStart=/usr/local/bin/jupyter lab -y --ip 0.0.0.0 --NotebookApp.token="$USER" --no-browser
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=10
+WorkingDirectory=/vagrant
+PIDFile=/var/run/jupyterlab.pid
+SyslogIdentifier=jupyterlab
+
+[Install]
+WantedBy=multi-user.target
+EOF
+check_service jupyterlab
 
 # influx
 echo "Provisioning INFLUXDB"
