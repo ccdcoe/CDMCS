@@ -835,10 +835,7 @@ Group=daemon
 WantedBy=multi-user.target
 EOF
 
-systemctl daemon-reload
-systemctl enable pikksilm.service
-systemctl start pikksilm.service
-
+check_service pikksilm
 sleep 3
 
 journalctl -u pikksilm.service --output cat -n 10
@@ -1025,7 +1022,7 @@ After=network.target containerd.service docker.service
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15
+RestartSec=15 # Elastic is slow to start up
 ExecStart=/opt/arkime/bin/node wiseService.js -c /opt/arkime/etc/wiseService.ini
 WorkingDirectory=/opt/arkime/wiseService
 SyslogIdentifier=arkime-wise
@@ -1043,7 +1040,7 @@ After=network.target arkime-wise.service
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=15
+RestartSec=15 # Elastic is slow to start up
 ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini
 WorkingDirectory=/opt/arkime/viewer
 SyslogIdentifier=arkime-viewer
@@ -1061,6 +1058,7 @@ After=network.target arkime-wise.service arkime-viewer.service
 [Service]
 Type=simple
 Restart=on-failure
+RestartSec=15 # Elastic is slow to start up
 #ExecStartPre=-/opt/arkime/bin/start-capture-interfaces.sh
 ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname)
 WorkingDirectory=/opt/arkime
@@ -1075,9 +1073,7 @@ EOF
 systemctl daemon-reload
 for service in wise viewer capture ; do
   echo starting $service
-  systemctl enable arkime-$service.service
-  systemctl start arkime-$service.service
-  systemctl status arkime-$service.service
+  check_service arkime-$service
   sleep 3
 done
 
