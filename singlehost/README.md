@@ -1,4 +1,4 @@
-# System requirements for the classroom training
+# Minimal system requirements if you are building it for yourself in the class
 
   * Host OS: Linux or MacOS preferred, with Windows you are responsible for making vagrant and SSH work;
     * Please avoid nested virtualization (i.e, Virtualbox inside Linux inside VMware workstation on a Windows machine);

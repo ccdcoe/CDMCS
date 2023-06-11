@@ -3,7 +3,7 @@
 Arkime viewer already includes comprehensive documentation under `/help` url, aka *the owl logo*. This section only serves to provide some context and examples. **Please refer to official docs for up-to-date reference for field types, supported expressions, etc**.
 
 See your `singlehost` VM Arkime installation for `/help`
- * http://192.168.56.11:8005/help
+ * http://<singlehost-ip>:8005/help
 
 ## Viewer tabs
 
@@ -53,14 +53,17 @@ User administration tab. Various user account limitations can be can be configur
 
 ## Tasks
 
-**On exercise Arkime data.**
+**NB! These tasks are meant to be performed on real cyber exercise data (not simulated traffic in `singlehost` VM). Please wait for the instructors to provide credentials and guidelines on accessing the Exercise Arkime environment.**
 
- * Find plaintext http on port 443;
- * Filter for traffic that contains data;
- * Investigate time-series data per gamenet host;
- * Drill down to specific protocols;
- * Investigate traffic between workstations;
+ * Find plaintext HTTP on port 443;
+ * Sometime there's no data in a session. Filter for traffic that contains data;
+ * Investigate time-series data per gamenet host (pick some hosts of interest);
+ * Drill down to specific protocols (HTTP, SMB, TLS, etc.);
+ * Investigate traffic between workstations, don't forget IPv6;
  * Filter only traffic for your team;
+
+If you are done with those, more tasks might be available from the instructors.
+
 
 # API
 
@@ -72,24 +75,30 @@ Viewer is nothing more than HTTP endpoint behind digest authentication that aggr
 
 # Hunting trip
 
-## Task
+## RT sessions in the classroom
+
+ * We might have someone from various RT sub-teams brief us on their activities during the previous Exercise.
+ * Pay attention to: Which machines were involved? When was the attack conducted? Which protocols were used? Was it encrypted or not?
+ * Takes notes! This information might be useful later when hunting for those specific attacks/events.
+
+## Tasks
 
  * Your task is to group up and go on a hunting trip. 
   * The goal, if it can be called like that, is to investigate sessions and IP addresses to identify Red team servers, compromised hosts, strange traffic patterns and possible causes, to differentiate scoring and connectivity from malicious traffic, etc. 
   * **There are no right or wrong answers, no ground truth!!!** Only traffic that is interesting and noise. 
   * **Note down your findings and possible explanations**.
   * Present your approach and findings at the end!
-  * You may be called to give a status update during work. Don't be afraid to say you are stuck - other teams may have ideas or suggestions to help you out.
+  * You may be called to give a status update during work. Don't be afraid to say you are stuck - other people (or instructors) around you may have ideas or suggestions to help you out.
 
-Some ideas and suggestions for getting started:
+## Some ideas and suggestions for getting started:
  * No one query nor API call will give you the whole picture, you must pivot between queries.
   * Use API to your advantage for collectiong possible indicators, then investigate by hand. Write off sessions that are not interesting, collect new indicators from those that are. Rinse and repeat.
- * Start by looking for common indicators - script tags in user-agents and URL-s, mistyped domains, strange peaks of traffic, IDS alerts, well-known protocols on non-standard ports, non-standard protocol on standardized ports, etc. Then look at involved IP addresses. Anything coming from simulated internet? See what else has that IP doing.
- * IP addresses can be changed but may nevertheless exhibit common patterns, for example ja3 hashes, TLS certificate fingerprints, common URI patterns, cookies, etc.
+ * Start by looking for common indicators - script tags in user-agents and URL-s, mistyped domains, strange peaks of traffic, IDS alerts, well-known protocols on non-standard ports, non-standard protocol on standardized ports, etc. Then look at involved IP addresses. Anything coming from the simulated internet? See what else has that IP doing.
+ * IP addresses can be changed but may nevertheless exhibit common patterns, for example JA3 hashes, TLS certificate fingerprints, common URI patterns, cookies, etc.
  * Arkime lets you apply views and tag sessions. Use that! If something is not interesting, mark it as such and get rid of it. Whatever is left might be interesting.
  * So, you found one connection going to or coming from a CnC server...and then nothing. It may be initial compromise and interesting traffic is happening through some other IP or protocol. Are there any new streams that started exactly after that initial session?
  * What about traffic between targets and workstations? Any patterns or indicators for filtering out lateral movement?
- * Do not forget that you can also search from packets in Hunt tab. Just be sure to apply a strong expression beforehand. Let's not kill the capture server.
+ * Do not forget that you can also search from packets in Hunt tab. Just be sure to apply a strong expression beforehand. There's a lot of PCAPs. Let's not kill the Arkime server.
  * Have a cool idea for search but no idea how to do it in Arkime? Ask the instructurs, that's why we are here.
- * On that note, have a cool idea and making progress? Let us and other teams know. We can mark it down and help out everyone.
+ * On that note, have a cool idea and making progress? Let us and others know. We can mark it down and help out everyone.
  * ...your suggestions go here...

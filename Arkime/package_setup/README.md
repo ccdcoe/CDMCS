@@ -5,16 +5,16 @@
 Download arkime package from [the official download page](https://arkime.com/downloads) and install it with your package manager.
 
 ```
-dpkg -i arkime_3.4.2-1_amd64.deb
+dpkg -i arkime_4.3.1-1_amd64.deb
 ```
 
-On debian, this will fail.
+On debian/ubuntu, this will fail.
 
 ```
 Selecting previously unselected package arkime.
 (Reading database ... 111873 files and directories currently installed.)
-Preparing to unpack arkime_3.4.2-1_amd64.deb ...
-Unpacking arkime (3.4.2-1) ...
+Preparing to unpack arkime_4.3.1-1_amd64.deb ...
+Unpacking arkime (4.3.1-1) ...
 dpkg: dependency problems prevent configuration of arkime:
  arkime depends on libwww-perl; however:
   Package libwww-perl is not installed.
@@ -42,7 +42,7 @@ cd /opt/arkime
 ```
 
 ```
-vagrant@setup:/opt/arkime$ ls -lah
+student@student-linux:/opt/arkime$ ls -lah
 total 1.3M
 drwxr-xr-x  16 root root 4.0K Jun  7 19:21 .
 drwxr-xr-x   4 root root 4.0K Jun  7 19:21 ..
@@ -66,38 +66,38 @@ drwxr-xr-x   6 root root 4.0K Jun  7 19:21 viewer
 drwxr-xr-x   4 root root 4.0K Jun  7 19:21 wiseService
 ```
 
-## Get elastic up and running
+## Get elasticsearch up and running
 
 Set up elasticsearch.
 
 ```
-docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:8.8.1
 ```
 
-Verify that elastic is up and running. You can check logs.
+Verify that elastic is up and running. You can check logs...
 
 ```
 docker logs arkime-elastic --follow
 ```
 
-Or interact with elastic API.
+...or interact with elastic API.
 
 ```
-vagrant@setup:~$ curl -ss localhost:9200
+student@student-linux:~$ curl -ss http://localhost:9200
 {
-  "name" : "5c7c756cb80d",
+  "name" : "43194d1deb40",
   "cluster_name" : "docker-cluster",
-  "cluster_uuid" : "574c5K-jQA2IcfoLaCgRAg",
+  "cluster_uuid" : "lWs_x9FMSNKgd3V2AcDipA",
   "version" : {
-    "number" : "7.17.4",
+    "number" : "8.8.1",
     "build_flavor" : "default",
     "build_type" : "docker",
-    "build_hash" : "79878662c54c886ae89206c685d9f1051a9d6411",
-    "build_date" : "2022-05-18T18:04:20.964345128Z",
+    "build_hash" : "f8edfccba429b6477927a7c1ce1bc6729521305e",
+    "build_date" : "2023-06-05T21:32:25.188464208Z",
     "build_snapshot" : false,
-    "lucene_version" : "8.11.1",
-    "minimum_wire_compatibility_version" : "6.8.0",
-    "minimum_index_compatibility_version" : "6.0.0-beta1"
+    "lucene_version" : "9.6.0",
+    "minimum_wire_compatibility_version" : "7.17.0",
+    "minimum_index_compatibility_version" : "7.0.0"
   },
   "tagline" : "You Know, for Search"
 }
@@ -122,7 +122,7 @@ cd /opt/arkime/db
 And call the database management script.
 
 ```
-vagrant@setup:/opt/arkime/db$ ./db.pl localhost:9200 init
+student@student-linux:/opt/arkime/db$ ./db.pl localhost:9200 init
 It is STRONGLY recommended that you stop ALL Arkime captures and viewers before proceeding.  Use 'db.pl http://localhost:9200 backup' to backup db first.
 
 There is 1 elastic search data node, if you expect more please fix first before proceeding.
@@ -136,7 +136,7 @@ Finished
 Verify the elastic indices.
 
 ```
-vagrant@setup:/opt/arkime/db$ curl -ss localhost:9200/_cat/indices
+student@student-linux:/opt/arkime/db$ curl -ss localhost:9200/_cat/indices
 green open arkime_lookups_v30  Xh0RlVK8RGCNosJqQdoM9g 1 0  0  0   226b   226b
 green open .geoip_databases    ObOMS7HdSzysFuJ1Ju8jew 1 0 40  0 38.1mb 38.1mb
 green open arkime_sequence_v30 0SLIuYNCQ1eFM5NfZLp9Aw 1 0  0  0   226b   226b

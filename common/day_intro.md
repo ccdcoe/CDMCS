@@ -12,7 +12,7 @@
   * Make students go through painful troubleshooting on purpose!
   * You don't store this knowledge from listening to lectures or copy-pasting commands
 * Coffee breaks
-  * Grab a coffee/tea when you need it
+  * Get a coffee/tea/break when you need it
 * Lunch
 * Smoking
 * Social
@@ -21,8 +21,8 @@
 ## Tooling
 
 * GitHub
-* Vagrant
+* Vagrant (optionally)
 * Linux
 * Command line
-* Jupyter notebooks
 * Docker
+* Jupyter notebooks
