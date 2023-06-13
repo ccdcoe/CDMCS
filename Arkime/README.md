@@ -25,12 +25,12 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
  * 15:30 - 17:00
    * [Hunting - LS RT Client Side](/Arkime/queries/#hunting-trip)
-   * [Singlehost](/singlehost/)
    * Intro to LS23 data capture
 
 ## Day 2 :: Install, configuration, basic enrichment :: June 13 2023
 
  * 09:30 - 10:30
+   * [Singlehost](/singlehost/)
    * [Arkime setup](/Arkime/package_setup/)
  * 11:00 - 12:00
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
