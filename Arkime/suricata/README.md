@@ -113,4 +113,11 @@ Now that Suricata is installed and running, we can also restart our Arkime Captu
 systemctl restart arkimecapture.service
 ```
 
+We need some traffic that would fire off a Suricata alert.
+
+```
+curl -s http://www.testmyids.com
+```
+
+Wait for the session to get indexed and see the results from Arkime Viewer. You can use the filter `suricata.signature == EXISTS!` for finding sessions with Suricata matches.
 
