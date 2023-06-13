@@ -43,7 +43,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 14 2023
 
  * 09:30 - 10:30
-   * Suricata integration
+   * [Suricata integration](/Arkime/suricata/)
  * 11:00 - 12:00
    * [Hunting - LS RT NET](/Arkime/queries/#hunting-trip)
 
