@@ -55,6 +55,8 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
 ## Day +1 :: Last but not least :: June 15 2023, *ends at 12:30*
 
  * 09:30 - 10:30
+   * Arkime rules
+   * Splitting BT traffic
    * Free topics - NB! propose topics you would like to hear about!
    * Discussion of topics not covered in previous days
  * 11:00 - 12:00
