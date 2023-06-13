@@ -25,7 +25,7 @@ Append `suricata.so` to your `config.ini` plugins line
 plugins=wise.so,suricata.so
 ```
 
-`suricataAlertFile` should be the full path to your eve.json file. `suricataExpireMinutes` option specifies how long Arkime will keep trying to match past suricata events. Note: When processing old PCAPs you need to compensate for the time from `<now()> - <pcap-record-date>`.
+`suricataAlertFile` should be the full path to your eve.json file. `suricataExpireMinutes` option specifies how long Arkime will keep trying to match past suricata events. Note: When processing old PCAPs you need to compensate for the time from `now() - pcap-record-date`.
 
 ```
 suricataAlertFile=/var/log/suricata/eve.json
@@ -91,7 +91,7 @@ You should see something like
 13/6/2023 -- 19:52:30 - <Info> -- Writing rules to /var/lib/suricata/rules/suricata.rules: total: 42944; enabled: 34152; added: 42944; removed 0; modified: 0
 ```
 
-Once again, you can restart the Suricata service to make sure the new rules are loaded.
+Once again, restart the Suricata service to make sure the new rules are loaded.
 
 ```
 systemctl restart suricata.service
@@ -107,10 +107,11 @@ less /var/log/suricata/suricata.log
 
 ## Checking the results
 
-Now that Suricata is installed and running, we can also restart our Arkime Capture, so that it will load the Suricata module and start parsing the eve.json file.
+Now that Suricata is installed and running, we can restart our Arkime Capture and Viewer, so that our earlier changes will take effect. Arkime Capture will load the Suricata module and start parsing the eve.json file.
 
 ```
 systemctl restart arkimecapture.service
+systemctl restart arkimeviewer.service
 ```
 
 We need some traffic that would fire off a Suricata alert.

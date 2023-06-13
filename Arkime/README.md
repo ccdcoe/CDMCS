@@ -45,7 +45,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 09:30 - 10:30
    * [Suricata integration](/Arkime/suricata/)
  * 11:00 - 12:00
-   * [Hunting - LS RT NET](/Arkime/queries/#hunting-trip)
+   * [Suricata integration](/Arkime/suricata/)
 
  * 13:00 - 15:00
    * [Hunting - LS RT NET continued](/Arkime/queries/#hunting-trip)
