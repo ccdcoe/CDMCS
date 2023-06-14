@@ -79,10 +79,24 @@ systemctl daemon-reload
 systemctl start arkimepolar.service
 systemctl start PolarProxy.service
 ```
+Let's test if we can take our proxy for a spin...
+
+```
+curl --connect-to www.netresec.com:443:127.0.0.1:10443 https://www.netresec.com/
+```
+
+As expected with self-signed certs, they are not trusted. You can add the `--insecure` flag to the `curl` command above to ignore any certificate issues.
+
+Now wait a minute or two and let's check if we can see that traffic in Arkime.
+
 
 ## Adding a trusted certificate
 
-PolarProxy exports its public certificate to `/var/log/PolarProxy/polarproxy.cer`
+In our env, PolarProxy exports its public certificate to `/var/log/PolarProxy/polarproxy.cer`
+
+### Linux
+
+We can make our machine to trust it with the following. Make sure to select the `extra/PolarProxy-root-CA.crt` Certificate Authority when prompted.
 
 ```
 sudo mkdir /usr/share/ca-certificates/extra
@@ -90,6 +104,15 @@ sudo openssl x509 -inform DER -in /var/log/PolarProxy/polarproxy.cer -out /usr/s
 sudo dpkg-reconfigure ca-certificates
 ```
 
+Now this command should work without issues
+
+```
+curl --connect-to www.netresec.com:443:127.0.0.1:10443 https://www.netresec.com/
+```
+
+Ideally, instead of tricking around with curl, you would redirect all traffic outbound to port 443 via your PolarProxy.
+
+### Windows
 
 * https://docs.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate
 
