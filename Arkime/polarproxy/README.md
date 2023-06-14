@@ -45,7 +45,7 @@ Let's make a copy of the `config.ini` file and configure another Systemd service
 cp /opt/arkime/etc/config.ini /opt/arkime/etc/config-polarproxy.ini
 ```
 
-Change the `pcapReadMethod` in the new default section of the config file.
+Change the `pcapReadMethod` in the default section of the new config file.
 
 ```
 pcapReadMethod=pcap-over-ip-server
