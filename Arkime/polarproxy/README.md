@@ -11,7 +11,7 @@ Get polarproxy and set it up in /opt/PolarProxy dir
 mkdir /opt/PolarProxy
 cd /opt/PolarProxy
 wget -O polarproxy.tar.gz 'https://www.netresec.com/?download=PolarProxy'
-tar -zxvf polarproxy.tar
+tar -zxvf polarproxy.tar.gz
 ```
 
 ### Systemd service
