@@ -52,7 +52,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
-## Day +1 :: Last but not least :: June 15 2023, *ends at 12:30*
+## Day +1 :: Last but not least :: June 15 2023, *ends at 12:00*
 
  * 09:30 - 10:30
    * Arkime rules
