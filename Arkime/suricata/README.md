@@ -22,7 +22,7 @@ Expected outcome
 Append `suricata.so` to your `config.ini` plugins line
 
 ```
-plugins=wise.so,suricata.so
+plugins=wise.so;suricata.so
 ```
 
 `suricataAlertFile` should be the full path to your eve.json file. `suricataExpireMinutes` option specifies how long Arkime will keep trying to match past suricata events. Note: When processing old PCAPs you need to compensate for the time from `now() - pcap-record-date`.
