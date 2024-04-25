@@ -22,39 +22,39 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
    * LS23 overview
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
  * 15:30 - 17:00
+   * [Singlehost](/singlehost/)
    * Intro to LS24 data capture
 
-## Day 1 :: Install, configuration, basic enrichment :: June 4 2024
+## Day 1 :: Build, Install, basic configuration :: June 4 2024
 
  * 09:30 - 12:00
-   * [Hunting - LS RT Client Side](/Arkime/queries/#hunting-trip)
+   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
    * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
    
  * 13:00 - 17:00
-   * [Pikksilm](/Arkime/pikksilm)
+   * [Arkime setup](/Arkime/package_setup/)
 
-## Day 2 :: Install, configuration, basic enrichment :: June 5 2024
+## Day 2 :: Advanced configuration, enrichment :: June 5 2024
 
  * 09:30 - 10:30
-   * [Singlehost](/singlehost/)
-   * [Arkime setup](/Arkime/package_setup/)
+   * [Arkime setup, adding new fields](/Arkime/package_setup/)
  * 11:00 - 12:00
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
 
  * 13:00 - 15:00
-   * [Hunting - LS RT WEB](/Arkime/queries/#hunting-trip)
+   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
-   * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
+   * [Suricata integration](/Arkime/suricata/)
 
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
 
  * 09:30 - 10:30
-   * [Suricata integration](/Arkime/suricata/)
+   * [Pikksilm](/Arkime/pikksilm)
  * 11:00 - 12:00
-   * [Suricata integration](/Arkime/suricata/)
+   * [Pikksilm](/Arkime/pikksilm)
 
  * 13:00 - 15:00
-   * [Hunting - LS RT NET continued](/Arkime/queries/#hunting-trip)
+   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
