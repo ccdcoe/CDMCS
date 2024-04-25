@@ -1,9 +1,9 @@
 
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-2/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-june-2024/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work
 
 **The online material is missing some of the contextual concepts and ideas that will be covered in class.**
 
-This is **3.5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Arkime. We believe these classes are perfect for anyone who wants a jump start in learning Arkime or who wants a more thorough understanding of it internals.
+This is **4 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Arkime. We believe these classes are perfect for anyone who wants a jump start in learning Arkime or who wants a more thorough understanding of it internals.
 
 ### Arkime is a large scale, open source, full packet capturing, indexing, and database system.
 
@@ -11,23 +11,29 @@ This is **3.5 days** of material for any intermediate-level dev-ops who has some
 
 > Arkime is not meant to replace Intrusion Detection Systems (IDS). Arkime augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.
+**NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.**
 
-## Day 1 :: Intro, singlehost, basic Viewer usage :: June 12 2023, *starts at 11:00!*
+## Day -1 :: Intro, singlehost, basic Viewer usage :: June 3 2024, *starts at 13:00!*
 
- * 10:30 Registration open, coffee
-
- * 11:00 - 12:00
-   * [Intro](/common/day_intro.md)
-   * LS23 overview
+ * 12:30 Registration open, coffee
 
  * 13:00 - 15:00
+   * [Intro](/common/day_intro.md)
+   * LS23 overview
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
  * 15:30 - 17:00
-   * [Hunting - LS RT Client Side](/Arkime/queries/#hunting-trip)
-   * Intro to LS23 data capture
+   * Intro to LS24 data capture
 
-## Day 2 :: Install, configuration, basic enrichment :: June 13 2023
+## Day 1 :: Install, configuration, basic enrichment :: June 4 2024
+
+ * 09:30 - 12:00
+   * [Hunting - LS RT Client Side](/Arkime/queries/#hunting-trip)
+   * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
+   
+ * 13:00 - 17:00
+   * [Pikksilm](/Arkime/pikksilm)
+
+## Day 2 :: Install, configuration, basic enrichment :: June 5 2024
 
  * 09:30 - 10:30
    * [Singlehost](/singlehost/)
@@ -40,7 +46,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 15:30 - 17:00
    * [Hunting - Freeform](/Arkime/queries/#hunting-trip)
 
-## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 14 2023
+## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
 
  * 09:30 - 10:30
    * [Suricata integration](/Arkime/suricata/)
@@ -52,7 +58,7 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
-## Day +1 :: Last but not least :: June 15 2023, *ends at 12:00*
+## Day +1 :: Last but not least :: June 7 2024, *ends at 12:00*
 
  * 09:30 - 10:30
    * Arkime rules
@@ -64,10 +70,8 @@ NB! Provided timeline is preliminary and will develop according to the actual pr
  
 
 ## Orphan topics, topics from previous iterations that we might or might not cover.
-   * [Pikksilm](/Arkime/pikksilm)
    * [vagrant](/common/vagrant/), [docker](/common/docker)
      * [Prepare your laptop](/Arkime/prepare-laptop.md)
-   * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
    * [Clustering teamwork, cont](/Arkime/clustering)
