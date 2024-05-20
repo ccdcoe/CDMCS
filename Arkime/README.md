@@ -19,7 +19,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
  * 13:00 - 15:00
    * [Intro](/common/day_intro.md)
-   * LS23 overview
+   * LS24 overview
    * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
  * 15:30 - 17:00
    * [Singlehost](/singlehost/)
@@ -29,10 +29,10 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
  * 09:30 - 12:00
    * [Hunting - TBD](/Arkime/queries/#hunting-trip)
-   * [build from source](/Arkime/setup/#Build), [basic config](/Arkime/setup/#Config)
+   * [Arkime setup](/Arkime/package_setup/)
    
  * 13:00 - 17:00
-   * [Arkime setup](/Arkime/package_setup/)
+   * [basic config](/Arkime/setup/#Config)
 
 ## Day 2 :: Advanced configuration, enrichment :: June 5 2024
 
@@ -44,14 +44,15 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
  * 13:00 - 15:00
    * [Hunting - TBD](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
-   * [Suricata integration](/Arkime/suricata/)
+   * Malicious traffic samples and detection
+   * Loading offline PCAPs
+
 
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
 
- * 09:30 - 10:30
-   * [Pikksilm](/Arkime/pikksilm)
- * 11:00 - 12:00
-   * [Pikksilm](/Arkime/pikksilm)
+ * 09:30 - 12:00
+   * [Suricata integration](/Arkime/suricata/)
+   * Malicious traffic samples and detection
 
  * 13:00 - 15:00
    * [Hunting - TBD](/Arkime/queries/#hunting-trip)
@@ -70,12 +71,14 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
  
 
 ## Orphan topics, topics from previous iterations that we might or might not cover.
-   * [vagrant](/common/vagrant/), [docker](/common/docker)
-     * [Prepare your laptop](/Arkime/prepare-laptop.md)
+   * [build from source](/Arkime/setup/#Build)
+   * [Pikksilm](/Arkime/pikksilm)
    * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
    * [Clustering teamwork, cont](/Arkime/clustering)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+   * [vagrant](/common/vagrant/), [docker](/common/docker)
+     * [Prepare your laptop](/Arkime/prepare-laptop.md)
 
 ----
 
