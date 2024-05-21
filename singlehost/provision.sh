@@ -1228,6 +1228,7 @@ FILE=/opt/arkime/etc/cont3xt.ini
 sed -i "s/elasticsearch=/elasticsearc=http:\/\/localhost:9200/g"    $FILE
 sed -i "s/ARKIME_PASSWORD/test123/g"                                $FILE
 
+mkdir /opt/arkime/logs
 systemctl restart arkimecont3xt
 
 # Jupyterlab
