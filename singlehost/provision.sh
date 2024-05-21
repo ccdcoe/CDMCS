@@ -1298,19 +1298,6 @@ curl -s -XPOST --user admin:admin $EXPOSE:3000/api/datasources -H "Content-Type:
     \"isDefault\": true
 }"
 
-# golang
-echo "Provisioning GOLANG"
-source ~/.bashrc
-
-mkdir -p $GOPATH/{bin,src,pkg} && chown -R vagrant $GOPATH
-mkdir -p $GOROOT && chown -R vagrant $GOROOT
-cd $PKGDIR
-[[ -f $GOLANG ]] || wget $WGET_PARAMS https://dl.google.com/go/$GOLANG -O $GOLANG
-tar -xzf $GOLANG -C /home/vagrant/.local
-su - vagrant -c "PATH=$PATH go env"
-su - vagrant -c "PATH=$PATH go get -u github.com/DCSO/ethflux"
-su - vagrant -c "PATH=$PATH go install github.com/DCSO/ethflux"
-
 # telegraf
 echo "Provisioning TELEGRAF"
 cd $PKGDIR
