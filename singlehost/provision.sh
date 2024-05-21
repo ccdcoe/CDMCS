@@ -116,6 +116,7 @@ DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
 ARKIME_FILE="arkime_${ARKIME_VERSION}-1_amd64.deb"
 ARKIME_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VERSION}/arkime_${ARKIME_VERSION}-1.ubuntu${UBUNTU_VERSION}_amd64.deb"
+ARKIME_JA4_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VERSION}/ja4plus.amd64.so"
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name=="gopherCap.gz") | .browser_download_url')
 PIKKSILM_URL=$(curl -ss -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/markuskont/pikksilm/releases | jq -r ".[] | select(.tag_name==\"v${PIKKSILM_VERSION}\") | .assets | .[] | select(.name==\"pikksilm_${PIKKSILM_VERSION}_linux_amd64.tar.gz\") | .browser_download_url")
@@ -889,8 +890,13 @@ rules:
       "protocols": "pkg-management"
 EOF
 
+echo "Downloading Arkime JA4 support"
+cd /opt/arkime/plugins
+wget $ARKIME_JA4_LINK
+cd -
+
 echo "Configuring capture plugins"
-sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/alert.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' $FILE
+sed -i -e 's,#wiseHost=127.0.0.1,wiseHost=127.0.0.1\nwiseCacheSecs=60\nplugins=ja4plus.amd64.so;wise.so;suricata.so\nsuricataAlertFile=/var/log/suricata/alert.json\nviewerPlugins=wise.js\nwiseTcpTupleLookups=true\nwiseUdpTupleLookups=true\n,g' $FILE
 sed -i "/\[default\]/arulesFiles=$RULE_FILE" $FILE
 sed -i "/\[default\]/asnapLen=65536" $FILE
 
