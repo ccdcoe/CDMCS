@@ -1222,6 +1222,14 @@ else
   echo "parliament: can not get eshealth from ${EXPOSE}:8005"
 fi
 
+echo "Setting up Cont3xt"
+/opt/arkime/bin/Configure --cont3xt
+FILE=/opt/arkime/etc/cont3xt.ini
+sed -i "s/elasticsearch=/elasticsearc=http:\/\/localhost:9200/g"    $FILE
+sed -i "s/ARKIME_PASSWORD/test123/g"                                $FILE
+
+systemctl restart arkimecont3xt
+
 # Jupyterlab
 echo "Provisioning Jupyterlab"
 pip3 install jupyterlab jedi-language-server
