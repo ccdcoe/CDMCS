@@ -89,14 +89,14 @@ apt-get update && apt-get -y install \
   tcpreplay || exit 1
 
 # versions
-UBUNTU_VERSION="22.04"
-ELASTIC_VERSION="8.8.1"
+UBUNTU_VERSION="2204"
+ELASTIC_VERSION="8.13.4"
 INFLUX_VERSION="2.7.1"
 GRAFANA_VERSION="9.5.3"
 TELEGRAF_VERSION="1.26.3"
-GOLANG_VERSION="1.20.5"
-ARKIME_VERSION="4.3.1"
-PIKKSILM_VERSION="0.6.0"
+GOLANG_VERSION="1.22.3"
+ARKIME_VERSION="5.1.2"
+PIKKSILM_VERSION="0.7.0"
 
 ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
 KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
@@ -115,7 +115,7 @@ DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
 DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
 ARKIME_FILE="arkime_${ARKIME_VERSION}-1_amd64.deb"
-ARKIME_LINK="https://s3.amazonaws.com/files.molo.ch/builds/ubuntu-${UBUNTU_VERSION}/${ARKIME_FILE}"
+ARKIME_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VERSION}/arkime_${ARKIME_VERSION}-1.ubuntu${UBUNTU_VERSION}_amd64.deb"
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name|startswith("gopherCap-ubuntu-2004-")) | .browser_download_url')
 PIKKSILM_URL=$(curl -ss -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/markuskont/pikksilm/releases | jq -r ".[] | select(.tag_name==\"v${PIKKSILM_VERSION}\") | .assets | .[] | select(.name==\"pikksilm_${PIKKSILM_VERSION}_linux_amd64.tar.gz\") | .browser_download_url")
@@ -646,8 +646,6 @@ outputs:
             extended: yes
         - files:
             force-magic: no
-        - drop:
-            alerts: yes
         - smtp:
             extended: yes
         - dnp3
@@ -695,8 +693,6 @@ outputs:
             extended: yes
         - files:
             force-magic: no
-        - drop:
-            alerts: yes
         - smtp:
             extended: yes
         - dnp3
@@ -744,8 +740,6 @@ outputs:
             extended: yes
         - files:
             force-magic: no
-        - drop:
-            alerts: yes
         - smtp:
             extended: yes
         - dnp3
@@ -842,9 +836,9 @@ sleep 3
 
 journalctl -u pikksilm.service --output cat -n 10
 
-echo "Provision arkime"
+echo "Provision arkime from $ARKIME_LINK"
 cd $PKGDIR
-[[ -f $ARKIME_FILE ]] || wget $WGET_PARAMS $ARKIME_LINK
+[[ -f $ARKIME_FILE ]] || wget -O $ARKIME_FILE $WGET_PARAMS $ARKIME_LINK
 
 dpkg -s arkime || dpkg -i $ARKIME_FILE
 apt-get -f -y install
