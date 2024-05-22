@@ -473,6 +473,14 @@ Arkime gets around that by providing compiled ja4 plugin that can then be set up
 * https://github.com/arkime/arkime/releases
 * https://arkime.com/settings#ja4plus
 
+## Cont3xt
+
+[Cont3xt](https://arkime.com/cont3xt) is a new tool in the Arkime family. It's been around since version 4 but has been improved in v5. It is a nodejs web application that condenses indicator lookups to a single interface. For example, instead of having different browser tabs open for virustotal, shotad, etc, one simply queries the indicator (domain, IP, hash, email, etc) from cont3xt instead. In the backend, cont3xt queries different services for you and then presents condensed info on a single screen.
+
+* https://arkime.com/cont3xt#install
+
+Note, this guide sets up default cont3xt systemd service which logs to plaintext file under `/opt/arkime/logs` folder. If following this tutorial, that folder might be missing and service would fail. Make sure the folder exists before restarting the service.
+
 ## Cool tricks
 
 Arkime is not limited to fields defined by its creators. You can add your own!
