@@ -77,8 +77,10 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
    * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
    * [Clustering teamwork, cont](/Arkime/clustering)
    * [evebox](/Suricata/indexing#evebox), [scirius](/Suricata/indexing#scirius), [kibana](/Suricata/indexing#kibana)
+
+## For trying out locally -- *not needed for classroom!*
    * [vagrant](/common/vagrant/), [docker](/common/docker)
-     * [Prepare your laptop](/Arkime/prepare-laptop.md)
+     * [Prepare local environment](/Arkime/prepare-laptop.md)
 
 ----
 

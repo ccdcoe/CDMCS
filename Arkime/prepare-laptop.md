@@ -1,14 +1,12 @@
-# Test your laptop before coming to class.
+# Instructions for setting up the environment locally
 
-* Yes, you need to bring your own laptop!
-* Yes, you need to be able to run Arkime in your laptop!
-* See instructions below
+Note, these instructions are for running a local instance of the tools in a VM. In the classroom, VMs have been prepared for you so you do not need to set this up before coming to class. But you can... :)
 
-## System requirements for the classroom training
-* Host OS: Linux or MacOS preferred, with Windows you are responsible for making vagrant and SSH work;
+
+## System requirements for running these tools locally
+* CPU: Modern 64-bit CPU, Apple Silicon has not been tested and is likely not supported.
 * RAM: 16GB or more system memory;
 * Disk: Minimum 50GB of free disk space, 100GB or more recommended. SSD preferred;
-* Network: Ethernet port (RJ-45) or applicable adapter;
 * Privileges: Root or Administrator privileges on the host OS.
 
 
@@ -29,7 +27,7 @@
 
 ### Instructions
 
-A quick way to get a classroom||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
+A quick way to get a classroom-like||testing||development environment up and running is with **Vagrant**. You will need recent versions of [Vagrant](https://www.vagrantup.com/) and [VirtualBox](https://www.virtualbox.org/) installed.
 
 *NB! Vagrant v2.2.19 repository installation has a known issue with Ubuntu 22.04 LTS host system. Meanwhile, you can just use the fixed Linux binary download (also version v2.2.19) at the bottom of the [Vagrant Downloads page](https://www.vagrantup.com/downloads).*
 
@@ -79,10 +77,6 @@ Remember, managing specific Vagrant VMs is couple to the directory of the `Vagra
 ## Support/help
 
 * If you are confused, or having any issues with the above, join the Arkime Slack server (https://slackinvite.arkime.com/) or Suricata IRC channel (irc.freenode.net #suricata).
-
-* If you can not get it running properly, do not worry, **day 0** is for helping you out.
-
-* If you can not get it running at all, do not worry, Tallinn is nice medieval city and has a good number of [tourist attractions](https://www.visittallinn.ee/eng/visitor/see-do/sightseeing) ;)
 
 ----
 
