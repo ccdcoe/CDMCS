@@ -326,12 +326,6 @@ wiseHost=127.0.0.1
 plugins=wise.so
 ```
 
-Since Arkime v4 the PCAPs written to the disk are automatically gzipped. As a side-effect it's not possible to view the contents of a PCAP file that is currently being written. If you are a low-volume network it might be a while before the PCAP file will reach the maxSize (default 12GB), so for the purposes of this lab we will turn off the compression feature. Add the following statement somewhere in the [default] section of `config.ini`.
-
-```
-simpleCompression=none
-```
-
 Then test the capture service.
 
 ```
