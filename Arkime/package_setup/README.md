@@ -481,11 +481,13 @@ Arkime gets around that by providing compiled ja4 plugin that can then be set up
 
 Note, this guide sets up default cont3xt systemd service which logs to plaintext file under `/opt/arkime/logs` folder. If following this tutorial, that folder might be missing and service would fail. Make sure the folder exists before restarting the service.
 
-## Cool tricks
+## Adding custom fields
 
 Arkime is not limited to fields defined by its creators. You can add your own!
 
-You can override fields in `config.ini` using the `[override-ips]` section. This works per subnet. Note that country is limited only to 2 chars. This is a really useful trick in exercises where networks are simulated anyway.
+### Overriding geoip
+
+You can override fields in `config.ini` using the `[override-ips]` section. This works per subnet. Note that country is limited only to 2 chars. This is a really useful trick in exercises where networks are simulated anyway. Can also be useful for adding context to internal subnets that are geographically separated.
 
 * https://arkime.com/taggerformat
 
@@ -494,6 +496,8 @@ You can override fields in `config.ini` using the `[override-ips]` section. This
 192.168.56.0/24=tag:private-net;country:BY;rir:SINET;asn:AS0000 This is neat
 10.0.2.0/24=tag:private-net;country:CR;rir:SINET;asn:AS0000 This is neat
 ```
+
+### Adding custom fields
 
 You can define new fields in `config.ini`. Note that this can also be done in WISE plugin setup but is much cleaner in main config file. Very useful for instant asset documentation. If you have a API to pull asset data from, generate some WISE data!
 
@@ -506,6 +510,8 @@ cdmcs.name=kind:lotermfield;count:true;friendly:Name;db:cdmcs.name;help:Traffic 
 cdmcs.type=kind:lotermfield;count:true;friendly:Type;db:cdmcs.type;help:Traffic type
 ```
 
+### Making custom fields visible in sessions view
+
 New fields are better when visible for related sessions. Again, this can be done with other (more painful) methods, but this is the cleanest.
 
 * https://arkime.com/settings#custom-views
@@ -515,7 +521,9 @@ New fields are better when visible for related sessions. Again, this can be done
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
 ```
 
-Arkime can define rules.
+### Arkime rules
+
+Arkime can define rules. These are not like suricata rules that apply on PCAP data. Rather, they process metadata and then modify indexed session or allow for custom PCAP handling control flows. A typical use-case is dropping encrypted packets once initial TLS session metadata is built (to save storage space).
 
 * https://arkime.com/rulesformat
 * https://arkime.com/rules
