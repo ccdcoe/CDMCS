@@ -458,6 +458,19 @@ SyslogIdentifier=arkime-viewer
 WantedBy=multi-user.target
 ```
 
+## Adding JA4+ support
+
+JA3 is a TLS fingerprinting technique that has become an industry standard. It is essentially a MD5 hash of TLS client or server HELLO packet. I.e., before TLS client and server can actually establish encrypted communications, they need to exchange cyper suites in order to agree on common encryption algorithms that both sides support. This is a sequence of numbers, and JA3 is basically just a hash of that sequence.
+
+Since 2023, Google Chrome started randomizing the order in which extensions are issued. This is called [TLS ClientHello Extension Permutation](https://www.stamus-networks.com/blog/ja3-fingerprints-fade-browsers-embrace-tls-extension-randomization), and it effectively killed JA3 fingerprinting. Sequence of these numbers is now random and thus produces a different hash every time.
+
+In order to deal with this problem, NSM tools are migrating to JA4 hashing, which is really a suite of fingerprinting techniques not only for TLS clients and servers, but also for HTTP, SSH, TCP, etc. Among other things, JA4 is also more resilient against randomization. But JA4 has another major issue which prevents open-source tools from simply incorporating it. JA4 for client and QUIC are released under BSD licence, but others are sold with commercial licence instead. [These other fingerprinting techniques, referred to as JA4+, can not be used for monetization](https://github.com/FoxIO-LLC/ja4#licensing), so open-source tools could easily get into trouble by including them.
+
+Arkime gets around that by providing compiled ja4 plugin that can then be set up by the users themselves. It is quite simple, a shared object (`.so`) file needs to be placed into `plugins` folder and then enabled as capture plugin.
+
+* https://github.com/arkime/arkime/releases
+* https://arkime.com/settings#ja4plus
+
 ## Cool tricks
 
 Arkime is not limited to fields defined by its creators. You can add your own!
