@@ -5,7 +5,7 @@
 Download arkime package from [the official download page](https://arkime.com/downloads) and install it with your package manager.
 
 ```
-dpkg -i arkime_4.3.1-1_amd64.deb
+dpkg -i arkime_5.1.2-1.ubuntu2204_amd64.deb
 ```
 
 On debian/ubuntu, this will fail.
@@ -71,7 +71,7 @@ drwxr-xr-x   4 root root 4.0K Jun  7 19:21 wiseService
 Set up elasticsearch.
 
 ```
-docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:8.8.1
+docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:8.13.4
 ```
 
 Verify that elastic is up and running. You can check logs...
@@ -137,16 +137,18 @@ Verify the elastic indices.
 
 ```
 student@student-linux:/opt/arkime/db$ curl -ss localhost:9200/_cat/indices
-green open arkime_lookups_v30  Xh0RlVK8RGCNosJqQdoM9g 1 0  0  0   226b   226b
-green open .geoip_databases    ObOMS7HdSzysFuJ1Ju8jew 1 0 40  0 38.1mb 38.1mb
-green open arkime_sequence_v30 0SLIuYNCQ1eFM5NfZLp9Aw 1 0  0  0   226b   226b
-green open arkime_users_v30    p4VQhHcuRZKtNs0qL8WQJA 1 0  0  0   226b   226b
-green open arkime_queries_v30  0N2EAf0yQDCuwyVtCMhE0A 1 0  0  0   226b   226b
-green open arkime_dstats_v30   ozhO1kfRTfyz2Kbrh-EmUA 2 0  0  0   452b   452b
-green open arkime_files_v30    BI2dSNYCSY2d506OKWyyfQ 2 0  0  0   452b   452b
-green open arkime_fields_v30   x5ZC1MbpTIm1-kESopxkFA 1 0 47 17 48.6kb 48.6kb
-green open arkime_stats_v30    Vmn-lc8gTtCiK6Iy6TnfFw 1 0  0  0   226b   226b
-green open arkime_hunts_v30    mD01vypESfmTtQ8pH5MFVQ 1 0  0  0   226b   226b
+green open arkime_parliament_v50 sKDnv_2_QmGBn38QfYWCbA 1 0  0  0   249b   249b   249b
+green open arkime_sequence_v30   9mhbON3rTAq7wu3GdVaGEg 1 0  0  0   249b   249b   249b
+green open arkime_queries_v30    ge3G705LSTmktJ2zGsd3Og 1 0  0  0   249b   249b   249b
+green open arkime_dstats_v30     nVosaSAtRVK9lhfIPHyOKg 2 0  0  0   498b   498b   498b
+green open arkime_fields_v30     HqLqjrc5Q-uxNC_Pb44G1A 1 0 47 17 53.3kb 53.3kb 53.3kb
+green open arkime_notifiers_v40  9j3EJ56VSoiix_9o1gevag 1 0  0  0   249b   249b   249b
+green open arkime_lookups_v30    hPMoGTAqS6-L-abJygEcHg 1 0  0  0   249b   249b   249b
+green open arkime_views_v40      Emu7WT9vRaeUqH8PP2E6Cw 1 0  0  0   249b   249b   249b
+green open arkime_users_v30      bEdZVRBZTMWNbCV-y8UpwA 1 0  0  0   249b   249b   249b
+green open arkime_files_v30      2BXir-1GTfCFhH4Qd79D7A 2 0  0  0   498b   498b   498b
+green open arkime_stats_v30      qHf6qhGMQ2u6e2r2Jj2ubQ 1 0  0  0   249b   249b   249b
+green open arkime_hunts_v30      PZHEKoe6RueB_cBlSRgPpw 1 0  0  0   249b   249b   249b
 ```
 
 ## Set up WISE
