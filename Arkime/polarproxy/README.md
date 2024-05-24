@@ -39,30 +39,40 @@ WantedBy=multi-user.target
 
 If we set Arkime to capture PCAP over IP connections, it will no longer listen on the network interfaces. For that, it would make sense to spin up another Arkime instance.
 
-Let's make a copy of the `config.ini` file and configure another Systemd service to spin up another Arkime instance to use that config file.
+A native way to do this is by adding another arkime Node. Add this section at the end of your `config.ini`.
 
 ```
-cp /opt/arkime/etc/config.ini /opt/arkime/etc/config-polarproxy.ini
+[polar]
 ```
 
-Change the `pcapReadMethod` in the default section of the new config file.
+Change the `pcapReadMethod` in the polar section of the config file. We can override some other values as well. Arkime capture node needs a corresponding viewer node. Since they might be on the same host as live capture, then their ports might collide. Finally, PCAP compression might also get in the way, as proxy traffic volume is quite low and arkime cannot rebuild sessions from PCAP files that are being actively written to.
 
 ```
 pcapReadMethod=pcap-over-ip-server
+viewPort=8006
+simpleCompression=none
 ```
 
-Let's create a new arkime service for PolarProxy capture
+Let's create a new arkime service for PolarProxy capture. We also need a corresponding viewer when using node configuration.
 
 ```
 cp /etc/systemd/system/arkimecapture.service /etc/systemd/system/arkimepolar.service
+cp /etc/systemd/system/arkimeviewer.service /etc/systemd/system/arkimeviewerpolar.service
 ```
 
 Comment the `ExecStartPre`, since we don't need to configure any actual interfaces. Modify the `ExecStart` to reflect the new paths and also create a separate log file to distinguish separate processes.
 
 ```
 ...
-#ExecStartPre=-/opt/arkime/bin/arkime_config_interfaces.sh -c /opt/arkime/etc/config.ini -n default
-ExecStart=/bin/sh -c '/opt/arkime/bin/capture --node arkimepolar -c /opt/arkime/etc/config-polarproxy.ini ${OPTIONS} >> /opt/arkime/logs/arkimepolar.log 2>&1'
+ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --node polar
+...
+```
+
+Make sure to also do this with viewer node in `arkimeviewerpolar.service`.
+
+```
+...
+ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini --node polar
 ...
 ```
 
@@ -76,7 +86,13 @@ Start the new services.
 
 ```
 systemctl daemon-reload
+
+systemctl enable arkimepolar.service
 systemctl start arkimepolar.service
+
+systemctl enable arkimeviewerpolar.service
+systemctl start arkimeviewerpolar.service
+
 systemctl start PolarProxy.service
 ```
 Let's test if we can take our proxy for a spin...
