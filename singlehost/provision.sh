@@ -924,6 +924,14 @@ grep "wise-types" $FILE || cat >> $FILE <<EOF
 communityid=communityId
 EOF
 
+echo "Adding custom node sections"
+grep "polar" $FILE || cat >> $FILE <<EOF
+[polar]
+pcapReadMethod=pcap-over-ip-server
+viewPort=8006
+simpleCompression=none
+EOF
+
 echo "Configuring wise"
 TAGGER_FILE="/opt/arkime/etc/tagger.txt"
 [[ -f $TAGGER_FILE ]] || cat > $TAGGER_FILE <<EOF
@@ -1075,6 +1083,47 @@ SyslogIdentifier=arkime-capture
 WantedBy=multi-user.target
 EOF
 
+FILE=/etc/systemd/system/arkime-viewer-polar.service
+grep "arkime-viewer" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Viewer for Polar
+After=network.target arkime-wise.service arkime-viewer.service
+
+[Service]
+Type=simple
+Restart=on-failure
+# Elastic is slow to start up
+RestartSec=15
+ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini --node polar
+WorkingDirectory=/opt/arkime/viewer
+SyslogIdentifier=arkime-viewer
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/arkime-capture-polar.service
+grep "arkime-capture-polar" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Capture for Polar
+After=network.target arkime-wise.service arkime-viewer.service arkime-capture.service
+
+[Service]
+Type=simple
+Restart=on-failure
+# Elastic is slow to start up
+RestartSec=15
+#ExecStartPre=-/opt/arkime/bin/start-capture-interfaces.sh
+ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname) --node polar
+WorkingDirectory=/opt/arkime
+LimitCORE=infinity
+LimitMEMLOCK=infinity
+SyslogIdentifier=arkime-capture
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 FILE=/etc/systemd/system/arkime-parliament.service
 grep "arkime-parliament" $FILE || cat > $FILE <<EOF
 [Unit]
@@ -1103,7 +1152,7 @@ for service in wise viewer capture parliament; do
 done
 
 systemctl daemon-reload
-for service in wise viewer capture ; do
+for service in wise viewer capture capture-polar viewer-polar; do
   echo starting $service
   check_service arkime-$service
   sleep 3
@@ -1230,6 +1279,33 @@ sed -i "s/ARKIME_PASSWORD/test123/g"                                $FILE
 
 mkdir /opt/arkime/logs
 systemctl restart arkimecont3xt
+
+echo "Provisioning PolarProxy"
+mkdir /opt/PolarProxy
+cd /opt/PolarProxy
+wget -O polarproxy.tar.gz 'https://www.netresec.com/?download=PolarProxy'
+tar -zxvf polarproxy.tar.gz
+mkdir /var/log/PolarProxy
+cd -
+
+FILE=/etc/systemd/system/PolarProxy.service
+grep "PolarProxy" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=PolarProxy TLS pcap logger
+After=network.target
+
+[Service]
+SyslogIdentifier=PolarProxy
+Type=simple
+WorkingDirectory=/opt/PolarProxy
+ExecStart=/opt/PolarProxy/PolarProxy -v -p 10443,80,443 -x /var/log/PolarProxy/polarproxy.cer -f /var/log/PolarProxy/proxyflows.log -o /var/log/PolarProxy/ --certhttp 10080 --socks 1080 --httpconnect 8080 --allownontls --insecure --pcapoveripconnect 127.0.0.1:57012
+KillSignal=SIGINT
+FinalKillSignal=SIGTERM
+
+[Install]
+WantedBy=multi-user.target
+EOF
+check_service PolarProxy
 
 # Jupyterlab
 echo "Provisioning Jupyterlab"
@@ -1474,6 +1550,8 @@ while : ; do curl -s http://testmyids.com > /dev/null 2>&1 ; sleep $(shuf -i 15-
 while : ; do curl -s -k https://self-signed.badssl.com/ > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
 while : ; do dig NS berylia.org @1.1.1.1 > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
 while : ; do dig NS berylia.org @8.8.8.8 > /dev/null 2>&1 ; sleep $(shuf -i 15-60 -n 1); done &
+
+curl -k --connect-to www.netresec.com:443:127.0.0.1:10443 https://www.netresec.com/ > /dev/null
 
 echo "DONE :: start $start end $(date)"
 
