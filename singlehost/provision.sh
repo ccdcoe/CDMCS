@@ -548,20 +548,23 @@ datasets:
     hashsize: 1024
   ua-seen:
     type: sha256
-    state: /var/lib/suricata/ua-sha256-seen.lst
+    state: ua-sha256-seen.lst
   dns-sha256-seen:
     type: sha256
-    state: /var/lib/suricata/dns-sha256-seen.lst
+    state: dns-sha256-seen.lst
     memcap: 100mb
     hashsize: 4096
 EOF
 
 FILE=/var/lib/suricata/rules/datasets.rules
 [[ -f $FILE ]] || cat > $FILE <<EOF
-alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Collect unique user-agents"; http.user_agent; dataset:set,http-user-agents, type string, state /var/lib/suricata/http-user-agents.lst; bypass; sid:3000007; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
+alert http any any -> \$EXTERNAL_NET any (msg:"CDMCS: Collect unique user-agents"; http.user_agent; dataset:set,http-user-agents, type string, state http-user-agents.lst; bypass; sid:3000007; rev:1; metadata:created_at 2020_02_28, updated_at 2020_02_28;)
 alert http any any -> any any (msg:"CDMCS: Listed UA seen"; http.user_agent; to_sha256; dataset:isset,ua-seen; classtype:policy-violation; sid:3000004; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 alert dns any any -> any any (msg:"CDMCS: Listed DNS hash seen"; dns.query; to_sha256; dataset:isset,dns-sha256-seen; classtype:policy-violation; sid:3000005; rev:1; metadata:created_at 2020_01_29, updated_at 2020_01_29;)
 EOF
+
+mkdir -p /var/lib/suricata/data
+touch /var/lib/suricata/rules/http-user-agents.lst
 
 echo "Adding detects for SURICATA"
 FILE=/etc/suricata/cdmcs-detect.yaml
@@ -569,6 +572,26 @@ grep "CDMCS" $FILE || cat >> $FILE <<EOF
 %YAML 1.1
 ---
 # CDMCS
+security:
+  # if true, prevents process creation from Suricata by calling
+  # setrlimit(RLIMIT_NPROC, 0)
+  limit-noproc: true
+  # Use landlock security module under Linux
+  landlock:
+    enabled: no
+    directories:
+      #write:
+      #  - /var/run/
+      # /usr and /etc folders are added to read list to allow
+      # file magic to be used.
+      read:
+        - /usr/
+        - /etc/
+        - /etc/suricata/
+  lua:
+    # Allow Lua rules. Disabled by default.
+    allow-rules: true
+
 af-packet:
   - interface: ${IFACE_EXT}
     cluster-id: 98
@@ -637,7 +660,7 @@ outputs:
             packet: yes
             http-body: yes
             http-body-printable: yes
-            metadata: no
+            metadata: yes
             tagged-packets: yes
         - http:
             extended: yes
@@ -653,7 +676,7 @@ outputs:
         - nfs
         - smb
         - tftp
-        - ikev2
+        - ike
         - krb5
         - dhcp:
             enabled: yes
@@ -684,7 +707,7 @@ outputs:
             packet: yes
             http-body: yes
             http-body-printable: yes
-            metadata: no
+            metadata: yes
             tagged-packets: yes
         - http:
             extended: yes
@@ -700,7 +723,7 @@ outputs:
         - nfs
         - smb
         - tftp
-        - ikev2
+        - ike
         - krb5
         - dhcp:
             enabled: yes
@@ -747,7 +770,7 @@ outputs:
         - nfs
         - smb
         - tftp
-        - ikev2
+        - ike
         - krb5
         - dhcp:
             enabled: yes
@@ -759,12 +782,12 @@ EOF
 echo "Adding includes for SURICATA"
 FILE=/etc/suricata/suricata.yaml
 grep "cdmcs" $FILE || cat >> $FILE <<EOF
-include: /etc/suricata/cdmcs-detect.yaml
-include: /etc/suricata/cdmcs-logging.yaml
-include: /etc/suricata/cdmcs-datasets.yaml
+include:
+- /etc/suricata/cdmcs-detect.yaml
+- /etc/suricata/cdmcs-logging.yaml
+- /etc/suricata/cdmcs-datasets.yaml
 EOF
 
-#if $DEBUG ; then suricata -T -vvv; fi
 [[ -f /etc/init.d/suricata ]] && rm /etc/init.d/suricata
 FILE=/etc/systemd/system/suricata.service
 grep "suricata" $FILE || cat > $FILE <<EOF
