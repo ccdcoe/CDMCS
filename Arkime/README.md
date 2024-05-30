@@ -27,41 +27,41 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
 ## Day 1 :: Build, Install, basic configuration :: June 4 2024
 
- * 09:30 - 12:00
-   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
+ * 09:30 - 12:30
    * [Arkime setup](/Arkime/package_setup/)
    
- * 13:00 - 17:00
+ * 13:30 - 15:00
+    * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
+ * 15:30 - 17:00
    * [basic config](/Arkime/setup/#Config)
 
 ## Day 2 :: Advanced configuration, enrichment :: June 5 2024
 
  * 09:30 - 10:30
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
- * 11:00 - 12:00
+ * 11:00 - 12:30
    * [Arkime setup, adding new fields](/Arkime/package_setup/)
 
- * 13:00 - 15:00
-   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
- * 15:30 - 17:00
+ * 13:30 - 15:00
    * Malicious traffic samples and detection
    * Loading offline PCAPs
 
 
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
 
- * 09:30 - 12:00
+ * 09:30 - 12:30
    * [Suricata integration](/Arkime/suricata/)
    * Malicious traffic samples and detection
 
- * 13:00 - 15:00
-   * [Hunting - TBD](/Arkime/queries/#hunting-trip)
+ * 13:30 - 15:00
+   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
  * 15:30 - 17:00
    * [Polarproxy](/Arkime/polarproxy)
     
 ## Day +1 :: Last but not least :: June 7 2024, *ends at 12:00*
 
  * 09:30 - 10:30
+   * [Hunting - RT Net](/Arkime/queries/#hunting-trip)
    * Arkime rules
    * Splitting BT traffic
    * Free topics - NB! propose topics you would like to hear about!
