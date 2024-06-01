@@ -75,6 +75,136 @@ Viewer is nothing more than HTTP endpoint behind digest authentication that aggr
 
 # Hunting trip
 
+## Hunting samples from 2022 and 2023
+
+### Zip file downloads
+
+`http.uri == *.zip`
+
+* lot of benight stuff, including antivirus deployments;
+* suspicious strings sometimes visible in payload (`FreePr0n.bat`);
+* unique listing is your friend;
+* files can be downloaded;
+* failed unzip still reveals file listing even if fails with password protection;
+
+### Web request to double extention file
+
+`http.uri == *.jpg.php`
+
+* PHP script mimicing a PNG image;
+* preplanted backdoor (sample results 404, so likely cleaned up);
+* filenames themselves can be suspisicous;
+* somestimes RT does not bother with domain and goes directly for the IP;
+
+### Malicious command injection
+
+`http.uri == *api.php && http.request.content-type == application/json && http.method == POST && http.statuscode == 200`
+
+```
+POST /api.php HTTP/1.1
+Host: REDACTED
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0
+Accept-Encoding: gzip, deflate
+Accept: */*
+Connection: close
+Content-Length: 361
+Content-Type: application/json
+
+{"ip": "8.8.8.8; /''??r/?i?''/''e?h?'' PHAgc3R5bGU9dG9wOjA7bGVmdDowO2JhY2tncm91bmQ6YmxhY2s7Y29sb3I6bGltZTtwb3NpdGlvbjpmaXhlZDt6LWluZGV4Ojk5OTk7Zm9udC1zaXplOjZlbTt3aWR0aDoxMDAlO2hlaWdodDoxMDAlO2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2FsaWduLWl0ZW1zOmNlbnRlcjs+Tm8gbW9yZSBmb3NzaWwgZnVlbHM8L3A+Cg== | /??r/??n/???e64 -''d > /v?r/w??''/''h??l''/index.html"}
+HTTP/1.1 200 OK
+Date: Wed, 19 Apr 2023 06:48:10 GMT
+Server: Apache/2.4.41 (Ubuntu)
+Content-Length: 380
+Connection: close
+Content-Type: application/json; charset=utf-8
+
+{"output":"PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.\n64 bytes from 8.8.8.8: icmp_seq=1 ttl=54 time=3.89 ms\n64 bytes from 8.8.8.8: icmp_seq=2 ttl=54 time=3.29 ms\n64 bytes from 8.8.8.8: icmp_seq=3 ttl=54 time=3.46 ms\n\n--- 8.8.8.8 ping statistics ---\n3 packets transmitted, 3 received, 0% packet loss, time 2004ms\nrtt min\/avg\/max\/mdev = 3.290\/3.545\/3.887\/0.251 ms\n"}
+
+```
+
+* query itself is a lucky hit;
+* real meat is in the payload;
+* successful command injection;
+* data sanitation vulnerability;
+* no need to decode payload, clearly just calling for ping;
+* no need to drop tables to prove a point;
+
+### Successful large body HTTP Post to php file
+
+`http.uri == *php && http.method == POST && http.statuscode == 200 && bytes.src > 100000`
+
+* POST body *is* a PHP file;
+* seems to be a web shell upload;
+
+### RT C2 domain examples
+
+```
+*.gstatlc.net
+*.scdn.co.uk
+*.rnicrosoftonline.net
+*.mozllla.com
+*.awsamazon.eu
+*.msn365.org
+*.braveapi.com
+```
+
+* notice how all domains look kinda legit, but not really;
+* mozilla with 3 L-s, rnicrosoft instead of microsoft;
+* with some fonts `rn` looks exactly like `m`;
+* used by cobalt strike to embed callback into payload;
+* IP gets blocked -> swap IP -> update A record -> malware calls home again;
+* list newly discovered domain -> loop NS query for all of them -> authoritative server in gamenet;
+    * extra points -> A record for malicious subdomain is `0.0.0.0` -> confirmed cobalt strike response;
+    * in 2024 this was only used for initial IP resolution though, likely by preplanted malware;
+
+### TCP DNS tunnel on port 53
+
+`port == 53 && protocols != dns && databytes == 0 && bytes > 100000`
+
+* non-standard protocol on well known port;
+    * could be a parsing issue as well;
+* large amount of data;
+* using bytes (all data, including headers) instead of databytes (payload) is because non-standard traffic fools parsers;
+
+### plaintext HTTP communication from target to unknown IP (RT)
+
+`country.src == 21 && country.dst != 21 && port.dst == 80 && packets >  10 && http.uri == "*\?r=*"`
+
+* Tool attribution `http.cookie.key == filegator` - https://github.com/filegator/filegator;
+* IPv4 hostname;
+* Looks like RT C2 or exfiltration server;
+
+### SSH on Port 443
+
+`port == 443 && protocols == ssh`
+
+* known protocol on non-standard port;
+* no need to see inside traffic to detect malicious activity;
+* can be used as *collector query* to find malicious IP-s and pivot to looking into those;
+
+### whatzapp.eu served from SimpleHTTPServer
+
+`host ==  *.whatzapp.eu`
+
+* mimicing a real domain, though can identified with human reasoning;
+* served by default python server - convenient for RT;
+* payload reveals a lot of info, such as affected user and RT actions;
+    * looks to be a php web shell delivery;
+
+### Seach for political statements for defacement attempts
+
+`http.uri == *stealing*black*market*`
+
+* Logic could be used to generate queries to find defacements;
+
+### Lala.exe
+
+`http.uri == *lala.exe`
+
+* suspicious filename;
+* example from Estonian team was dropped by squid proxy - no impact;
+* unique listing of EXE files can reveal a lot;
+
 ## RT sessions in the classroom
 
  * We might have someone from various RT sub-teams brief us on their activities during the previous Exercise.
