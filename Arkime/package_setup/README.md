@@ -68,6 +68,8 @@ drwxr-xr-x   4 root root 4.0K Jun  7 19:21 wiseService
 
 ## Get elasticsearch up and running
 
+### Using docker
+
 Set up elasticsearch.
 
 ```
@@ -109,6 +111,33 @@ Some important endpoints to keep tabs on.
 /_cat/indices
 /_cat/shards
 /_cat/health
+```
+
+
+### Using a deb package
+
+```
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.13.4-amd64.deb
+dpkg -i elasticsearch-8.13.4-amd64.deb
+```
+
+Set the JVM heap size in `/etc/elasticsearch/elasticsearch.yml`
+
+```
+-Xms1g
+-Xmx1g
+```
+
+Proper elasticsearch setup is outside the scope of this training. Elasticsearch now defaults to full TLS with authentication via `xpack` extensions. While arkime can handle this just fine, we'll nevertheless disable it for the training to reduce overhead. Simply set `xpack.security.enabled` to `false` in `/etc/elasticsearch/elasticsearch.yml`.
+
+```
+systemctl daemon-reload
+systemctl enable elasticsearch.service
+systemctl start elasticsearch.service
+```
+
+```
+curl -ss localhost:9200
 ```
 
 ## Initialize elastic database
