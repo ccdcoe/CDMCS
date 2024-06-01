@@ -12,6 +12,15 @@ wget $ARKIME_JA4_LINK
 pwd
 SCRIPT
 
+$swap = <<-SCRIPT
+swapon --show | grep "NAME" && exit 1
+dd if=/dev/zero of=/swapfile bs=1024 count=2097152
+mkswap /swapfile
+chmod 600 /swapfile
+swapon /swapfile
+swapon --show
+SCRIPT
+
 NAME="setup"
 CPU=4
 MEM=4096
@@ -42,6 +51,7 @@ Vagrant.configure(2) do |config|
       "docker.elastic.co/elasticsearch/elasticsearch:8.13.4",
       "redis"
     ]
+    box.vm.provision "shell", inline: $swap
     box.vm.provision "shell", inline: $arkime
   end
 end

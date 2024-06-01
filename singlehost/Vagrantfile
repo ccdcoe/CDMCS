@@ -21,6 +21,15 @@ systemctl start docker.service
 adduser vagrant docker
 SCRIPT
 
+$swap = <<-SCRIPT
+swapon --show | grep "NAME" && exit 1
+dd if=/dev/zero of=/swapfile bs=1024 count=2097152
+mkswap /swapfile
+chmod 600 /swapfile
+swapon /swapfile
+swapon --show
+SCRIPT
+
 NAME="singlehost"
 CPU=4
 MEM=4096
@@ -49,6 +58,7 @@ Vagrant.configure(2) do |config|
       v.vmx["memsize"] = MEM
     end
     box.vm.provision "shell", inline: $docker
+    box.vm.provision "shell", inline: $swap
     box.vm.provision "shell", path: "provision.sh"
   end
 end
