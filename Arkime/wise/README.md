@@ -623,7 +623,7 @@ Todo:
 
 ## Getting fancy
 
-Last example is somewhat useful, but we did not really do anything that we could not implement via built-in plugins. This example enteres all observed domains into a [bloom filter](https://github.com/ccdcoe/CDMCS/blob/master/SDM/go-jupyter/016-bloom.ipynb). Going into probabolistic data structures is outside the scope of this section, but it essentially allows us to make reasonably precise estimations on weather we have previously seen something while using a few kilobytes of memory.
+Last example is somewhat useful, but we did not really do anything that we could not implement via built-in plugins. This example enteres all observed domains into a [bloom filter](https://github.com/ccdcoe/CDMCS/blob/2018/SDM/go-jupyter/016-bloom.ipynb). Going into probabolistic data structures is outside the scope of this section, but it essentially allows us to make reasonably precise estimations on weather we have previously seen something while using a few kilobytes of memory.
 
 ```javascript
 'use strict';
