@@ -104,6 +104,18 @@ Alternatively, we could simply generate a list of unique mail servers with follo
 alert dns any any -> any any (msg:"New mailserver query seen"; dns.query; content: "mail"; startswith; dataset:set,new-mailservers, type string, state /tmp/new-mailservers.lst, memcap 10mb, hashsize 10000; sid:123; rev:1;)
 ```
 
+## IP dataset in Suricata 7.x
+
+Initial implementation of datasets only supported sticky buffers, which are part of the rule options. However, this meant IP addresses could not be checked with a dataset since IP matching is part of rule header. This has been fixed in suricata 7, as sticky buffers for IP matching are now available.
+
+* https://docs.suricata.io/en/suricata-7.0.5/rules/ipaddr.html#ip-addresses-match
+
+```
+alert ip [$HOME_NET] any -> any any (msg:"Bad IP seen 124"; sid: ; rev: 1; ip.dst; dataset:isset,bad-ip,type ip, load bad-ip.lst, hashsize 10000;)
+```
+
+Unlike string type, IP addresses do not have to be base64 encoded.
+
 ## Tasks
 
 Use PCAP files specified by the instructors.
