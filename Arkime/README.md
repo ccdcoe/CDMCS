@@ -17,13 +17,12 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
 * 12:30 Registration open, coffee
 
-* 13:00 - 15:00
+* 13:00 - 17:00
   * [Intro](/common/day_intro.md)
-* LS24 overview
-  * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
-* 15:30 - 17:00
-  * Intro to LS24 data capture
   * [Singlehost](/singlehost/)
+  * LS24 overview
+  * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
+  * Intro to LS24 data capture
 
 ## Day 1 :: Build, Install, basic configuration :: June 4 2024
 
