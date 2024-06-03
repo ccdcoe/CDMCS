@@ -24,44 +24,35 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
   * Intro to LS24 data capture
 
-## Day 1 :: Build, Install, basic configuration :: June 4 2024
+## Day 1 :: Install, basic configuration :: June 4 2024
 
 * 09:30 - 12:30
   * [Arkime setup](/Arkime/package_setup/)
-  
-* 13:30 - 15:00
-  * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
-* 15:30 - 17:00
   * [basic config](/Arkime/setup/#Config)
+* 13:30 - 17:00
+  * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
 
 ## Day 2 :: Advanced configuration, enrichment :: June 5 2024
 
 * 09:30 - 10:30
-  * [Arkime setup, adding new fields](/Arkime/package_setup/)
-* 11:00 - 12:30
-  * [Arkime setup, adding new fields](/Arkime/package_setup/)
-* 13:30 - 15:00
-  * Malicious traffic samples and detection
-  * Loading offline PCAPs
   * Arkime rules
-
+  * [Arkime setup, adding new fields](/Arkime/package_setup/)
+  * [MISP integration](/Arkime/misp_wise/)
+* 13:30 - 17:00
+  * [Suricata](/Suricata)
+  * [Suricata integration](/Arkime/suricata/)
 
 ## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
 
 * 09:30 - 12:30
-  * [Suricata integration](/Arkime/suricata/)
-  * Malicious traffic samples and detection
-* 13:30 - 15:00
-  * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
-* 15:30 - 17:00
   * [Polarproxy](/Arkime/polarproxy)
+* 13:30 - 17:00
+  * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
     
 ## Day +1 :: Last but not least :: June 7 2024, *ends at 12:00*
 
 * 09:30 - 10:30
   * [Hunting - RT Net](/Arkime/queries/#hunting-trip)
-  * Free topics - NB! propose topics you would like to hear about!
-  * Discussion of topics not covered in previous days
 * 11:00 - 12:00
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
