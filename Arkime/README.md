@@ -34,8 +34,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
 ## Day 2 :: Advanced configuration, enrichment :: June 5 2024
 
-* 09:30 - 10:30
-  * Arkime rules
+* 09:30 - 12:30
   * [Arkime setup, adding new fields](/Arkime/package_setup/)
   * [MISP integration](/Arkime/misp_wise/)
 * 13:30 - 17:00
