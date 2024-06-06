@@ -46,9 +46,9 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 * 09:30 - 12:30
   * [Suricata rules](/Suricata/rules), [suricata-update](/Suricata/suricata-update)
   * [Suricata datasets](/Suricata/datasets)
-  * [Polarproxy](/Arkime/polarproxy)
 * 13:30 - 17:00
   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
+  * [Polarproxy](/Arkime/polarproxy)
     
 ## Day +1 :: Last but not least :: June 7 2024, *ends at 12:00*
 
