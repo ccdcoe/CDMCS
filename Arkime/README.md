@@ -36,14 +36,16 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 
 * 09:30 - 12:30
   * [Arkime setup, adding new fields](/Arkime/package_setup/)
-  * [MISP integration](/Arkime/misp_wise/)
 * 13:30 - 17:00
-  * [Suricata](/Suricata)
+  * [MISP integration](/Arkime/misp_wise/)
   * [Suricata integration](/Arkime/suricata/)
+  * [Suricata](/Suricata)
 
-## Day 3 :: Enrichment, Monitoring encrypted traffic, SSL/TLS proxy :: June 6 2024
+## Day 3 :: Suricata, SSL/TLS proxy :: June 6 2024
 
 * 09:30 - 12:30
+  * [Suricata rules](/Suricata/rules) 
+  * [Suricata datasets](/Suricata/datasets)
   * [Polarproxy](/Arkime/polarproxy)
 * 13:30 - 17:00
   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
