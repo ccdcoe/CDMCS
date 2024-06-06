@@ -27,7 +27,7 @@ After=network.target
 SyslogIdentifier=PolarProxy
 Type=simple
 WorkingDirectory=/opt/PolarProxy
-ExecStart=/opt/PolarProxy/PolarProxy -v -p 10443,80,443 -x /var/log/PolarProxy/polarproxy.cer -f /var/log/PolarProxy/proxyflows.log -o /var/log/PolarProxy/ --certhttp 10080 --socks 1080 --httpconnect 8080 --allownontls --insecure --pcapoveripconnect 127.0.0.1:57012
+ExecStart=/opt/PolarProxy/PolarProxy -v -p 10443,80,443 -x /var/log/PolarProxy/polarproxy.cer -f /var/log/PolarProxy/proxyflows.log -o /var/log/PolarProxy/ --certhttp 10080 --socks 1080 --httpconnect 8080 --nontls allow --leafcert sign --pcapoveripconnect 127.0.0.1:57012
 KillSignal=SIGINT
 FinalKillSignal=SIGTERM
 
@@ -87,11 +87,9 @@ Start the new services.
 ```
 systemctl daemon-reload
 
-systemctl enable arkimepolar.service
-systemctl start arkimepolar.service
+systemctl enable --now arkimepolar.service
 
-systemctl enable arkimeviewerpolar.service
-systemctl start arkimeviewerpolar.service
+systemctl enable --now arkimeviewerpolar.service
 
 systemctl start PolarProxy.service
 ```
