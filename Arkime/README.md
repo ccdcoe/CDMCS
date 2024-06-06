@@ -46,6 +46,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 * 09:30 - 12:30
   * [Suricata rules](/Suricata/rules) 
   * [Suricata datasets](/Suricata/datasets)
+  * [suricata-update](/Suricata/suricata-update)
   * [Polarproxy](/Arkime/polarproxy)
 * 13:30 - 17:00
   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
