@@ -2,6 +2,7 @@
 
 * https://www.netresec.com/?page=PolarProxy
 * https://www.netresec.com/?page=Blog&month=2020-12&post=Capturing-Decrypted-TLS-Traffic-with-Arkime
+* https://arkime.com/settings#reader-poi
 
 ## Setting up Polarproxy
 
