@@ -1,30 +1,31 @@
-
-This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-june-2024/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work
+This material has been designed to be taught in a [classroom](https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-june-2026/) environment... hands-on 80% + talk 40% + **slides 0%** = 120% hard work
 
 **The online material is missing some of the contextual concepts and ideas that will be covered in class.**
 
-This is **4 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Arkime. We believe these classes are perfect for anyone who wants a jump start in learning Arkime or who wants a more thorough understanding of it internals.
+This course holds **~5 days** of material for any intermediate-level dev-ops who has some experience with other security|monitoring tools and wants to learn Arkime. We believe these classes are perfect for anyone who wants a jump start in learning Arkime or who wants a more thorough understanding of it internals. 
 
-### Arkime is a large scale, open source, full packet capturing, indexing, and database system.
+Analyzing the most recent Locked Shields dataset is an added bonus all participants get. Furthermore, in the class we've also had dedicated session by LS red teamers shining a light on what sneaky things they did in the recent exercise.
+
+### Arkime is a large scale, open source, full packet capturing, indexing, and database system
 
 > Arkime was formerly named **Moloch**, so the materials on this site may still refer to it as Moloch in various ways or forms. Same holds true for the Arkime codebase.
-
 > Arkime is not meant to replace Intrusion Detection Systems (IDS). Arkime augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
 **NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.**
 
-## Day -1 :: Intro, singlehost, basic Viewer usage :: June 3 2024, *starts at 13:00!*
+## Day -1 :: Intro, singlehost, basic Viewer usage :: June 15 2026, *starts at 13:00!*
 
 * 12:30 Registration open, coffee
 
 * 13:00 - 17:00
   * [Intro](/common/day_intro.md)
   * [Singlehost](/singlehost/)
-  * LS24 overview
+  * LS26 overview
   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
-  * Intro to LS24 data capture
+  * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
+  * Intro to LS26 data capture
 
-## Day 1 :: Install, basic configuration :: June 4 2024
+## Day 1 :: Install, basic configuration :: June 16 2026
 
 * 09:30 - 12:30
   * [Arkime setup](/Arkime/package_setup/)
@@ -32,7 +33,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
 * 13:30 - 17:00
   * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
 
-## Day 2 :: Advanced configuration, enrichment :: June 5 2024
+## Day 2 :: Advanced configuration, enrichment :: June 17 2026
 
 * 09:30 - 12:30
   * [Arkime setup, adding new fields](/Arkime/package_setup/)
@@ -41,7 +42,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
   * [Suricata integration](/Arkime/suricata/)
   * [Suricata](/Suricata)
 
-## Day 3 :: Suricata, SSL/TLS proxy :: June 6 2024
+## Day 3 :: Suricata, SSL/TLS proxy :: June 18 2026
 
 * 09:30 - 12:30
   * [Suricata rules](/Suricata/rules), [suricata-update](/Suricata/suricata-update)
@@ -50,7 +51,7 @@ This is **4 days** of material for any intermediate-level dev-ops who has some e
   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
   * [Polarproxy](/Arkime/polarproxy)
     
-## Day +1 :: Last but not least :: June 7 2024, *ends at 12:00*
+## Day +1 :: Last but not least :: June 19 2026, *ends at 12:00*
 
 * 09:30 - 10:30
   * [Hunting - RT Net](/Arkime/queries/#hunting-trip)
