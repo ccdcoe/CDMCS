@@ -14,34 +14,45 @@ Our goal is to make our students understand fundamental concepts that can be bro
 
 Please visit:
 
- * https://suricata.io/
- * https://arkime.com/
+* https://suricata.io/
+* https://arkime.com/
 
 See:
- * [Prerequisites](prerequisites/)
+
+* [Prerequisites](prerequisites/)
 
 # Current Classes
 
- * [Suricata - Rule-based Threat Detection :: Not scheduled](/Suricata/)
-   * Information ~~and registration~~: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
- * [Arkime - Large Scale Packet Capture Analysis :: 15 - 19 June 2026](/Arkime/)
-   * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-june-2026/
-     * **Don't miss the registration deadline!**
-   * Bring your own device (BYOD) is recommended.
+* [Suricata - Rule-based Threat Detection :: Not scheduled](/Suricata/)
+  * Information ~~and registration~~: https://ccdcoe.org/training/cyber-defence-monitoring-course-rule-based-threat-detection/
+* [Arkime - Large Scale Packet Capture Analysis :: 15 - 19 June 2026](/Arkime/)
+  * Information and registration: https://ccdcoe.org/training/cyber-defence-monitoring-course-large-scale-packet-capture-analysis-june-2026/
+    * **Don't miss the registration deadline!**
+  * Bring your own device (BYOD) is recommended.
 
-# Older Classes
+## Questions?
 
- * Prior iterations are preserved under respectively numbered annual branches. Please refer to them if you are interested in prior content.
+* Technical questions, topics, laptop requirements, classroom agenda
+  * mauno[ät]sciscope.ee
+  * [LinkedIn](https://www.linkedin.com/in/mauno-pihelgas/)
+* Registration, travel, fees, etc.
+  * Use the `Contact us` form in the registration page.
+  * ccdcoe[ät]ccdcoe.org
+  * https://ccdcoe.org/training/ has some useful information.
 
 ## Teachers (2026 season)
 
- * [mpihelgas](https://github.com/mpihelgas)
- * ...
+* [mpihelgas](https://github.com/mpihelgas)
+* ...
 
 ## Credits
 
- * [markuskont](https://github.com/markuskont)
- * [mpihelgas](https://github.com/mpihelgas)
- * [regit](https://github.com/regit)
- * [hillar](https://github.com/hillar)
- * ...
+* [markuskont](https://github.com/markuskont)
+* [mpihelgas](https://github.com/mpihelgas)
+* [regit](https://github.com/regit)
+* [hillar](https://github.com/hillar)
+* ...
+
+# Older Classes
+
+* Prior iterations are preserved under respectively numbered annual branches. Please refer to them if you are interested in prior content.
