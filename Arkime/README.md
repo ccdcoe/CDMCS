@@ -11,57 +11,55 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 > Arkime was formerly named **Moloch**, so the materials on this site may still refer to it as Moloch in various ways or forms. Same holds true for the Arkime codebase.
 > Arkime is not meant to replace Intrusion Detection Systems (IDS). Arkime augments your current security infrastructure by storing and indexing network traffic in standard PCAP format, while also providing fast indexed access.
 
-**NB! Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.**
+**Provided timeline is preliminary and will develop according to the actual progress of the class. On-site participation only.**
 
-## Day -1 :: Intro, singlehost, basic Viewer usage :: June 15 2026, *starts at 13:00!*
+**Attention:** Initial start time of 13:00 has changed to **09:00** as communicated via e-mail.
 
-* 12:30 Registration open, coffee
+## Day 1 :: Intro, singlehost, basic Viewer usage :: June 15 2026 :: 09:00 Local time
 
-* 13:00 - 17:00
+* 08:30 Registration open
+
+* 09:00 - 17:00
   * [Intro](/common/day_intro.md)
   * [Singlehost](/singlehost/)
   * LS26 overview
   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
   * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
   * Intro to LS26 data capture
+  * Splitting LS BT traffic
 
-## Day 1 :: Install, basic configuration :: June 16 2026
+## Day 2 :: Install, basic configuration :: June 16 2026
 
-* 09:30 - 12:30
+* 09:00 - 17:00
   * [Arkime setup](/Arkime/package_setup/)
   * [basic config](/Arkime/setup/#Config)
-* 13:30 - 17:00
   * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
 
-## Day 2 :: Advanced configuration, enrichment :: June 17 2026
+## Day 3 :: Advanced configuration, enrichment :: June 17 2026
 
-* 09:30 - 12:30
+* 09:00 - 17:00
   * [Arkime setup, adding new fields](/Arkime/package_setup/)
-* 13:30 - 17:00
   * [MISP integration](/Arkime/misp_wise/)
   * [Suricata integration](/Arkime/suricata/)
   * [Suricata](/Suricata)
 
-## Day 3 :: Suricata, SSL/TLS proxy :: June 18 2026
+## Day 4 :: Suricata, SSL/TLS proxy :: June 18 2026
 
-* 09:30 - 12:30
+* 09:00 - 17:00
   * [Suricata rules](/Suricata/rules), [suricata-update](/Suricata/suricata-update)
   * [Suricata datasets](/Suricata/datasets)
-* 13:30 - 17:00
   * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
   * [Polarproxy](/Arkime/polarproxy)
     
-## Day +1 :: Last but not least :: June 19 2026, *ends at 12:00*
+## Day 5 :: Last but not least :: June 19 2026, *ends at 12:00*
 
-* 09:30 - 10:30
+* 09:30 - 12:00
   * [Hunting - RT Net](/Arkime/queries/#hunting-trip)
-* 11:00 - 12:00
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
 
 ## Orphan topics, topics from previous iterations that we might or might not cover
 
-* Splitting LS BT traffic
 * [build from source](/Arkime/setup/#Build)
 * [Pikksilm](/Arkime/pikksilm)
 * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
