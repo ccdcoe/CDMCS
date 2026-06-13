@@ -21,47 +21,52 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * 09:00 - 17:00
   * [Intro](/common/day_intro.md)
-  * [Singlehost](/singlehost/)
   * LS26 overview
   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
+  * Lunch 12-13
   * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
   * Intro to LS26 data capture
   * Splitting LS BT traffic
+  * [Singlehost](/singlehost/)
 
 ## Day 2 :: Install, basic configuration :: June 16 2026
 
 * 09:00 - 17:00
   * [Arkime setup](/Arkime/package_setup/)
   * [basic config](/Arkime/setup/#Config)
-  * [Hunting - RT Web](/Arkime/queries/#hunting-trip)
+  * [Hunting - RT Client Side](/Arkime/queries/#hunting-trip)
+  * Lunch 12-13
+  * [Hunting - RT NET + Special Systems](/Arkime/queries/#hunting-trip)
 
 ## Day 3 :: Advanced configuration, enrichment :: June 17 2026
 
 * 09:00 - 17:00
-  * [Arkime setup, adding new fields](/Arkime/package_setup/)
-  * [MISP integration](/Arkime/misp_wise/)
-  * [Suricata integration](/Arkime/suricata/)
-  * [Suricata](/Suricata)
+  * Arkime customizations, adding new fields, WISE
+  * Lunch 12-13
+  * [Hunting - RT WEB](/Arkime/queries/#hunting-trip)
 
 ## Day 4 :: Suricata, SSL/TLS proxy :: June 18 2026
 
 * 09:00 - 17:00
+  * [Suricata integration](/Arkime/suricata/)
+  * [Suricata](/Suricata)
+  * Lunch 12-13
   * [Suricata rules](/Suricata/rules), [suricata-update](/Suricata/suricata-update)
-  * [Suricata datasets](/Suricata/datasets)
-  * [Hunting - RT client side](/Arkime/queries/#hunting-trip)
   * [Polarproxy](/Arkime/polarproxy)
     
 ## Day 5 :: Last but not least :: June 19 2026, *ends at 12:00*
 
 * 09:30 - 12:00
-  * [Hunting - RT Net](/Arkime/queries/#hunting-trip)
+  * Open, propose your topic!
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
 
 ## Orphan topics, topics from previous iterations that we might or might not cover
 
+* [MISP integration](/Arkime/misp_wise/)
 * [build from source](/Arkime/setup/#Build)
 * [Pikksilm](/Arkime/pikksilm)
+* [Suricata datasets](/Suricata/datasets)
 * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
 * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
 * [Clustering teamwork, cont](/Arkime/clustering)
