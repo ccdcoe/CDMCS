@@ -27,6 +27,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
   * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
   * Intro to LS26 data capture
   * Splitting LS BT traffic
+  * [First Hunts](/Arkime/queries/#hunting-trip)
   * [Singlehost](/singlehost/)
 
 ## Day 2 :: Install, basic configuration :: June 16 2026
