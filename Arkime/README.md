@@ -26,7 +26,6 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
   * Lunch 12-13
   * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
   * Intro to LS26 data capture
-  * Splitting LS BT traffic
   * [First Hunts](/Arkime/queries/#hunting-trip)
   * [Singlehost](/singlehost/)
 
@@ -59,6 +58,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * 09:30 - 12:00
   * Open, propose your topic!
+  * LS BT traffic PCAPs: how to get them for your team
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
 
