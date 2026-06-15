@@ -24,7 +24,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
   * LS26 overview
   * [Basic viewer and queries](/Arkime/queries/#using-the-viewer)
   * Lunch 12-13
-  * [Alkeme](https://arkime.com/alkeme) - A Terminal UI for Arkime
+  * [Alkeme](/Arkime/queries/alkeme.md) - A Terminal UI for Arkime
   * Intro to LS26 data capture
   * [First Hunts](/Arkime/queries/#hunting-trip)
   * [Singlehost](/singlehost/)
