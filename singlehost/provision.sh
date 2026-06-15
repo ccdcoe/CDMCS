@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Run non-interactively (no TTY): disable the systemd pager so that `systemctl status`
+# and journalctl never spawn `less`, which blocks forever waiting for input when stdin
+# is not a terminal (and isn't /dev/null). Without this the script hangs at
+# `check_service`'s `systemctl status` under any non-interactive provisioner.
+export SYSTEMD_PAGER=cat
+export PAGER=cat
+
 USER="vagrant"
 PKGDIR=/vagrant/pkgs
 HOME=/home/vagrant
@@ -8,8 +15,16 @@ PCAP_REPLAY=/srv/replay
 # This script is meant to be run on vagrant box images, but let's compensate
 [ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR && chown -R $USER: /vagrant
 
-# Determine "Predictable Network Interface Names"
-if [[ -n $(ip link show | grep eth0) ]]; then
+# Determine the primary (management) network interface name.
+# Prefer the interface that owns the default route -- this works on any machine
+# regardless of NIC naming. The legacy name-pattern fallbacks below only kick in if
+# there is no default route; relying on them alone can guess wrong (e.g. enp0s3) and
+# Suricata/Arkime would then bind a non-existent interface and fail.
+IFACE_EXT=$(ip -o route show default 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev"){print $(i+1); exit}}')
+if [[ -n "$IFACE_EXT" ]]; then
+  IFACE_INT="$IFACE_EXT"
+  IFACE_PATTERN="$IFACE_EXT"
+elif [[ -n $(ip link show | grep eth0) ]]; then
   # legacy naming
   IFACE_EXT="eth0"
   IFACE_INT="eth1"
@@ -33,6 +48,11 @@ fi
 
 check_service(){
   systemctl daemon-reload
+  # Clear any systemd start-limit ("start request repeated too quickly"): a package
+  # (e.g. suricata) often auto-starts on its default config before we write the CDMCS
+  # config, crash-loops, and exhausts the burst limit -- which would then make our
+  # own 'systemctl start' below fail. reset-failed wipes that counter first.
+  systemctl reset-failed $1.service 2>/dev/null
   systemctl is-enabled $1.service 2>/dev/null | grep "disabled" && systemctl enable $1.service
   systemctl status $1.service | egrep  "inactive|failed" && systemctl start $1.service
   systemctl status $1.service
@@ -88,31 +108,22 @@ apt-get update && apt-get -y install \
   pcregrep \
   tcpreplay || exit 1
 
-# versions
-UBUNTU_VERSION="2204"
-ELASTIC_VERSION="8.13.4"
-INFLUX_VERSION="2.7.1"
-GRAFANA_VERSION="9.5.3"
-TELEGRAF_VERSION="1.26.3"
-GOLANG_VERSION="1.22.3"
-ARKIME_VERSION="5.1.2"
-PIKKSILM_VERSION="0.7.0"
+# versions (2026: Ubuntu 24.04 noble; ELK + evebox + valkey match the base-image set
+# course_docker_images so the singlehost reuses the pre-pulled images, no extra pull)
+UBUNTU_VERSION="2404"
+ELASTIC_VERSION="9.0.4"
+ARKIME_VERSION="6.4.0"
+PIKKSILM_VERSION="2.0.3"
 
-ELA="elasticsearch-oss-${ELASTIC_VERSION}-amd64.deb"
-KIBANA="kibana-oss-${ELASTIC_VERSION}-amd64.deb"
-INFLUX="influxdb_${INFLUX_VERSION}_amd64.deb"
-GRAFANA="grafana_${GRAFANA_VERSION}_amd64.deb"
-
-TELEGRAF="telegraf_${TELEGRAF_VERSION}-1_amd64.deb"
-GOLANG="go${GOLANG_VERSION}.linux-amd64.tar.gz"
+# NB (2026 cleanup): influxdb/grafana/telegraf/golang and the elasticsearch/kibana
+# -oss .deb vars were removed -- nothing in the script installed them (no download/apt
+# code referenced those vars). ELK runs from the docker images below; Pikksilm ships a
+# prebuilt binary. Re-add a version var here only together with its install code.
 
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
 DOCKER_FILEBEAT="docker.elastic.co/beats/filebeat:${ELASTIC_VERSION}"
-
-DOCKER_INFLUXDB="influxdb:${INFLUX_VERSION}-alpine"
-DOCKER_GRAFANA="grafana/grafana:${GRAFANA_VERSION}"
 
 ARKIME_FILE="arkime_${ARKIME_VERSION}-1_amd64.deb"
 ARKIME_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VERSION}/arkime_${ARKIME_VERSION}-1.ubuntu${UBUNTU_VERSION}_amd64.deb"
@@ -158,7 +169,7 @@ docker ps -a | grep redis || docker run -dit \
   --network cdmcs \
   --restart unless-stopped \
   -p 6379:6379 \
-    redis
+    valkey/valkey:7.2
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -266,12 +277,12 @@ curl -s -XPUT localhost:9200/_template/suricata   -H 'Content-Type: application/
 }
 ' || exit 1
 
-docker ps -a | grep evebox | docker run -tid \
+docker ps -a | grep evebox || docker run -tid \
   --network cdmcs \
   --name evebox \
   --restart unless-stopped \
   -p 5636:5636 \
-    jasonish/evebox:master  \
+    jasonish/evebox:latest  \
       -e http://elastic:9200 \
       --index suricata \
       --host 0.0.0.0 \
@@ -279,7 +290,10 @@ docker ps -a | grep evebox | docker run -tid \
 echo "Provisioning RSYSLOG"
 add-apt-repository -y ppa:adiscon/v8-stable
 apt-get update
-apt-get install rsyslog rsyslog-mmjsonparse rsyslog-elasticsearch -y
+# 2026/noble: the adiscon rsyslog package now bundles mmjsonparse.so, so installing
+# the separate rsyslog-mmjsonparse conflicts (dpkg overwrite error -> breaks apt ->
+# cascades into the suricata install). Drop it; module(load="mmjsonparse") still works.
+apt-get install rsyslog rsyslog-elasticsearch -y
 FILE=/etc/rsyslog.d/75-elastic.conf
 grep "CDMCS" $FILE || cat >> $FILE <<'EOF'
 # CDMCS
@@ -364,7 +378,7 @@ docker ps -a | grep logstash || docker run -dit \
   -h logstash \
   --network cdmcs \
   -v /etc/logstash/conf.d/:/usr/share/logstash/pipeline/ \
-  -e "ES_JAVA_OPTS=-Xms${LOGSTASH_MEM}m -Xmx${LOGSTASH_MEM}m" \
+  -e "LS_JAVA_OPTS=-Xms${LOGSTASH_MEM}m -Xmx${LOGSTASH_MEM}m" \
   --restart unless-stopped \
     $DOCKER_LOGSTASH
 
@@ -472,7 +486,7 @@ install_suricata_from_ppa(){
 }
 
 suricata -V || install_suricata_from_ppa
-pip3 install --upgrade suricata-update
+pip3 install --break-system-packages --upgrade suricata-update
 
 touch  /etc/suricata/threshold.config
 mkdir -p /var/lib/suricata/rules
@@ -488,20 +502,21 @@ EOF
 
 FILE=/var/lib/suricata/rules/lua.rules
 [[ -f $FILE ]] || cat > $FILE <<EOF
-alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; luajit:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000051; rev:1;)
+alert tls any any -> any any (msg:"CDMCS TLS Self Signed Certificate"; flow:established; lua:self-signed-cert.lua; tls.store; classtype:protocol-command-decode; sid:3000051; rev:1;)
 alert tls any any -> any any (msg:"Recent certificate"; lua:new-cert.lua; tls.store; sid:3000052; rev:1;)
 EOF
 
 FILE=/var/lib/suricata/rules/self-signed-cert.lua
 [[ -f $FILE ]] || cat > $FILE <<EOF
+-- Suricata 8 lua detect API: suricata.tls module; no needs["tls"] (hook comes from the
+-- 'alert tls ... lua:' rule). Replaces the removed global TlsGetCertInfo().
+local tls = require("suricata.tls")
 function init (args)
-    local needs = {}
-    needs["tls"] = tostring(true)
-    return needs
+    return {}
 end
 function match(args)
-    version, subject, issuer, fingerprint = TlsGetCertInfo();
-    if subject == issuer then
+    local version, subject, issuer, fingerprint = tls.get_server_cert_info()
+    if subject ~= nil and subject == issuer then
         return 1
     else
         return 0
@@ -511,19 +526,18 @@ EOF
 
 FILE=/var/lib/suricata/rules/new-cert.lua
 [[ -f $FILE ]] || cat > $FILE <<EOF
+-- Suricata 8 lua detect API: suricata.tls module. Replaces TlsGetCertNotBefore().
+-- (the old flowint "cert-age" side-effect is dropped; nothing referenced that var.)
+local tls = require("suricata.tls")
 function init (args)
-    local needs = {}
-    needs["tls"] = tostring(true)
-    needs["flowint"] = {"cert-age"}
-    return needs
+    return {}
 end
 function match(args)
-    notbefore = TlsGetCertNotBefore()
+    local notbefore = tls.get_server_cert_not_before()
     if not notbefore then
         return 0
     end
     if os.time() - notbefore <  3 * 3600  then
-        ScFlowintSet(0, os.time() - notbefore)
         return 1
     end
     return 0
@@ -834,7 +848,65 @@ wget -O pikksilm.tar.gz $PIKKSILM_URL
 tar -xzf pikksilm.tar.gz -C /usr/local/bin
 
 which pikksilm || exit 1
-pikksilm --config /etc/pikksilm.toml config
+# pikksilm's own `config` subcommand emits a default with EVERY output disabled, so the
+# service logs "winlog: no result handlers" and exits. Write the config directly instead
+# (same heredoc style as the other configs) with the redis result handlers enabled:
+# correlations -> redis db1 (read by Arkime WISE) and enriched suricata -> redis db1.
+# This replicates the pre-2.x flow (Sysmon EventID 1+3 correlation keyed by Community ID).
+FILE=/etc/pikksilm.yaml
+grep "CDMCS" $FILE 2>/dev/null || cat > $FILE <<'EOF'
+# CDMCS
+input:
+    suricata:
+        redis:
+            db: 0
+            host: localhost:6379
+            key: suricata
+            password: ""
+    sysmon:
+        redis:
+            db: 0
+            host: localhost:6379
+            key: winlogbeat
+            password: ""
+log:
+    debug: false
+    interval: 30s
+output:
+    correlations:
+        file:
+            enabled: false
+            path: ""
+        redis:
+            db: 1
+            enabled: true
+            host: localhost:6379
+            password: ""
+    suricata:
+        file:
+            enabled: false
+            path: ""
+        redis:
+            db: 1
+            enabled: true
+            host: localhost:6379
+            key: suricata
+            password: ""
+persist:
+    file:
+        enabled: false
+        path: ""
+process:
+    suricata:
+        buffer: 10000
+        bulk: 100000
+        cache: 100000
+        delay: 1s
+        enabled: true
+    sysmon:
+        buffer: 10000
+        cache: 1000000
+EOF
 
 FILE=/etc/systemd/system/pikksilm.service
 grep "pikksilm" $FILE || cat > $FILE <<EOF
@@ -1030,8 +1102,8 @@ EOF
 
 echo "Configuring databases"
 cd /opt/arkime/db
-if [[ `./db.pl localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
-  echo "INIT" | ./db.pl localhost:9200 init
+if [[ `./db.pl http://localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
+  echo "INIT" | ./db.pl http://localhost:9200 init
 fi
 
 cd /opt/arkime/bin
@@ -1158,7 +1230,7 @@ Type=simple
 Restart=on-failure
 # Elastic is slow to start up
 RestartSec=15
-ExecStart=/opt/arkime/bin/node parliament.js
+ExecStart=/opt/arkime/bin/node parliament.js -c /opt/arkime/etc/parliament.ini
 WorkingDirectory=/opt/arkime/parliament
 PIDFile=/var/run/parliament.pid
 LimitCORE=infinity
@@ -1168,6 +1240,10 @@ SyslogIdentifier=arkime-parliament
 [Install]
 WantedBy=multi-user.target
 EOF
+
+# arkime 6.x parliament.js requires -c <config> (5.x bootstrapped purely via the API);
+# seed parliament.ini from the package sample once so the service has a config to start.
+[[ -f /opt/arkime/etc/parliament.ini ]] || cp /opt/arkime/etc/parliament.ini.sample /opt/arkime/etc/parliament.ini
 
 for service in wise viewer capture parliament; do
   # delete the default service file
@@ -1185,7 +1261,7 @@ sleep 2
 pgrep capture || exit 1
 
 mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
-su - vagrant -c "pip3 install --user --upgrade psutil"
+su - vagrant -c "pip3 install --break-system-packages --user --upgrade psutil"
 
 FILE=/home/vagrant/.local/bin/set-capture-affinit.py
 grep "get_numa_cores" $FILE || cat > $FILE <<EOF
@@ -1294,14 +1370,51 @@ else
   echo "parliament: can not get eshealth from ${EXPOSE}:8005"
 fi
 
-echo "Setting up Cont3xt"
-/opt/arkime/bin/Configure --cont3xt
-FILE=/opt/arkime/etc/cont3xt.ini
-sed -i "s/elasticsearch=/elasticsearc=http:\/\/localhost:9200/g"    $FILE
-sed -i "s/ARKIME_PASSWORD/test123/g"                                $FILE
+echo "Provisioning Alkeme (Arkime terminal UI client)"
+# Alkeme is Arkime's Rust TUI client (https://arkime.com/alkeme): a prebuilt binary from
+# the official arkime/alkeme GitHub releases that connects to the local viewer over HTTP.
+ALKEME_VERSION="0.5.0"
+wget $WGET_PARAMS -O /usr/local/bin/alkeme "https://github.com/arkime/alkeme/releases/download/v${ALKEME_VERSION}/alkeme-linux-x86_64" \
+  && chmod +x /usr/local/bin/alkeme
+# convenience wrapper: open the local viewer with the admin (vagrant) credentials
+cat > /usr/local/bin/arkime-tui <<'WRAP'
+#!/bin/bash
+exec /usr/local/bin/alkeme http://localhost:8005 --auth digest --user vagrant:vagrant "$@"
+WRAP
+chmod +x /usr/local/bin/arkime-tui
 
-mkdir /opt/arkime/logs
-systemctl restart arkimecont3xt
+echo "Setting up Cont3xt"
+# Generate cont3xt.ini straight from the sample (it carries the same ARKIME_* placeholders
+# as config.ini), exactly like the main Arkime config above -- instead of the interactive
+# `Configure --cont3xt`, which prompts for an encryption password with no TTY and loops
+# forever in a non-interactive run. Fully non-interactive this way.
+mkdir -p /opt/arkime/logs
+cd /opt/arkime/etc
+FILE=/opt/arkime/etc/cont3xt.ini
+[[ -f cont3xt.ini ]] || cp cont3xt.ini.sample $FILE
+sed -i "s|ARKIME_ELASTICSEARCH|http://localhost:9200|g" $FILE
+sed -i "s|ARKIME_PASSWORD|test123|g"                    $FILE
+sed -i "s|ARKIME_INSTALL_DIR|/opt/arkime|g"             $FILE
+
+# Cont3xt systemd unit (Configure would normally install it from the package template)
+FILE=/etc/systemd/system/arkime-cont3xt.service
+grep "arkime-cont3xt" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=Arkime Cont3xt
+After=network.target arkime-viewer.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15
+ExecStart=/bin/sh -c '/opt/arkime/bin/node cont3xt.js -c /opt/arkime/etc/cont3xt.ini >> /opt/arkime/logs/cont3xt.log 2>&1'
+WorkingDirectory=/opt/arkime/cont3xt
+SyslogIdentifier=arkime-cont3xt
+
+[Install]
+WantedBy=multi-user.target
+EOF
+check_service arkime-cont3xt
 
 echo "Provisioning PolarProxy"
 mkdir /opt/PolarProxy
@@ -1332,7 +1445,7 @@ check_service PolarProxy
 
 # Jupyterlab
 echo "Provisioning Jupyterlab"
-pip3 install jupyterlab jedi-language-server
+pip3 install --break-system-packages --ignore-installed jupyterlab jedi-language-server
 
 FILE=/etc/systemd/system/jupyterlab.service
 grep "jupyterlab" $FILE || cat > $FILE <<EOF
@@ -1370,6 +1483,7 @@ check_service jupyterlab
 #   unzip -P infected ${pcap}
 # done
 
+mkdir -p $PCAP_REPLAY
 FILE=$PCAP_REPLAY/gopher.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 # CDMCS
@@ -1479,3 +1593,8 @@ curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/j
 ' | jq .
 
 journalctl -u arkime-capture.service --output cat -n 10
+
+# Mark this host as fully provisioned. Reaching this line (a clean finish) lets a
+# provisioner skip the heavy re-run if it guards on /var/lib/cdmcs-singlehost-provisioned.
+# Critical steps above `|| exit 1`, so a failed run never reaches here and a re-run retries.
+touch /var/lib/cdmcs-singlehost-provisioned
