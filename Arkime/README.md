@@ -27,20 +27,23 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
   * [Alkeme](/Arkime/queries/alkeme.md) - A Terminal UI for Arkime
   * Intro to LS26 data capture
   * [First Hunts](/Arkime/queries/#hunting-trip)
-  * [Singlehost](/singlehost/)
+
 
 ## Day 2 :: Install, basic configuration :: June 16 2026
 
 * 09:00 - 17:00
-  * [Arkime setup](/Arkime/package_setup/)
-  * [basic config](/Arkime/setup/#Config)
+  * Recap
+  * [Guided Hunts](/Arkime/queries/#hunting-trip)
   * [Hunting - RT Client Side](/Arkime/queries/#hunting-trip)
   * Lunch 12-13
   * [Hunting - RT NET + Special Systems](/Arkime/queries/#hunting-trip)
+  * [Singlehost](/singlehost/)
 
 ## Day 3 :: Advanced configuration, enrichment :: June 17 2026
 
 * 09:00 - 17:00
+  * [Arkime setup](/Arkime/package_setup/)
+  * [basic config](/Arkime/setup/#Config)
   * Arkime customizations, adding new fields, WISE
   * Lunch 12-13
   * [Hunting - RT WEB](/Arkime/queries/#hunting-trip)
