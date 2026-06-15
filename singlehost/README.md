@@ -17,7 +17,7 @@
     * **[Elasticsearch](https://www.elastic.co/elasticsearch/)** is a search engine based on Lucene.
   * We will also have:
     * **[Suricata](https://suricata.io/)** is a network threat detection engine.
-    * **[Redis](https://redis.io/)** is a in-memory data structure storage and message broker. Good for sharing data between multiple applications.
+    * **[Valkey](https://valkey.io/)** is an open-source in-memory data structure store (a Redis fork) and message broker. Good for sharing data between multiple applications.
 
 # Instructions
 
@@ -45,7 +45,7 @@ Verify that your environment is correct.
 ➜  singlehost git:(master) ✗ vagrant status 
 Current machine states: 
  
-moloch                    not created (virtualbox) 
+singlehost                not created (virtualbox) 
  
 The environment has not yet been created. Run `vagrant up` to 
 create the environment. If a machine is not created, only the 
