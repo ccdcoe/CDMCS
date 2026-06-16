@@ -5,7 +5,7 @@
 Download arkime package from [the official download page](https://arkime.com/downloads) and install it with your package manager.
 
 ```
-dpkg -i arkime_5.1.2-1.ubuntu2204_amd64.deb
+dpkg -i arkime_6.5.0-1.ubuntu2404_amd64.deb
 ```
 
 On debian/ubuntu, this will fail.
@@ -13,8 +13,8 @@ On debian/ubuntu, this will fail.
 ```
 Selecting previously unselected package arkime.
 (Reading database ... 111873 files and directories currently installed.)
-Preparing to unpack arkime_4.3.1-1_amd64.deb ...
-Unpacking arkime (4.3.1-1) ...
+Preparing to unpack arkime_6.5.0-1.ubuntu2404_amd64.deb ...
+Unpacking arkime (6.5.0-1) ...
 dpkg: dependency problems prevent configuration of arkime:
  arkime depends on libwww-perl; however:
   Package libwww-perl is not installed.
@@ -55,7 +55,7 @@ drwxr-xr-x   2 root root 4.0K Jun  7 19:21 include
 -rwxr-xr-x   1 root root  729 Mar 31 19:45 LICENSE
 drwxr-xr-x   2 root root 4.0K Jun  7 19:21 lua
 drwxr-xr-x 366 root root  12K Jun  7 19:21 node_modules
-drwxr-xr-x   7 root root 4.0K Jun  7 19:21 node-v16.14.2-linux-x64
+drwxr-xr-x   7 root root 4.0K Jun  7 19:21 node-v22.22.3-linux-x64
 -rw-r--r--   1 root root 1.2M Mar 31 19:45 NOTICE.txt
 -rwxr-xr-x   1 root root 7.7K Mar 31 19:43 package.json
 drwxr-xr-x   4 root root 4.0K Jun  7 19:21 parliament
@@ -73,7 +73,7 @@ drwxr-xr-x   4 root root 4.0K Jun  7 19:21 wiseService
 Set up elasticsearch.
 
 ```
-docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:9.0.4
 ```
 
 Verify that elastic is up and running. You can check logs...
@@ -91,7 +91,7 @@ student@student-linux:~$ curl -ss http://localhost:9200
   "cluster_name" : "docker-cluster",
   "cluster_uuid" : "lWs_x9FMSNKgd3V2AcDipA",
   "version" : {
-    "number" : "8.8.1",
+    "number" : "9.0.4",
     "build_flavor" : "default",
     "build_type" : "docker",
     "build_hash" : "f8edfccba429b6477927a7c1ce1bc6729521305e",
@@ -117,11 +117,11 @@ Some important endpoints to keep tabs on.
 ### Using a deb package
 
 ```
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.13.4-amd64.deb
-dpkg -i elasticsearch-8.13.4-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-9.0.4-amd64.deb
+dpkg -i elasticsearch-9.0.4-amd64.deb
 ```
 
-Set the JVM heap size in `/etc/elasticsearch/elasticsearch.yml`
+Set the JVM heap size in `/etc/elasticsearch/jvm.options.d/heap.options` (heap belongs in `jvm.options`, not `elasticsearch.yml`).
 
 ```
 -Xms1g
@@ -148,13 +148,13 @@ Before configuring, let's take care of setting up the database. Enter the `db` d
 cd /opt/arkime/db
 ```
 
-And call the database management script.
+And call the database management script. The URL **must** include the scheme (`http://`) — newer Arkime refuses a bare `localhost:9200`.
 
 ```
-student@student-linux:/opt/arkime/db$ ./db.pl localhost:9200 init
+student@student-linux:/opt/arkime/db$ ./db.pl http://localhost:9200 init
 It is STRONGLY recommended that you stop ALL Arkime captures and viewers before proceeding.  Use 'db.pl http://localhost:9200 backup' to backup db first.
 
-There is 1 elastic search data node, if you expect more please fix first before proceeding.
+There is 1 OpenSearch/Elasticsearch data node, if you expect more please fix first before proceeding.
 
 This is a fresh Arkime install
 Erasing
@@ -310,10 +310,10 @@ Capture is a tcpdump-like program written in C. It writes raw packets into pcap 
 Firstly, call geoip update script to pull some files. Capture will not start if those files are missing.
 
 ```
-root@setup:/opt/arkime# /opt/arkime/bin/arkime_update_geo.sh
-2022-06-07 20:15:19 URL:https://www.iana.org/assignments/ipv4-address-space/ipv4-address-space.csv [23331/23331] -> "/tmp/tmp.FUDuons64v" [1]
-2022-06-07 20:15:19 URL:https://raw.githubusercontent.com/wireshark/wireshark/master/manuf [2004683/2004683] -> "/tmp/tmp.XRkZ70f7VI" [1]
+/opt/arkime/bin/arkime_update_geo.sh
 ```
+
+It fetches the IANA IPv4 address-space and the OUI (MAC vendor) list into `/opt/arkime/etc/` (`ipv4-address-space.csv`, `oui.txt`). MaxMind GeoLite2 city/ASN data needs a free licence key and is optional for the lab.
 
 Create a folder with correct permissions to store pcap files. If you choose another folder, make sure it's reflected in config.
 
@@ -582,3 +582,18 @@ rules:
     ops:
       _maxPacketsToSave: 12
 ```
+
+## Tasks
+
+Hands-on challenges — use the config sections above, the example configs in `/opt/arkime/etc`, and the [singlehost](/singlehost/) provisioning script for reference.
+
+### Basic
+  * Change Arkime config parameters in `/opt/arkime/etc/config.ini`; configure users and permissions.
+  * Set up Arkime with an **hourly** index pattern (`rotateIndex=hourly`) that stores pcap files in **/srv/pcap** owned by the capture drop user/group;
+    * Ensure that the viewer is able to **see and open PCAPs** for all sessions;
+  * Configure the `[override-ips]` section to tag the lab networks with a **VB** country code and a RIR value of your choice;
+
+### Advanced
+  * Create persistent systemd services for both capture and viewer (mirror the WISE service above);
+    * Enable the services so they start automatically at boot;
+    * Ensure the Arkime services start **after** the `docker` service running your Elasticsearch;

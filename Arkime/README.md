@@ -43,7 +43,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * 09:00 - 17:00
   * [Arkime setup](/Arkime/package_setup/)
-  * [basic config](/Arkime/setup/#Config)
+  * [basic config](/Arkime/package_setup/#set-up-capture)
   * Arkime customizations, adding new fields, WISE
   * Lunch 12-13
   * [Hunting - RT WEB](/Arkime/queries/#hunting-trip)
