@@ -105,13 +105,21 @@ less /var/log/suricata/suricata.log
 13/6/2023 -- 20:29:02 - <Info> - 34155 signatures processed. 1277 are IP-only rules, 5214 are inspecting packet payload, 27457 inspect application layer, 108 are decoder event only
 ```
 
+## Let Arkime read the Suricata logs
+
+Arkime Capture runs as its unprivileged **drop user** (`nobody` by default), but the Suricata package locks its log directory down to `suricata:suricata` (`drwxrwx---`). Capture then can't read `eve.json` — you'll see `ERROR - Can't access suricataAlertFile '/var/log/suricata/eve.json' : Permission denied` in the capture log, and no sessions get enriched. Make the directory traversable so capture can read the log:
+
+```
+sudo chmod 755 /var/log/suricata
+```
+
 ## Checking the results
 
 Now that Suricata is installed and running, we can restart our Arkime Capture and Viewer, so that our earlier changes will take effect. Arkime Capture will load the Suricata module and start parsing the eve.json file.
 
 ```
-systemctl restart arkimecapture.service
-systemctl restart arkimeviewer.service
+systemctl restart arkime-capture.service
+systemctl restart arkime-viewer.service
 ```
 
 We need some traffic that would fire off a Suricata alert.
