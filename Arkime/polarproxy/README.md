@@ -57,8 +57,8 @@ simpleCompression=none
 Let's create a new arkime service for PolarProxy capture. We also need a corresponding viewer when using node configuration.
 
 ```
-cp /etc/systemd/system/arkimecapture.service /etc/systemd/system/arkimepolar.service
-cp /etc/systemd/system/arkimeviewer.service /etc/systemd/system/arkimeviewerpolar.service
+cp /etc/systemd/system/arkime-capture.service /etc/systemd/system/arkime-polar.service
+cp /etc/systemd/system/arkime-viewer.service /etc/systemd/system/arkime-viewer-polar.service
 ```
 
 Comment the `ExecStartPre`, since we don't need to configure any actual interfaces. Modify the `ExecStart` to reflect the new paths and also create a separate log file to distinguish separate processes.
@@ -69,7 +69,7 @@ ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --node polar
 ...
 ```
 
-Make sure to also do this with viewer node in `arkimeviewerpolar.service`.
+Make sure to also do this with viewer node in `arkime-viewer-polar.service`.
 
 ```
 ...
@@ -88,9 +88,9 @@ Start the new services.
 ```
 systemctl daemon-reload
 
-systemctl enable --now arkimepolar.service
+systemctl enable --now arkime-polar.service
 
-systemctl enable --now arkimeviewerpolar.service
+systemctl enable --now arkime-viewer-polar.service
 
 systemctl start PolarProxy.service
 ```
