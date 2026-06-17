@@ -8,7 +8,12 @@ export SYSTEMD_PAGER=cat
 export PAGER=cat
 
 USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
-PKGDIR=/vagrant/pkgs
+# Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
+# the synced /vagrant folder; on bare metal use a local dir. Override with WORKDIR=... Data
+# files not present locally are fetched from REPO_RAW (so the script also works fetched alone).
+WORKDIR="${WORKDIR:-$([ -d /vagrant ] && echo /vagrant || echo /opt/cdmcs)}"
+REPO_RAW="${REPO_RAW:-https://raw.githubusercontent.com/ccdcoe/CDMCS/master}"
+PKGDIR=$WORKDIR/pkgs
 HOME=/home/$USER
 PCAP_REPLAY=/srv/replay
 
@@ -18,7 +23,7 @@ PCAP_REPLAY=/srv/replay
 # leave the new account LOCKED (no password set) -- so set it explicitly here.
 id "$USER" >/dev/null 2>&1 || useradd -m -s /bin/bash -G sudo "$USER"
 echo "$USER:$USER" | chpasswd
-mkdir -p $PKGDIR && chown -R $USER: /vagrant
+mkdir -p $PKGDIR && chown -R $USER: $WORKDIR
 
 # Determine the primary (management) network interface name.
 # Prefer the interface that owns the default route -- this works on any machine
@@ -160,7 +165,7 @@ vm.max_map_count=262144
 EOF
 sysctl -p
 
-echo $start >  /vagrant/provision.log
+echo $start >  $WORKDIR/provision.log
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
@@ -1667,7 +1672,12 @@ echo "DONE :: start $start end $(date)"
 echo "Sleeping 60 seconds for data to ingest."; sleep 60
 
 echo "Provisioning KIBANA DASHBOARDS"
-curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/export.ndjson
+# Locate the dashboards file (vagrant synced folder or WORKDIR); if absent -- e.g. the script
+# was fetched standalone -- pull it from the repo.
+NDJSON=""
+for c in "$WORKDIR/export.ndjson" /vagrant/export.ndjson; do [ -f "$c" ] && { NDJSON="$c"; break; }; done
+[ -n "$NDJSON" ] || { NDJSON="$WORKDIR/export.ndjson"; wget $WGET_PARAMS -O "$NDJSON" "$REPO_RAW/singlehost/export.ndjson"; }
+curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@"$NDJSON"
 
 echo "Checking on arkime"
 curl -ss -u $USER:$USER --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
