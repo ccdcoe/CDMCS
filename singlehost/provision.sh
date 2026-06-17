@@ -7,13 +7,18 @@
 export SYSTEMD_PAGER=cat
 export PAGER=cat
 
-USER="vagrant"
+USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
 PKGDIR=/vagrant/pkgs
-HOME=/home/vagrant
+HOME=/home/$USER
 PCAP_REPLAY=/srv/replay
 
 # This script is meant to be run on vagrant box images, but let's compensate
-[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR && chown -R $USER: /vagrant
+# Ensure the login user exists with a known password = its username. On a vagrant box the
+# 'vagrant' user already exists; on a bare-metal/non-vagrant run useradd would otherwise
+# leave the new account LOCKED (no password set) -- so set it explicitly here.
+id "$USER" >/dev/null 2>&1 || useradd -m -s /bin/bash -G sudo "$USER"
+echo "$USER:$USER" | chpasswd
+mkdir -p $PKGDIR && chown -R $USER: /vagrant
 
 # Determine the primary (management) network interface name.
 # Prefer the interface that owns the default route -- this works on any machine
@@ -1314,10 +1319,10 @@ done
 sleep 2
 pgrep capture || exit 1
 
-mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
-su - vagrant -c "pip3 install --break-system-packages --user --upgrade psutil"
+mkdir -p $HOME/.local/bin && chown -R $USER $HOME/.local
+su - $USER -c "pip3 install --break-system-packages --user --upgrade psutil"
 
-FILE=/home/vagrant/.local/bin/set-capture-affinit.py
+FILE=$HOME/.local/bin/set-capture-affinit.py
 grep "get_numa_cores" $FILE || cat > $FILE <<EOF
 #!/usr/bin/env python3
 
@@ -1392,12 +1397,12 @@ if __name__ == "__main__":
 
     subprocess.Popen(['/usr/bin/sudo /bin/bash -c \'echo {} > {}\''.format(intr_thread, irq)], shell=True)
 EOF
-chown vagrant $FILE
+chown $USER $FILE
 chmod u+x $FILE
-# su - vagrant -c "python3 $FILE"
+# su - $USER -c "python3 $FILE"
 
 echo "Adding viewer user"
-cd /opt/arkime/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
+cd /opt/arkime/viewer && ../bin/node addUser.js $USER $USER $USER --admin
 sleep 3
 
 # parliament
@@ -1430,10 +1435,10 @@ echo "Provisioning Alkeme (Arkime terminal UI client)"
 ALKEME_VERSION="0.5.0"
 wget $WGET_PARAMS -O /usr/local/bin/alkeme "https://github.com/arkime/alkeme/releases/download/v${ALKEME_VERSION}/alkeme-linux-x86_64" \
   && chmod +x /usr/local/bin/alkeme
-# convenience wrapper: open the local viewer with the admin (vagrant) credentials
-cat > /usr/local/bin/arkime-tui <<'WRAP'
+# convenience wrapper: open the local viewer with the admin ($USER) credentials
+cat > /usr/local/bin/arkime-tui <<WRAP
 #!/bin/bash
-exec /usr/local/bin/alkeme http://localhost:8005 --auth digest --user vagrant:vagrant "$@"
+exec /usr/local/bin/alkeme http://localhost:8005 --auth digest --user $USER:$USER "\$@"
 WRAP
 chmod +x /usr/local/bin/arkime-tui
 
@@ -1515,7 +1520,7 @@ ExecStart=/usr/local/bin/jupyter lab -y --ip 0.0.0.0 --NotebookApp.token="$USER"
 Restart=on-failure
 RestartSec=5
 StartLimitBurst=10
-WorkingDirectory=/vagrant
+WorkingDirectory=/home/$USER
 PIDFile=/var/run/jupyterlab.pid
 SyslogIdentifier=jupyterlab
 
@@ -1665,8 +1670,8 @@ echo "Provisioning KIBANA DASHBOARDS"
 curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/export.ndjson
 
 echo "Checking on arkime"
-curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
-curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
+curl -ss -u $USER:$USER --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
+curl -ss -u $USER:$USER --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
 
 echo "Checking on suricata and elastic"
 curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '{"size": 1, "query": {"term": {"event_type": "alert"}}}' | jq .
