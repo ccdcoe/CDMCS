@@ -401,11 +401,14 @@ FILE=/etc/filebeat.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 # CDMCS
 filebeat.inputs:
-- type: log
+- type: filestream
+  id: suricata-eve
   paths:
     - "/var/log/suricata/eve.json"
-  json.keys_under_root: true
-  json.add_error_key: true
+  parsers:
+    - ndjson:
+        keys_under_root: true
+        add_error_key: true
 
 processors:
 - timestamp:
@@ -438,6 +441,8 @@ setup.template:
 setup.ilm.enabled: false
 EOF
 
+# filebeat runs as a non-root user inside the container and must be able to write its own log here
+mkdir -p /var/log/filebeat && chmod 777 /var/log/filebeat
 docker ps -a | grep filebeat || docker run -dit \
   --name filebeat \
   -h filebeat \
@@ -1469,7 +1474,10 @@ After=network.target arkime-viewer.service
 
 [Service]
 Type=simple
-Restart=on-failure
+# cont3xt.js exits 0 (NOT a failure) when Elasticsearch isn't reachable yet -- which happens
+# during the provisioning reboots, since ES (docker) comes up after this service. Restart=always
+# (not on-failure) keeps retrying until ES is up; once connected the server stays running.
+Restart=always
 RestartSec=15
 ExecStart=/bin/sh -c '/opt/arkime/bin/node cont3xt.js -c /opt/arkime/etc/cont3xt.ini >> /opt/arkime/logs/cont3xt.log 2>&1'
 WorkingDirectory=/opt/arkime/cont3xt
