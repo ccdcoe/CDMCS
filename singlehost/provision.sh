@@ -470,7 +470,11 @@ EOF
 
 check_service virtIface
 
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp|capture|monitoring'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+# Interfaces we capture on: the live wire (reliably found via the default route, see
+# IFACE_EXT above) plus the replay veth (capture0, created by virtIface just above).
+# Used by the capture-param tuning loop below. NB Arkime's default node sniffs only the
+# live wire; capture0 is handled by the dedicated 'replay' node (see config.ini below).
+ifaces="$IFACE_EXT;capture0"
 
 for iface in ${ifaces//;/ }; do
   echo "Setting capture params for $iface"
@@ -944,7 +948,7 @@ cd /opt/arkime/etc
 FILE=/opt/arkime/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
 sed -i "s/ARKIME_ELASTICSEARCH/http:\/\/localhost:9200/g"   $FILE
-sed -i "s/ARKIME_INTERFACE/$ifaces/g"                       $FILE
+sed -i "s/ARKIME_INTERFACE/$IFACE_EXT/g"                    $FILE   # default node = live wire only
 sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
 sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
 sed -i "s/ARKIME_PASSWORD/test123/g"                        $FILE
@@ -1024,6 +1028,16 @@ grep "polar" $FILE || cat >> $FILE <<EOF
 [polar]
 pcapReadMethod=pcap-over-ip-server
 viewPort=8006
+simpleCompression=none
+EOF
+
+# Dedicated 'replay' node: sniffs capture0 (the replay end of the veth pair). Keeping it
+# out of the default/live node means replayed pcaps -- which carry historical, often
+# time-shifted timestamps -- land under node==replay and never muddy the live timeline.
+grep "\[replay\]" $FILE || cat >> $FILE <<EOF
+[replay]
+interface=capture0
+viewPort=8007
 simpleCompression=none
 EOF
 
@@ -1219,6 +1233,46 @@ SyslogIdentifier=arkime-capture
 WantedBy=multi-user.target
 EOF
 
+# --- replay node: capture + viewer (mirrors the polar pair) --------------------
+FILE=/etc/systemd/system/arkime-viewer-replay.service
+grep "arkime-viewer-replay" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Viewer for Replay
+After=network.target arkime-wise.service arkime-viewer.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15
+ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini --node replay
+WorkingDirectory=/opt/arkime/viewer
+SyslogIdentifier=arkime-viewer
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/arkime-capture-replay.service
+grep "arkime-capture-replay" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Capture for Replay
+After=network.target arkime-wise.service arkime-viewer.service arkime-capture.service virtIface.service
+Requires=virtIface.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15
+ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname) --node replay
+WorkingDirectory=/opt/arkime
+LimitCORE=infinity
+LimitMEMLOCK=infinity
+SyslogIdentifier=arkime-capture
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 FILE=/etc/systemd/system/arkime-parliament.service
 grep "arkime-parliament" $FILE || cat > $FILE <<EOF
 [Unit]
@@ -1251,7 +1305,7 @@ for service in wise viewer capture parliament; do
 done
 
 systemctl daemon-reload
-for service in wise viewer capture capture-polar viewer-polar; do
+for service in wise viewer capture capture-polar viewer-polar capture-replay viewer-replay; do
   echo starting $service
   check_service arkime-$service
   sleep 3
@@ -1484,6 +1538,64 @@ check_service jupyterlab
 # done
 
 mkdir -p $PCAP_REPLAY
+
+# --- Auto-replay watcher -------------------------------------------------------
+# Drop a *.pcap into /srv/replay and it is tcpreplayed onto replay0 (-> capture0,
+# where the Arkime 'replay' node and Suricata listen), then moved into
+# /srv/replay/replayed/ so it is never replayed twice. The drop dir only ever holds
+# not-yet-replayed files, so a new file triggers a replay while done files sit in
+# replayed/. A size-stability check avoids grabbing a half-copied file. (tcpreplay
+# reads classic pcap, not pcapng -- convert first with: editcap in.pcapng out.pcap.)
+mkdir -p $PCAP_REPLAY/replayed
+FILE=/usr/sbin/replay_pcap
+[[ -f $FILE ]] || cat > $FILE <<'EOS'
+#!/bin/bash
+set -u
+DROP=/srv/replay
+DONE=$DROP/replayed
+IFACE=replay0
+mkdir -p "$DONE"
+shopt -s nullglob
+for f in "$DROP"/*.pcap; do
+  # wait until the file size stops changing (i.e. the file is fully written)
+  prev=-1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0)
+  while [ "$cur" != "$prev" ]; do prev=$cur; sleep 1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0); done
+  echo "replay_pcap: replaying $f onto $IFACE"
+  tcpreplay --intf1="$IFACE" --mbps=10 "$f" || echo "replay_pcap: tcpreplay failed for $f"
+  mv -f "$f" "$DONE/"
+done
+EOS
+chmod 755 $FILE
+
+FILE=/etc/systemd/system/replay-pcap.service
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[Unit]
+Description=CDMCS auto-replay PCAPs dropped in /srv/replay
+After=network.target virtIface.service
+Requires=virtIface.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/replay_pcap
+EOF
+
+FILE=/etc/systemd/system/replay-pcap.path
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[Unit]
+Description=Watch /srv/replay for new PCAPs
+
+[Path]
+PathExistsGlob=/srv/replay/*.pcap
+Unit=replay-pcap.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now replay-pcap.path
+# -------------------------------------------------------------------------------
+
 FILE=$PCAP_REPLAY/gopher.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 # CDMCS
