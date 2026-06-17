@@ -369,6 +369,15 @@ Then test the capture service.
 /opt/arkime/bin/capture -c /opt/arkime/etc/config.ini
 ```
 
+In case you added new fields in WISE, the capture will complain that it does not have those field definitions. We must also add the new field definitions into config.ini, so capture and viewer know about it.
+
+* Check the [Adding custom fields](https://github.com/ccdcoe/CDMCS/tree/master/Arkime/package_setup#adding-custom-fields-1) section. Add the field defitions.
+* Run capture again.
+
+```
+/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini
+```
+
 Then check the elastic to verify that `arkime_sessions3-*` exists.
 
 ```
@@ -495,6 +504,10 @@ SyslogIdentifier=arkime-viewer
 WantedBy=multi-user.target
 ```
 
+If you added new fields in WISE, you might wonder how you can see them, especially in the Sessions view. Try searching for that field, autocomplete should show it does exist. Also clicking on the Owl icon and navigating to the Field index should have everything. You can of course add new columns with those values. 
+
+* When you want to create a dedicated section in the Sessions view, check out the [Making custom fields visible in sessions view](https://github.com/ccdcoe/CDMCS/tree/master/Arkime/package_setup#making-custom-fields-visible-in-sessions-view) section.
+
 ## Set up Cont3xt
 
 [Cont3xt](https://arkime.com/cont3xt) is another nodejs service in the Arkime family. It condenses indicator lookups into a single interface: instead of juggling browser tabs for VirusTotal, Shodan, passive DNS and the like, you query an indicator (domain, IP, hash, email, …) once and Cont3xt fans the query out to all configured integrations, then presents the results on a single screen.
@@ -561,7 +574,7 @@ Browse to `http://<host>:3218/` and log in with an Arkime user that has Cont3xt 
 
 ## Adding JA4+ support
 
-JA3 is a TLS fingerprinting technique that has become an industry standard. It is essentially a MD5 hash of TLS client or server HELLO packet. I.e., before TLS client and server can actually establish encrypted communications, they need to exchange cyper suites in order to agree on common encryption algorithms that both sides support. This is a sequence of numbers, and JA3 is basically just a hash of that sequence.
+JA3 (and JA4) is a TLS fingerprinting technique that has become an industry standard. It is essentially a MD5 hash of TLS client or server HELLO packet. I.e., before TLS client and server can actually establish encrypted communications, they need to exchange cyper suites in order to agree on common encryption algorithms that both sides support. This is a sequence of numbers, and JA3 is basically just a hash of that sequence.
 
 Since 2023, Google Chrome started randomizing the order in which extensions are issued. This is called [TLS ClientHello Extension Permutation](https://www.stamus-networks.com/blog/ja3-fingerprints-fade-browsers-embrace-tls-extension-randomization), and it effectively killed JA3 fingerprinting. Sequence of these numbers is now random and thus produces a different hash every time.
 
@@ -681,15 +694,20 @@ Capture applies rules as it builds sessions, so newly captured TLS sessions pick
 
 ## Tasks
 
-Hands-on challenges — use the config sections above, the example configs in `/opt/arkime/etc`, and the [singlehost](/singlehost/) provisioning script for reference.
+Hands-on challenges — use the config sections above, the example configs in `/opt/arkime/etc`. You may also look at the [singlehost](/singlehost/) provisioning script for reference.
 
 ### Basic
-  * Change Arkime config parameters in `/opt/arkime/etc/config.ini`; configure users and permissions.
+  * Change Arkime config parameters in `/opt/arkime/etc/config.ini`; configure users and permissions;
   * Set up Arkime with an **hourly** index pattern (`rotateIndex=hourly`) that stores pcap files in **/srv/pcap** owned by the capture drop user/group;
     * Ensure that the viewer is able to **see and open PCAPs** for all sessions;
+  * Configure arkime to use 3 packet processing threads (if your VM has that many, check!);
   * Configure the `[override-ips]` section to tag the lab networks with a **VB** country code and a RIR value of your choice;
 
-### Advanced
-  * Create persistent systemd services for both capture and viewer (mirror the WISE service above);
+### Advanced service mgmt
+  * Create persistent systemd services for WISE, capture and viewer;
     * Enable the services so they start automatically at boot;
-    * Ensure the Arkime services start **after** the `docker` service running your Elasticsearch;
+    * Ensure the Arkime services start **after** your Elasticsearch;
+      * If you used docker, then the `docker` service must be running before;
+      * If you used local `Elasticsearch`, then that systemd service must be running before;
+    * WISE must be running before capture;
+  * Reboot your student VM and check if all services come up nicely.
