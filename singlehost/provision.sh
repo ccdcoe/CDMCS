@@ -401,11 +401,14 @@ FILE=/etc/filebeat.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 # CDMCS
 filebeat.inputs:
-- type: log
+- type: filestream
+  id: suricata-eve
   paths:
     - "/var/log/suricata/eve.json"
-  json.keys_under_root: true
-  json.add_error_key: true
+  parsers:
+    - ndjson:
+        keys_under_root: true
+        add_error_key: true
 
 processors:
 - timestamp:
@@ -438,6 +441,8 @@ setup.template:
 setup.ilm.enabled: false
 EOF
 
+# filebeat runs as a non-root user inside the container and must be able to write its own log here
+mkdir -p /var/log/filebeat && chmod 777 /var/log/filebeat
 docker ps -a | grep filebeat || docker run -dit \
   --name filebeat \
   -h filebeat \
@@ -1469,7 +1474,10 @@ After=network.target arkime-viewer.service
 
 [Service]
 Type=simple
-Restart=on-failure
+# cont3xt.js exits 0 (NOT a failure) when Elasticsearch isn't reachable yet -- which happens
+# during the provisioning reboots, since ES (docker) comes up after this service. Restart=always
+# (not on-failure) keeps retrying until ES is up; once connected the server stays running.
+Restart=always
 RestartSec=15
 ExecStart=/bin/sh -c '/opt/arkime/bin/node cont3xt.js -c /opt/arkime/etc/cont3xt.ini >> /opt/arkime/logs/cont3xt.log 2>&1'
 WorkingDirectory=/opt/arkime/cont3xt
@@ -1567,9 +1575,14 @@ IFACE=replay0
 mkdir -p "$DONE"
 shopt -s nullglob
 for f in "$DROP"/*.pcap; do
-  # wait until the file size stops changing (i.e. the file is fully written)
-  prev=-1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0)
-  while [ "$cur" != "$prev" ]; do prev=$cur; sleep 1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0); done
+  # wait until the file is fully written: size must be STABLE *and* non-zero. A file that is
+  # still being written (or freshly created) can read as 0 bytes, which would otherwise be
+  # replayed empty. Cap the wait so a genuinely-empty drop does not loop forever.
+  prev=-1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0); tries=0
+  while { [ "$cur" != "$prev" ] || [ "$cur" -eq 0 ]; } && [ "$tries" -lt 30 ]; do
+    prev=$cur; sleep 1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0); tries=$((tries+1))
+  done
+  if [ "$cur" -eq 0 ]; then echo "replay_pcap: $f still empty after wait, skipping"; mv -f "$f" "$DONE/"; continue; fi
   echo "replay_pcap: replaying $f onto $IFACE"
   tcpreplay --intf1="$IFACE" --mbps=10 "$f" || echo "replay_pcap: tcpreplay failed for $f"
   mv -f "$f" "$DONE/"
@@ -1731,7 +1744,7 @@ touch /var/lib/cdmcs-singlehost-provisioned
 # otherwise fall back to the first address.
 ACCESS_IP=$(ip -4 -o addr show 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | grep -E '^192\.168\.56\.' | head -1)
 [ -z "$ACCESS_IP" ] && ACCESS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
-cat <<EOF
+cat <<EOF | tee "$WORKDIR/provision-summary.txt"
 
 ==================================================================
  CDMCS singlehost provisioned -- $(hostname)
@@ -1756,7 +1769,13 @@ cat <<EOF
  Capture/sensor (no web UI): arkime-capture (live: $IFACE_EXT),
    arkime-capture-replay (capture0), arkime-capture-polar (pcap-over-ip),
    suricata, pikksilm
- Replay a PCAP: drop *.pcap into /srv/replay (auto-replayed -> node 'replay')
+
+ NOTE: background "noise" generators are running (curl loops to facebook / tumblr /
+   testmyids / self-signed.badssl) so there is always live + alerting traffic to look at.
+   They are plain background shell jobs, NOT a service -- they vanish on reboot; to stop
+   them sooner, kill the curl/while-loop processes (e.g. pkill -f testmyids).
+ Replay a PCAP: drop a *.pcap into /srv/replay (auto-replayed -> node 'replay').
+ This summary is also saved to $WORKDIR/provision-summary.txt
 ==================================================================
 EOF
 # -------------------------------------------------------------------------------
