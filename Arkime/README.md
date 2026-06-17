@@ -37,21 +37,21 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
   * [Arkime setup + config](/Arkime/package_setup/)
   * Lunch 12-13
   * [Hunting - RT NET + Special Systems](/Arkime/queries/#hunting-trip)
-  * [Singlehost](/singlehost/)
 
 ## Day 3 :: Advanced configuration, enrichment :: June 17 2026
 
 * 09:00 - 17:00
   * [Hunting - RT Client Side](/Arkime/queries/#hunting-trip)
-  * Arkime customizations, adding new fields, Cont3xt, JA4+
+  * [Arkime customizations, adding new fields, Cont3xt, JA4+](/Arkime/package_setup/)
   * Lunch 12-13
   * [Hunting - RT WEB](/Arkime/queries/#hunting-trip)
+  * [Singlehost](/singlehost/)
 
 ## Day 4 :: Suricata, SSL/TLS proxy :: June 18 2026
 
 * 09:00 - 17:00
-  * [Suricata integration](/Arkime/suricata/)
   * [Suricata](/Suricata)
+  * [Suricata integration](/Arkime/suricata/)
   * Lunch 12-13
   * [Suricata rules](/Suricata/rules), [suricata-update](/Suricata/suricata-update)
   * [Polarproxy](/Arkime/polarproxy)
