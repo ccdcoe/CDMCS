@@ -43,7 +43,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * 09:00 - 17:00
   * [Hunting - RT Client Side](/Arkime/queries/#hunting-trip)
-  * Arkime customizations, adding new fields, WISE
+  * Arkime customizations, adding new fields, Cont3xt, JA4+
   * Lunch 12-13
   * [Hunting - RT WEB](/Arkime/queries/#hunting-trip)
 

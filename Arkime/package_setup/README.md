@@ -369,6 +369,15 @@ Then test the capture service.
 /opt/arkime/bin/capture -c /opt/arkime/etc/config.ini
 ```
 
+In case you added new fields in WISE, the capture will complain that it does not have those field definitions. We must also add the new field definitions into config.ini, so capture and viewer know about it.
+
+* Check the [Adding custom fields](https://github.com/ccdcoe/CDMCS/tree/master/Arkime/package_setup#adding-custom-fields-1) section. Add the field defitions.
+* Run capture again.
+
+```
+/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini
+```
+
 Then check the elastic to verify that `arkime_sessions3-*` exists.
 
 ```
@@ -495,26 +504,109 @@ SyslogIdentifier=arkime-viewer
 WantedBy=multi-user.target
 ```
 
+If you added new fields in WISE, you might wonder how you can see them, especially in the Sessions view. Try searching for that field, autocomplete should show it does exist. Also clicking on the Owl icon and navigating to the Field index should have everything. You can of course add new columns with those values. 
+
+* When you want to create a dedicated section in the Sessions view, check out the [Making custom fields visible in sessions view](https://github.com/ccdcoe/CDMCS/tree/master/Arkime/package_setup#making-custom-fields-visible-in-sessions-view) section.
+
+## Set up Cont3xt
+
+[Cont3xt](https://arkime.com/cont3xt) is another nodejs service in the Arkime family. It condenses indicator lookups into a single interface: instead of juggling browser tabs for VirusTotal, Shodan, passive DNS and the like, you query an indicator (domain, IP, hash, email, …) once and Cont3xt fans the query out to all configured integrations, then presents the results on a single screen.
+
+* https://arkime.com/cont3xt#install
+
+Like WISE and Viewer, it reads a config file and runs from its own folder. Set up the config from the sample.
+
+```
+cp /opt/arkime/etc/cont3xt.ini.sample /opt/arkime/etc/cont3xt.ini
+```
+
+Edit `/opt/arkime/etc/cont3xt.ini`. Point it at the same elasticsearch as Arkime, and — importantly — set `passwordSecret` and `httpRealm` to the **same values as `config.ini`**. Cont3xt shares Arkime's user database, so matching these two lets your existing Arkime users (e.g. the `owl` admin created for viewer) log in to Cont3xt as well.
+
+```
+elasticsearch=http://localhost:9200
+passwordSecret=<same value as config.ini>
+httpRealm=Moloch
+userNameHeader=digest
+```
+
+Go to the `cont3xt` folder and test it on the command line.
+
+```
+cd /opt/arkime/cont3xt
+/opt/arkime/bin/node cont3xt.js -c /opt/arkime/etc/cont3xt.ini
+```
+
+It should report that it is listening on port 3218.
+
+```
+/opt/arkime/cont3xt/cont3xt.js listening on host :: port 3218 in development mode
+Open your web browser to http://localhost:3218/
+```
+
+If all seems well, exit the foreground program and set up a systemd service. Add the following content to `/etc/systemd/system/arkime-cont3xt.service`.
+
+```
+[Unit]
+Description=arkime Cont3xt
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+ExecStart=/opt/arkime/bin/node cont3xt.js -c /opt/arkime/etc/cont3xt.ini
+WorkingDirectory=/opt/arkime/cont3xt
+SyslogIdentifier=arkime-cont3xt
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then reload systemd and enable + start the service, just like the WISE one.
+
+```
+systemctl daemon-reload
+systemctl enable arkime-cont3xt.service
+systemctl start arkime-cont3xt.service
+systemctl status arkime-cont3xt.service
+```
+
+Browse to `http://<host>:3218/` and log in with an Arkime user that has Cont3xt access — the `superAdmin` (`owl`) account works, or grant another user the `cont3xtUser` role. Most external lookups need per-integration API keys (VirusTotal, Shodan, …) set in `cont3xt.ini`, but the built-in integrations work out of the box.
+
 ## Adding JA4+ support
 
-JA3 is a TLS fingerprinting technique that has become an industry standard. It is essentially a MD5 hash of TLS client or server HELLO packet. I.e., before TLS client and server can actually establish encrypted communications, they need to exchange cyper suites in order to agree on common encryption algorithms that both sides support. This is a sequence of numbers, and JA3 is basically just a hash of that sequence.
+JA3 (and JA4) is a TLS fingerprinting technique that has become an industry standard. It is essentially a MD5 hash of TLS client or server HELLO packet. I.e., before TLS client and server can actually establish encrypted communications, they need to exchange cyper suites in order to agree on common encryption algorithms that both sides support. This is a sequence of numbers, and JA3 is basically just a hash of that sequence.
 
 Since 2023, Google Chrome started randomizing the order in which extensions are issued. This is called [TLS ClientHello Extension Permutation](https://www.stamus-networks.com/blog/ja3-fingerprints-fade-browsers-embrace-tls-extension-randomization), and it effectively killed JA3 fingerprinting. Sequence of these numbers is now random and thus produces a different hash every time.
 
 In order to deal with this problem, NSM tools are migrating to JA4 hashing, which is really a suite of fingerprinting techniques not only for TLS clients and servers, but also for HTTP, SSH, TCP, etc. Among other things, JA4 is also more resilient against randomization. But JA4 has another major issue which prevents open-source tools from simply incorporating it. JA4 for client and QUIC are released under BSD licence, but others are sold with commercial licence instead. [These other fingerprinting techniques, referred to as JA4+, can not be used for monetization](https://github.com/FoxIO-LLC/ja4#licensing), so open-source tools could easily get into trouble by including them.
 
-Arkime gets around that by providing compiled ja4 plugin that can then be set up by the users themselves. It is quite simple, a shared object (`.so`) file needs to be placed into `plugins` folder and then enabled as capture plugin.
+Arkime gets around that by providing a compiled ja4 plugin that you enable yourself: a shared object (`.so`) file is dropped into the `plugins` folder and added to the capture plugins. The prebuilt `.so` ships as a per-release, per-architecture asset on the [Arkime releases page](https://github.com/arkime/arkime/releases), so no compilation is needed — just grab the one matching your Arkime version and CPU.
 
-* https://github.com/arkime/arkime/releases
+Download `ja4plus.<arch>.so` for your installed version (here `v6.5.0`, amd64) into the `plugins` folder.
+
+```
+ARKIME_VERSION=6.5.0
+curl -fSL -o /opt/arkime/plugins/ja4plus.so \
+  https://github.com/arkime/arkime/releases/download/v${ARKIME_VERSION}/ja4plus.amd64.so
+chmod 755 /opt/arkime/plugins/ja4plus.so
+```
+
+Append `ja4plus.so` to the capture `plugins` line in `config.ini`.
+
+```
+plugins=wise.so;ja4plus.so
+```
+
+Restart capture and confirm the plugin loads — the log line reads `JA4+ plugin loaded`.
+
+```
+systemctl restart arkime-capture.service
+journalctl -u arkime-capture --no-pager | grep -i ja4
+```
+
+Once some TLS traffic has been captured, the fingerprints appear under the `tls.ja4` field. Confirm with the expression `tls.ja4 == EXISTS!` in the viewer.
+
 * https://arkime.com/settings#ja4plus
-
-## Cont3xt
-
-[Cont3xt](https://arkime.com/cont3xt) is a new tool in the Arkime family. It's been around since version 4 but has been improved in v5. It is a nodejs web application that condenses indicator lookups to a single interface. For example, instead of having different browser tabs open for virustotal, shotad, etc, one simply queries the indicator (domain, IP, hash, email, etc) from cont3xt instead. In the backend, cont3xt queries different services for you and then presents condensed info on a single screen.
-
-* https://arkime.com/cont3xt#install
-
-Note, this guide sets up default cont3xt systemd service which logs to plaintext file under `/opt/arkime/logs` folder. If following this tutorial, that folder might be missing and service would fail. Make sure the folder exists before restarting the service.
 
 ## Adding custom fields
 
@@ -583,17 +675,39 @@ rules:
       _maxPacketsToSave: 12
 ```
 
+Besides special operations like `_maxPacketsToSave`, the `ops` block can also **set fields on the session** — including the custom fields you defined in the `[custom-fields]` section above. This is a handy way to label or enrich sessions right from capture, without WISE. Reference the field by its expression name; it must already be defined.
+
+```
+version: 1
+rules:
+  - name: "Label TLS sessions"
+    when: "fieldSet"
+    fields:
+      protocols:
+      - tls
+    ops:
+      tags: "cdmcs-tls"
+      cdmcs.type: "encrypted"
+```
+
+Capture applies rules as it builds sessions, so newly captured TLS sessions pick up the `cdmcs-tls` tag and a `cdmcs.type` of `encrypted` — which then surfaces in the `cdmcs` custom view from the previous section.
+
 ## Tasks
 
-Hands-on challenges — use the config sections above, the example configs in `/opt/arkime/etc`, and the [singlehost](/singlehost/) provisioning script for reference.
+Hands-on challenges — use the config sections above, the example configs in `/opt/arkime/etc`. You may also look at the [singlehost](/singlehost/) provisioning script for reference.
 
 ### Basic
-  * Change Arkime config parameters in `/opt/arkime/etc/config.ini`; configure users and permissions.
+  * Change Arkime config parameters in `/opt/arkime/etc/config.ini`; configure users and permissions;
   * Set up Arkime with an **hourly** index pattern (`rotateIndex=hourly`) that stores pcap files in **/srv/pcap** owned by the capture drop user/group;
     * Ensure that the viewer is able to **see and open PCAPs** for all sessions;
+  * Configure arkime to use 3 packet processing threads (if your VM has that many, check!);
   * Configure the `[override-ips]` section to tag the lab networks with a **VB** country code and a RIR value of your choice;
 
-### Advanced
-  * Create persistent systemd services for both capture and viewer (mirror the WISE service above);
+### Advanced service mgmt
+  * Create persistent systemd services for WISE, capture and viewer;
     * Enable the services so they start automatically at boot;
-    * Ensure the Arkime services start **after** the `docker` service running your Elasticsearch;
+    * Ensure the Arkime services start **after** your Elasticsearch;
+      * If you used docker, then the `docker` service must be running before;
+      * If you used local `Elasticsearch`, then that systemd service must be running before;
+    * WISE must be running before capture;
+  * Reboot your student VM and check if all services come up nicely.
