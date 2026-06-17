@@ -1710,3 +1710,38 @@ journalctl -u arkime-capture.service --output cat -n 10
 # provisioner skip the heavy re-run if it guards on /var/lib/cdmcs-singlehost-provisioned.
 # Critical steps above `|| exit 1`, so a failed run never reaches here and a re-run retries.
 touch /var/lib/cdmcs-singlehost-provisioned
+
+# --- Provisioning summary ------------------------------------------------------
+# Prefer the host-only/private IP (reachable from the host laptop) for the URLs,
+# otherwise fall back to the first address.
+ACCESS_IP=$(ip -4 -o addr show 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | grep -E '^192\.168\.56\.' | head -1)
+[ -z "$ACCESS_IP" ] && ACCESS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+cat <<EOF
+
+==================================================================
+ CDMCS singlehost provisioned -- $(hostname)
+ Web UIs:  http://$ACCESS_IP:<port>      (all VM IPs: $(hostname -I))
+==================================================================
+
+ SERVICE                       PORT   LOGIN
+ ----------------------------  -----  --------------------
+ Arkime Viewer (live wire)     8005   $USER : $USER
+ Arkime Viewer (polar / TLS)   8006   $USER : $USER
+ Arkime Viewer (replay)        8007   $USER : $USER
+ Arkime Cont3xt                3218   $USER : $USER
+ Arkime Parliament             8008   password: admin
+ Arkime WISE                   8081   (internal API, no login)
+ Kibana                        5601   (no auth)
+ Elasticsearch                 9200   (no auth)
+ JupyterLab                    8888   token: $USER
+ SSH / shell login              -     $USER : $USER
+
+ PolarProxy (TLS inspection):  10443 proxy | 10080 CA-cert HTTP | 1080 SOCKS | 8080 HTTP-CONNECT
+
+ Capture/sensor (no web UI): arkime-capture (live: $IFACE_EXT),
+   arkime-capture-replay (capture0), arkime-capture-polar (pcap-over-ip),
+   suricata, pikksilm
+ Replay a PCAP: drop *.pcap into /srv/replay (auto-replayed -> node 'replay')
+==================================================================
+EOF
+# -------------------------------------------------------------------------------
