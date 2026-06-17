@@ -7,13 +7,23 @@
 export SYSTEMD_PAGER=cat
 export PAGER=cat
 
-USER="vagrant"
-PKGDIR=/vagrant/pkgs
-HOME=/home/vagrant
+USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
+# Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
+# the synced /vagrant folder; on bare metal use a local dir. Override with WORKDIR=... Data
+# files not present locally are fetched from REPO_RAW (so the script also works fetched alone).
+WORKDIR="${WORKDIR:-$([ -d /vagrant ] && echo /vagrant || echo /opt/cdmcs)}"
+REPO_RAW="${REPO_RAW:-https://raw.githubusercontent.com/ccdcoe/CDMCS/master}"
+PKGDIR=$WORKDIR/pkgs
+HOME=/home/$USER
 PCAP_REPLAY=/srv/replay
 
 # This script is meant to be run on vagrant box images, but let's compensate
-[ -d "$HOME" ] || useradd -m -G sudo $USER && mkdir -p $PKGDIR && chown -R $USER: /vagrant
+# Ensure the login user exists with a known password = its username. On a vagrant box the
+# 'vagrant' user already exists; on a bare-metal/non-vagrant run useradd would otherwise
+# leave the new account LOCKED (no password set) -- so set it explicitly here.
+id "$USER" >/dev/null 2>&1 || useradd -m -s /bin/bash -G sudo "$USER"
+echo "$USER:$USER" | chpasswd
+mkdir -p $PKGDIR && chown -R $USER: $WORKDIR
 
 # Determine the primary (management) network interface name.
 # Prefer the interface that owns the default route -- this works on any machine
@@ -155,7 +165,7 @@ vm.max_map_count=262144
 EOF
 sysctl -p
 
-echo $start >  /vagrant/provision.log
+echo $start >  $WORKDIR/provision.log
 echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
@@ -470,7 +480,11 @@ EOF
 
 check_service virtIface
 
-delim=";"; ifaces=""; for item in `ls /sys/class/net/ | egrep '^eth|ens|eno|enp|capture|monitoring'`; do ifaces+="$item$delim"; done ; ifaces=${ifaces%"$deli$delim"}
+# Interfaces we capture on: the live wire (reliably found via the default route, see
+# IFACE_EXT above) plus the replay veth (capture0, created by virtIface just above).
+# Used by the capture-param tuning loop below. NB Arkime's default node sniffs only the
+# live wire; capture0 is handled by the dedicated 'replay' node (see config.ini below).
+ifaces="$IFACE_EXT;capture0"
 
 for iface in ${ifaces//;/ }; do
   echo "Setting capture params for $iface"
@@ -944,7 +958,7 @@ cd /opt/arkime/etc
 FILE=/opt/arkime/etc/config.ini
 [[ -f config.ini ]] || cp config.ini.sample $FILE
 sed -i "s/ARKIME_ELASTICSEARCH/http:\/\/localhost:9200/g"   $FILE
-sed -i "s/ARKIME_INTERFACE/$ifaces/g"                       $FILE
+sed -i "s/ARKIME_INTERFACE/$IFACE_EXT/g"                    $FILE   # default node = live wire only
 sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
 sed -i "s/ARKIME_INSTALL_DIR/\/opt\/arkime/g"               $FILE
 sed -i "s/ARKIME_PASSWORD/test123/g"                        $FILE
@@ -1024,6 +1038,16 @@ grep "polar" $FILE || cat >> $FILE <<EOF
 [polar]
 pcapReadMethod=pcap-over-ip-server
 viewPort=8006
+simpleCompression=none
+EOF
+
+# Dedicated 'replay' node: sniffs capture0 (the replay end of the veth pair). Keeping it
+# out of the default/live node means replayed pcaps -- which carry historical, often
+# time-shifted timestamps -- land under node==replay and never muddy the live timeline.
+grep "\[replay\]" $FILE || cat >> $FILE <<EOF
+[replay]
+interface=capture0
+viewPort=8007
 simpleCompression=none
 EOF
 
@@ -1219,6 +1243,46 @@ SyslogIdentifier=arkime-capture
 WantedBy=multi-user.target
 EOF
 
+# --- replay node: capture + viewer (mirrors the polar pair) --------------------
+FILE=/etc/systemd/system/arkime-viewer-replay.service
+grep "arkime-viewer-replay" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Viewer for Replay
+After=network.target arkime-wise.service arkime-viewer.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15
+ExecStart=/opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini --node replay
+WorkingDirectory=/opt/arkime/viewer
+SyslogIdentifier=arkime-viewer
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+FILE=/etc/systemd/system/arkime-capture-replay.service
+grep "arkime-capture-replay" $FILE || cat > $FILE <<EOF
+[Unit]
+Description=arkime Capture for Replay
+After=network.target arkime-wise.service arkime-viewer.service arkime-capture.service virtIface.service
+Requires=virtIface.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=15
+ExecStart=/opt/arkime/bin/capture -c /opt/arkime/etc/config.ini --host $(hostname) --node replay
+WorkingDirectory=/opt/arkime
+LimitCORE=infinity
+LimitMEMLOCK=infinity
+SyslogIdentifier=arkime-capture
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 FILE=/etc/systemd/system/arkime-parliament.service
 grep "arkime-parliament" $FILE || cat > $FILE <<EOF
 [Unit]
@@ -1251,7 +1315,7 @@ for service in wise viewer capture parliament; do
 done
 
 systemctl daemon-reload
-for service in wise viewer capture capture-polar viewer-polar; do
+for service in wise viewer capture capture-polar viewer-polar capture-replay viewer-replay; do
   echo starting $service
   check_service arkime-$service
   sleep 3
@@ -1260,10 +1324,10 @@ done
 sleep 2
 pgrep capture || exit 1
 
-mkdir -p /home/vagrant/.local/bin && chown -R vagrant /home/vagrant/.local
-su - vagrant -c "pip3 install --break-system-packages --user --upgrade psutil"
+mkdir -p $HOME/.local/bin && chown -R $USER $HOME/.local
+su - $USER -c "pip3 install --break-system-packages --user --upgrade psutil"
 
-FILE=/home/vagrant/.local/bin/set-capture-affinit.py
+FILE=$HOME/.local/bin/set-capture-affinit.py
 grep "get_numa_cores" $FILE || cat > $FILE <<EOF
 #!/usr/bin/env python3
 
@@ -1338,12 +1402,12 @@ if __name__ == "__main__":
 
     subprocess.Popen(['/usr/bin/sudo /bin/bash -c \'echo {} > {}\''.format(intr_thread, irq)], shell=True)
 EOF
-chown vagrant $FILE
+chown $USER $FILE
 chmod u+x $FILE
-# su - vagrant -c "python3 $FILE"
+# su - $USER -c "python3 $FILE"
 
 echo "Adding viewer user"
-cd /opt/arkime/viewer && ../bin/node addUser.js vagrant vagrant vagrant --admin
+cd /opt/arkime/viewer && ../bin/node addUser.js $USER $USER $USER --admin
 sleep 3
 
 # parliament
@@ -1376,10 +1440,10 @@ echo "Provisioning Alkeme (Arkime terminal UI client)"
 ALKEME_VERSION="0.5.0"
 wget $WGET_PARAMS -O /usr/local/bin/alkeme "https://github.com/arkime/alkeme/releases/download/v${ALKEME_VERSION}/alkeme-linux-x86_64" \
   && chmod +x /usr/local/bin/alkeme
-# convenience wrapper: open the local viewer with the admin (vagrant) credentials
-cat > /usr/local/bin/arkime-tui <<'WRAP'
+# convenience wrapper: open the local viewer with the admin ($USER) credentials
+cat > /usr/local/bin/arkime-tui <<WRAP
 #!/bin/bash
-exec /usr/local/bin/alkeme http://localhost:8005 --auth digest --user vagrant:vagrant "$@"
+exec /usr/local/bin/alkeme http://localhost:8005 --auth digest --user $USER:$USER "\$@"
 WRAP
 chmod +x /usr/local/bin/arkime-tui
 
@@ -1461,7 +1525,7 @@ ExecStart=/usr/local/bin/jupyter lab -y --ip 0.0.0.0 --NotebookApp.token="$USER"
 Restart=on-failure
 RestartSec=5
 StartLimitBurst=10
-WorkingDirectory=/vagrant
+WorkingDirectory=/home/$USER
 PIDFile=/var/run/jupyterlab.pid
 SyslogIdentifier=jupyterlab
 
@@ -1484,6 +1548,64 @@ check_service jupyterlab
 # done
 
 mkdir -p $PCAP_REPLAY
+
+# --- Auto-replay watcher -------------------------------------------------------
+# Drop a *.pcap into /srv/replay and it is tcpreplayed onto replay0 (-> capture0,
+# where the Arkime 'replay' node and Suricata listen), then moved into
+# /srv/replay/replayed/ so it is never replayed twice. The drop dir only ever holds
+# not-yet-replayed files, so a new file triggers a replay while done files sit in
+# replayed/. A size-stability check avoids grabbing a half-copied file. (tcpreplay
+# reads classic pcap, not pcapng -- convert first with: editcap in.pcapng out.pcap.)
+mkdir -p $PCAP_REPLAY/replayed
+FILE=/usr/sbin/replay_pcap
+[[ -f $FILE ]] || cat > $FILE <<'EOS'
+#!/bin/bash
+set -u
+DROP=/srv/replay
+DONE=$DROP/replayed
+IFACE=replay0
+mkdir -p "$DONE"
+shopt -s nullglob
+for f in "$DROP"/*.pcap; do
+  # wait until the file size stops changing (i.e. the file is fully written)
+  prev=-1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0)
+  while [ "$cur" != "$prev" ]; do prev=$cur; sleep 1; cur=$(stat -c%s "$f" 2>/dev/null || echo 0); done
+  echo "replay_pcap: replaying $f onto $IFACE"
+  tcpreplay --intf1="$IFACE" --mbps=10 "$f" || echo "replay_pcap: tcpreplay failed for $f"
+  mv -f "$f" "$DONE/"
+done
+EOS
+chmod 755 $FILE
+
+FILE=/etc/systemd/system/replay-pcap.service
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[Unit]
+Description=CDMCS auto-replay PCAPs dropped in /srv/replay
+After=network.target virtIface.service
+Requires=virtIface.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/replay_pcap
+EOF
+
+FILE=/etc/systemd/system/replay-pcap.path
+[[ -f $FILE ]] || cat > $FILE <<EOF
+[Unit]
+Description=Watch /srv/replay for new PCAPs
+
+[Path]
+PathExistsGlob=/srv/replay/*.pcap
+Unit=replay-pcap.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable --now replay-pcap.path
+# -------------------------------------------------------------------------------
+
 FILE=$PCAP_REPLAY/gopher.yml
 grep "CDMCS" $FILE || cat > $FILE <<EOF
 # CDMCS
@@ -1550,11 +1672,16 @@ echo "DONE :: start $start end $(date)"
 echo "Sleeping 60 seconds for data to ingest."; sleep 60
 
 echo "Provisioning KIBANA DASHBOARDS"
-curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@/vagrant/export.ndjson
+# Locate the dashboards file (vagrant synced folder or WORKDIR); if absent -- e.g. the script
+# was fetched standalone -- pull it from the repo.
+NDJSON=""
+for c in "$WORKDIR/export.ndjson" /vagrant/export.ndjson; do [ -f "$c" ] && { NDJSON="$c"; break; }; done
+[ -n "$NDJSON" ] || { NDJSON="$WORKDIR/export.ndjson"; wget $WGET_PARAMS -O "$NDJSON" "$REPO_RAW/singlehost/export.ndjson"; }
+curl -s -XPOST "localhost:5601/api/saved_objects/_import" -H "kbn-xsrf: true" --form file=@"$NDJSON"
 
 echo "Checking on arkime"
-curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
-curl -ss -u vagrant:vagrant --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
+curl -ss -u $USER:$USER --digest "http://$EXPOSE:8005/sessions.csv?counts=0&date=1&fields=ipProtocol,totDataBytes,srcDataBytes,dstDataBytes,firstPacket,lastPacket,srcIp,srcPort,dstIp,dstPort,totPackets,srcPackets,dstPackets,totBytes,srcBytes,suricata.signature&length=1000&expression=suricata.signature%20%3D%3D%20EXISTS%21"
+curl -ss -u $USER:$USER --digest "http://$EXPOSE:8005/unique.txt?exp=host.dns&counts=0&date=1&expression=tags%20%3D%3D%20bloom"
 
 echo "Checking on suricata and elastic"
 curl -s -XPOST localhost:9200/suricata-*/_search -H "Content-Type: application/json" -d '{"size": 1, "query": {"term": {"event_type": "alert"}}}' | jq .
@@ -1598,3 +1725,38 @@ journalctl -u arkime-capture.service --output cat -n 10
 # provisioner skip the heavy re-run if it guards on /var/lib/cdmcs-singlehost-provisioned.
 # Critical steps above `|| exit 1`, so a failed run never reaches here and a re-run retries.
 touch /var/lib/cdmcs-singlehost-provisioned
+
+# --- Provisioning summary ------------------------------------------------------
+# Prefer the host-only/private IP (reachable from the host laptop) for the URLs,
+# otherwise fall back to the first address.
+ACCESS_IP=$(ip -4 -o addr show 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | grep -E '^192\.168\.56\.' | head -1)
+[ -z "$ACCESS_IP" ] && ACCESS_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+cat <<EOF
+
+==================================================================
+ CDMCS singlehost provisioned -- $(hostname)
+ Web UIs:  http://$ACCESS_IP:<port>      (all VM IPs: $(hostname -I))
+==================================================================
+
+ SERVICE                       PORT   LOGIN
+ ----------------------------  -----  --------------------
+ Arkime Viewer (live wire)     8005   $USER : $USER
+ Arkime Viewer (polar / TLS)   8006   $USER : $USER
+ Arkime Viewer (replay)        8007   $USER : $USER
+ Arkime Cont3xt                3218   $USER : $USER
+ Arkime Parliament             8008   password: admin
+ Arkime WISE                   8081   (internal API, no login)
+ Kibana                        5601   (no auth)
+ Elasticsearch                 9200   (no auth)
+ JupyterLab                    8888   token: $USER
+ SSH / shell login              -     $USER : $USER
+
+ PolarProxy (TLS inspection):  10443 proxy | 10080 CA-cert HTTP | 1080 SOCKS | 8080 HTTP-CONNECT
+
+ Capture/sensor (no web UI): arkime-capture (live: $IFACE_EXT),
+   arkime-capture-replay (capture0), arkime-capture-polar (pcap-over-ip),
+   suricata, pikksilm
+ Replay a PCAP: drop *.pcap into /srv/replay (auto-replayed -> node 'replay')
+==================================================================
+EOF
+# -------------------------------------------------------------------------------
