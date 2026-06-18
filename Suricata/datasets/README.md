@@ -215,6 +215,11 @@ Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP ru
 > The docs say `type ip` should accept "IPv6 or IPv4 address", and Suricata **7.0.15 loads and
 > matches the identical IPv4 file fine**, so this is a **regression** in 8.0.x — distinct from the
 > already-fixed socket-side [#7689](https://redmine.openinfosecfoundation.org/issues/7689).
+> *Root cause:* the dataset file parser was rewritten C→Rust in 8.0 and lost the IPv4 fallback —
+> v8 [`process_ipv6_set`](https://github.com/OISF/suricata/blob/suricata-8.0.5/rust/src/detect/datasets.rs#L238-L247)
+> parses every line as IPv6 only, whereas v7
+> [`ParseIpv6String`](https://github.com/OISF/suricata/blob/suricata-7.0.15/src/datasets.c#L248-L277)
+> fell back to `inet_pton(AF_INET, …)` for colon-less (IPv4) lines.
 >
 > **Two file-backed workarounds, both verified on 8.0.5 (load *and* match):**
 >
