@@ -171,9 +171,12 @@ alert ip $HOME_NET any -> any any (msg:"Outbound to Tor exit node"; ip.dst; data
 Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP rule explosion.
 
 > **⚠️ Suricata 8.0.x caveat (verified on 8.0.5).** The `type ip` **file** loader is currently
-> **IPv6-only**: every line is parsed as IPv6, and **IPv4 addresses are rejected** with
-> `detect-dataset: invalid IPv6 value …`, so an all-IPv4 list such as `torbulkexitlist` loads
-> **zero** entries (IPv6 entries load fine). Adding IPv4 over the unix socket *does* work
+> **IPv6-only**: every line in a `load`/`state` file is parsed as IPv6, so **IPv4 entries are
+> dropped**. At runtime each IPv4 line logs `Warning: ... invalid Ipv6 value <dataset-name> in
+> <file>` (note it prints the *dataset name*, not the offending address) and the entry is skipped —
+> so an all-IPv4 list like `torbulkexitlist` loads **zero** entries while IPv6 entries load fine. The
+> rule itself still loads. Under `suricata -T` the same condition is treated as a **fatal error**
+> (config test exits non-zero). Adding IPv4 over the unix socket *does* work
 > (`dataset-add … ip 1.2.3.4` — fixed in [#7689](https://redmine.openinfosecfoundation.org/issues/7689)),
 > but socket additions are **not persisted across a restart** (the saved file hits the same loader on
 > reload). So on 8.0.x, to use the Tor (IPv4) list, populate it over the socket on each start:
