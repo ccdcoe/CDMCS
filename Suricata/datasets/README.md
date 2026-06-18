@@ -162,31 +162,37 @@ curl -s https://check.torproject.org/torbulkexitlist -o /var/lib/suricata/datase
 sudo chown suricata:suricata /var/lib/suricata/datasets/tor-exits.lst
 ```
 
-One rule covers the entire set:
+One rule covers the entire set. The Tor list is all IPv4, so use **`type ipv4`** (see the 8.0.x
+caveat below for why `type ip` won't load an IPv4 file):
 
 ```
-alert ip $HOME_NET any -> any any (msg:"Outbound to Tor exit node"; ip.dst; dataset:isset,tor-exits,type ip,load /var/lib/suricata/datasets/tor-exits.lst,memcap 16mb,hashsize 8192; sid:9000001; rev:1;)
+alert ip $HOME_NET any -> any any (msg:"Outbound to Tor exit node"; ip.dst; dataset:isset,tor-exits,type ipv4,load /var/lib/suricata/datasets/tor-exits.lst,memcap 16mb,hashsize 8192; sid:9000001; rev:1;)
 ```
 
 Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP rule explosion.
 
-> **⚠️ Suricata 8.0.x caveat (verified on 8.0.5).** The `type ip` **file** loader is currently
-> **IPv6-only**: every line in a `load`/`state` file is parsed as IPv6, so **IPv4 entries are
-> dropped**. At runtime each IPv4 line logs `Warning: ... invalid Ipv6 value <dataset-name> in
-> <file>` (note it prints the *dataset name*, not the offending address) and the entry is skipped —
-> so an all-IPv4 list like `torbulkexitlist` loads **zero** entries while IPv6 entries load fine. The
-> rule itself still loads. Under `suricata -T` the same condition is treated as a **fatal error**
-> (config test exits non-zero). Adding IPv4 over the unix socket *does* work
-> (`dataset-add … ip 1.2.3.4` — fixed in [#7689](https://redmine.openinfosecfoundation.org/issues/7689)),
-> but socket additions are **not persisted across a restart** (the saved file hits the same loader on
-> reload). So on 8.0.x, to use the Tor (IPv4) list, populate it over the socket on each start:
+> **⚠️ Suricata 8.0.x caveat (verified on 8.0.5).** The combined **`type ip`** **file** loader is
+> currently **IPv6-only**: every line in a `load`/`state` file is parsed as IPv6, so **plain IPv4
+> entries are dropped**. At runtime each IPv4 line logs `Warning: ... invalid Ipv6 value
+> <dataset-name> in <file>` (note it prints the *dataset name*, not the offending address) and the
+> entry is skipped — so an all-IPv4 list like `torbulkexitlist` loads **zero** entries under
+> `type ip`. Under `suricata -T` the same condition is a **fatal error** (config test exits non-zero).
+> The docs say `type ip` should accept "IPv6 or IPv4 address", so this is a bug — distinct from the
+> already-fixed socket-side [#7689](https://redmine.openinfosecfoundation.org/issues/7689).
 >
-> ```
-> while read ip; do sudo suricatasc -c "dataset-add tor-exits ip $ip"; done < /var/lib/suricata/datasets/tor-exits.lst
-> ```
+> **Two file-backed workarounds, both verified on 8.0.5 (load *and* match):**
 >
-> For a fully **file-backed** big-list exercise on 8.0.5, use a **string** dataset instead (e.g. the
-> `ad-domain-blacklist` task below) — string/md5/sha256 file loading is unaffected.
+> 1. For an **all-IPv4** list, use **`type ipv4`** (as in the rule above) — it loads a plain-IPv4
+>    file and `ip.dst`/`ip.src` matches IPv4 packets correctly.
+> 2. To keep using **`type ip`** (e.g. a mixed v4/v6 list), write each IPv4 entry as an
+>    **IPv4-mapped IPv6** address — `::ffff:1.2.3.4`. That passes the IPv6 parser and still matches
+>    plain-IPv4 packets. Convert the Tor list with:
+>    ```
+>    sed 's/^/::ffff:/' torbulkexitlist > tor-exits.lst   # then dataset:...,type ip,load tor-exits.lst
+>    ```
+>
+> (Adding IPv4 over the unix socket — `dataset-add … ip 1.2.3.4` — also works but is **not persisted**
+> across a restart, since the saved file hits the same broken loader on reload.)
 
 ## Tasks
 
