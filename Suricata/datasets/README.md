@@ -141,17 +141,49 @@ Alternatively, we could simply generate a list of unique mail servers with follo
 alert dns any any -> any any (msg:"New mailserver query seen"; dns.query; content: "mail"; startswith; dataset:set,new-mailservers, type string, state /var/lib/suricata/datasets/new-mailservers.lst, memcap 10mb, hashsize 10000; sid:123; rev:1;)
 ```
 
-## IP dataset in Suricata 7.x
+## IP datasets
 
-Initial implementation of datasets only supported sticky buffers, which are part of the rule options. However, this meant IP addresses could not be checked with a dataset since IP matching is part of rule header. This has been fixed in suricata 7, as sticky buffers for IP matching are now available.
+Initial datasets only supported sticky buffers (rule *options*), so IP addresses — matched in the rule *header* — couldn't be used. Since Suricata 7 there are sticky buffers for IP matching (`ip.src` / `ip.dst`), so an address can be checked against a dataset.
 
-* https://docs.suricata.io/en/suricata-7.0.5/rules/ipaddr.html#ip-addresses-match
+* https://docs.suricata.io/en/latest/rules/ipaddr.html#ip-addresses-match
 
 ```
-alert ip [$HOME_NET] any -> any any (msg:"Bad IP seen 124"; sid: ; rev: 1; ip.dst; dataset:isset,bad-ip,type ip, load bad-ip.lst, hashsize 10000;)
+alert ip $HOME_NET any -> any any (msg:"Bad IP seen"; ip.dst; dataset:isset,bad-ip,type ip,load bad-ip.lst,hashsize 10000; sid:1; rev:1;)
 ```
 
-Unlike string type, IP addresses do not have to be base64 encoded.
+Unlike the string type, IP addresses are written as plain text (no base64). `ip.dst` (or `ip.src`) picks which address to test.
+
+### Worked example — one rule, a thousand IPs (Tor exit nodes)
+
+This is the whole point of datasets: a **single** rule that fires when a host touches **any** address in a large, externally-maintained list — and you update the list without touching the rule. Tor publishes its exit nodes as a flat IP list (1200+ today):
+
+```
+curl -s https://check.torproject.org/torbulkexitlist -o /var/lib/suricata/datasets/tor-exits.lst
+sudo chown suricata:suricata /var/lib/suricata/datasets/tor-exits.lst
+```
+
+One rule covers the entire set:
+
+```
+alert ip $HOME_NET any -> any any (msg:"Outbound to Tor exit node"; ip.dst; dataset:isset,tor-exits,type ip,load /var/lib/suricata/datasets/tor-exits.lst,memcap 16mb,hashsize 8192; sid:9000001; rev:1;)
+```
+
+Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP rule explosion.
+
+> **⚠️ Suricata 8.0.x caveat (verified on 8.0.5).** The `type ip` **file** loader is currently
+> **IPv6-only**: every line is parsed as IPv6, and **IPv4 addresses are rejected** with
+> `detect-dataset: invalid IPv6 value …`, so an all-IPv4 list such as `torbulkexitlist` loads
+> **zero** entries (IPv6 entries load fine). Adding IPv4 over the unix socket *does* work
+> (`dataset-add … ip 1.2.3.4` — fixed in [#7689](https://redmine.openinfosecfoundation.org/issues/7689)),
+> but socket additions are **not persisted across a restart** (the saved file hits the same loader on
+> reload). So on 8.0.x, to use the Tor (IPv4) list, populate it over the socket on each start:
+>
+> ```
+> while read ip; do sudo suricatasc -c "dataset-add tor-exits ip $ip"; done < /var/lib/suricata/datasets/tor-exits.lst
+> ```
+>
+> For a fully **file-backed** big-list exercise on 8.0.5, use a **string** dataset instead (e.g. the
+> `ad-domain-blacklist` task below) — string/md5/sha256 file loading is unaffected.
 
 ## Tasks
 
