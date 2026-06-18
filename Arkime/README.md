@@ -60,6 +60,8 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * 09:30 - 12:00
   * Open, propose your topic!
+  * [Suricata datasets](/Suricata/datasets)
+  * [Pikksilm](/Arkime/pikksilm)
   * LS BT traffic PCAPs: how to get them for your team
   * [feedback, contact exchange, thanks, etc.](/common/Closing.md)
  
@@ -68,8 +70,6 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
 
 * [MISP integration](/Arkime/misp_wise/)
 * [build from source](/Arkime/setup/#Build)
-* [Pikksilm](/Arkime/pikksilm)
-* [Suricata datasets](/Suricata/datasets)
 * [WISE - Plugins](/Arkime/wise#writing-a-wise-plugin)
 * [Clustered elastic](/Arkime/clustering#clustered-elasticsearch), [multinode](/Arkime/clustering#moloch-workers)
 * [Clustering teamwork, cont](/Arkime/clustering)
