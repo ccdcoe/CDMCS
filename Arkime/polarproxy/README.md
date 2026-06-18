@@ -168,6 +168,15 @@ curl --connect-to www.netresec.com:443:127.0.0.1:10443 https://www.netresec.com/
 
 In practice you wouldn't juggle `--connect-to`; instead route clients' outbound 443 through PolarProxy — transparently, or via the `--socks 1080` / `--httpconnect 8080` entry points.
 
+#### Firefox on Ubuntu
+
+Apparently Firefox on Ubuntu does not use the system CA configuration by default. You have to manually point Firefox to the system certificates.
+
+* Go to Firefox settings and search for `Manage security devices` and open it.
+* Click `Load`
+* Give a name for the new Module. Choose your own.
+* For filename enter: `/usr/lib/x86_64-linux-gnu/pkcs11/p11-kit-trust.so`
+
 ### Windows
 
 * https://docs.microsoft.com/en-us/skype-sdk/sdn/articles/installing-the-trusted-root-certificate
