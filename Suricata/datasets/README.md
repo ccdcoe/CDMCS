@@ -141,6 +141,36 @@ Alternatively, we could simply generate a list of unique mail servers with follo
 alert dns any any -> any any (msg:"New mailserver query seen"; dns.query; content: "mail"; startswith; dataset:set,new-mailservers, type string, state /var/lib/suricata/datasets/new-mailservers.lst, memcap 10mb, hashsize 10000; sid:123; rev:1;)
 ```
 
+## Worked example — alert on bad domains (string dataset)
+
+The `string` type is the workhorse: any sticky buffer can be checked against a list. Here we hook
+`dns.query` to a list of known-bad domains, so **one** rule fires on a DNS lookup of **any** of them.
+
+String entries are stored **base64-encoded** (see [Adding elements](#adding-elements)), so build the
+list with `base64` — one encoded domain per line:
+
+```
+for d in malware-c2-test.example spambot-test.example ; do
+  echo -n "$d" | base64
+done | sudo tee /var/lib/suricata/datasets/bad-domains.lst
+sudo chown suricata:suricata /var/lib/suricata/datasets/bad-domains.lst
+```
+
+One rule covers the whole list:
+
+```
+alert dns any any -> any any (msg:"DNS lookup of known-bad domain"; dns.query; dataset:isset,bad-domains,type string,load /var/lib/suricata/datasets/bad-domains.lst,memcap 10mb,hashsize 1024; sid:9000002; rev:1;)
+```
+
+Trigger it — any DNS query for one of the names works, it doesn't have to resolve:
+
+```
+dig @8.8.8.8 malware-c2-test.example
+```
+
+Each matching query produces an alert (verified on 8.0.5). Unlike the `type ip` IPv4 file loader, the
+`string` loader behaves identically on 7.x and 8.x.
+
 ## IP datasets
 
 Initial datasets only supported sticky buffers (rule *options*), so IP addresses — matched in the rule *header* — couldn't be used. Since Suricata 7 there are sticky buffers for IP matching (`ip.src` / `ip.dst`), so an address can be checked against a dataset.
@@ -152,6 +182,11 @@ alert ip $HOME_NET any -> any any (msg:"Bad IP seen"; ip.dst; dataset:isset,bad-
 ```
 
 Unlike the string type, IP addresses are written as plain text (no base64). `ip.dst` (or `ip.src`) picks which address to test.
+
+Two limits worth knowing (both verified on 8.0.5):
+
+* **Exact addresses only — no CIDR.** A dataset is a hash set of individual addresses; a network such as `10.0.0.0/24` is **rejected at load** (`invalid Ipv4/Ipv6 value`) and never matches. For subnet matching use the rule header (`alert ip ... -> [10.0.0.0/24] any ...`) or `iprep`, not a dataset.
+* **Pick the type per address family.** Use **`type ipv4`** for IPv4 lists, and **`type ip`** (or `type ipv6`, both work) for IPv6 lists. The combined `type ip` is currently broken for IPv4 **file** loads on 8.0.x (see the caveat below), so don't use it for IPv4 lists.
 
 ### Worked example — one rule, a thousand IPs (Tor exit nodes)
 
