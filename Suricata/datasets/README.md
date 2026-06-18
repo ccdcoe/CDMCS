@@ -177,7 +177,8 @@ Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP ru
 > <dataset-name> in <file>` (note it prints the *dataset name*, not the offending address) and the
 > entry is skipped — so an all-IPv4 list like `torbulkexitlist` loads **zero** entries under
 > `type ip`. Under `suricata -T` the same condition is a **fatal error** (config test exits non-zero).
-> The docs say `type ip` should accept "IPv6 or IPv4 address", so this is a bug — distinct from the
+> The docs say `type ip` should accept "IPv6 or IPv4 address", and Suricata **7.0.15 loads and
+> matches the identical IPv4 file fine**, so this is a **regression** in 8.0.x — distinct from the
 > already-fixed socket-side [#7689](https://redmine.openinfosecfoundation.org/issues/7689).
 >
 > **Two file-backed workarounds, both verified on 8.0.5 (load *and* match):**
