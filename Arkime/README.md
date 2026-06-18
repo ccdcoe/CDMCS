@@ -58,7 +58,7 @@ Analyzing the most recent Locked Shields dataset is an added bonus all participa
     
 ## Day 5 :: Last but not least :: June 19 2026, *ends at 12:00*
 
-* 09:30 - 12:00
+* 09:00 - 12:00
   * Open, propose your topic!
   * [Suricata datasets](/Suricata/datasets)
   * [Pikksilm](/Arkime/pikksilm)
