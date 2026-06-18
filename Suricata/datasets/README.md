@@ -184,7 +184,9 @@ Refresh the list (cron the `curl`) and restart — no rule changes, no per-IP ru
 > **Two file-backed workarounds, both verified on 8.0.5 (load *and* match):**
 >
 > 1. For an **all-IPv4** list, use **`type ipv4`** (as in the rule above) — it loads a plain-IPv4
->    file and `ip.dst`/`ip.src` matches IPv4 packets correctly.
+>    file, `ip.dst`/`ip.src` matches IPv4 packets correctly, and a saved set (`state`) **round-trips
+>    across a restart**. (`type ip` does *not*: it writes plain IPv4 on shutdown but rejects it on
+>    reload, so a `type ip` IPv4 set silently loses every entry on restart.)
 > 2. To keep using **`type ip`** (e.g. a mixed v4/v6 list), write each IPv4 entry as an
 >    **IPv4-mapped IPv6** address — `::ffff:1.2.3.4`. That passes the IPv6 parser and still matches
 >    plain-IPv4 packets. Convert the Tor list with:
