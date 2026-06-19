@@ -9,8 +9,26 @@ export PAGER=cat
 
 # Script revision = number of git commits that have touched this file
 # (singlehost/provision.sh). Bump by 1 each time you commit a change here.
-PROVISION_REV=64
+PROVISION_REV=65
 echo "=== CDMCS singlehost provision.sh — revision ${PROVISION_REV} ==="
+
+# ============================================================================
+# SOFTWARE VERSIONS — update these when refreshing the stack (then bump PROVISION_REV).
+# All human-editable version numbers live here so they're easy to find/update. The
+# derived download URLs + docker image tags are built from these further down (the
+# gophercap/pikksilm asset URLs use jq+curl, so they're resolved after the apt install).
+# NB: ELK + evebox + valkey should also match the base template's `course_docker_images`
+# (ansible group_vars) so clones reuse pre-pulled images instead of re-downloading.
+# ============================================================================
+UBUNTU_VERSION="2404"      # Ubuntu release number (2404 = 24.04 noble)
+ELASTIC_VERSION="9.4.2"    # ELK images: elasticsearch / kibana / logstash / filebeat
+ARKIME_VERSION="6.5.0"     # Arkime .deb (github release)
+PIKKSILM_VERSION="2.0.3"   # Pikksilm prebuilt binary (github release)
+VALKEY_VERSION="8.1"       # redis-compatible store (valkey/valkey docker tag)
+EVEBOX_TAG="latest"        # jasonish/evebox docker tag
+ELASTSIC_MEM=512           # Elasticsearch JVM heap (MB)
+LOGSTASH_MEM=512           # Logstash JVM heap (MB)
+# ============================================================================
 
 USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
 # Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
@@ -123,18 +141,10 @@ apt-get update && apt-get -y install \
   pcregrep \
   tcpreplay || exit 1
 
-# versions (2026: Ubuntu 24.04 noble; ELK + evebox + valkey match the base-image set
-# course_docker_images so the singlehost reuses the pre-pulled images, no extra pull)
-UBUNTU_VERSION="2404"
-ELASTIC_VERSION="9.0.4"
-ARKIME_VERSION="6.4.0"
-PIKKSILM_VERSION="2.0.3"
-
-# NB (2026 cleanup): influxdb/grafana/telegraf/golang and the elasticsearch/kibana
-# -oss .deb vars were removed -- nothing in the script installed them (no download/apt
-# code referenced those vars). ELK runs from the docker images below; Pikksilm ships a
-# prebuilt binary. Re-add a version var here only together with its install code.
-
+# Download URLs + docker image tags derived from the SOFTWARE VERSIONS block at the top.
+# (influxdb/grafana/telegraf/golang and the ELK -oss .debs were dropped in the 2026 cleanup;
+# ELK runs from the docker images below and Pikksilm ships a prebuilt binary.)
+# The two URLs below use curl+jq, so they're resolved here, after the apt install above.
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
@@ -146,9 +156,6 @@ ARKIME_JA4_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VE
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name=="gopherCap.gz") | .browser_download_url')
 PIKKSILM_URL=$(curl -ss -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/markuskont/pikksilm/releases | jq -r ".[] | select(.tag_name==\"v${PIKKSILM_VERSION}\") | .assets | .[] | select(.name==\"pikksilm_${PIKKSILM_VERSION}_linux_amd64.tar.gz\") | .browser_download_url")
-
-ELASTSIC_MEM=512
-LOGSTASH_MEM=512
 
 mkdir -p $PKGDIR
 
@@ -175,6 +182,22 @@ echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
 echo "Configuring DOCKER"
+# Install Docker Engine from Docker's OFFICIAL apt repo if it isn't already present.
+# Skip entirely when docker is already installed (e.g. baked into the base template).
+# We use download.docker.com (current docker-ce + compose plugin), not Ubuntu's docker.io.
+if command -v docker >/dev/null 2>&1; then
+  echo "Docker already installed ($(docker --version)) - skipping install"
+else
+  echo "Docker not found - installing docker-ce from download.docker.com"
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    > /etc/apt/sources.list.d/docker.list
+  apt-get update
+  apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || exit 1
+  systemctl enable --now docker
+fi
 docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
 
 echo "Provisioning REDIS"
@@ -184,7 +207,7 @@ docker ps -a | grep redis || docker run -dit \
   --network cdmcs \
   --restart unless-stopped \
   -p 6379:6379 \
-    valkey/valkey:7.2
+    valkey/valkey:${VALKEY_VERSION}
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -297,7 +320,7 @@ docker ps -a | grep evebox || docker run -tid \
   --name evebox \
   --restart unless-stopped \
   -p 5636:5636 \
-    jasonish/evebox:latest  \
+    jasonish/evebox:${EVEBOX_TAG}  \
       -e http://elastic:9200 \
       --index suricata \
       --host 0.0.0.0 \
