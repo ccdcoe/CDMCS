@@ -1034,7 +1034,7 @@ EOF
 grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
-sysmon=title:Sysmon correlation;require:sysmon;fields:sysmon.parentprocessname,sysmon.parentprocesspid,sysmon.processname,sysmon.processpid,sysmon.username,sysmon.hostname,sysmon.hostip,sysmon.hostmac
+sysmon=title:Sysmon correlation;require:sysmon;fields:sysmon.processname,sysmon.username,sysmon.hostname,sysmon.processpid
 EOF
 
 grep "wise-types" $FILE || cat >> $FILE <<EOF
@@ -1145,6 +1145,19 @@ cd /opt/arkime/db
 if [[ `./db.pl http://localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
   echo "INIT" | ./db.pl http://localhost:9200 init
 fi
+
+# WISE stores the Pikksilm correlation values under the sysmon.* db fields, but it registers the
+# Arkime *expressions* as process.name / user.name / winlog.computer_name / process.pid (WISE uses
+# the json key from `field:` as the expression). Register friendly sysmon.* ALIASES (group "sysmon")
+# directly in the fields index so `sysmon.processname` searches work and the [custom-views] "Sysmon
+# correlation" panel populates. (capture won't add the base alias itself once WISE owns the dbField.)
+# Idempotent (PUT by _id); safe to re-run.
+echo "Registering sysmon.* WISE field aliases"
+for fa in "sysmon.processname:Process Name:termfield" "sysmon.username:User:termfield" "sysmon.hostname:Host Name:termfield" "sysmon.processpid:Process PID:integer"; do
+  exp="${fa%%:*}"; rest="${fa#*:}"; fn="${rest%:*}"; kind="${rest##*:}"
+  curl -s -XPUT "http://localhost:9200/arkime_fields/_doc/${exp}" -H 'Content-Type: application/json' \
+    -d "{\"friendlyName\":\"${fn}\",\"group\":\"sysmon\",\"help\":\"Endpoint ${fn} behind the flow (Sysmon via Pikksilm/WISE)\",\"dbField2\":\"${exp}\",\"type\":\"${kind}\"}" >/dev/null
+done
 
 cd /opt/arkime/bin
 ./arkime_update_geo.sh > /dev/null 2>&1
