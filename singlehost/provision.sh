@@ -7,6 +7,11 @@
 export SYSTEMD_PAGER=cat
 export PAGER=cat
 
+# Script revision = number of git commits that have touched this file
+# (singlehost/provision.sh). Bump by 1 each time you commit a change here.
+PROVISION_REV=64
+echo "=== CDMCS singlehost provision.sh — revision ${PROVISION_REV} ==="
+
 USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
 # Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
 # the synced /vagrant folder; on bare metal use a local dir. Override with WORKDIR=... Data
