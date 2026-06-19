@@ -86,6 +86,65 @@ WantedBy=multi-user.target
 The full, tested install (binary download, user, config, service, plus the Arkime side) lives in
 [`singlehost/provision.sh`](../../singlehost/provision.sh).
 
+## Winlogbeat on the endpoint (ECS normalization — REQUIRED)
+
+This is the piece that's easy to miss. Pikksilm 2.x reads Sysmon events in **ECS** form
+(`process.entity_id`, `process.name`, `source.ip`, `destination.ip`, **`network.community_id`**).
+Winlogbeat's Sysmon→ECS mapping normally runs as an **Elasticsearch ingest pipeline** — which is
+**skipped when you ship straight to redis**. So a plain `winlogbeat.event_logs` config delivers only
+raw `winlog.event_data.*`; Pikksilm then can't find the fields and emits **empty** correlations with
+no community_id (they pile up under an empty-string key and nothing ever enriches). You must do the
+ECS mapping **client-side** and compute `community_id` with **seed 0** (to match Suricata + Arkime):
+
+```yaml
+winlogbeat.event_logs:
+  - name: Microsoft-Windows-Sysmon/Operational
+
+processors:
+  - copy_fields:
+      fields:
+        - { from: "winlog.event_data.ProcessGuid",   to: "process.entity_id" }
+        - { from: "winlog.event_data.Image",         to: "process.executable" }
+        - { from: "winlog.event_data.Image",         to: "process.name" }
+        - { from: "winlog.event_data.User",          to: "user.name" }
+        - { from: "winlog.computer_name",            to: "host.name" }
+        - { from: "winlog.event_data.SourceIp",      to: "source.ip" }
+        - { from: "winlog.event_data.DestinationIp", to: "destination.ip" }
+        - { from: "winlog.event_data.Protocol",      to: "network.transport" }
+      ignore_missing: true
+      fail_on_error: false
+  - convert:
+      fields:
+        - { from: "winlog.event_data.SourcePort",      to: "source.port",      type: integer }
+        - { from: "winlog.event_data.DestinationPort", to: "destination.port", type: integer }
+        - { from: "winlog.event_data.ProcessId",       to: "process.pid",      type: integer }
+      ignore_missing: true
+      fail_on_error: false
+  # community_id wants an iana_number; map Sysmon's tcp/udp string
+  - if:
+      has_fields: ["network.transport"]
+    then:
+      - script:
+          lang: javascript
+          source: >
+            function process(evt){var t=evt.Get("network.transport");if(t){t=String(t).toLowerCase();
+            evt.Put("network.transport",t);if(t==="tcp")evt.Put("network.iana_number",6);
+            else if(t==="udp")evt.Put("network.iana_number",17);}}
+  - community_id:
+      seed: 0
+
+output.redis:
+  hosts: ["<singlehost-ip>:6379"]   # the box running redis + Pikksilm
+  key: "winlogbeat"
+  db: 0
+  datatype: "list"
+```
+
+Install **Sysmon** with a config that logs EventID 1 (process create) + EventID 3 (network connect) —
+a minimal `<ProcessCreate onmatch="exclude"/>` + `<NetworkConnect onmatch="exclude"/>` works, or use
+the olafhartong modular config. Lock down `winlogbeat.yml` perms (`icacls … /inheritance:r`) or
+Winlogbeat's strict-perms check refuses to start.
+
 ## Arkime / WISE integration
 
 WISE pulls the correlations out of **db1** and maps the Sysmon fields onto Arkime session fields. The

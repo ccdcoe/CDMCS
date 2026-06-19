@@ -771,6 +771,10 @@ outputs:
       enabled: 'yes'
       filetype: redis
       filename: eve.json
+      # community-id is the join key Pikksilm/Arkime-WISE use to line a flow up with the
+      # endpoint's Sysmon network event. Seed 0 so it matches Arkime + Winlogbeat (all seed 0).
+      community-id: yes
+      community-id-seed: 0
       redis:
         server: 127.0.0.1
         port: 6379
@@ -1101,16 +1105,23 @@ type=ip
 format=tagger
 EOF
 
+# Pikksilm 2.x writes correlations to redis db1 keyed by the bare community_id hash, as ECS
+# JSON (process.name, user.name, winlog.computer_name, process.pid). NB:
+#  - redis here has NO password -> plain url (the old ":password@" broke auth).
+#  - template=1:%key%  because Arkime sends the BARE community_id (no "1:" seed prefix) as the
+#    lookup key; the template re-adds it to match Pikksilm's db1 key.
+#  - field:<path> must be the ECS path Pikksilm emits (process.name, ...), NOT the old
+#    sysmon.* keys; db:<name> is where Arkime stores it. (type name "communityid" is lowercase.)
 grep correlation wiseService.ini || cat >> wiseService.ini <<EOF
 [redis:sysmon_proc]
-url=redis://:password@127.0.0.1:6379/1
-redisURL=redis://:password@127.0.0.1:6379/1
+url=redis://127.0.0.1:6379/1
+redisURL=redis://127.0.0.1:6379/1
 tags=correlation
 type=communityid
 format=json
 template=1:%key%
 keyPath=network.community_id
-fields=field:sysmon.processname;db:sysmon.processname;kind:termfield;friendly:Process Name;shortcut:process.name\nfield:sysmon.username;db:sysmon.username;kind:termfield;friendly:User;shortcut:user.name\nfield:sysmon.hostname;db:sysmon.hostname;kind:termfield;friendly:Host Name;shortcut:host.name\nfield:sysmon.processpid;db:sysmon.processpid;kind:integer;friendly:Process PID;shortcut:process.pid\nfield:sysmon.hostip;db:sysmon.hostip;kind:ip;friendly:Host IP-s;shortcut:host.ip\nfield:sysmon.hostmac;db:sysmon.hostmac;kind:termfield;friendly:Host MAC;shortcut:host.mac
+fields=field:process.name;db:sysmon.processname;kind:termfield;friendly:Process Name;shortcut:process.name\nfield:user.name;db:sysmon.username;kind:termfield;friendly:User;shortcut:user.name\nfield:winlog.computer_name;db:sysmon.hostname;kind:termfield;friendly:Host Name;shortcut:host.name\nfield:process.pid;db:sysmon.processpid;kind:integer;friendly:Process PID;shortcut:process.pid
 redisMethod=lpop
 
 EOF
