@@ -7,9 +7,39 @@
 export SYSTEMD_PAGER=cat
 export PAGER=cat
 
+# -----------------------------------------------------------------------------
+# CDMCS all-in-one "singlehost" provisioner: Arkime + Elasticsearch/Kibana/
+# Logstash/Filebeat (ELK) + Suricata + evebox + valkey + Pikksilm (EDR->NDR
+# correlation) + PolarProxy + Cont3xt + Parliament + JupyterLab, all on one box.
+#
+# Usage:   provision.sh [USER] [--no-password]
+#   USER            login/stack user to create + use (default: vagrant). The Arkime
+#                   viewer login, JupyterLab token and shell login all use USER.
+#   --no-password   do NOT (re)set USER's password to its username -- preserves an
+#                   existing/managed password (e.g. set by Ansible/Vault) on a re-run.
+#                   A freshly-created user still gets one, to avoid lockout.
+#                   Aliases: --keep-password ; or  export SET_PASSWORD=no
+#
+# Env overrides:
+#   WORKDIR=<dir>    download/cache/log dir (default: /vagrant if present, else
+#                    /opt/cdmcs). The run summary is tee'd to $WORKDIR/provision-summary.txt
+#   REPO_RAW=<url>   base URL to fetch data files (Kibana dashboards) from when not local
+#   SET_PASSWORD=no  same as --no-password
+#
+# Updating versions: edit the SOFTWARE VERSIONS block below, then bump PROVISION_REV.
+#   Keep the ELK/evebox/valkey tags in sync with the base template's
+#   course_docker_images (ansible group_vars) so clones reuse pre-pulled images.
+#   For the Pikksilm -> Arkime WISE enrichment + its gotchas see
+#   ../Arkime/pikksilm/README.md.
+#
+# NB: re-running over an ALREADY-provisioned box does NOT upgrade existing docker
+#   containers (the `docker ps -a | grep X ||` guards skip them). To pick up new
+#   versions, `docker rm -f` the old containers first, or provision a fresh box.
+# -----------------------------------------------------------------------------
+
 # Script revision = number of git commits that have touched this file
 # (singlehost/provision.sh). Bump by 1 each time you commit a change here.
-PROVISION_REV=66
+PROVISION_REV=67
 echo "=== CDMCS singlehost provision.sh — revision ${PROVISION_REV} ==="
 
 # ============================================================================
