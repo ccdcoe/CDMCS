@@ -9,7 +9,7 @@ export PAGER=cat
 
 # Script revision = number of git commits that have touched this file
 # (singlehost/provision.sh). Bump by 1 each time you commit a change here.
-PROVISION_REV=65
+PROVISION_REV=66
 echo "=== CDMCS singlehost provision.sh — revision ${PROVISION_REV} ==="
 
 # ============================================================================
@@ -31,6 +31,17 @@ LOGSTASH_MEM=512           # Logstash JVM heap (MB)
 # ============================================================================
 
 USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
+# Whether to (re)set $USER's password to its username. Default yes (back-compat: a fresh box
+# needs a known login). Skip it on a re-run so an existing/managed password (e.g. set by
+# Ansible from Vault) is NOT clobbered:  pass --no-password  (or export SET_PASSWORD=no).
+# A *freshly created* user always gets a password regardless, else the account stays locked.
+SET_PASSWORD="${SET_PASSWORD:-yes}"
+for _arg in "$@"; do
+  case "$_arg" in
+    --no-password|--keep-password) SET_PASSWORD="no" ;;
+    --set-password)                SET_PASSWORD="yes" ;;
+  esac
+done
 # Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
 # the synced /vagrant folder; on bare metal use a local dir. Override with WORKDIR=... Data
 # files not present locally are fetched from REPO_RAW (so the script also works fetched alone).
@@ -44,8 +55,15 @@ PCAP_REPLAY=/srv/replay
 # Ensure the login user exists with a known password = its username. On a vagrant box the
 # 'vagrant' user already exists; on a bare-metal/non-vagrant run useradd would otherwise
 # leave the new account LOCKED (no password set) -- so set it explicitly here.
-id "$USER" >/dev/null 2>&1 || useradd -m -s /bin/bash -G sudo "$USER"
-echo "$USER:$USER" | chpasswd
+if id "$USER" >/dev/null 2>&1; then _user_existed=yes; else useradd -m -s /bin/bash -G sudo "$USER"; _user_existed=no; fi
+if [ "$SET_PASSWORD" = "yes" ] || [ "$_user_existed" = "no" ]; then
+  echo "$USER:$USER" | chpasswd
+  if [ "$SET_PASSWORD" != "yes" ]; then
+    echo "NB: '$USER' was just created -> set password (= username) anyway, else the account stays locked."
+  fi
+else
+  echo "Keeping existing password for '$USER' (--no-password / SET_PASSWORD=no)."
+fi
 mkdir -p $PKGDIR && chown -R $USER: $WORKDIR
 
 # Determine the primary (management) network interface name.
