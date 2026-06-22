@@ -147,29 +147,64 @@ Winlogbeat's strict-perms check refuses to start.
 
 ## Arkime / WISE integration
 
-WISE pulls the correlations out of **db1** and maps the Sysmon fields onto Arkime session fields. The
-source is keyed on `network.community_id`, so a session matches the endpoint event for the same flow.
-In `wiseService.ini`:
+WISE pulls the correlations out of **db1** and decorates the matching Arkime session, keyed on
+`network.community_id`. **Edit the config file the `arkime-wise` service actually loads** (check
+`systemctl cat arkime-wise` — `provision.sh` uses `wiseService.ini`, but some installs point `-c` at
+`wise.ini`), then `systemctl restart arkime-wise`:
 
 ```ini
+[cache]
+type=redis
+url=redis://127.0.0.1:6379/1
+
 [redis:sysmon_proc]
-url=redis://:password@127.0.0.1:6379/1
+url=redis://127.0.0.1:6379/1
 type=communityid
 format=json
-template=1:%key%
 keyPath=network.community_id
+template=1:%key%
 redisMethod=lpop
-fields=field:sysmon.processname;db:sysmon.processname;kind:termfield;friendly:Process Name;shortcut:process.name\n...
+fields=field:process.name;db:sysmon.processname;kind:termfield;friendly:Process Name;shortcut:process.name\nfield:user.name;db:sysmon.username;kind:termfield;friendly:User;shortcut:user.name\nfield:winlog.computer_name;db:sysmon.hostname;kind:termfield;friendly:Host Name;shortcut:host.name\nfield:process.pid;db:sysmon.processpid;kind:integer;friendly:Process PID;shortcut:process.pid
 ```
 
-This db1 source is the one fed by Pikksilm 2.x; its fields show up on the session — Process Name,
-User, Host Name/IP/MAC, Process PID — so you can pivot from a suspicious flow straight to the process
-that caused it.
+and in `config.ini`: `wiseHost=127.0.0.1`, `plugins=…;wise.so`, `viewerPlugins=wise.js`,
+`wiseTcpTupleLookups=true`, `wiseUdpTupleLookups=true`, and `[wise-types]` `communityid=communityId`.
 
-> **Note:** `provision.sh` also carries a second source, `[redis:sysmonevent1]`, on **db2** (Parent
-> Process, Process MD5, Arguments, Integrity Level). That layout predates Pikksilm 2.x, whose config
-> above only writes **db1** — so db2 stays empty unless you add a matching `output` to
-> `/etc/pikksilm.yaml`. Treat those extra fields as not-yet-wired on the current stack.
+**Four things that each silently break it (all learned the hard way):**
+
+1. **`field:<X>` is the JSON-extract key *and* the Arkime expression.** Pikksilm 2.x emits **ECS** JSON
+   (`process.name`, `user.name`, `winlog.computer_name`, `process.pid`) — so `field:` must be those
+   ECS paths, **not** `sysmon.*`; `db:` is where Arkime stores the value. (`shortcut:` does *not*
+   re-map the extract path — `field:sysmon.processname` just extracts nothing and WISE fails/empties.)
+2. **`template=1:%key%`** — Arkime sends the **bare** community_id hash (no `1:` seed prefix) as the
+   lookup key; the template re-adds `1:` to match Pikksilm's db1 key. `%key%` alone ⇒ `found:0`.
+3. **type is lowercase `communityid`** (case-sensitive); the redis has **no password** (plain url).
+4. **Edit the file the service loads** — wrong file ⇒ `curl -s localhost:8081/stats` shows `sources: []`.
+
+**Getting nice `sysmon.*` names + the "Sysmon correlation" view.** Per #1 the fields land under the
+expressions `process.name`/`user.name`/`winlog.computer_name`/`process.pid`. WISE won't add a second
+base field once it owns the dbField, so to also search them as `sysmon.processname` and group them in
+`[custom-views] sysmon`, register friendly **aliases** straight in the fields index (this is exactly
+what `provision.sh` now does right after `db.pl init`):
+
+```bash
+for fa in "sysmon.processname:Process Name:termfield" "sysmon.username:User:termfield" \
+          "sysmon.hostname:Host Name:termfield" "sysmon.processpid:Process PID:integer"; do
+  e="${fa%%:*}"; r="${fa#*:}"; n="${r%:*}"; k="${r##*:}"
+  curl -s -XPUT "localhost:9200/arkime_fields/_doc/$e" -H 'Content-Type: application/json' \
+    -d "{\"friendlyName\":\"$n\",\"group\":\"sysmon\",\"dbField2\":\"$e\",\"type\":\"$k\"}"
+done
+```
+
+**Verify:** `curl -s localhost:8081/stats` (the `communityid` type shows `found > 0` once traffic
+flows); then in the viewer search `sysmon.processname == EXISTS!` (or `process.name == EXISTS!`) and
+open a session — the **Sysmon correlation** view shows Process Name / User / Host / PID. WISE enriches
+**at capture time**, so only sessions captured after the wiring carry the fields (regenerate traffic
+for a live demo); `redisMethod=lpop` is one-shot but the value persists in the saved session.
+
+> **Legacy note:** older `provision.sh` carried a second source `[redis:sysmonevent1]` on **db2**
+> (parent process, MD5, args, integrity). Pikksilm 2.x doesn't populate db2 — drop it, or wire a db2
+> `output` in `/etc/pikksilm.yaml` if you want those fields.
 
 ## Generating interesting traffic
 

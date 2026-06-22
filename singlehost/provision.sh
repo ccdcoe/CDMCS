@@ -7,7 +7,71 @@
 export SYSTEMD_PAGER=cat
 export PAGER=cat
 
+# -----------------------------------------------------------------------------
+# CDMCS all-in-one "singlehost" provisioner: Arkime + Elasticsearch/Kibana/
+# Logstash/Filebeat (ELK) + Suricata + evebox + valkey + Pikksilm (EDR->NDR
+# correlation) + PolarProxy + Cont3xt + Parliament + JupyterLab, all on one box.
+#
+# Usage:   provision.sh [USER] [--no-password]
+#   USER            login/stack user to create + use (default: vagrant). The Arkime
+#                   viewer login, JupyterLab token and shell login all use USER.
+#   --no-password   do NOT (re)set USER's password to its username -- preserves an
+#                   existing/managed password (e.g. set by Ansible/Vault) on a re-run.
+#                   A freshly-created user still gets one, to avoid lockout.
+#                   Aliases: --keep-password ; or  export SET_PASSWORD=no
+#
+# Env overrides:
+#   WORKDIR=<dir>    download/cache/log dir (default: /vagrant if present, else
+#                    /opt/cdmcs). The run summary is tee'd to $WORKDIR/provision-summary.txt
+#   REPO_RAW=<url>   base URL to fetch data files (Kibana dashboards) from when not local
+#   SET_PASSWORD=no  same as --no-password
+#
+# Updating versions: edit the SOFTWARE VERSIONS block below, then bump PROVISION_REV.
+#   Keep the ELK/evebox/valkey tags in sync with the base template's
+#   course_docker_images (ansible group_vars) so clones reuse pre-pulled images.
+#   For the Pikksilm -> Arkime WISE enrichment + its gotchas see
+#   ../Arkime/pikksilm/README.md.
+#
+# NB: re-running over an ALREADY-provisioned box does NOT upgrade existing docker
+#   containers (the `docker ps -a | grep X ||` guards skip them). To pick up new
+#   versions, `docker rm -f` the old containers first, or provision a fresh box.
+# -----------------------------------------------------------------------------
+
+# Script revision = number of git commits that have touched this file
+# (singlehost/provision.sh). Bump by 1 each time you commit a change here.
+PROVISION_REV=67
+echo "=== CDMCS singlehost provision.sh — revision ${PROVISION_REV} ==="
+
+# ============================================================================
+# SOFTWARE VERSIONS — update these when refreshing the stack (then bump PROVISION_REV).
+# All human-editable version numbers live here so they're easy to find/update. The
+# derived download URLs + docker image tags are built from these further down (the
+# gophercap/pikksilm asset URLs use jq+curl, so they're resolved after the apt install).
+# NB: ELK + evebox + valkey should also match the base template's `course_docker_images`
+# (ansible group_vars) so clones reuse pre-pulled images instead of re-downloading.
+# ============================================================================
+UBUNTU_VERSION="2404"      # Ubuntu release number (2404 = 24.04 noble)
+ELASTIC_VERSION="9.4.2"    # ELK images: elasticsearch / kibana / logstash / filebeat
+ARKIME_VERSION="6.5.0"     # Arkime .deb (github release)
+PIKKSILM_VERSION="2.0.3"   # Pikksilm prebuilt binary (github release)
+VALKEY_VERSION="8.1"       # redis-compatible store (valkey/valkey docker tag)
+EVEBOX_TAG="latest"        # jasonish/evebox docker tag
+ELASTSIC_MEM=512           # Elasticsearch JVM heap (MB)
+LOGSTASH_MEM=512           # Logstash JVM heap (MB)
+# ============================================================================
+
 USER="${1:-vagrant}"   # login user: pass as $1 (e.g. ./provision.sh student25); defaults to vagrant
+# Whether to (re)set $USER's password to its username. Default yes (back-compat: a fresh box
+# needs a known login). Skip it on a re-run so an existing/managed password (e.g. set by
+# Ansible from Vault) is NOT clobbered:  pass --no-password  (or export SET_PASSWORD=no).
+# A *freshly created* user always gets a password regardless, else the account stays locked.
+SET_PASSWORD="${SET_PASSWORD:-yes}"
+for _arg in "$@"; do
+  case "$_arg" in
+    --no-password|--keep-password) SET_PASSWORD="no" ;;
+    --set-password)                SET_PASSWORD="yes" ;;
+  esac
+done
 # Working/cache dir for downloads, logs and the dashboards file. On a vagrant box default to
 # the synced /vagrant folder; on bare metal use a local dir. Override with WORKDIR=... Data
 # files not present locally are fetched from REPO_RAW (so the script also works fetched alone).
@@ -21,8 +85,15 @@ PCAP_REPLAY=/srv/replay
 # Ensure the login user exists with a known password = its username. On a vagrant box the
 # 'vagrant' user already exists; on a bare-metal/non-vagrant run useradd would otherwise
 # leave the new account LOCKED (no password set) -- so set it explicitly here.
-id "$USER" >/dev/null 2>&1 || useradd -m -s /bin/bash -G sudo "$USER"
-echo "$USER:$USER" | chpasswd
+if id "$USER" >/dev/null 2>&1; then _user_existed=yes; else useradd -m -s /bin/bash -G sudo "$USER"; _user_existed=no; fi
+if [ "$SET_PASSWORD" = "yes" ] || [ "$_user_existed" = "no" ]; then
+  echo "$USER:$USER" | chpasswd
+  if [ "$SET_PASSWORD" != "yes" ]; then
+    echo "NB: '$USER' was just created -> set password (= username) anyway, else the account stays locked."
+  fi
+else
+  echo "Keeping existing password for '$USER' (--no-password / SET_PASSWORD=no)."
+fi
 mkdir -p $PKGDIR && chown -R $USER: $WORKDIR
 
 # Determine the primary (management) network interface name.
@@ -118,18 +189,10 @@ apt-get update && apt-get -y install \
   pcregrep \
   tcpreplay || exit 1
 
-# versions (2026: Ubuntu 24.04 noble; ELK + evebox + valkey match the base-image set
-# course_docker_images so the singlehost reuses the pre-pulled images, no extra pull)
-UBUNTU_VERSION="2404"
-ELASTIC_VERSION="9.0.4"
-ARKIME_VERSION="6.4.0"
-PIKKSILM_VERSION="2.0.3"
-
-# NB (2026 cleanup): influxdb/grafana/telegraf/golang and the elasticsearch/kibana
-# -oss .deb vars were removed -- nothing in the script installed them (no download/apt
-# code referenced those vars). ELK runs from the docker images below; Pikksilm ships a
-# prebuilt binary. Re-add a version var here only together with its install code.
-
+# Download URLs + docker image tags derived from the SOFTWARE VERSIONS block at the top.
+# (influxdb/grafana/telegraf/golang and the ELK -oss .debs were dropped in the 2026 cleanup;
+# ELK runs from the docker images below and Pikksilm ships a prebuilt binary.)
+# The two URLs below use curl+jq, so they're resolved here, after the apt install above.
 DOCKER_ELA="docker.elastic.co/elasticsearch/elasticsearch:${ELASTIC_VERSION}"
 DOCKER_KIBANA="docker.elastic.co/kibana/kibana:${ELASTIC_VERSION}"
 DOCKER_LOGSTASH="docker.elastic.co/logstash/logstash:${ELASTIC_VERSION}"
@@ -141,9 +204,6 @@ ARKIME_JA4_LINK="https://github.com/arkime/arkime/releases/download/v${ARKIME_VE
 
 GOPHER_URL=$(curl --silent "https://api.github.com/repos/StamusNetworks/gophercap/releases/latest" | jq -r '.assets[] | select(.name=="gopherCap.gz") | .browser_download_url')
 PIKKSILM_URL=$(curl -ss -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/markuskont/pikksilm/releases | jq -r ".[] | select(.tag_name==\"v${PIKKSILM_VERSION}\") | .assets | .[] | select(.name==\"pikksilm_${PIKKSILM_VERSION}_linux_amd64.tar.gz\") | .browser_download_url")
-
-ELASTSIC_MEM=512
-LOGSTASH_MEM=512
 
 mkdir -p $PKGDIR
 
@@ -170,6 +230,22 @@ echo 'Acquire::ForceIPv4 "true";' | sudo tee /etc/apt/apt.conf.d/99force-ipv4
 export DEBIAN_FRONTEND=noninteractive
 
 echo "Configuring DOCKER"
+# Install Docker Engine from Docker's OFFICIAL apt repo if it isn't already present.
+# Skip entirely when docker is already installed (e.g. baked into the base template).
+# We use download.docker.com (current docker-ce + compose plugin), not Ubuntu's docker.io.
+if command -v docker >/dev/null 2>&1; then
+  echo "Docker already installed ($(docker --version)) - skipping install"
+else
+  echo "Docker not found - installing docker-ce from download.docker.com"
+  install -m 0755 -d /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+    > /etc/apt/sources.list.d/docker.list
+  apt-get update
+  apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || exit 1
+  systemctl enable --now docker
+fi
 docker network ls | grep cdmcs >/dev/null || docker network create -d bridge cdmcs
 
 echo "Provisioning REDIS"
@@ -179,7 +255,7 @@ docker ps -a | grep redis || docker run -dit \
   --network cdmcs \
   --restart unless-stopped \
   -p 6379:6379 \
-    valkey/valkey:7.2
+    valkey/valkey:${VALKEY_VERSION}
 
 # elastic
 echo "Provisioning ELASTICSEARCH"
@@ -292,7 +368,7 @@ docker ps -a | grep evebox || docker run -tid \
   --name evebox \
   --restart unless-stopped \
   -p 5636:5636 \
-    jasonish/evebox:latest  \
+    jasonish/evebox:${EVEBOX_TAG}  \
       -e http://elastic:9200 \
       --index suricata \
       --host 0.0.0.0 \
@@ -1034,7 +1110,7 @@ EOF
 grep "custom-views" $FILE || cat >> $FILE <<EOF
 [custom-views]
 cdmcs=title:Cyber Defence Monitoring Course;require:cdmcs;fields:cdmcs.name,cdmcs.type
-sysmon=title:Sysmon correlation;require:sysmon;fields:sysmon.parentprocessname,sysmon.parentprocesspid,sysmon.processname,sysmon.processpid,sysmon.username,sysmon.hostname,sysmon.hostip,sysmon.hostmac
+sysmon=title:Sysmon correlation;require:sysmon;fields:sysmon.processname,sysmon.username,sysmon.hostname,sysmon.processpid
 EOF
 
 grep "wise-types" $FILE || cat >> $FILE <<EOF
@@ -1145,6 +1221,19 @@ cd /opt/arkime/db
 if [[ `./db.pl http://localhost:9200 info | grep "DB Version" | cut -d ":" -f2 | tr -d " "` -eq -1 ]]; then
   echo "INIT" | ./db.pl http://localhost:9200 init
 fi
+
+# WISE stores the Pikksilm correlation values under the sysmon.* db fields, but it registers the
+# Arkime *expressions* as process.name / user.name / winlog.computer_name / process.pid (WISE uses
+# the json key from `field:` as the expression). Register friendly sysmon.* ALIASES (group "sysmon")
+# directly in the fields index so `sysmon.processname` searches work and the [custom-views] "Sysmon
+# correlation" panel populates. (capture won't add the base alias itself once WISE owns the dbField.)
+# Idempotent (PUT by _id); safe to re-run.
+echo "Registering sysmon.* WISE field aliases"
+for fa in "sysmon.processname:Process Name:termfield" "sysmon.username:User:termfield" "sysmon.hostname:Host Name:termfield" "sysmon.processpid:Process PID:integer"; do
+  exp="${fa%%:*}"; rest="${fa#*:}"; fn="${rest%:*}"; kind="${rest##*:}"
+  curl -s -XPUT "http://localhost:9200/arkime_fields/_doc/${exp}" -H 'Content-Type: application/json' \
+    -d "{\"friendlyName\":\"${fn}\",\"group\":\"sysmon\",\"help\":\"Endpoint ${fn} behind the flow (Sysmon via Pikksilm/WISE)\",\"dbField2\":\"${exp}\",\"type\":\"${kind}\"}" >/dev/null
+done
 
 cd /opt/arkime/bin
 ./arkime_update_geo.sh > /dev/null 2>&1
