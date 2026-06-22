@@ -73,7 +73,7 @@ drwxr-xr-x   4 root root 4.0K Jun  7 19:21 wiseService
 Set up elasticsearch.
 
 ```
-docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:9.0.4
+docker run -ti -d --name arkime-elastic -v elastic_data:/usr/share/elasticsearch/data:rw -p 127.0.0.1:9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --restart unless-stopped docker.elastic.co/elasticsearch/elasticsearch:9.4.2
 ```
 
 Verify that elastic is up and running. You can check logs...
@@ -91,7 +91,7 @@ student@student-linux:~$ curl -ss http://localhost:9200
   "cluster_name" : "docker-cluster",
   "cluster_uuid" : "lWs_x9FMSNKgd3V2AcDipA",
   "version" : {
-    "number" : "9.0.4",
+    "number" : "9.4.2",
     "build_flavor" : "default",
     "build_type" : "docker",
     "build_hash" : "f8edfccba429b6477927a7c1ce1bc6729521305e",
@@ -117,8 +117,8 @@ Some important endpoints to keep tabs on.
 ### Using a deb package
 
 ```
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-9.0.4-amd64.deb
-dpkg -i elasticsearch-9.0.4-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-9.4.2-amd64.deb
+dpkg -i elasticsearch-9.4.2-amd64.deb
 ```
 
 Set the JVM heap size in `/etc/elasticsearch/jvm.options.d/heap.options` (heap belongs in `jvm.options`, not `elasticsearch.yml`).
